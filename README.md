@@ -7,7 +7,7 @@ GIAB 샘플(HG001–HG007 germline + HG008 tumor-normal) 원시 데이터 + trut
 ## Quick start (nbb2)
 
 ```bash
-git clone <REPO_URL> && cd GIAB_benchmarking
+git clone https://github.com/ehojune/GIAB_benchmarking.git && cd GIAB_benchmarking
 ./scripts/download.sh release                    # truth set + stratifications (241 GiB, 먼저)
 ./scripts/download.sh pacbio_hifi                # 우선순위 1
 ./scripts/download.sh ont                        # 우선순위 2
