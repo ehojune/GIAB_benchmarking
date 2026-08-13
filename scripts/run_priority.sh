@@ -9,7 +9,7 @@
 set -uo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export TOOL="${TOOL:-s3}" JOBS="${JOBS:-8}"
-CATEGORIES="${CATEGORIES:-release pacbio_hifi ont pacbio_clr illumina_wgs bgi_mgi linked_reads exome complete_genomics other}"
+CATEGORIES="${CATEGORIES:-release trio_analysis pacbio_hifi ont pacbio_clr rnaseq illumina_wgs bgi_mgi linked_reads exome complete_genomics other}"
 mkdir -p "$REPO_DIR/logs"
 
 for cat in $CATEGORIES; do

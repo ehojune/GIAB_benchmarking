@@ -3,9 +3,10 @@
 # 이미 받은 파일(크기 일치)은 건너뛰므로 중단 후 재실행해도 안전하다.
 #
 # Usage:
-#   ./scripts/download.sh <category|all|release> [SAMPLE ...]
+#   ./scripts/download.sh <category|all|release|rnaseq|trio_analysis> [SAMPLE ...]
 #     category: pacbio_hifi ont pacbio_clr illumina_wgs bgi_mgi linked_reads exome complete_genomics other
-#     SAMPLE:   HG001..HG008 (생략 시 전체; HG008 = tumor-normal, T/N-D/N-P 통합)
+#     SAMPLE:   HG001..HG009 (생략 시 전체; HG008/HG009 = tumor-normal 통합)
+#     주의: 'all'은 샘플별 manifest만 — release/rnaseq/trio_analysis는 별도 인자 (run_priority.sh는 전부 포함)
 #
 # Env:
 #   DEST=/BiO/scratch/ehojune/GIAB_benchmark   다운로드 루트
@@ -34,7 +35,7 @@ if [ -z "${AWS_BIN:-}" ]; then
     else AWS_BIN=/BiO/home/program/awscli/bin/aws; fi
 fi
 
-ALL_SAMPLES=(HG001 HG002 HG003 HG004 HG005 HG006 HG007 HG008)
+ALL_SAMPLES=(HG001 HG002 HG003 HG004 HG005 HG006 HG007 HG008 HG009)
 CATEGORIES=(pacbio_hifi ont pacbio_clr illumina_wgs bgi_mgi linked_reads exome complete_genomics other)
 
 usage() { sed -n '2,20p' "$0"; exit 1; }
@@ -48,6 +49,8 @@ if [ "$CAT" = "release" ]; then
     MANIFESTS+=("$REPO_DIR/manifests/release_truthsets.tsv")
 elif [ "$CAT" = "rnaseq" ]; then
     MANIFESTS+=("$REPO_DIR/manifests/rnaseq_all.tsv")
+elif [ "$CAT" = "trio_analysis" ]; then
+    MANIFESTS+=("$REPO_DIR/manifests/trio_analysis.tsv")
 elif [ "$CAT" = "all" ]; then
     for s in "${SAMPLES[@]}"; do
         for m in "$REPO_DIR/manifests/$s"/*.tsv; do [ -e "$m" ] && MANIFESTS+=("$m"); done
@@ -87,8 +90,12 @@ dl_line() {
                 && mv "$out.part" "$out" && rc=0
             ;;
         s3)
-            "$AWS_BIN" s3 cp --no-sign-request --only-show-errors "$S3_BASE/$key" "$out" && rc=0
-            # S3 미러 누락분(RNA-seq Illumina/Iso-Seq, Element AVITI 2024-09 등)은 FTP로 자동 대체
+            if "$AWS_BIN" s3 cp --no-sign-request --only-show-errors "$S3_BASE/$key" "$out"; then
+                local have_s3; have_s3=$(stat -c%s "$out" 2>/dev/null || echo 0)
+                # 크기까지 맞아야 성공 (manifest 크기의 출처는 FTP — 미러가 stale일 수 있음)
+                if [ "$have_s3" = "$size" ]; then rc=0; rm -f "$out.part"; fi
+            fi
+            # S3 실패 또는 크기 불일치 → FTP(wget)로 자동 대체 (HG009, RNA-seq Illumina 등 미러 누락분 포함)
             if [ $rc -ne 0 ]; then
                 echo "S3 miss → FTP fallback: $key" >&2
                 rm -f "$out"

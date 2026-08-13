@@ -2,8 +2,9 @@
 # manifest 대비 다운로드 진행률/무결성(파일 크기) 확인.
 #
 # Usage:
-#   ./scripts/verify.sh <category|all|release> [SAMPLE ...]
+#   ./scripts/verify.sh <category|all|release|rnaseq|trio_analysis> [SAMPLE ...]
 #   MISSING=1 ./scripts/verify.sh pacbio_hifi   # 미완료 파일 목록도 출력
+#   주의: 'all'은 샘플별 manifest만 집계 (release/rnaseq/trio_analysis는 별도 인자로)
 #
 # Env: DEST=/BiO/scratch/ehojune/GIAB_benchmark
 
@@ -12,8 +13,8 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEST="${DEST:-/BiO/scratch/ehojune/GIAB_benchmark}"
 MISSING="${MISSING:-0}"
 
-ALL_SAMPLES=(HG001 HG002 HG003 HG004 HG005 HG006 HG007 HG008)
-[ $# -ge 1 ] || { echo "usage: $0 <category|all|release> [SAMPLE ...]"; exit 1; }
+ALL_SAMPLES=(HG001 HG002 HG003 HG004 HG005 HG006 HG007 HG008 HG009)
+[ $# -ge 1 ] || { echo "usage: $0 <category|all|release|rnaseq|trio_analysis> [SAMPLE ...]"; exit 1; }
 CAT="$1"; shift
 SAMPLES=("$@"); [ ${#SAMPLES[@]} -gt 0 ] || SAMPLES=("${ALL_SAMPLES[@]}")
 
@@ -22,6 +23,8 @@ if [ "$CAT" = "release" ]; then
     MANIFESTS+=("$REPO_DIR/manifests/release_truthsets.tsv")
 elif [ "$CAT" = "rnaseq" ]; then
     MANIFESTS+=("$REPO_DIR/manifests/rnaseq_all.tsv")
+elif [ "$CAT" = "trio_analysis" ]; then
+    MANIFESTS+=("$REPO_DIR/manifests/trio_analysis.tsv")
 elif [ "$CAT" = "all" ]; then
     for s in "${SAMPLES[@]}"; do
         for m in "$REPO_DIR/manifests/$s"/*.tsv; do [ -e "$m" ] && MANIFESTS+=("$m"); done
@@ -32,6 +35,7 @@ else
         [ -e "$m" ] && MANIFESTS+=("$m")
     done
 fi
+[ ${#MANIFESTS[@]} -gt 0 ] || { echo "no manifests matched: $CAT ${SAMPLES[*]}"; exit 1; }
 
 g_total=0; g_done=0; g_tb=0; g_done_b=0
 for m in "${MANIFESTS[@]}"; do

@@ -29,7 +29,7 @@ PE="${PE:-}"
 LOG_DIR="$REPO_DIR/logs"
 mkdir -p "$LOG_DIR"
 
-ALL_SAMPLES=(HG001 HG002 HG003 HG004 HG005 HG006 HG007 HG008)
+ALL_SAMPLES=(HG001 HG002 HG003 HG004 HG005 HG006 HG007 HG008 HG009)
 [ $# -ge 1 ] || { echo "usage: $0 <category|all|release> [SAMPLE ...]"; exit 1; }
 CAT="$1"; shift
 SAMPLES=("$@"); [ ${#SAMPLES[@]} -gt 0 ] || SAMPLES=("${ALL_SAMPLES[@]}")
@@ -55,7 +55,7 @@ export TOOL="$TOOL" JOBS="$JOBS" DEST="$DEST" AWS_BIN="$AWS_BIN"
 EOF
 }
 
-if [ "$CAT" = "release" ] || [ "$CAT" = "rnaseq" ]; then
+if [ "$CAT" = "release" ] || [ "$CAT" = "rnaseq" ] || [ "$CAT" = "trio_analysis" ]; then
     submit "$CAT" ""
 elif [ "$CAT" = "all" ]; then
     for s in "${SAMPLES[@]}"; do

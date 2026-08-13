@@ -1,3 +1,15 @@
+data/NA12878/Element_AVITI_20240920/HG001_Element-LngInsert_30x_GRCh38-GIABv3.bam	62877625922
+data/NA12878/Element_AVITI_20240920/HG001_Element-LngInsert_30x_GRCh38-GIABv3.bam.bai	8945272
+data/NA12878/Element_AVITI_20240920/HG001_Element-StdInsert_81x_GRCh38-GIABv3.bam	138635882297
+data/NA12878/Element_AVITI_20240920/HG001_Element-StdInsert_81x_GRCh38-GIABv3.bam.bai	9128216
+data/NA12878/Element_AVITI_20240920/HG001_LngInsert_Fastqs/MAXQ-0635_QC.html	1797353
+data/NA12878/Element_AVITI_20240920/HG001_LngInsert_Fastqs/NIST_HG001_long-insert_R1.fastq.gz	33968517596
+data/NA12878/Element_AVITI_20240920/HG001_LngInsert_Fastqs/NIST_HG001_long-insert_R2.fastq.gz	38455235023
+data/NA12878/Element_AVITI_20240920/HG001_StdInsert_Fastqs/GAT-APP-C136_R1.fastq.gz	87207372919
+data/NA12878/Element_AVITI_20240920/HG001_StdInsert_Fastqs/GAT-APP-C136_R2.fastq.gz	90883479857
+data/NA12878/Element_AVITI_20240920/HG001_StdInsert_Fastqs/HG001_MAXQ-0215_QC.html	1788876
+data/NA12878/Element_AVITI_20240920/README_Element_20240920.md	17123
+data/NA12878/Element_AVITI_20240920/checksum_HG001.md5	843
 data/NA12878/MtSinai_BioNano/EXP_REFINEFINAL1.cmap	13691584
 data/NA12878/MtSinai_BioNano/EXP_REFINEFINAL1.cmap.md5	103
 data/NA12878/MtSinai_BioNano/EXP_REFINEFINAL1.xmap	348896
@@ -331,6 +343,7 @@ data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.GRCh38.deepva
 data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.GRCh38.deepvariant.vcf.gz.tbi	1635414
 data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.GRCh38.gatkhc.vcf.gz	304393700
 data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.GRCh38.gatkhc.vcf.gz.tbi	2181419
+data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.GRCh38.haplotagged.bam	203556468686
 data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.GRCh38.haplotagged.bam.bai	29656144
 data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.GRCh38.pbsv.vcf.gz	4781399
 data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.GRCh38.pbsv.vcf.gz.tbi	372996
@@ -338,6 +351,7 @@ data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.hs37d5.deepva
 data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.hs37d5.deepvariant.vcf.gz.tbi	1615997
 data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.hs37d5.gatkhc.vcf.gz	299620094
 data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.hs37d5.gatkhc.vcf.gz.tbi	2165162
+data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.hs37d5.haplotagged.bam	208026895847
 data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.hs37d5.haplotagged.bam.bai	29275056
 data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.hs37d5.pbsv.vcf.gz	5281888
 data/NA12878/analysis/PacBio_CCS_15kb_20kb_chemistry2_042021/HG001.hs37d5.pbsv.vcf.gz.tbi	374745
