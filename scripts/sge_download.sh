@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # download.sh를 SGE job으로 제출. manifest(샘플x카테고리) 하나당 job 하나.
-# 기본: shepherd-1-9 노드 고정, TOOL=s3, JOBS=4.
+# 기본: shepherd-1-9 노드 고정, TOOL=s3, JOBS=8.
+# 주의: 계산 노드에 외부 egress가 없으면 전부 실패함 — 먼저 scripts/netcheck.sh로 확인.
 #
 # aws는 PATH에 없으면 /BiO/home/program/awscli/bin/aws 를 자동 사용 (AWS_BIN=경로 로 변경).
 #
@@ -22,7 +23,7 @@ set -uo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 QUEUE="${QUEUE:-shepherd.q@shepherd-1-9.kobic}"
 TOOL="${TOOL:-s3}"
-JOBS="${JOBS:-4}"
+JOBS="${JOBS:-8}"
 DEST="${DEST:-/BiO/scratch/ehojune/GIAB_benchmark}"
 PE="${PE:-}"
 LOG_DIR="$REPO_DIR/logs"
