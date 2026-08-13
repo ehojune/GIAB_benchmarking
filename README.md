@@ -17,6 +17,7 @@ tail -f logs/run_priority.log                                        # 카테고
 ./scripts/verify.sh all                                              # 진행률/크기 검증
 ```
 
+- 노드 자원·다운로드 현황: `bash scripts/status.sh` / 중단: `bash scripts/stop_downloads.sh` 후 원하는 `JOBS=`로 재시작
 - 일부만 받으려면: `CATEGORIES="release pacbio_hifi ont" nohup bash scripts/run_priority.sh ... &`
 - 단발 실행: `TOOL=s3 JOBS=8 ./scripts/download.sh pacbio_hifi HG002`
 - aws는 PATH에 없으면 `/BiO/home/program/awscli/bin/aws`를 자동 사용 (`AWS_BIN=경로`로 변경)
