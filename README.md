@@ -4,17 +4,23 @@ GIAB 샘플(HG001–HG007 germline + HG008 tumor-normal) 원시 데이터 + trut
 파일 목록과 크기는 2026-08-13에 공식 미러 `s3://giab`에서 직접 조회한 값 (NCBI FTP와 동일 내용, 총 71,767개 파일).
 샘플·플랫폼 개요는 `GIAB_HG_Catalog.xlsx` (전종범 박사님 정리본) 참고.
 
-## Quick start (nbb2, SGE + s3)
+## Quick start (nbb2 로그인 노드)
+
+계산 노드(shepherd-1-9)는 외부 egress가 없어(2026-08-13 netcheck로 확인) 다운로드는 로그인 노드에서 돌린다.
+로그인 노드 실측: s3 단일 스트림 57 MB/s (wget 17 MB/s).
 
 ```bash
 git clone https://github.com/ehojune/GIAB_benchmarking.git && cd GIAB_benchmarking
-qsub -N giab_speedtest -q shepherd.q@shepherd-1-9.kobic -V -j y -o speedtest.log -S /bin/bash scripts/speedtest.sh   # 속도 실측 (s3 vs wget)
-./scripts/sge_download.sh release                # truth set (241 GiB, 먼저)
-./scripts/sge_download.sh pacbio_hifi            # 우선순위 1 → 이후 ont, pacbio_clr 순
-./scripts/verify.sh all                          # 진행률/크기 검증 (로그인 노드에서 실행 가능)
+mkdir -p logs
+nohup bash scripts/run_priority.sh > logs/run_priority.log 2>&1 &   # release → hifi → ont → clr → 나머지 순차
+tail -f logs/run_priority.log                                        # 카테고리별 로그는 logs/<category>.log
+./scripts/verify.sh all                                              # 진행률/크기 검증
 ```
 
-`sge_download.sh`는 manifest(샘플×카테고리) 하나당 job 하나를 `shepherd.q@shepherd-1-9.kobic`에 제출한다 (기본 `TOOL=s3 JOBS=4`). aws는 PATH에 없으면 `/BiO/home/program/awscli/bin/aws`를 자동 사용 (`AWS_BIN=경로`로 변경). 큐/병렬도 변경은 `QUEUE=... JOBS=8 ./scripts/sge_download.sh ...`. SGE 없이 직접 실행하려면 `download.sh`를 같은 인자로 사용.
+- 일부만 받으려면: `CATEGORIES="release pacbio_hifi ont" nohup bash scripts/run_priority.sh ... &`
+- 단발 실행: `TOOL=s3 JOBS=8 ./scripts/download.sh pacbio_hifi HG002`
+- aws는 PATH에 없으면 `/BiO/home/program/awscli/bin/aws`를 자동 사용 (`AWS_BIN=경로`로 변경)
+- `scripts/sge_download.sh`는 계산 노드에 egress가 생기면(프록시 등) 쓸 수 있는 SGE 제출용, 현재는 사용 불가
 
 - 기본 다운로드 위치: `/BiO/scratch/ehojune/GIAB_benchmark` (변경: `DEST=... ./scripts/download.sh ...`)
 - GIAB 원본 디렉토리 구조 그대로 저장됨 (`data/AshkenazimTrio/HG002_.../PacBio_CCS_15kb/...`)
