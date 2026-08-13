@@ -1,0 +1,8 @@
+data/NA12878/NA12878_PacBio_MtSinai/NA12878.sorted.vcf.gz	656104
+data/NA12878/NA12878_PacBio_MtSinai/NA12878.sorted.vcf.gz.tbi	224590
+data/NA12878/NA12878_PacBio_MtSinai/README.txt	4082
+data/NA12878/NA12878_PacBio_MtSinai/corrected_reads_gt4kb.fasta	63820252344
+data/NA12878/NA12878_PacBio_MtSinai/merged_ec_output_primary.bam	15609911860
+data/NA12878/NA12878_PacBio_MtSinai/merged_ec_output_primary.bam.bai	22334456
+data/NA12878/NA12878_PacBio_MtSinai/sorted_final_merged.bam	146870854017
+data/NA12878/NA12878_PacBio_MtSinai/sorted_final_merged.bam.bai	73765392
