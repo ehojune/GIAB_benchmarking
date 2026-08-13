@@ -88,6 +88,12 @@ dl_line() {
             ;;
         s3)
             "$AWS_BIN" s3 cp --no-sign-request --only-show-errors "$S3_BASE/$key" "$out" && rc=0
+            # S3 미러 누락분(RNA-seq Illumina/Iso-Seq, Element AVITI 2024-09 등)은 FTP로 자동 대체
+            if [ $rc -ne 0 ]; then
+                echo "S3 miss → FTP fallback: $key" >&2
+                rm -f "$out"
+                wget -c -q -O "$out.part" "$HTTP_BASE/$key" && mv "$out.part" "$out" && rc=0
+            fi
             ;;
         *) echo "unknown TOOL: $TOOL" >&2; return 2 ;;
     esac

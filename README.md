@@ -85,5 +85,17 @@ TOOL=s3 JOBS=4 ./scripts/download.sh pacbio_hifi
 
 - `manifests/<SAMPLE>/<category>.tsv` — `상대경로<TAB>bytes`. 이 목록이 다운로드 대상의 전부
 - `manifests/release_truthsets.tsv` — truth set VCF/BED, stratification, reference (전체 버전 포함)
-- `manifests/rnaseq_all.tsv` — `data_RNAseq/` 전체 (PacBio MAS-seq + ONT directRNA + trio analysis, 361 GiB). `./scripts/download.sh rnaseq`로 다운로드. `all`에는 포함되지 않음
+- `manifests/rnaseq_all.tsv` — `data_RNAseq/` 전체 (324 files, 6.5 TiB). HG002·HG004·HG005만 존재. `./scripts/download.sh rnaseq`로 다운로드. `all`에는 포함되지 않음
+
+### S3 미러 누락 주의 (2026-08-13 확인)
+
+S3 미러는 FTP보다 불완전하다. FTP `current.tree`(86,392 files)와 S3 실시간 목록(87,527 objects)을 대조한 결과:
+
+| 누락 데이터 | 용량 | 대응 |
+|---|---|---|
+| RNA-seq Illumina(UNC·Google), Iso-Seq, Baylor HiFi RNA | 6.3 TiB | FTP만 가능 |
+| Element AVITI 2024-09 (HG001·HG003~HG005) | 2.1 TiB | FTP만 가능 |
+| HG001 PacBio CCS haplotagged BAM 등 | 0.4 TiB | FTP만 가능 |
+
+`TOOL=s3`에서 S3에 없는 파일은 자동으로 FTP(wget)로 대체 다운로드된다 (`download.sh`의 fallback).
 - `scripts/download.sh` / `scripts/verify.sh` — 위 사용법 참고. `MISSING=1 ./scripts/verify.sh ...`로 미완료 파일 나열
