@@ -1,7 +1,8 @@
 # GIAB benchmark data download
 
-GIAB 7개 샘플(HG001–HG007) 원시 데이터 + truth set 다운로드용 스크립트.
-파일 목록과 크기는 2026-08-13에 공식 미러 `s3://giab`에서 직접 조회한 값 (NCBI FTP와 동일 내용, 총 70,206개 파일).
+GIAB 샘플(HG001–HG007 germline + HG008 tumor-normal) 원시 데이터 + truth set 다운로드용 스크립트.
+파일 목록과 크기는 2026-08-13에 공식 미러 `s3://giab`에서 직접 조회한 값 (NCBI FTP와 동일 내용, 총 71,767개 파일).
+샘플·플랫폼 개요는 `GIAB_HG_Catalog.xlsx` (전종범 박사님 정리본) 참고.
 
 ## Quick start (nbb2)
 
@@ -25,17 +26,17 @@ git clone <REPO_URL> && cd GIAB_benchmarking
 
 | category | TB | days @17MB/s |
 |---|---|---|
-| pacbio_hifi | 6.1 | 4.2 |
-| ont | 7.3 | 4.9 |
+| pacbio_hifi | 7.6 | 5.2 |
+| ont | 11.8 | 8.0 |
 | pacbio_clr | 14.4 | 9.8 |
-| illumina_wgs | 18.9 | 12.9 |
+| illumina_wgs | 22.3 | 15.2 |
 | bgi_mgi | 6.2 | 4.2 |
 | linked_reads (10X, stLFR) | 4.9 | 3.4 |
 | exome | 1.1 | 0.7 |
 | complete_genomics | 16.0 | 10.9 |
-| other (BioNano, Strand-seq, HiC, SOLiD 등) | 4.0 | 2.7 |
+| other (BioNano, Strand-seq, HiC, AVITI, UG100 등) | 16.9 | 11.5 |
 | release (truth set, stratifications, references) | 0.3 | 0.2 |
-| **전체** | **79.0** | **53.8** |
+| **전체** | **101.3** | **69.0** |
 
 샘플 × 카테고리 (GiB):
 
@@ -48,6 +49,10 @@ git clone <REPO_URL> && cd GIAB_benchmarking
 | HG005 | 611 | 527 | 1,731 | 3,299 | 1,655 | 429 | 216 | 3,660 | 923 | 13,051 | 9.5 |
 | HG006 | 442 | 470 | 861 | 1,244 | 192 | 422 | - | 1,859 | 6 | 5,497 | 4.0 |
 | HG007 | 424 | 382 | 849 | 1,271 | 209 | 431 | - | 1,867 | 8 | 5,441 | 4.0 |
+| HG008 (T + N-D + N-P) | 1,394 | 4,238 | - | 3,111 | - | - | - | - | 12,031 | 20,774 | 15.2 |
+
+- HG008의 other(12.0 TiB)에는 Element AVITI(4.9 TiB), Ultima UG100(1.9 TiB), PacBio Onso(1.2 TiB), analysis(1.7 TiB), superseded 2022 데이터(1.8 TiB)가 포함됨. superseded는 제외해도 무방
+- HG008은 T/N-D/N-P 세 물리 샘플이 같은 디렉토리에 섞여 있어 파일명으로 구분됨 (`HG008-T_*`, `HG008-N-D_*`, `HG008-N-P_*`)
 
 플랫폼 디렉토리 단위 상세 용량은 [docs/SIZES.md](docs/SIZES.md) (조회용) 참고.
 

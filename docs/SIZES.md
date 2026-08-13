@@ -144,4 +144,33 @@ Source: S3 ListObjectsV2 on s3://giab, 2026-08-13. Sizes are exact byte sums.
 | HG007 | UCSC_Ultralong_OxfordNanopore_Promethion | ont | 12 | 410097622927 | 381.9 |
 | HG007 | stLFR | linked_reads | 5 | 462603243725 | 430.8 |
 
+## HG008 (data_somatic/HG008/, T + N-D + N-P 통합)
+
+| sample | platform dir | category | files | bytes | GiB |
+|---|---|---|---|---|---|
+| HG008 | Arima_HiC-ILMN_20240112 | other | 7 | 320951681869 | 298.9 |
+| HG008 | BCM_Illumina-WGS_20240313 | illumina_wgs | 24 | 1482434563822 | 1,380.6 |
+| HG008 | BCM_Revio_20240313 | pacbio_hifi | 22 | 812686266796 | 756.9 |
+| HG008 | Bionano_OpticalMapping_20231019 | other | 6 | 2856757806 | 2.7 |
+| HG008 | Bioskryb_ResolveDNA_20230914 | other | 8 | 43677262800 | 40.7 |
+| HG008 | Element-AVITI-20241216 | other | 26 | 2057894507763 | 1,916.6 |
+| HG008 | Element_AVITI_20240118 | other | 20 | 834444303781 | 777.1 |
+| HG008 | Element_AVITI_20240626 | other | 56 | 2452078000016 | 2,283.7 |
+| HG008 | HG008-T_bioskryb-libraries-UG100 | other | 3 | 173708 | 0.0 |
+| HG008 | HG008-T_bulk | other | 24 | 187511479932 | 174.6 |
+| HG008 | HG008-T_clones | other | 14 | 1233861 | 0.0 |
+| HG008 | Liss_lab(root) | other | 1 | 163 | 0.0 |
+| HG008 | NIST(root) | other | 1 | 163 | 0.0 |
+| HG008 | NYGC_Illumina-WGS_20231023 | illumina_wgs | 58 | 1857940849538 | 1,730.3 |
+| HG008 | Northeastern-ONT-UL-20241216 | ont | 9 | 576381644407 | 536.8 |
+| HG008 | Northeastern_ONT-std_20240422 | ont | 61 | 2957621904648 | 2,754.5 |
+| HG008 | PacBio_Onso_20240415 | other | 18 | 1305499239051 | 1,215.8 |
+| HG008 | PacBio_Revio_20240125 | pacbio_hifi | 17 | 684260969954 | 637.3 |
+| HG008 | UCSC_ONT-UL_20231207 | ont | 12 | 468938869860 | 436.7 |
+| HG008 | UCSC_ONT_20231003 | ont | 11 | 547741921555 | 510.1 |
+| HG008 | Ultima-ppmSeq-UG100-20241028 | other | 7 | 481463325068 | 448.4 |
+| HG008 | Ultima_UG100-WGS_20240530 | other | 14 | 1561546827897 | 1,454.3 |
+| HG008 | analysis | other | 979 | 1775184906138 | 1,653.3 |
+| HG008 | superseded-2022-data | other | 163 | 1895227684823 | 1,765.1 |
+
 release/ (truth sets + stratifications + references): 4110 files, 240.8 GiB

@@ -5,7 +5,7 @@
 # Usage:
 #   ./scripts/download.sh <category|all|release> [SAMPLE ...]
 #     category: pacbio_hifi ont pacbio_clr illumina_wgs bgi_mgi linked_reads exome complete_genomics other
-#     SAMPLE:   HG001..HG007 (생략 시 전체)
+#     SAMPLE:   HG001..HG008 (생략 시 전체; HG008 = tumor-normal, T/N-D/N-P 통합)
 #
 # Env:
 #   DEST=/BiO/scratch/ehojune/GIAB_benchmark   다운로드 루트
@@ -28,7 +28,7 @@ HTTP_BASE="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab"
 S3_BASE="s3://giab"
 FAIL_LOG="$DEST/.download_failed.log"
 
-ALL_SAMPLES=(HG001 HG002 HG003 HG004 HG005 HG006 HG007)
+ALL_SAMPLES=(HG001 HG002 HG003 HG004 HG005 HG006 HG007 HG008)
 CATEGORIES=(pacbio_hifi ont pacbio_clr illumina_wgs bgi_mgi linked_reads exome complete_genomics other)
 
 usage() { sed -n '2,20p' "$0"; exit 1; }
