@@ -8,14 +8,13 @@ GIAB 샘플(HG001–HG007 germline + HG008 tumor-normal) 원시 데이터 + trut
 
 ```bash
 git clone https://github.com/ehojune/GIAB_benchmarking.git && cd GIAB_benchmarking
-conda create -n awscli -c conda-forge awscli -y && conda activate awscli
 qsub -N giab_speedtest -q shepherd.q@shepherd-1-9.kobic -V -j y -o speedtest.log -S /bin/bash scripts/speedtest.sh   # 속도 실측 (s3 vs wget)
 ./scripts/sge_download.sh release                # truth set (241 GiB, 먼저)
 ./scripts/sge_download.sh pacbio_hifi            # 우선순위 1 → 이후 ont, pacbio_clr 순
 ./scripts/verify.sh all                          # 진행률/크기 검증 (로그인 노드에서 실행 가능)
 ```
 
-`sge_download.sh`는 manifest(샘플×카테고리) 하나당 job 하나를 `shepherd.q@shepherd-1-9.kobic`에 제출한다 (기본 `TOOL=s3 JOBS=4`, `-V`라서 activate된 conda env가 job에 전달됨). 큐/병렬도 변경은 `QUEUE=... JOBS=8 ./scripts/sge_download.sh ...`. SGE 없이 직접 실행하려면 `download.sh`를 같은 인자로 사용.
+`sge_download.sh`는 manifest(샘플×카테고리) 하나당 job 하나를 `shepherd.q@shepherd-1-9.kobic`에 제출한다 (기본 `TOOL=s3 JOBS=4`). aws는 PATH에 없으면 `/BiO/home/program/awscli/bin/aws`를 자동 사용 (`AWS_BIN=경로`로 변경). 큐/병렬도 변경은 `QUEUE=... JOBS=8 ./scripts/sge_download.sh ...`. SGE 없이 직접 실행하려면 `download.sh`를 같은 인자로 사용.
 
 - 기본 다운로드 위치: `/BiO/scratch/ehojune/GIAB_benchmark` (변경: `DEST=... ./scripts/download.sh ...`)
 - GIAB 원본 디렉토리 구조 그대로 저장됨 (`data/AshkenazimTrio/HG002_.../PacBio_CCS_15kb/...`)

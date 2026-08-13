@@ -35,10 +35,14 @@ run() {
     rm -f "$out"
 }
 
-if command -v aws >/dev/null; then
-    run s3 aws s3 cp --no-sign-request --only-show-errors "s3://giab/$KEY" "$TMPDIR_TEST/s3.dat"
+if [ -z "${AWS_BIN:-}" ]; then
+    if command -v aws >/dev/null; then AWS_BIN=aws
+    else AWS_BIN=/BiO/home/program/awscli/bin/aws; fi
+fi
+if "$AWS_BIN" --version >/dev/null 2>&1; then
+    run s3 "$AWS_BIN" s3 cp --no-sign-request --only-show-errors "s3://giab/$KEY" "$TMPDIR_TEST/s3.dat"
 else
-    echo "s3: aws cli 없음 (conda install -c conda-forge awscli)"
+    echo "s3: aws cli 실행 불가 ($AWS_BIN)"
 fi
 
 if [ "$SKIP_WGET" != "1" ]; then

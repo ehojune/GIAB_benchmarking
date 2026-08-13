@@ -28,6 +28,12 @@ HTTP_BASE="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab"
 S3_BASE="s3://giab"
 FAIL_LOG="$DEST/.download_failed.log"
 
+# aws 실행 파일: PATH에 있으면 그것, 없으면 nbb2 설치 경로 (AWS_BIN으로 덮어쓰기 가능)
+if [ -z "${AWS_BIN:-}" ]; then
+    if command -v aws >/dev/null; then AWS_BIN=aws
+    else AWS_BIN=/BiO/home/program/awscli/bin/aws; fi
+fi
+
 ALL_SAMPLES=(HG001 HG002 HG003 HG004 HG005 HG006 HG007 HG008)
 CATEGORIES=(pacbio_hifi ont pacbio_clr illumina_wgs bgi_mgi linked_reads exome complete_genomics other)
 
@@ -79,7 +85,7 @@ dl_line() {
                 && mv "$out.part" "$out" && rc=0
             ;;
         s3)
-            aws s3 cp --no-sign-request --only-show-errors "$S3_BASE/$key" "$out" && rc=0
+            "$AWS_BIN" s3 cp --no-sign-request --only-show-errors "$S3_BASE/$key" "$out" && rc=0
             ;;
         *) echo "unknown TOOL: $TOOL" >&2; return 2 ;;
     esac
@@ -97,7 +103,7 @@ dl_line() {
     return 1
 }
 export -f dl_line
-export DEST TOOL HTTP_BASE S3_BASE FAIL_LOG
+export DEST TOOL HTTP_BASE S3_BASE FAIL_LOG AWS_BIN
 
 for m in "${MANIFESTS[@]}"; do
     n=$(wc -l < "$m")

@@ -2,9 +2,7 @@
 # download.sh를 SGE job으로 제출. manifest(샘플x카테고리) 하나당 job 하나.
 # 기본: shepherd-1-9 노드 고정, TOOL=s3, JOBS=4.
 #
-# 사전 준비 (제출 셸에서):
-#   conda activate <awscli 깔린 env>    # aws --version 확인
-#   qsub -V 로 제출되므로 활성화된 env의 PATH가 job에 그대로 전달됨
+# aws는 PATH에 없으면 /BiO/home/program/awscli/bin/aws 를 자동 사용 (AWS_BIN=경로 로 변경).
 #
 # Usage:
 #   ./scripts/sge_download.sh <category|all|release> [SAMPLE ...]
@@ -35,8 +33,12 @@ ALL_SAMPLES=(HG001 HG002 HG003 HG004 HG005 HG006 HG007 HG008)
 CAT="$1"; shift
 SAMPLES=("$@"); [ ${#SAMPLES[@]} -gt 0 ] || SAMPLES=("${ALL_SAMPLES[@]}")
 
-if [ "$TOOL" = "s3" ] && ! command -v aws >/dev/null; then
-    echo "aws cli가 PATH에 없음. conda activate 후 제출할 것 (qsub -V로 PATH 전달됨)" >&2
+if [ -z "${AWS_BIN:-}" ]; then
+    if command -v aws >/dev/null; then AWS_BIN=aws
+    else AWS_BIN=/BiO/home/program/awscli/bin/aws; fi
+fi
+if [ "$TOOL" = "s3" ] && ! "$AWS_BIN" --version >/dev/null 2>&1; then
+    echo "aws cli 실행 불가: $AWS_BIN (AWS_BIN=경로 로 지정 가능)" >&2
     exit 1
 fi
 
@@ -47,7 +49,7 @@ submit() {
     [ -n "$PE" ] && pe_opt=(-pe "$PE" "$JOBS")
     qsub -N "$name" -q "$QUEUE" -V -j y -o "$LOG_DIR/$name.log" \
         -S /bin/bash "${pe_opt[@]}" <<EOF
-export TOOL="$TOOL" JOBS="$JOBS" DEST="$DEST"
+export TOOL="$TOOL" JOBS="$JOBS" DEST="$DEST" AWS_BIN="$AWS_BIN"
 "$REPO_DIR/scripts/download.sh" "$cat" $sample
 EOF
 }
