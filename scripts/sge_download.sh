@@ -55,8 +55,8 @@ export TOOL="$TOOL" JOBS="$JOBS" DEST="$DEST" AWS_BIN="$AWS_BIN"
 EOF
 }
 
-if [ "$CAT" = "release" ]; then
-    submit release ""
+if [ "$CAT" = "release" ] || [ "$CAT" = "rnaseq" ]; then
+    submit "$CAT" ""
 elif [ "$CAT" = "all" ]; then
     for s in "${SAMPLES[@]}"; do
         for m in "$REPO_DIR/manifests/$s"/*.tsv; do

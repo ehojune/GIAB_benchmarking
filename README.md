@@ -45,7 +45,8 @@ JOBS=12 bash scripts/run_priority.sh 2>&1 | tee logs/run_priority.log   # releas
 | complete_genomics | 16.0 | 10.9 |
 | other (BioNano, Strand-seq, HiC, AVITI, UG100 등) | 16.9 | 11.5 |
 | release (truth set, stratifications, references) | 0.3 | 0.2 |
-| **전체** | **101.3** | **69.0** |
+| rnaseq (MAS-seq, ONT directRNA; HG002/4/5만) | 0.4 | 0.3 |
+| **전체** | **101.7** | **69.3** |
 
 샘플 × 카테고리 (GiB):
 
@@ -84,4 +85,5 @@ TOOL=s3 JOBS=4 ./scripts/download.sh pacbio_hifi
 
 - `manifests/<SAMPLE>/<category>.tsv` — `상대경로<TAB>bytes`. 이 목록이 다운로드 대상의 전부
 - `manifests/release_truthsets.tsv` — truth set VCF/BED, stratification, reference (전체 버전 포함)
+- `manifests/rnaseq_all.tsv` — `data_RNAseq/` 전체 (PacBio MAS-seq + ONT directRNA + trio analysis, 361 GiB). `./scripts/download.sh rnaseq`로 다운로드. `all`에는 포함되지 않음
 - `scripts/download.sh` / `scripts/verify.sh` — 위 사용법 참고. `MISSING=1 ./scripts/verify.sh ...`로 미완료 파일 나열

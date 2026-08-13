@@ -46,6 +46,8 @@ SAMPLES=("$@"); [ ${#SAMPLES[@]} -gt 0 ] || SAMPLES=("${ALL_SAMPLES[@]}")
 MANIFESTS=()
 if [ "$CAT" = "release" ]; then
     MANIFESTS+=("$REPO_DIR/manifests/release_truthsets.tsv")
+elif [ "$CAT" = "rnaseq" ]; then
+    MANIFESTS+=("$REPO_DIR/manifests/rnaseq_all.tsv")
 elif [ "$CAT" = "all" ]; then
     for s in "${SAMPLES[@]}"; do
         for m in "$REPO_DIR/manifests/$s"/*.tsv; do [ -e "$m" ] && MANIFESTS+=("$m"); done
