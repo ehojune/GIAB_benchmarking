@@ -38,9 +38,9 @@ fi
 
 # 내 다운로드 프로세스
 echo
-n_aws=$(pgrep -u "$USER" -fc 'aws s3 cp' 2>/dev/null || echo 0)
-n_wget=$(pgrep -u "$USER" -fc 'wget .*giab' 2>/dev/null || echo 0)
-n_runner=$(pgrep -u "$USER" -fc 'run_priority.sh' 2>/dev/null || echo 0)
+n_aws=$(pgrep -u "$USER" -fc 'aws s3 cp' 2>/dev/null || true); n_aws=${n_aws:-0}
+n_wget=$(pgrep -u "$USER" -fc 'wget .*giab' 2>/dev/null || true); n_wget=${n_wget:-0}
+n_runner=$(pgrep -u "$USER" -fc 'run_priority.sh' 2>/dev/null || true); n_runner=${n_runner:-0}
 echo "DOWNLOADS: run_priority=$n_runner, aws=$n_aws, wget=$n_wget (동시 파일 수 = aws+wget)"
 
 echo
