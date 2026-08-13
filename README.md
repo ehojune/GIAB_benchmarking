@@ -12,9 +12,10 @@ GIAB 샘플(HG001–HG007 germline + HG008 tumor-normal) 원시 데이터 + trut
 ```bash
 git clone https://github.com/ehojune/GIAB_benchmarking.git && cd GIAB_benchmarking
 mkdir -p logs
-nohup bash scripts/run_priority.sh > logs/run_priority.log 2>&1 &   # release → hifi → ont → clr → 나머지 순차
-tail -f logs/run_priority.log                                        # 카테고리별 로그는 logs/<category>.log
-./scripts/verify.sh all                                              # 진행률/크기 검증
+screen -S giab                                                    # 이후 명령은 screen 안에서
+JOBS=12 bash scripts/run_priority.sh 2>&1 | tee logs/run_priority.log   # release → hifi → ont → clr → 나머지 순차
+# 나오기: Ctrl-A d / 다시 붙기: screen -r giab / 카테고리별 로그: logs/<category>.log
+./scripts/verify.sh all                                           # 진행률/크기 검증 (screen 밖에서)
 ```
 
 - 노드 자원·다운로드 현황: `bash scripts/status.sh` / 중단: `bash scripts/stop_downloads.sh` 후 원하는 `JOBS=`로 재시작
