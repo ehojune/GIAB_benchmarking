@@ -4,7 +4,7 @@
 # Usage:
 #   ./scripts/verify.sh <category|all|release|rnaseq|trio_analysis> [SAMPLE ...]
 #   MISSING=1 ./scripts/verify.sh pacbio_hifi   # 미완료 파일 목록도 출력
-#   주의: 'all'은 샘플별 manifest만 집계 (release/rnaseq/trio_analysis는 별도 인자로)
+#   'all' = 샘플별 manifest 전부 + release/rnaseq/trio_analysis (전체 115.6 TB 기준)
 #
 # Env: DEST=/BiO/scratch/ehojune/GIAB_benchmark
 
@@ -29,6 +29,10 @@ elif [ "$CAT" = "all" ]; then
     for s in "${SAMPLES[@]}"; do
         for m in "$REPO_DIR/manifests/$s"/*.tsv; do [ -e "$m" ] && MANIFESTS+=("$m"); done
     done
+    # 샘플 외 특수 manifest도 전체 집계에 포함
+    for m in release_truthsets rnaseq_all trio_analysis; do
+        [ -e "$REPO_DIR/manifests/$m.tsv" ] && MANIFESTS+=("$REPO_DIR/manifests/$m.tsv")
+    done
 else
     for s in "${SAMPLES[@]}"; do
         m="$REPO_DIR/manifests/$s/$CAT.tsv"
@@ -50,6 +54,7 @@ for m in "${MANIFESTS[@]}"; do
         fi
     done < "$m"
     name="$(basename "$(dirname "$m")")/$(basename "$m" .tsv)"
+    [ "$(basename "$(dirname "$m")")" = "manifests" ] && name="$(basename "$m" .tsv)"
     awk -v n="$name" -v d="$done_n" -v t="$total" -v db="$done_b" -v tb="$total_b" \
         'BEGIN{printf "%-40s %6d/%-6d files  %8.1f/%.1f GiB (%.1f%%)\n", n, d, t, db/2^30, tb/2^30, (tb>0? 100*db/tb : 100)}'
     g_total=$((g_total+total)); g_done=$((g_done+done_n))
