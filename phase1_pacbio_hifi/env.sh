@@ -1,6 +1,12 @@
 # phase1 공통 환경. 모든 phase1 스크립트와 SGE 잡이 source 한다. nbb2 값이 바뀌면 여기만 고친다.
 # shellcheck shell=bash
 
+# 개인/사이트 오버라이드: 같은 폴더에 env.local.sh를 만들면 (git 미추적) 먼저 읽는다.
+# 아래의 모든 기본값이 ${VAR:-...} 꼴이라, env.local.sh에서 export한 값이 이긴다.
+# 예: export SGE_SLOTS=32; export SGE_VMEM=300G; export NF_LOCAL_MEM_GB=280
+_P1_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+[ -f "$_P1_DIR/env.local.sh" ] && . "$_P1_DIR/env.local.sh"
+
 # ---- 경로 ----
 export GIAB_ROOT="${GIAB_ROOT:-/BiO/scratch/ehojune/GIAB_benchmark}"   # phase0 다운로드 루트
 export RUN_BASE="${RUN_BASE:-$GIAB_ROOT/processed_data_ehojune}"       # 산출물: <sample>/PacBio/<dataset>/

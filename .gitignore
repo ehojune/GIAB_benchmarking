@@ -1,2 +1,5 @@
 logs/
 ~$*.xlsx
+
+# phase1 개인 오버라이드 (env.sh가 읽음)
+phase1_pacbio_hifi/env.local.sh

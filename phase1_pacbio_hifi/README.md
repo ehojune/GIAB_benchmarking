@@ -17,10 +17,10 @@ GIAB PacBio HiFi 전 데이터셋을 **각자의 가장 raw한 형태부터** �
 ```bash
 cd ~/GIAB_benchmarking && git pull    # 서버의 클론 위치 기준
 bash phase1_pacbio_hifi/scripts/01_prepare_login_node.sh   # 1회: 컨테이너 11개 + 레퍼런스 + TRF bed
-bash phase1_pacbio_hifi/scripts/10_submit.sh --list        # 준비 상태 확인 (input=ready인 것만 제출됨)
-bash phase1_pacbio_hifi/scripts/10_submit.sh --ready       # 준비된 것 전부 제출 (dup 제외)
-qstat -u $USER                                             # 잡 상태
+bash phase1_pacbio_hifi/scripts/10_submit.sh --ready       # 준비된 것 전부 제출 (dup 제외; --list로 미리보기)
+bash phase1_pacbio_hifi/scripts/20_status.sh               # 진행 대시보드 (입력/잡 상태/단계별 산출물)
 bash phase1_pacbio_hifi/scripts/30_verify_outputs.sh       # 완료 검증 (dsid 인자 주면 그것만)
+python phase1_pacbio_hifi/scripts/50_update_catalog.py     # 완료분 → 카탈로그+README 표 반영, git diff 보고 커밋
 ```
 
 - 특정 것만: `10_submit.sh HG002.PacBio_CCS_15kb ...` / 로그: `tail -f $INFRA/logs/<dsid>.<jobid>.log`
@@ -34,7 +34,7 @@ bash phase1_pacbio_hifi/scripts/30_verify_outputs.sh       # 완료 검증 (dsid
 | 항목 | 기본값 | 비고 |
 |---|---|---|
 | 큐/노드 | shepherd.q, shepherd-1-7/8/9 고정 | 계산 노드는 외부망 없음 → `NXF_OFFLINE`, 사전 캐시 |
-| 잡 크기 | `SGE_SLOTS=21`, `SGE_VMEM=80G`, `NF_LOCAL_MEM_GB=72` | nanoseq 검증값. `qhost`로 노드 RAM 확인 후 키우면 빨라짐 (특히 100x+ 데이터: HG008-T 116x, HG009T-p16 140x) |
+| 잡 크기 | `SGE_SLOTS=21`, `SGE_VMEM=80G`, `NF_LOCAL_MEM_GB=72` | nanoseq 검증값. 키우려면 `phase1_pacbio_hifi/env.local.sh`(미추적)에 export — pull과 충돌 없음. 100x+ 데이터(HG008-T 116x, HG009T-p16 140x)는 키우는 걸 권장 |
 | Nextflow | 24.10.5 + conda `nfcore312` (JDK17) | 잡 안에서 local executor로 완주 (SGE 자식 잡 없음) |
 | 레퍼런스 | GRCh38_no_alt_analysis_set (release에서 복사) | 산출 파일명 라벨 `REF_NAME=GRCh38` |
 
