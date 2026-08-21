@@ -1,0 +1,39 @@
+dsid	sample	dataset	entry_type	units	clair3_model	size_gib	dup_of	note
+HG001.HudsonAlpha_PacBio_CCS	HG001	HudsonAlpha_PacBio_CCS	hifi_fastq	6	hifi_sequel2	65.9		
+HG001.PacBio_SequelII_CCS_11kb	HG001	PacBio_SequelII_CCS_11kb	aligned_bam	1	hifi_sequel2	54.4		리드가 SRA에만 있어 GIAB GRCh38 정렬 BAM에서 시작 (fastq 없음)
+HG001.PacBio_CCS_15kb_20kb_chemistry2	HG001	PacBio_CCS_15kb_20kb_chemistry2	hifi_bam	6	hifi_sequel2	72.4	HG001.HudsonAlpha_PacBio_CCS	HudsonAlpha와 동일 movie 6개의 uBAM 형태 (5mC/kinetics 보존용 원본)
+HG002.PacBio_CCS_10kb	HG002	PacBio_CCS_10kb	hifi_fastq	39	hifi	165.5		
+HG002.PacBio_CCS_15kb	HG002	PacBio_CCS_15kb	hifi_fastq	39	hifi	166.2		
+HG002.PacBio_HiFi-Revio_20231031	HG002	PacBio_HiFi-Revio_20231031	hifi_bam	2	hifi_revio	77.7		
+HG002.PacBio_SequelII_CCS_11kb	HG002	PacBio_SequelII_CCS_11kb	hifi_fastq	6	hifi_sequel2	78.4		
+HG002.PacBio_CCS_15kb_20kb_chemistry2	HG002	PacBio_CCS_15kb_20kb_chemistry2	hifi_fastq	6	hifi_sequel2	119.3		
+HG003.PacBio_CCS_Google_15kb	HG003	PacBio_CCS_Google_15kb	hifi_fastq	3	hifi_sequel2	44.9		m54262U 1개는 Sequel I movie — 다수(m64017 2개) 기준 모델 선택
+HG003.PacBio_CCS_HudsonAlpha_14kb_15kb_19kb	HG003	PacBio_CCS_HudsonAlpha_14kb_15kb_19kb	hifi_fastq	6	hifi_sequel2	95.4		셀당 fastq 2벌(런ID명/movie명, 동일 데이터) 중 movie명만 사용
+HG003.PacBio_HiFi-Revio_20231031	HG003	PacBio_HiFi-Revio_20231031	hifi_bam	2	hifi_revio	75.4		
+HG003.PacBio_CCS_15kb_20kb_chemistry2	HG003	PacBio_CCS_15kb_20kb_chemistry2	hifi_fastq	6	hifi_sequel2	95.4	HG003.PacBio_CCS_HudsonAlpha_14kb_15kb_19kb	HudsonAlpha와 동일 6개 movie (fastq는 런ID명, uBAMs/는 movie명)
+HG004.PacBio_CCS_Google_15kb	HG004	PacBio_CCS_Google_15kb	hifi_fastq	3	hifi_sequel2	42.9		
+HG004.PacBio_CCS_HudsonAlpha_15kb_21kb	HG004	PacBio_CCS_HudsonAlpha_15kb_21kb	hifi_fastq	6	hifi_sequel2	97.9		셀당 fastq 2벌 중 movie명만 사용
+HG004.PacBio_HiFi-Revio_20231031	HG004	PacBio_HiFi-Revio_20231031	hifi_bam	2	hifi_revio	56.8		
+HG004.PacBio_CCS_15kb_20kb_chemistry2	HG004	PacBio_CCS_15kb_20kb_chemistry2	hifi_bam	6	hifi_sequel2	108.6	HG004.PacBio_CCS_HudsonAlpha_15kb_21kb	HudsonAlpha와 동일 movie 6개의 uBAM 형태
+HG005.HudsonAlpha_PacBio_CCS	HG005	HudsonAlpha_PacBio_CCS	hifi_fastq	7	hifi_sequel2	118.8		
+HG005.PacBio_SequelII_CCS_11kb	HG005	PacBio_SequelII_CCS_11kb	aligned_bam	1	hifi_sequel2	60.8		리드가 SRA에만 있어 GIAB GRCh38 정렬 BAM에서 시작 (fastq 없음)
+HG005.PacBio_CCS_15kb_20kb_chemistry2	HG005	PacBio_CCS_15kb_20kb_chemistry2	hifi_bam	7	hifi_sequel2	130.0	HG005.HudsonAlpha_PacBio_CCS	HudsonAlpha와 동일 movie 7개의 uBAM 형태
+HG006.PacBio_HiFi_Google	HG006	PacBio_HiFi_Google	hifi_fastq	3	hifi_sequel2	55.6		
+HG006.PacBio_CCS_15kb_20kb_chemistry2	HG006	PacBio_CCS_15kb_20kb_chemistry2	hifi_fastq	6	hifi_sequel2	93.0		같은 데이터셋의 uBAMs/는 동일 셀의 uBAM 형태라 제외 (fastq 우선 정책)
+HG007.PacBio_HiFi_Google	HG007	PacBio_HiFi_Google	hifi_fastq	3	hifi_sequel2	44.5		
+HG007.PacBio_CCS_15kb_20kb_chemistry2	HG007	PacBio_CCS_15kb_20kb_chemistry2	hifi_fastq	6	hifi_sequel2	91.7		같은 데이터셋의 uBAMs/는 동일 셀의 uBAM 형태라 제외 (fastq 우선 정책)
+HG008-T.BCM_Revio_20240313	HG008-T	BCM_Revio_20240313	hifi_bam	2	hifi_revio	105.0		
+HG008-N-D.BCM_Revio_20240313	HG008-N-D	BCM_Revio_20240313	hifi_bam	2	hifi_revio	98.9		
+HG008-T.PacBio_Revio_20240125	HG008-T	PacBio_Revio_20240125	hifi_bam	2	hifi_revio	118.8		
+HG008-N-P.PacBio_Revio_20240125	HG008-N-P	PacBio_Revio_20240125	hifi_bam	1	hifi_revio	50.7		
+HG009N-WT-p25.HG009-N_bulk	HG009N-WT-p25	HG009-N_bulk	hifi_bam	1	hifi_revio	47.0		
+HG009N-WT-p4.HG009-N_bulk	HG009N-WT-p4	HG009-N_bulk	hifi_bam	2	hifi_revio	129.2		
+HG009N-LVTert-p23.HG009-N_bulk	HG009N-LVTert-p23	HG009-N_bulk	hifi_bam	1	hifi_revio	46.4		
+HG009T-p16.HG009-T_bulk	HG009T-p16	HG009-T_bulk	hifi_bam	2	hifi_revio	125.2		
+HG009T-p42.HG009-T_bulk	HG009T-p42	HG009-T_bulk	hifi_bam	1	hifi_revio	49.4		
+HG009T-1C3.HG009-T_clones	HG009T-1C3	HG009-T_clones	hifi_bam	1	hifi_revio	56.2		
+HG009T-1D5.HG009-T_clones	HG009T-1D5	HG009-T_clones	hifi_bam	1	hifi_revio	76.2		
+HG009T-3C4.HG009-T_clones	HG009T-3C4	HG009-T_clones	hifi_bam	1	hifi_revio	63.0		
+HG009T-3C9.HG009-T_clones	HG009T-3C9	HG009-T_clones	hifi_bam	1	hifi_revio	67.4		
+HG009T-3F2.HG009-T_clones	HG009T-3F2	HG009-T_clones	hifi_bam	1	hifi_revio	74.9		
+HG009T-4G9.HG009-T_clones	HG009T-4G9	HG009-T_clones	hifi_bam	1	hifi_revio	65.6		
