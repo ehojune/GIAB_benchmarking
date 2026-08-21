@@ -30,8 +30,14 @@ python phase1_pacbio_hifi/scripts/50_update_catalog.py     # 완료분 → 카�
 - 특정 것만: `10_submit.sh HG002.PacBio_CCS_15kb ...` / 로그: `tail -f $INFRA/logs/<dsid>.<jobid>.log`
 - 잡이 죽으면 **같은 dsid로 재제출하면 -resume** 으로 이어서 돈다 (완료분 재계산 없음).
 - 끝난 run의 중간 파일 정리: `scripts/40_clean_work.sh <dsid>` (verify 통과분만 지움).
-- 다운로드가 진행 중이어도 된다 — `--ready`는 manifest와 크기까지 일치하는 실행 단위만 집는다.
-  나중에 `--ready`를 다시 돌리면 새로 준비된 것들이 제출된다 (완료/실행 중인 것은 자동 스킵).
+- **다운로드가 진행 중이어도 그냥 제출하면 된다.** `--ready`는 입력이 (1) manifest와 크기가 같고
+  (2) 최근 10분간 쓰이지 않은 실행 단위만 집는다. 나중에 다시 돌리면 새로 준비된 것이 제출된다
+  (완료/실행 중인 것은 자동 스킵). 대기 시간은 `READY_AGE_MIN=N`으로 조정.
+  - mtime까지 보는 이유: phase0의 기본 경로 `aws s3 cp`는 `.part` 없이 최종 파일명에 바로 쓰고
+    대용량은 멀티파트로 오프셋에 나눠 쓴다. 뒤쪽 파트가 먼저 도착하면 **크기는 최종값인데
+    중간이 빈 구멍인** 순간이 생겨서, 크기만 보면 완료로 오판한다. (wget 경로는 `.part`→`mv`라 무관)
+  - `20_status.sh`의 input 열에서 `settling`이 그 상태다. 다운로드가 끝난 뒤에도 계속 `settling`이면
+    그 파일을 실제로 쓰는 중이 아닌지(`ls -l --time-style=full-iso`) 확인할 것.
 
 ## 설정 (전부 [env.sh](env.sh))
 

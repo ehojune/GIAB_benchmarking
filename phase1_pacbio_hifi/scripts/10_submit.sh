@@ -9,58 +9,30 @@
 #            FORCE=1   VCF가 이미 다 있어도 재제출 (-resume라 캐시는 재사용)
 #            GVCF=1    DeepVariant gVCF도 출력 (--gvcf)
 #            DRY=1     qsub 하지 않고 잡 스크립트만 생성
+#            READY_AGE_MIN=N  다운로드 안정화 대기 분 (기본 10, lib.sh 설명 참고)
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$HERE/../env.sh"
-PHASE1="$(cd "$HERE/.." && pwd)"
+source "$HERE/lib.sh"
+PHASE1="$P1_DIR"
 REPO="$(cd "$PHASE1/.." && pwd)"
-RT="$PHASE1/run_table.tsv"
-IM="$PHASE1/inputs_manifest.tsv"
-
-row() { awk -F'\t' -v d="$1" '$1==d {print; exit}' "$RT"; }
-col() { echo "$1" | cut -f"$2"; }   # run_table: 1 dsid 2 sample 3 dataset 4 entry 5 units 6 clair3 7 gib 8 dup_of 9 note
-
-inputs_missing() {  # dsid -> "missing/total" (0/N이면 준비 완료; 크기까지 manifest와 일치해야 함)
-    local tot=0 miss=0 f rel sz
-    while IFS=$'\t' read -r _ rel sz; do
-        tot=$((tot + 1))
-        f="$GIAB_ROOT/$rel"
-        if [ ! -f "$f" ] || [ "$(stat -c%s "$f" 2>/dev/null || echo -1)" != "$sz" ]; then
-            miss=$((miss + 1))
-        fi
-    done < <(awk -F'\t' -v d="$1" '$1==d' "$IM")
-    echo "$miss/$tot"
-}
-
-vcf_done() {  # dsid sample dataset -> 0 if DV+Clair3+pbsv VCF 존재
-    local base="$RUN_BASE/$2/PacBio/$3" id="$2.$3.$REF_NAME"
-    [ -s "$base/03_VCF/deepvariant/$id.deepvariant.vcf.gz" ] &&
-    [ -s "$base/03_VCF/clair3/$id.clair3.vcf.gz" ] &&
-    [ -s "$base/03_VCF/SV_pbsv/$id.pbsv.vcf.gz" ]
-}
-
-job_alive() {  # dsid -> 0 if 큐/실행 중
-    local idf="$INFRA/jobs/$1.jobid" jid
-    [ -f "$idf" ] || return 1
-    jid=$(cat "$idf")
-    qstat -u "$USER" 2>/dev/null | awk 'NR>2 {print $1}' | grep -qx "$jid"
-}
 
 list_all() {
-    printf '%-46s %-11s %-8s %-5s %s\n' dsid input job vcf dup_of
+    printf '%-46s %-13s %-5s %-5s %s\n' dsid input job vcf dup_of
     local dsid r sample dataset dup m j v
-    for dsid in $(awk -F'\t' 'NR>1 {print $1}' "$RT"); do
-        r=$(row "$dsid")
-        sample=$(col "$r" 2); dataset=$(col "$r" 3); dup=$(col "$r" 8)
-        m=$(inputs_missing "$dsid")
-        case "$m" in 0/*) m=ready ;; *) m="miss $m" ;; esac
-        j=-; job_alive "$dsid" && j="q/r"
-        v=-; vcf_done "$dsid" "$sample" "$dataset" && v=OK
-        printf '%-46s %-11s %-8s %-5s %s\n' "$dsid" "$m" "$j" "$v" "$dup"
+    p1_qstat_refresh
+    for dsid in $(p1_dsids); do
+        r=$(p1_row "$dsid")
+        sample=$(p1_col "$r" 2); dataset=$(p1_col "$r" 3); dup=$(p1_col "$r" 8)
+        m=$(p1_inputs_state "$dsid")
+        j=$(p1_job_state "$dsid")
+        v=-; p1_vcf_done "$sample" "$dataset" && v=OK
+        printf '%-46s %-13s %-5s %-5s %s\n' "$dsid" "$m" "$j" "$v" "$dup"
     done
 }
 
 preflight() {
+    p1_qstat_refresh
     [ -s "$REF_FASTA" ] || { echo "ERROR: 레퍼런스 없음 ($REF_FASTA) — scripts/01_prepare_login_node.sh 먼저"; exit 1; }
     local uris missing=0 img
     uris=$(grep -oE "container_[a-z0-9_]+ *= *'[^']+'" "$PHASE1/pipeline/pacbio-hifi-wgs/nextflow.config" | cut -d"'" -f2 | sort -u)
@@ -73,19 +45,24 @@ preflight() {
 
 submit_one() {
     local dsid=$1 r sample dataset entry model dup
-    r=$(row "$dsid")
+    r=$(p1_row "$dsid")
     [ -n "$r" ] || { echo "SKIP $dsid: run_table.tsv에 없음"; return 1; }
-    sample=$(col "$r" 2); dataset=$(col "$r" 3); entry=$(col "$r" 4); model=$(col "$r" 6); dup=$(col "$r" 8)
+    sample=$(p1_col "$r" 2); dataset=$(p1_col "$r" 3); entry=$(p1_col "$r" 4)
+    model=$(p1_col "$r" 6); dup=$(p1_col "$r" 8)
 
     if [ -n "$dup" ] && [ "${DUP_OK:-0}" != 1 ]; then
         echo "SKIP $dsid: $dup 와 동일 movie 세트 (중복 계산). 그래도 돌리려면 DUP_OK=1"; return 0
     fi
-    local m; m=$(inputs_missing "$dsid")
-    case "$m" in 0/*) : ;; *) echo "SKIP $dsid: 입력 미완 ($m missing) — 다운로드 완료 후 재시도"; return 0 ;; esac
-    if vcf_done "$dsid" "$sample" "$dataset" && [ "${FORCE:-0}" != 1 ]; then
+    local m; m=$(p1_inputs_state "$dsid")
+    case "$m" in
+        ready) : ;;
+        settling*) echo "SKIP $dsid: 다운로드 중일 수 있음 ($m) — 크기는 맞지만 최근에 쓰인 파일이 있다"; return 0 ;;
+        *) echo "SKIP $dsid: 입력 미완 ($m) — 다운로드 완료 후 재시도"; return 0 ;;
+    esac
+    if p1_vcf_done "$sample" "$dataset" && [ "${FORCE:-0}" != 1 ]; then
         echo "SKIP $dsid: VCF 3종 이미 존재 (재제출은 FORCE=1)"; return 0
     fi
-    if job_alive "$dsid"; then
+    if p1_job_alive "$dsid"; then
         echo "SKIP $dsid: 이미 큐/실행 중 (jobid $(cat "$INFRA/jobs/$dsid.jobid"))"; return 0
     fi
 
@@ -141,7 +118,7 @@ case "${1:-}" in
     --list) list_all ;;
     --ready)
         preflight
-        mapfile -t dsids < <(awk -F'\t' 'NR>1 && $8=="" {print $1}' "$RT")
+        mapfile -t dsids < <(p1_dsids_primary)
         for d in "${dsids[@]}"; do submit_one "$d" || true; done ;;
     "") echo "사용법: $0 --list | --ready | <dsid> [dsid ...]  (dsid는 run_table.tsv 1열)"; exit 1 ;;
     *)  preflight
