@@ -2,8 +2,9 @@
 # shellcheck shell=bash
 
 # 개인/사이트 오버라이드: 같은 폴더에 env.local.sh를 만들면 (git 미추적) 먼저 읽는다.
-# 아래의 모든 기본값이 ${VAR:-...} 꼴이라, env.local.sh에서 export한 값이 이긴다.
-# 예: export SGE_SLOTS=32; export SGE_VMEM=300G; export NF_LOCAL_MEM_GB=280
+# 템플릿과 노드 실측값 기반 프리셋은 env.local.sh.example 참고.
+# env.local.sh 안에서도 ${VAR:-값} 꼴을 쓸 것 — 그래야 `SGE_SLOTS=60 bash 10_submit.sh ...`
+# 같은 1회성 지정이 파일 값을 이긴다 (이 파일이 먼저 읽히므로 무조건 export하면 덮어써진다).
 _P1_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 [ -f "$_P1_DIR/env.local.sh" ] && . "$_P1_DIR/env.local.sh"
 
@@ -28,13 +29,16 @@ export REF_FASTA="${REF_FASTA:-$INFRA/reference/GCA_000001405.15_GRCh38_no_alt_a
 export TRF_BED="${TRF_BED:-$INFRA/reference/human_GRCh38_no_alt_analysis_set.trf.bed}"
 export GIAB_HTTP_BASE="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab"
 
-# ---- SGE (kobic-sge-job-constraints 메모 기준; 노드 3개 고정은 불변) ----
+# ---- SGE (노드 3개 고정은 불변) ----
+# 노드 실측(2026-08-21): 64코어 / 251.1 GB. h_vmem은 consumable=NO —
+# 스케줄러가 메모리를 예약하지 않으므로 노드당 잡 수는 슬롯으로만 통제된다.
+# 기본값은 노드당 3잡(21x3=63슬롯, 70x3=210 GB) 기준. 프리셋 변경은 env.local.sh.example.
 export SGE_QUEUE="${SGE_QUEUE:-shepherd.q}"
 export SGE_PE="${SGE_PE:-pe_slots}"
-export SGE_SLOTS="${SGE_SLOTS:-21}"                        # 잡당 슬롯. 노드 여유 보고 조정 가능
-export SGE_VMEM="${SGE_VMEM:-80G}"                         # h_vmem. 사이트가 slot당/잡당 어느 쪽인지에 따라 의미 다름
+export SGE_SLOTS="${SGE_SLOTS:-21}"
+export SGE_VMEM="${SGE_VMEM:-78G}"                         # 잡별 상한(넘으면 kill). 예약 아님
 export SGE_HOSTS="${SGE_HOSTS:-(shepherd-1-7|shepherd-1-8|shepherd-1-9)}"
 
 # 잡 안에서 Nextflow local executor가 동시에 잡을 수 있는 자원 상한 (kobic.config가 읽음).
-# NF_LOCAL_CPUS는 잡 스크립트가 NSLOTS로 덮는다. MEM은 h_vmem이 잡당이면 그보다 약간 작게.
-export NF_LOCAL_MEM_GB="${NF_LOCAL_MEM_GB:-72}"
+# NF_LOCAL_CPUS는 잡 스크립트가 NSLOTS로 덮는다. SGE_VMEM보다 작게 둬서 오버헤드를 남긴다.
+export NF_LOCAL_MEM_GB="${NF_LOCAL_MEM_GB:-70}"

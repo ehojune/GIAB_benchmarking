@@ -8,6 +8,21 @@ PIPE="$HERE/../pipeline/pacbio-hifi-wgs"
 
 mkdir -p "$INFRA"/{containers,reference,tmp,work,launch,jobs,logs} "$RUN_BASE"
 
+echo "== [0/4] SGE 설정 확인 =="
+# 파이프라인은 잡 1개 안에서 local executor로 도므로 슬롯이 한 노드에 모여야 한다.
+# allocation_rule이 $pe_slots(또는 고정수)가 아니면 슬롯이 여러 노드로 쪼개지고,
+# 그 경우 잡은 한 노드 코어만 쓰면서 다른 노드 슬롯을 점유만 한다.
+rule=$(qconf -sp "$SGE_PE" 2>/dev/null | awk '$1=="allocation_rule" {print $2}')
+case "$rule" in
+    '$pe_slots') echo "  PE $SGE_PE: allocation_rule=$rule (단일 노드 보장, 정상)" ;;
+    '') echo "  WARN: PE '$SGE_PE'를 조회 못함 — qconf -spl 로 이름 확인" ;;
+    *) echo "  WARN: PE $SGE_PE allocation_rule=$rule — 슬롯이 여러 노드로 갈릴 수 있다."
+       echo "        단일 노드 PE가 따로 있으면 env.local.sh에서 SGE_PE를 그걸로 지정할 것 (qconf -spl)" ;;
+esac
+cons=$(qconf -sc 2>/dev/null | awk '$1=="h_vmem" {print $6}')
+[ "$cons" = NO ] && echo "  h_vmem consumable=NO → 메모리는 예약되지 않음. 노드당 잡 수는 슬롯으로 통제 (env.local.sh.example 참고)"
+echo "  현재 잡 크기: ${SGE_SLOTS}슬롯 / h_vmem ${SGE_VMEM} / Nextflow 메모리 상한 ${NF_LOCAL_MEM_GB}G"
+
 echo "== [1/4] Nextflow $NXF_VER 배포판 캐시 =="
 command -v nextflow >/dev/null || { echo "ERROR: nextflow가 PATH에 없음 — $CONDA_ENV/bin 확인"; exit 1; }
 nextflow -version | grep -m1 version || true

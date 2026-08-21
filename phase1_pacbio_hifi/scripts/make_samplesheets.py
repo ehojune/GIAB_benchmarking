@@ -50,10 +50,9 @@ RUNS = [
     dict(manifest="HG001", sample="HG001", dataset="HudsonAlpha_PacBio_CCS", entry="hifi_fastq",
          clair3="hifi_sequel2", expect=6,
          pattern=r"^data/NA12878/HudsonAlpha_PacBio_CCS/.*/m\d+_\d+_\d+\.fastq\.gz$"),
-    dict(manifest="HG001", sample="HG001", dataset="PacBio_SequelII_CCS_11kb", entry="aligned_bam",
-         clair3="hifi_sequel2", expect=1,
-         pattern=r"^data/NA12878/PacBio_SequelII_CCS_11kb/HG001_GRCh38/HG001_GRCh38\.haplotag\.RTG\.trio\.bam$",
-         note="리드가 SRA에만 있어 GIAB GRCh38 정렬 BAM에서 시작 (fastq 없음)"),
+    dict(manifest="SRA", sample="HG001", dataset="PacBio_SequelII_CCS_11kb", entry="hifi_fastq",
+         clair3="hifi_sequel2", expect=6,
+         note="리드가 GIAB FTP에 없어 SRA PRJNA540705에서 받음 (11kb 4셀 + 9kb 2셀)"),
     dict(manifest="HG001", sample="HG001", dataset="PacBio_CCS_15kb_20kb_chemistry2", entry="hifi_bam",
          clair3="hifi_sequel2", expect=6,
          pattern=r"^data/NA12878/PacBio_CCS_15kb_20kb_chemistry2/uBAMs/m\d+_\d+_\d+\.hifi_reads\.bam$",
@@ -112,10 +111,9 @@ RUNS = [
     dict(manifest="HG005", sample="HG005", dataset="HudsonAlpha_PacBio_CCS", entry="hifi_fastq",
          clair3="hifi_sequel2", expect=7,
          pattern=rf"^{C_HG005}/HudsonAlpha_PacBio_CCS/.*/m\d+_\d+_\d+\.fastq\.gz$"),
-    dict(manifest="HG005", sample="HG005", dataset="PacBio_SequelII_CCS_11kb", entry="aligned_bam",
-         clair3="hifi_sequel2", expect=1,
-         pattern=rf"^{C_HG005}/PacBio_SequelII_CCS_11kb/HG005_GRCh38/HG005_GRCh38\.haplotag\.10x\.bam$",
-         note="리드가 SRA에만 있어 GIAB GRCh38 정렬 BAM에서 시작 (fastq 없음)"),
+    dict(manifest="SRA", sample="HG005", dataset="PacBio_SequelII_CCS_11kb", entry="hifi_fastq",
+         clair3="hifi_sequel2", expect=6,
+         note="리드가 GIAB FTP에 없어 SRA PRJNA540706에서 받음 (11kb 4셀 + 9kb 2셀)"),
     dict(manifest="HG005", sample="HG005", dataset="PacBio_CCS_15kb_20kb_chemistry2", entry="hifi_bam",
          clair3="hifi_sequel2", expect=7,
          pattern=rf"^{C_HG005}/PacBio_CCS_15kb_20kb_chemistry2/uBAMs/m\d+_\d+_\d+\.hifi_reads\.bam$",
@@ -181,6 +179,17 @@ def load_manifest(name):
     return rows
 
 
+def load_sra():
+    """sra_manifest.tsv -> {dsid: {relpath: bytes}}. phase0 매니페스트에 없는 SRA 유래 리드."""
+    by_dsid = {}
+    with open(PHASE1 / "sra_manifest.tsv", newline="", encoding="utf-8") as fh:
+        hdr = fh.readline().rstrip("\n").split("\t")
+        for line in fh:
+            r = dict(zip(hdr, line.rstrip("\n").split("\t")))
+            by_dsid.setdefault(r["dsid"], {})[r["relpath"]] = int(r["bytes"])
+    return by_dsid
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data-root", default="/BiO/scratch/ehojune/GIAB_benchmark",
@@ -189,8 +198,12 @@ def main():
 
     manifests = {n: load_manifest(n) for n in
                  ["HG001", "HG002", "HG003", "HG004", "HG005", "HG006", "HG007", "HG008", "HG009"]}
+    sra = load_sra()
 
     errors = []
+    sra_dsids = {f"{r['sample']}.{r['dataset']}" for r in RUNS if r["manifest"] == "SRA"}
+    if set(sra) != sra_dsids:
+        errors.append(f"sra_manifest.tsv의 dsid {sorted(set(sra))} != RUNS의 SRA 항목 {sorted(sra_dsids)}")
     for hg, ubam_re, fq_re in DUP_MOVIE_CHECKS:
         paths = manifests[hg]
         ubams = {m.group(0) for p in paths if re.search(ubam_re, p) for m in [MOVIE_RE.search(Path(p).name)] if m}
@@ -208,11 +221,16 @@ def main():
         dsid = f"{run['sample']}.{run['dataset']}"
         assert dsid not in seen_dsid, f"dsid 중복: {dsid}"
         seen_dsid.add(dsid)
-        paths = manifests[run["manifest"]]
-        rex = re.compile(run["pattern"])
-        picked = sorted(p for p in paths if rex.match(p))
+        if run["manifest"] == "SRA":
+            paths = sra.get(dsid, {})
+            picked = sorted(paths)
+        else:
+            paths = manifests[run["manifest"]]
+            rex = re.compile(run["pattern"])
+            picked = sorted(p for p in paths if rex.match(p))
         if len(picked) != run["expect"]:
-            errors.append(f"{dsid}: 기대 {run['expect']}개, 매칭 {len(picked)}개\n  pattern={run['pattern']}\n"
+            errors.append(f"{dsid}: 기대 {run['expect']}개, 매칭 {len(picked)}개\n"
+                          f"  source={run['manifest']} pattern={run.get('pattern', '-')}\n"
                           f"  matched={picked[:5]}")
             continue
 

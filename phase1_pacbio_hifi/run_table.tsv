@@ -1,6 +1,6 @@
 dsid	sample	dataset	entry_type	units	clair3_model	size_gib	dup_of	note
 HG001.HudsonAlpha_PacBio_CCS	HG001	HudsonAlpha_PacBio_CCS	hifi_fastq	6	hifi_sequel2	65.9		
-HG001.PacBio_SequelII_CCS_11kb	HG001	PacBio_SequelII_CCS_11kb	aligned_bam	1	hifi_sequel2	54.4		리드가 SRA에만 있어 GIAB GRCh38 정렬 BAM에서 시작 (fastq 없음)
+HG001.PacBio_SequelII_CCS_11kb	HG001	PacBio_SequelII_CCS_11kb	hifi_fastq	6	hifi_sequel2	64.6		리드가 GIAB FTP에 없어 SRA PRJNA540705에서 받음 (11kb 4셀 + 9kb 2셀)
 HG001.PacBio_CCS_15kb_20kb_chemistry2	HG001	PacBio_CCS_15kb_20kb_chemistry2	hifi_bam	6	hifi_sequel2	72.4	HG001.HudsonAlpha_PacBio_CCS	HudsonAlpha와 동일 movie 6개의 uBAM 형태 (5mC/kinetics 보존용 원본)
 HG002.PacBio_CCS_10kb	HG002	PacBio_CCS_10kb	hifi_fastq	39	hifi	165.5		
 HG002.PacBio_CCS_15kb	HG002	PacBio_CCS_15kb	hifi_fastq	39	hifi	166.2		
@@ -16,7 +16,7 @@ HG004.PacBio_CCS_HudsonAlpha_15kb_21kb	HG004	PacBio_CCS_HudsonAlpha_15kb_21kb	hi
 HG004.PacBio_HiFi-Revio_20231031	HG004	PacBio_HiFi-Revio_20231031	hifi_bam	2	hifi_revio	56.8		
 HG004.PacBio_CCS_15kb_20kb_chemistry2	HG004	PacBio_CCS_15kb_20kb_chemistry2	hifi_bam	6	hifi_sequel2	108.6	HG004.PacBio_CCS_HudsonAlpha_15kb_21kb	HudsonAlpha와 동일 movie 6개의 uBAM 형태
 HG005.HudsonAlpha_PacBio_CCS	HG005	HudsonAlpha_PacBio_CCS	hifi_fastq	7	hifi_sequel2	118.8		
-HG005.PacBio_SequelII_CCS_11kb	HG005	PacBio_SequelII_CCS_11kb	aligned_bam	1	hifi_sequel2	60.8		리드가 SRA에만 있어 GIAB GRCh38 정렬 BAM에서 시작 (fastq 없음)
+HG005.PacBio_SequelII_CCS_11kb	HG005	PacBio_SequelII_CCS_11kb	hifi_fastq	6	hifi_sequel2	70.7		리드가 GIAB FTP에 없어 SRA PRJNA540706에서 받음 (11kb 4셀 + 9kb 2셀)
 HG005.PacBio_CCS_15kb_20kb_chemistry2	HG005	PacBio_CCS_15kb_20kb_chemistry2	hifi_bam	7	hifi_sequel2	130.0	HG005.HudsonAlpha_PacBio_CCS	HudsonAlpha와 동일 movie 7개의 uBAM 형태
 HG006.PacBio_HiFi_Google	HG006	PacBio_HiFi_Google	hifi_fastq	3	hifi_sequel2	55.6		
 HG006.PacBio_CCS_15kb_20kb_chemistry2	HG006	PacBio_CCS_15kb_20kb_chemistry2	hifi_fastq	6	hifi_sequel2	93.0		같은 데이터셋의 uBAMs/는 동일 셀의 uBAM 형태라 제외 (fastq 우선 정책)
