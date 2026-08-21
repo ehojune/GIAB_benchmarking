@@ -12,7 +12,23 @@ GIAB PacBio HiFi 전 데이터셋을 **각자의 가장 raw한 형태부터** �
 - 이 중 4개는 `dup_of` 표시 — HG001·HG003·HG004·HG005의 chemistry2는 HudsonAlpha와 **movie가 동일**
   (형태만 fastq/uBAM). 기본 제출에서 빠지며, 돌릴 필요도 없다 (VCF가 필요하면 primary 결과를 복사).
 - 산출: `/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/<sample>/PacBio/<dataset>/{02_alignedBAM,03_VCF,04_QC}`
-- 입력 합계 3.13 TiB (중복 제외 2.73 TiB, 34 runs). 노드 3개 / 노드당 2잡이면 동시 6런, run당 1–3일 → 수 주.
+- 입력 합계 3.13 TiB (중복 제외 2.73 TiB, 34 runs). 노드 3개 / 노드당 2잡 = 동시 6런.
+
+**실측 (2026-08-21, 30슬롯 잡, 첫 4런 완주)**
+
+| 실행 단위 | 커버리지 | 입력 | wallclock | maxvmem |
+|---|---|---|---|---|
+| HG001.HudsonAlpha_PacBio_CCS | (미기재) | 65.9 GiB | 5h50m | 53.8 GB |
+| HG002.PacBio_CCS_10kb | 약 30x | 165.5 GiB | 5h58m | 48.4 GB |
+| HG002.PacBio_CCS_15kb | 약 28x | 166.2 GiB | 7h17m | 45.1 GB |
+| HG002.PacBio_SequelII_CCS_11kb | 약 32x | 78.4 GiB | 6h46m | 43.1 GB |
+
+커버리지는 카탈로그 값. 넷 다 `exit_status 0`.
+
+- **메모리는 준 110 GB의 절반도 안 썼다** (피크 43~54 GB). 30x 기준이므로 HG008(106~116x)·
+  HG009(61~140x)도 한도 안에 들어올 가능성이 높다 — 현재 설정 그대로 두면 된다.
+- 시간은 6~7h/런. 커버리지에 비례해 늘어나므로 고심도 런은 12~25h 대로 예상,
+  전체 32런 종료까지 **2~4일** 규모 (동시 6런).
 
 ## 실행 (nbb2 로그인 노드)
 
@@ -62,8 +78,9 @@ python phase1_pacbio_hifi/scripts/50_update_catalog.py     # 완료분 → 카�
 - 저장 위치는 GIAB 미러와 섞이지 않게 `$GIAB_ROOT/sra/<PRJNA>/<sample>/<movie>.fastq.gz`.
   SRR 대신 movie ID로 저장하는 이유는 파일명이 파이프라인의 unit(=RG ID)이 되기 때문이다.
 - **ENA 파일명이 `_subreads.fastq.gz`지만 CCS 리드다**: library_name이 `HG001-CCS-11kb-m64011...`이고
-  cell당 ~1.5M reads / 평균 10 kb로 HiFi 수율이다. 다운로드 스크립트가 첫 리드 이름으로 최종 확인한다
-  (CCS는 `<movie>/<zmw>/ccs`, subread는 `<movie>/<zmw>/<start>_<end>`). 여기서 걸리면 그냥 쓰지 말 것 —
-  진짜 subreads면 samplesheet 진입 타입을 `subreads`로 바꿔 CCS 단계를 태워야 한다.
+  cell당 1.3~1.8M reads / 평균 ~10 kb로 Sequel II HiFi 수율이다(진짜 subreads면 같은 cell에서
+  리드가 수천만 개여야 한다). **ENA는 리드 이름을 `@SRR9001770.1`로 바꿔 배포하므로 이름으로는
+  판정할 수 없다** — 다운로드 스크립트가 앞부분을 샘플링해 평균 리드 길이를 manifest 값과 대조한다.
+  여기서 걸리면 그냥 쓰지 말 것: 진짜 subreads면 진입 타입을 `subreads`로 바꿔 CCS 단계를 태워야 한다.
 - GIAB의 정렬 BAM으로 되돌리려면 `make_samplesheets.py`의 해당 RUNS 항목을 `aligned_bam`으로 바꾸면 된다
   (git 이력에 이전 정의가 있다).
