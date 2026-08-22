@@ -25,8 +25,10 @@ python catalog/build_readme.py      # master_catalog.tsv -> README.md 표 재생
 **식별 (8)** — `sample` `category` `dataset` `giab_path` `platform` `coverage` `files` `size_gib`
 
 **리드 (2)** — `reads_present` `reads_format`
-: 원본 리드가 GIAB에 있는지. `reads_format`은 uBAM / FASTQ / bax.h5 / POD5 / subreads.bam 등.
+: 원본 리드를 확보했는지. `reads_format`은 uBAM / FASTQ / bax.h5 / POD5 / subreads.bam 등.
   `FALSE`면 재정렬·재호출이 불가능하다는 뜻이라 중요하다.
+  GIAB FTP가 아니라 SRA/ENA에서 받아온 경우도 `TRUE`로 두되, 출처와 로컬 경로를 `reads_format`에 적는다
+  (HG001·HG005 SequelII 11kb가 그런 경우 — PRJNA540705/540706).
 
 **index (6)** — `index_present` `index_types` `index_unindexed_n` `index_by` `index_local_path` `index_script`
 : `index_present`는 BAM/VCF에 대응하는 `.bai`/`.pbi`/`.tbi`가 GIAB에 함께 있는지.

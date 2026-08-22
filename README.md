@@ -9,6 +9,7 @@ GIAB 9개 샘플(HG001–HG007 germline, HG008·HG009 tumor-normal)의 **전체 
 | 데이터 규모 | **330 datasets / 76,595 files / 115.6 TB** (2026-08-13 파일별 HEAD 검증) |
 | 다운로드 | [phase0_download/](phase0_download/) — 스크립트, 매니페스트, 속도·용량 계획 |
 | PacBio HiFi 처리 | [phase1_pacbio_hifi/](phase1_pacbio_hifi/) — 38개 실행 단위, raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
+| SRA 보충 리드 | HG001·HG005 SequelII 11kb는 GIAB FTP에 리드가 없어 ENA에서 확보 (PRJNA540705/540706, 12 cell 135 GiB). 위 규모 집계에는 미포함 — 목록은 [sra_manifest.tsv](phase1_pacbio_hifi/sra_manifest.tsv) |
 | 표 원본 | [catalog/master_catalog.tsv](catalog/master_catalog.tsv) — 51개 컬럼. 필드 정의는 [catalog/README.md](catalog/README.md) |
 | 정확 바이트 | [docs/SIZES.md](docs/SIZES.md) — 플랫폼 디렉토리 단위 (조회용) |
 | 분류 근거 | [docs/reference/catalog_evidence.md](docs/reference/catalog_evidence.md) |
@@ -58,7 +59,7 @@ python catalog/build_readme.py
 | 데이터셋 | 샘플 | 플랫폼 | GiB | 리드 | index | 정렬 | 페이징 | 변이 | 메틸 | somatic | 어셈블리 | 출처 | 다음 할 일 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | HiFi CCS (HudsonAlpha) | HG001 | Sequel II (m64109) | 66 | ✓ FASTQ | – | ✗ | ✗ | ✗ | – | – | ✗ | 문서 | FASTQ를 pbmm2 --preset CCS(HiFi)로 GRCh38-GIABv3에 정렬 후 Deep… |
-| HiFi SequelII 11kb | HG001 | Sequel II | 110 | ✗ | ✓ | ✓ pbmm2 align | ✓ WhatsHap 0.17 haplotag | ✓ pbsv v2.2.1 | – | – | ✗ | 문서 | 원본 HiFi 리드가 이 디렉토리에 없어 재정렬은 SRA(PRJNA540705) 다운로드가 선행돼야 함… |
+| HiFi SequelII 11kb | HG001 | Sequel II | 110 | ✓ FASTQ | ✓ | ✓ pbmm2 align | ✓ WhatsHap 0.17 haplotag | ✓ pbsv v2.2.1 | – | – | ✗ | 문서 | PRJNA540705 리드 6 cell 확보 완료(2026-08-21, 64.6 GiB, md5 검증)… |
 | HiFi chemistry2 | HG001 | Sequel II (m64109) | 210 | ✓ hifi_reads/uBAM | △ 6개 | ✓ pbmm2 v1.1.0 | ✓ N/A | ✓ GATK 4.0.10.1 HaplotypeCaller +1 | ✓ N/A | – | ✗ | 문서 | uBAM(염기수식 태그 포함)을 pbmm2 --preset HIFI로 GRCh38-GIABv3에 재정렬… |
 | HiFi CCS 10kb | HG002 | Sequel | 282 | ✓ FASTQ | ✓ | ✓ pbmm2 align +1 | ✓ WhatsHap 0.17 haplotag | ✗ | – | – | ✗ | 문서 | 39개 FASTQ를 병합해 pbmm2 --preset HIFI로 GRCh38-GIABv3 재정렬 → D… |
 | HiFi CCS 15kb | HG002 | Sequel | 292 | ✓ FASTQ | ✓ | ✓ pbmm2 align +1 | ✓ WhatsHap 0.17 haplotag | ✗ | – | – | ✗ | 문서 | 39개 FASTQ 병합 후 pbmm2 --preset HIFI로 GRCh38-GIABv3 재정렬 → D… |
@@ -74,7 +75,7 @@ python catalog/build_readme.py
 | HiFi Revio 20231031 | HG004 | Revio (m84039) | 208 | ✓ hifi_reads/uBAM | △ 2개 | ✓ pbmm2 v1.10.0 | ✓ HiPhase | ✓ DeepVariant +2 | ✓ pb-CpG-tools | – | ✗ | 문서 | uBAM을 HiFi-human-WGS-WDL 또는 pbmm2 → DeepVariant → HiPhase… |
 | HiFi chemistry2 | HG004 | Sequel II (m64017) | 577 | ✓ hifi_reads/uBAM | △ 6개 | ✓ pbmm2 | ✓ whatshap haplotag, 버전 미기재 | ✓ DeepVariant v0.9.0 + GATK MAP… | ✓ N/A | – | ✗ | 문서 | uBAM을 pbmm2 --preset HIFI로 GRCh38-GIABv3 재정렬 → DeepVarian… |
 | HiFi CCS (HudsonAlpha) | HG005 | Sequel II (m64109, m64017) | 119 | ✓ FASTQ | – | ✗ | ✗ | ✗ | – | – | ✗ | 문서 | FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 DeepVarian… |
-| HiFi SequelII 11kb | HG005 | Sequel II | 123 | ✗ | ✓ | ✓ pbmm2 align | ✓ WhatsHap 0.17 haplotag | ✓ pbsv v2.2.1 | – | – | ✗ | 문서 | 이 디렉토리에 리드가 없어 재정렬은 SRA(PRJNA540706) 확보가 선행돼야 함. 당장은 hapl… |
+| HiFi SequelII 11kb | HG005 | Sequel II | 123 | ✓ FASTQ | ✓ | ✓ pbmm2 align | ✓ WhatsHap 0.17 haplotag | ✓ pbsv v2.2.1 | – | – | ✗ | 문서 | PRJNA540706 리드 6 cell 확보 완료(2026-08-21, 70.7 GiB, md5 검증)… |
 | HiFi chemistry2 | HG005 | Sequel II (m64109, m64017) | 369 | ✓ hifi_reads/uBAM | △ 7개 | ✓ N/A | ✓ N/A | ✓ DeepVariant | ✓ N/A | – | ✗ | 파일명 | uBAM을 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 → DeepVariant… |
 | HiFi (Google) | HG006 | Sequel II | 56 | ✓ FASTQ | – | ✗ | ✗ | ✗ | – | – | ✗ | 문서 | 3개 FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 DeepVar… |
 | HiFi chemistry2 | HG006 | Sequel II (m64017, m64109) | 386 | ✓ hifi_reads/uBAM | △ 6개 | ✓ N/A | ✓ N/A | ✓ DeepVariant | ✓ N/A | – | ✗ | 문서 | uBAM을 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 → DeepVariant… |
