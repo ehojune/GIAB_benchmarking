@@ -89,26 +89,38 @@ for m in $(p2_clair3_models); do
     enc="${m//+/%2B}"
     echo "  다운로드:      $m"
     ok=0
+    dest="$CLAIR3_MODEL_DIR/$m"
     for url in "$HKU/$enc.tar.gz" "$RERIO/$m.tar.gz"; do
         if wget -q -O "$INFRA/tmp/$m.tar.gz" "$url"; then
-            mkdir -p "$CLAIR3_MODEL_DIR/$m"
-            # 아카이브가 모델 디렉토리를 품고 있는 경우와 파일만 있는 경우가 섞여 있다
-            tar -xzf "$INFRA/tmp/$m.tar.gz" -C "$CLAIR3_MODEL_DIR/$m" --strip-components=0
-            if [ ! -f "$CLAIR3_MODEL_DIR/$m/pileup.index" ] && [ -f "$CLAIR3_MODEL_DIR/$m/$m/pileup.index" ]; then
-                mv "$CLAIR3_MODEL_DIR/$m/$m"/* "$CLAIR3_MODEL_DIR/$m/" && rmdir "$CLAIR3_MODEL_DIR/$m/$m"
+            mkdir -p "$dest"
+            tar -xzf "$INFRA/tmp/$m.tar.gz" -C "$dest"
+            # 아카이브 안쪽 디렉토리 이름은 모델 이름과 다를 수 있다
+            # (실측: r941_prom_hac_g238.tar.gz -> ont_guppy2/). pileup.index가 있는 곳을 찾아 끌어올린다.
+            if [ ! -f "$dest/pileup.index" ]; then
+                inner=$(find "$dest" -name pileup.index -printf '%h\n' 2>/dev/null | head -1)
+                if [ -n "$inner" ] && [ "$inner" != "$dest" ]; then
+                    mv "$inner"/* "$dest"/
+                    find "$dest" -mindepth 1 -type d -empty -delete
+                fi
             fi
             rm -f "$INFRA/tmp/$m.tar.gz"
             ok=1; break
         fi
     done
-    if [ "$ok" = 1 ] && [ -f "$CLAIR3_MODEL_DIR/$m/pileup.index" ]; then
-        echo "    OK ($(du -sh "$CLAIR3_MODEL_DIR/$m" | cut -f1))"
+    if [ "$ok" = 1 ] && [ -f "$dest/pileup.index" ]; then
+        echo "    OK ($(du -sh "$dest" | cut -f1))"
     else
-        echo "    FAIL: $m — HKU/Rerio 양쪽 실패거나 pileup.index가 없다"
-        need_fail=1
+        # 기본 제출(dup_of 없는 런)이 쓰는 모델만 치명적이다. gate된 재베이스콜 런에만 필요한
+        # 모델은 경고로 넘긴다 — 그것 때문에 14개 기본 런을 막을 이유가 없다.
+        if p2_clair3_models_primary | grep -qx "$m"; then
+            echo "    FAIL: $m — HKU/Rerio 양쪽 실패. 이 모델은 기본 제출 런이 쓴다"
+            need_fail=1
+        else
+            echo "    WARN: $m — 받지 못했다. DUP_OK=1로 돌릴 런에만 필요하니 기본 제출은 진행 가능"
+        fi
     fi
 done
-[ "$need_fail" = 0 ] || { echo "ERROR: Clair3 모델이 빠졌다. 이 상태로 제출하면 해당 런이 CLAIR3에서 죽는다"; exit 1; }
+[ "$need_fail" = 0 ] || { echo "ERROR: 기본 제출 런이 쓸 Clair3 모델이 빠졌다. 이 상태로 제출하면 그 런이 CLAIR3에서 죽는다"; exit 1; }
 
 echo
 echo "준비 완료. 다음:"

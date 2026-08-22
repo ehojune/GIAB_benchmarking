@@ -43,10 +43,10 @@ HG008T-p2,BCM_ONT-std_HG008T-p2_20260313,ubam,/data/run1C/PBI63802_pass_0.bam,,2
 
 ### Clair3 모델은 이미지에 다 없다
 
-`hkubal/clair3:v1.2.0` 이미지에 **있는** 것: `r941_prom_sup_g5014`, `r1041_e82_400bps_{sup,hac}_v410`,
-`r1041_e82_400bps_{sup,hac}_v500`, `hifi*`, `ilmn`.
-**없는** 것: `r941_prom_hac_g360+g422`(Guppy 3.6/4.2.2 hac), `r1041_e82_400bps_sup_v420`, `_v430`.
-GIAB ONT 데이터는 대부분 후자를 쓴다 — 그래서 `../../scripts/01_prepare_login_node.sh`가 이 모델들을
+`hkubal/clair3:v1.2.0` 이미지 실측(2026-08-22): `r941_prom_{hac_g360+g422,sup_g5014}`,
+`r1041_e82_400bps_{sup,hac}_{v410,v500}`, `hifi*`, `ilmn`, `ont`, `ont_guppy5`.
+**없는** 것: `r1041_e82_400bps_sup_v420`, `_v430`, `r941_prom_hac_g238`.
+HG008 데이터가 앞의 둘을 쓴다 — 그래서 `../../scripts/01_prepare_login_node.sh`가 이 모델들을
 `$CLAIR3_MODEL_DIR`에 내려받고, 잡이 `--clair3_model_dir`로 마운트한다.
 모델이 없으면 CLAIR3가 시작 단계에서 두 디렉토리 목록을 찍고 죽는다 (조용히 넘어가지 않는다).
 

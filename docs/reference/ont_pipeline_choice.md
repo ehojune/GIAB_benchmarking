@@ -16,30 +16,35 @@ phase2_ont를 만들 때 확인한 외부 사실. 전부 2026-08-22에 직접 �
 
 → `phase1_pacbio_hifi/pipeline/pacbio-hifi-wgs`를 본떠 `phase2_ont/pipeline/ont-wgs`를 만들었다.
 
-## Clair3 모델: 이미지에 없는 게 대부분이다
+## Clair3 모델: 이미지에 있는 것과 없는 것
 
-`hkubal/clair3:v1.2.0` README의 모델 표(2026-08-22 열람) 기준.
+`hkubal/clair3:v1.2.0` 이미지의 `/opt/models` **실측** (2026-08-22, nbb2에서 `singularity exec ... ls`):
 
-| 모델 | 용도 | 도커 이미지 포함 |
+    hifi  hifi_revio  hifi_sequel2  ilmn  ont  ont_guppy5
+    r1041_e82_400bps_hac_v410  r1041_e82_400bps_hac_v500
+    r1041_e82_400bps_sup_v410  r1041_e82_400bps_sup_v430_bacteria_finetuned
+    r1041_e82_400bps_sup_v500  r941_prom_hac_g360+g422  r941_prom_sup_g5014
+
+**Clair3 README의 모델 표는 `r941_prom_hac_g360+g422`를 "도커 이미지 포함" 빈칸으로 두지만 실제로는 들어 있다.**
+문서보다 이미지를 믿을 것. 반대로 우리가 필요한 것 중 진짜 없는 것은 이 셋이다.
+
+| 없는 모델 | 쓰는 곳 | 받는 곳 |
 |---|---|---|
-| `r941_prom_sup_g5014` | R9.4.1, Guppy5 sup | 있음 |
-| `r941_prom_hac_g360+g422` | R9.4.1, **Guppy 3.6.0/4.2.2 hac** | **없음** |
-| `r941_prom_hac_g238` | R9.4.1, Guppy 2.3.8 | **없음** |
-| `r1041_e82_400bps_sup_v410` / `hac_v410` | R10.4.1 4kHz, dorado v4.1.0 | 있음 |
-| `r1041_e82_400bps_sup_v500` / `hac_v500` | R10.4.1 5kHz, dorado v5.0.0 | 있음 |
-| `r1041_e82_400bps_sup_v420`, `_v430` | R10.4.1, dorado v4.2.0 / v4.3.0 | **없음** |
-
-GIAB ONT 데이터가 필요로 하는 것은 대부분 "없음" 쪽이다 (R9는 Guppy 3~4, HG008은 dorado sup@v4.2/v4.3).
-phase1에서 Clair3 v2.x가 HiFi 모델을 전부 뺀 것과 같은 종류의 함정이다.
+| `r1041_e82_400bps_sup_v420` | HG008 UCSC std/UL (dorado sup@v4.2.0) | HKU 70 MB |
+| `r1041_e82_400bps_sup_v430` | HG008 NE std, BCM p2 (sup@v4.3.0) | HKU/Rerio 70 MB |
+| `r941_prom_hac_g238` | HG002 guppy 2.3.4·rel1·rel2 (gate된 dup 런 전용) | HKU 37 MB |
 
 다운로드 출처 (`scripts/01_prepare_login_node.sh`가 이 순서로 시도):
 
 1. HKU: `https://www.bio8.cs.hku.hk/clair3/clair3_models/<model>.tar.gz`
-   — 디렉토리 목록에 `r941_prom_hac_g360+g422`, `_g238`, `r1041_e82_400bps_sup_v420` 등이 있다.
-   URL에서 `+`는 `%2B`로 인코딩해야 한다. http는 301이고 https로 받아야 한다.
+   — `+`는 `%2B`로 인코딩해야 하고, http는 301이라 https로 받아야 한다.
 2. ONT Rerio: `https://cdn.oxfordnanoportal.com/software/analysis/models/clair3/<model>.tar.gz`
    — `nanoporetech/rerio` repo의 `clair3_models/<model>_model` 파일이 이 URL 한 줄을 담고 있다.
-   `sup_v420`, `sup_v430`, `sup_v500`, `hac_v600` 등 버전별 정확 매칭이 여기 있다.
+   r1041 계열의 버전별 정확 매칭(v420·v430·v500·v600)이 여기 있다. r941 계열은 없다.
+
+**아카이브 안쪽 디렉토리 이름이 모델 이름과 다를 수 있다.** 실측: `r941_prom_hac_g238.tar.gz`는
+`ont_guppy2/`를 품고 있다 (같은 모델의 옛 이름). 그래서 준비 스크립트는 이름을 가정하지 않고
+`pileup.index`가 있는 디렉토리를 찾아 끌어올린다.
 
 ## DeepVariant의 ONT 모델은 하나뿐
 

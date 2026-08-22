@@ -77,3 +77,5 @@ p2_container_uris() {
 
 # run_table에서 실제로 쓰이는 clair3 모델 목록 (중복 표시된 런 포함 — 나중에 돌릴 수 있으니 다 받아 둔다)
 p2_clair3_models() { awk -F'\t' 'NR>1 {print $9}' "$P2_RT" | sort -u; }
+# 기본 제출(dup_of 없는) 런이 쓰는 모델만. 이게 빠지면 치명적이고, 나머지는 경고로 족하다.
+p2_clair3_models_primary() { awk -F'\t' 'NR>1 && $12=="" {print $9}' "$P2_RT" | sort -u; }

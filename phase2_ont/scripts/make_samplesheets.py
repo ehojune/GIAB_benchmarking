@@ -35,9 +35,9 @@ L_HG008 = "data_somatic/HG008/Liss_lab"
 UL_HG002 = f"{A_HG002}/Ultralong_OxfordNanopore"
 
 # Clair3 모델. hkubal/clair3:v1.2.0 이미지에 없는 것은 01_prepare_login_node.sh가 내려받는다.
-M_R9_G4 = "r941_prom_hac_g360+g422"        # R9.4.1, Guppy 3.6.0/4.2.2 hac 로 학습 (이미지에 없음)
-M_R9_G2 = "r941_prom_hac_g238"             # R9.4.1, Guppy 2.3.8 (이미지에 없음). albacore 데이터의 대체품
-M_R10_420 = "r1041_e82_400bps_sup_v420"    # dorado sup@v4.2.0 (이미지에 없음)
+M_R9_G4 = "r941_prom_hac_g360+g422"        # R9.4.1, Guppy 3.6.0/4.2.2 hac 로 학습 (이미지에 있음 — 실측)
+M_R9_G2 = "r941_prom_hac_g238"             # R9.4.1, Guppy 2.3.8 (이미지에 없음. HKU 아카이브 안쪽 이름은 ont_guppy2). albacore 데이터의 대체품
+M_R10_420 = "r1041_e82_400bps_sup_v420"    # dorado sup@v4.2.0 (이미지에 없음 -> 01_prepare가 받는다)
 M_R10_430 = "r1041_e82_400bps_sup_v430"    # dorado sup@v4.3.0 (이미지에 없음)
 M_R10_500 = "r1041_e82_400bps_sup_v500"    # dorado sup@v5.0.0 (이미지에 있음)
 DV_R10 = "ONT_R104"                        # DeepVariant 1.10.0의 유일한 ONT 모델 (R10.4.1 전용)

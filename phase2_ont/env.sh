@@ -30,9 +30,9 @@ export TRF_BED="${TRF_BED:-$INFRA/reference/human_GRCh38_no_alt_analysis_set.trf
 export GIAB_HTTP_BASE="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab"
 
 # Clair3 모델. 컨테이너에 없는 모델을 여기에 내려받아 마운트한다 (01_prepare_login_node.sh).
-# hkubal/clair3:v1.2.0 이미지에 들어 있는 것: r941_prom_sup_g5014, r1041_e82_400bps_{sup,hac}_v410,
-# r1041_e82_400bps_{sup,hac}_v500, hifi*, ilmn. 우리가 쓰는 r941_prom_hac_g360+g422와
-# r1041_e82_400bps_sup_v420/v430은 **이미지에 없다** — 그래서 이 디렉토리가 필요하다.
+# hkubal/clair3:v1.2.0 이미지 실측(2026-08-22): r941_prom_{hac_g360+g422,sup_g5014},
+# r1041_e82_400bps_{sup,hac}_{v410,v500}, hifi*, ilmn, ont, ont_guppy5.
+# 우리가 쓰는 r1041_e82_400bps_sup_v420/v430과 r941_prom_hac_g238은 **없다** — 그래서 이 디렉토리가 필요하다.
 export CLAIR3_MODEL_DIR="${CLAIR3_MODEL_DIR:-$INFRA/reference/clair3_models}"
 
 # ---- SGE ----

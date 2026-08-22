@@ -59,7 +59,7 @@ python phase2_ont/scripts/50_update_catalog.py             # 완료분 → 카�
 | 잡 크기 | 30슬롯 / h_vmem 115G / Nextflow 110G = **노드당 2잡** | 노드는 64코어·251 GB. `h_vmem`은 consumable=NO라 메모리가 예약되지 않는다 — (노드당 잡 수)×`NF_LOCAL_MEM_GB` < 251을 직접 지켜야 한다. 프리셋은 [env.local.sh.example](env.local.sh.example) |
 | Nextflow | 24.10.5 + conda `nfcore312` (JDK17) | 잡 안에서 local executor로 완주 (SGE 자식 잡 없음) |
 | 레퍼런스 | GRCh38_no_alt_analysis_set | phase1과 `$INFRA`를 공유하므로 이미 있으면 다시 안 받는다 |
-| Clair3 모델 | `$INFRA/reference/clair3_models` | **이미지에 없는 모델을 여기 받아 마운트한다** (아래) |
+| Clair3 모델 | `$INFRA/reference/clair3_models` | **이미지에 없는 모델 3개를 여기 받아 마운트한다** (아래) |
 
 ## 케미스트리별 콜러 모델 (틀려도 조용히 돌아간다)
 
@@ -79,9 +79,10 @@ python phase2_ont/scripts/50_update_catalog.py             # 완료분 → 카�
 
 - **DeepVariant 1.10.0의 ONT 모델은 `ONT_R104` 하나뿐이고 R10.4.1 전용이다.** R9.4.1 런은
   `--skip_deepvariant`로 돌고(제출 스크립트가 `dv_model` 열을 보고 자동으로 붙인다) Clair3 단독이다.
-- `hkubal/clair3:v1.2.0` 이미지에 **없는** 모델이 우리가 쓰는 것의 대부분이다
-  (`r941_prom_hac_g360+g422`, `_g238`, `sup_v420`, `sup_v430`). `01_prepare_login_node.sh`가
-  이미지 목록과 대조해 없는 것만 HKU/Rerio에서 받는다. 제출 시점에도 다시 확인한다.
+- `hkubal/clair3:v1.2.0` 이미지에 **없는** 모델은 `sup_v420`, `sup_v430`, `_g238` 셋이다
+  (2026-08-22 nbb2 실측. `r941_prom_hac_g360+g422`는 Clair3 README 표와 달리 이미지에 있다).
+  `01_prepare_login_node.sh`가 이미지 목록과 대조해 없는 것만 HKU/Rerio에서 받고, 제출 시점에도 다시 확인한다.
+  `_g238`은 gate된 dup 런만 쓰므로 못 받아도 경고로 넘어간다.
 
 ## 자원 실측은 아직 없다
 
