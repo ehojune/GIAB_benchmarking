@@ -1,0 +1,7 @@
+# 이 프로젝트가 사용한 Yuan 자산의 pin. 자산을 쓰기 시작할 때 바로 갱신한다.
+yuan_repo: https://github.com/ehojune/Yuan
+yuan_commit: 0b4ea3dd025eba7367147617c1e4e17eafdf1e70
+assets:
+  - meta.project-template@experimental
+  - process.legacy-retrofit@experimental
+  - meta.journal@experimental

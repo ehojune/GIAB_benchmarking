@@ -509,3 +509,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 예를 들어 HG008 PacBio Revio의 VCF는 `pacbio_hifi` 쪽이 아니라 `other` 쪽
 (`data_somatic/HG008/Liss_lab/analysis/`)에 있다. 카테고리 하나만 보면 놓치므로,
 데이터를 찾을 때는 카테고리가 아니라 이 표의 `giab_path`로 확인할 것.
+
+## Journal
+
+- 2026-08-23 — Yuan 최소 준수 retrofit을 적용했다. 기존 카탈로그·PacBio HiFi·ONT 분석 구조와 HARVEST 후보는 유지했다.
