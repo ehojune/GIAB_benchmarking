@@ -1,0 +1,6 @@
+sample,dataset,input_type,file,index,unit
+HG002,guppy-V3.4.5,fastq,/data/HG002_ONT-UL_GIAB_20200204.fastq.gz,,
+HG008-T,UCSC_ONT-UL_20231207,ubam,/data/HG008-T_..._1_dorado.bam,,
+HG008T-p2,BCM_ONT-std_HG008T-p2_20260313,ubam,/data/run1/PBI63802_pass_a_0.bam,,20260202_1137_1C_PBI63802_5301c73c
+HG008T-p2,BCM_ONT-std_HG008T-p2_20260313,ubam,/data/run1/PBI63802_pass_a_1.bam,,20260202_1137_1C_PBI63802_5301c73c
+HG001,Ultralong_OxfordNanopore,aligned_bam,/data/NA12878-minion-ul_GRCh38.bam,/data/NA12878-minion-ul_GRCh38.bam.bai,

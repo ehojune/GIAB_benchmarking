@@ -1,0 +1,7 @@
+# -stub 스모크 테스트용. 경로는 이 파일이 있는 디렉토리 기준 상대경로다.
+# 네 갈래를 다 태운다: fastq 진입 / uBAM 진입 / uBAM 여러 개를 한 unit으로 cat / unit 3개 병합
+sample,dataset,input_type,file,index,unit
+TEST,ont_smoke,fastq,tiny.fastq.gz,,
+TEST,ont_smoke,ubam,tiny.ubam.bam,,
+TEST,ont_smoke,ubam,tiny.ubam2.bam,,catunit
+TEST,ont_smoke,ubam,tiny.ubam3.bam,,catunit

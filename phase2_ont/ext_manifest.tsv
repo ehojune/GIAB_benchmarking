@@ -1,0 +1,3 @@
+dsid	relpath	bytes	url	kind	note
+HG001.Ultralong_OxfordNanopore	ext/nanopore-wgs-consortium/rel6/rel_6.fastq.gz	146155473652	https://s3.amazonaws.com/nanopore-human-wgs/rel6/rel_6.fastq.gz	reads	rel6 전체(53 플로우셀, 132.9 Gbp, ~43x). Content-Length는 2026-08-22 HEAD로 확인. ETag는 멀티파트라 md5가 아니다 — 크기 + 리드 길이 샘플링으로 검증한다
+HG001.Ultralong_OxfordNanopore	ext/nanopore-wgs-consortium/rel6/rel_6_sequencing_summary.txt.gz	1182107904	https://s3.amazonaws.com/nanopore-human-wgs/rel6/rel_6_sequencing_summary.txt.gz	evidence	read_id/run_id 목록. GIAB의 NA12878-minion-ul BAM이 rel6 전체인지 Ultra 킷 12셀인지 대조하는 데 쓴다 (03_dup_evidence.sh)

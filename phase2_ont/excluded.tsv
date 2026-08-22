@@ -1,0 +1,2 @@
+sample	dataset	reason
+HG002	CORNELL_Oxford_Nanopore	2D 리드가 fastq 96 MB(+fasta 43 MB) = 0.03x 수준이고, 원시 데이터는 fast5 2912개다. R7 2D 케미스트리는 Clair3/DeepVariant 모델이 아예 없고 fast5 재베이스콜은 정책상 제외. 커버리지만으로도 변이 호출이 불가능하다 (2026-08-22 사용자 확인)

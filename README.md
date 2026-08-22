@@ -9,7 +9,8 @@ GIAB 9개 샘플(HG001–HG007 germline, HG008·HG009 tumor-normal)의 **전체 
 | 데이터 규모 | **330 datasets / 76,595 files / 115.6 TB** (2026-08-13 파일별 HEAD 검증) |
 | 다운로드 | [phase0_download/](phase0_download/) — 스크립트, 매니페스트, 속도·용량 계획 |
 | PacBio HiFi 처리 | [phase1_pacbio_hifi/](phase1_pacbio_hifi/) — 38개 실행 단위, raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
-| SRA 보충 리드 | HG001·HG005 SequelII 11kb는 GIAB FTP에 리드가 없어 ENA에서 확보 (PRJNA540705/540706, 12 cell 135 GiB). 위 규모 집계에는 미포함 — 목록은 [sra_manifest.tsv](phase1_pacbio_hifi/sra_manifest.tsv) |
+| ONT 처리 | [phase2_ont/](phase2_ont/) — 18개 실행 단위(기본 제출 14), raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
+| 외부 보충 리드 | GIAB FTP에 리드가 없는 데이터셋은 외부에서 받는다. PacBio: HG001·HG005 SequelII 11kb → ENA PRJNA540705/540706, 12 cell 135 GiB ([sra_manifest.tsv](phase1_pacbio_hifi/sra_manifest.tsv)). ONT: HG001 ultralong → nanopore-wgs-consortium rel6, 136 GiB ([ext_manifest.tsv](phase2_ont/ext_manifest.tsv)). 위 규모 집계에는 미포함 |
 | 표 원본 | [catalog/master_catalog.tsv](catalog/master_catalog.tsv) — 51개 컬럼. 필드 정의는 [catalog/README.md](catalog/README.md) |
 | 정확 바이트 | [docs/SIZES.md](docs/SIZES.md) — 플랫폼 디렉토리 단위 (조회용) |
 | 분류 근거 | [docs/reference/catalog_evidence.md](docs/reference/catalog_evidence.md) |
