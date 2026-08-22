@@ -5,6 +5,44 @@ GIAB PacBio HiFi 전 데이터셋을 **각자의 가장 raw한 형태부터** �
 파이프라인: pbmm2 → DeepVariant + Clair3 → WhatsHap phase/haplotag → pbsv → QC.
 [pipeline/pacbio-hifi-wgs](pipeline/pacbio-hifi-wgs/)는 bioinfo-agent에서 vendoring ([차이](pipeline/VENDORED.md)).
 
+```mermaid
+flowchart TD
+    SUB["subreads 진입<br/>phase1 0 런"]
+    HB["HiFi uBAM 진입<br/>phase1 21 런"]
+    HF["HiFi fastq 진입<br/>phase1 17 런"]
+    AB["aligned BAM 진입<br/>phase1 0 런"]
+
+    SUB -->|"pbccs 6.4.0<br/>8 chunk + pbmerge"| CCS["HiFi uBAM<br/>01_HIFI/"]
+    CCS --> PM
+    HB --> PM["pbmm2 26.2.0<br/>--preset CCS"]
+    HF --> PM
+    PM --> FIN["samtools merge / index<br/>02_alignedBAM/"]
+    AB --> FIN
+    FIN --> CHK{"CHECK_BAM<br/>레퍼런스 contig 대조<br/>mapped 0 이면 중단"}
+
+    CHK --> DV["DeepVariant 1.10.0<br/>PACBIO<br/>03_VCF/deepvariant/"]
+    CHK --> C3["Clair3 v1.2.0<br/>hifi / hifi_sequel2 / hifi_revio<br/>03_VCF/clair3/"]
+    CHK --> PS["pbsv 2.11.0<br/>discover + call<br/>03_VCF/SV_pbsv/"]
+
+    DV --> WP["WhatsHap 2.8 phase<br/>03_VCF/phased_whatshap/"]
+    WP --> WH["WhatsHap haplotag<br/>02_alignedBAM/haplotagged/"]
+
+    DV --> SP["bcftools norm -m -any + view<br/>03_VCF/SNV_* · INDEL_*"]
+    C3 --> SP
+
+    CHK --> QC["mosdepth 0.3.14<br/>samtools stats"]
+    DV --> VS["bcftools stats"]
+    C3 --> VS
+    PS --> VS
+    WP --> WS["whatshap stats<br/>위상 블록 지표"]
+    QC --> MQ["MultiQC 1.35<br/>multiqc/dsid/"]
+    VS --> MQ
+    WS --> MQ
+```
+
+ONT 쪽 같은 그림은 [phase2_ont/pipeline/ont-wgs/README.md](../phase2_ont/pipeline/ont-wgs/README.md).
+차이는 정렬(pbmm2→minimap2), SV(pbsv→Sniffles2), 위상(WhatsHap→LongPhase), 그리고 R9.4.1에서 DeepVariant가 빠지는 것이다.
+
 - 실행 단위: **38개** ([run_table.tsv](run_table.tsv)) = 카탈로그 HiFi 28행을 (sample, dataset)로 분해
   (HG008 T/N 분리, HG009 passage·클론 11개 분리). 잡 1개 = 실행 단위 1개.
 - 진입점: fastq 17 / HiFi uBAM 21. **aligned BAM 진입은 없다** — HG001·HG005 SequelII 11kb도

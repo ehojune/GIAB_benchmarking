@@ -2,17 +2,42 @@
 
 ONT 사람 WGS germline 파이프라인. 플러그인 0개, nf-core 템플릿 없음, 컨테이너는 전부 `params.container_*`.
 
-```
-fastq | uBAM | aligned BAM
-  └─ minimap2 -x map-ont ─ merge ─ CHECK_BAM
-       ├─ Clair3            (모델을 데이터셋마다 지정)
-       ├─ DeepVariant       (ONT_R104 = R10.4.1 전용, R9에서는 --skip_deepvariant)
-       ├─ Sniffles2         (--tandem-repeats 권장)
-       ├─ LongPhase         phase (+SV 동시 위상) → haplotag
-       └─ QC                mosdepth / samtools / bcftools / whatshap stats → MultiQC
+```mermaid
+flowchart TD
+    FQ["fastq 진입<br/>phase2 12 런"]
+    UB["unaligned BAM 진입<br/>phase2 6 런 · MM/ML 태그"]
+    AB["aligned BAM 진입<br/>phase2 0 런"]
+
+    UB -->|"samtools cat<br/>같은 unit끼리 (재압축 없음)"| UB1["uBAM 1개 / unit"]
+    UB1 -->|"samtools fastq -T MM,ML"| MM
+    FQ --> MM["minimap2 2.30<br/>-ax map-ont -Y<br/>-y는 uBAM 진입만"]
+    MM --> FIN["samtools merge / index<br/>02_alignedBAM/"]
+    AB --> FIN
+    FIN --> CHK{"CHECK_BAM<br/>레퍼런스 contig 대조<br/>mapped 0 이면 중단"}
+
+    CHK --> C3["Clair3 v1.2.0<br/>모델은 데이터셋별 지정<br/>03_VCF/clair3/"]
+    CHK --> DV["DeepVariant 1.10.0<br/>ONT_R104 · R10.4.1 런만<br/>03_VCF/deepvariant/"]
+    CHK --> SN["Sniffles2 2.8.0<br/>--tandem-repeats<br/>03_VCF/SV_sniffles/"]
+
+    C3 --> LP["LongPhase 2.0.2 phase<br/>--ont --sv-file<br/>03_VCF/phased_longphase/"]
+    SN --> LP
+    LP --> HT["LongPhase haplotag<br/>02_alignedBAM/haplotagged/"]
+
+    C3 --> SP["bcftools norm -m -any + view<br/>03_VCF/SNV_* · INDEL_*"]
+    DV --> SP
+
+    CHK --> QC["mosdepth 0.3.14<br/>samtools stats"]
+    C3 --> VS["bcftools stats"]
+    DV --> VS
+    SN --> VS
+    LP --> WS["whatshap 2.8 stats<br/>위상 블록 지표"]
+    QC --> MQ["MultiQC 1.35<br/>multiqc/dsid/"]
+    VS --> MQ
+    WS --> MQ
 ```
 
 산출: `<outdir>/<sample>/ONT/<dataset>/{02_alignedBAM,03_VCF,04_QC}`
+(PacBio 쪽 같은 그림은 [phase1_pacbio_hifi/README.md](../../../phase1_pacbio_hifi/README.md))
 
 ## 샘플시트
 
