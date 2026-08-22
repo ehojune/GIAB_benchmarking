@@ -37,12 +37,15 @@ cp phase2_ont/env.local.sh{.example,}                      # 잡 크기 프리�
 bash phase2_ont/scripts/01_prepare_login_node.sh           # 1회: SGE 점검 + 컨테이너 10개 + 레퍼런스 + TRF + Clair3 모델
 bash phase2_ont/scripts/02_fetch_external_reads.sh         # 1회: HG001 rel6 리드 (외부 AWS, 136 GiB)
 bash phase2_ont/scripts/03_dup_evidence.sh                 # 중복 판정 근거 (읽기 전용, 오래 걸림)
+bash phase2_ont/scripts/04_stub_test.sh                    # 1회: 파이프라인 배선 스모크 테스트 (1분)
 bash phase2_ont/scripts/10_submit.sh --ready               # 준비된 것 전부 제출 (dup 제외; --list로 미리보기)
 bash phase2_ont/scripts/20_status.sh                       # 진행 대시보드
 bash phase2_ont/scripts/30_verify_outputs.sh               # 완료 검증
 python phase2_ont/scripts/50_update_catalog.py             # 완료분 → 카탈로그+README 표, git diff 보고 커밋
 ```
 
+- **`nextflow` 를 직접 부르지 말 것.** 서버 기본은 26.x이고 strict config 파서가 `def` 선언을 거부한다.
+  env.sh가 24.10.5를 고정하니 스크립트(또는 `source env.sh`)를 거쳐야 한다.
 - 특정 것만: `10_submit.sh HG002.guppy-V3.4.5 ...` / 로그: `tail -f $INFRA/logs/<dsid>.<jobid>.log`
 - 잡이 죽으면 **같은 dsid로 재제출하면 -resume** 으로 이어서 돈다.
 - 끝난 run의 중간 파일 정리: `scripts/40_clean_work.sh <dsid>`. ONT는 이게 phase1보다 중요하다 —

@@ -140,5 +140,5 @@ done
 echo
 echo "준비 완료. 다음:"
 echo "  bash $HERE/02_fetch_external_reads.sh      # HG001 rel6 리드 (외부, 136 GiB)"
-echo "  nextflow run $PIPE -profile test -stub --outdir $INFRA/tmp/stub   # 배선 스모크 테스트"
+echo "  bash $HERE/04_stub_test.sh                 # 배선 스모크 테스트 (nextflow를 직접 부르면 26.x가 잡혀 실패한다)"
 echo "  bash $HERE/10_submit.sh --list"
