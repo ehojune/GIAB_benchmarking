@@ -8,7 +8,7 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$HERE/../env.sh"
 source "$HERE/lib.sh"
-PIPE="$HERE/../pipeline/ont-wgs"
+PIPE="$(cd "$HERE/../pipeline/ont-wgs" && pwd)"
 
 mkdir -p "$INFRA"/{containers,reference,tmp,work,launch,jobs,logs} "$CLAIR3_MODEL_DIR" "$RUN_BASE"
 
@@ -72,8 +72,20 @@ else
 fi
 
 echo "== [5/5] Clair3 모델 =="
-# 여기가 ONT의 함정이다. hkubal/clair3:v1.2.0 이미지에는 우리가 쓸 모델이 절반도 없다.
-# run_table.tsv가 요구하는 모델을 이미지 목록과 대조해서, 없는 것만 내려받는다.
+# 여기가 ONT의 함정이다. run_table.tsv가 요구하는 모델을 이미지 목록과 대조해서 없는 것만 받는다.
+# (2026-08-22 nbb2 실측: v1.2.0 이미지에 sup_v420 / sup_v430 / g238 이 없다.)
+#
+# 아카이브 안쪽 디렉토리 이름은 모델 이름과 다를 수 있다 — 실측으로 r941_prom_hac_g238.tar.gz는
+# ont_guppy2/ 를 품고 있었다. 그래서 이름을 가정하지 않고 pileup.index가 있는 곳을 끌어올린다.
+flatten_model() {   # <dest>
+    local dest=$1 inner
+    [ -f "$dest/pileup.index" ] && return 0
+    inner=$(find "$dest" -name pileup.index -printf '%h\n' 2>/dev/null | head -1)
+    if [ -n "$inner" ] && [ "$inner" != "$dest" ]; then
+        mv "$inner"/* "$dest"/
+        find "$dest" -mindepth 1 -type d -empty -delete
+    fi
+}
 clair3_img="$(p2_img_path "$(p2_container_uris | grep clair3)")"
 in_image="$(singularity exec "$clair3_img" ls /opt/models 2>/dev/null || true)"
 echo "  이미지 안 /opt/models:"
@@ -84,25 +96,28 @@ need_fail=0
 for m in $(p2_clair3_models); do
     [ "$m" = - ] && continue
     if echo "$in_image" | grep -qx "$m"; then echo "  이미지에 있음: $m"; continue; fi
-    if [ -d "$CLAIR3_MODEL_DIR/$m" ]; then echo "  받아둠:        $m"; continue; fi
+    # 디렉토리 존재만 보면 안 된다 — 실패한 이전 실행이 껍데기를 남길 수 있다. pileup.index로 판정한다.
+    if [ -f "$CLAIR3_MODEL_DIR/$m/pileup.index" ]; then echo "  받아둠:        $m"; continue; fi
     # 모델 이름의 '+'는 URL에서 %2B로 인코딩해야 한다 (r941_prom_hac_g360+g422)
     enc="${m//+/%2B}"
-    echo "  다운로드:      $m"
     ok=0
     dest="$CLAIR3_MODEL_DIR/$m"
+    # 이전 실행이 잘못된 깊이로 풀어 놓고 죽었을 수 있다 (아래 flatten 주석 참고).
+    # 디렉토리가 있으면 먼저 제자리에서 복구를 시도하고, 안 되면 지우고 다시 받는다.
+    if [ -d "$dest" ]; then
+        flatten_model "$dest"
+        if [ -f "$dest/pileup.index" ]; then
+            echo "    복구:        $m (이전 실행이 남긴 디렉토리를 정리했다)"
+            continue
+        fi
+        rm -rf "$dest"
+    fi
+    echo "  다운로드:      $m"
     for url in "$HKU/$enc.tar.gz" "$RERIO/$m.tar.gz"; do
         if wget -q -O "$INFRA/tmp/$m.tar.gz" "$url"; then
             mkdir -p "$dest"
             tar -xzf "$INFRA/tmp/$m.tar.gz" -C "$dest"
-            # 아카이브 안쪽 디렉토리 이름은 모델 이름과 다를 수 있다
-            # (실측: r941_prom_hac_g238.tar.gz -> ont_guppy2/). pileup.index가 있는 곳을 찾아 끌어올린다.
-            if [ ! -f "$dest/pileup.index" ]; then
-                inner=$(find "$dest" -name pileup.index -printf '%h\n' 2>/dev/null | head -1)
-                if [ -n "$inner" ] && [ "$inner" != "$dest" ]; then
-                    mv "$inner"/* "$dest"/
-                    find "$dest" -mindepth 1 -type d -empty -delete
-                fi
-            fi
+            flatten_model "$dest"
             rm -f "$INFRA/tmp/$m.tar.gz"
             ok=1; break
         fi
