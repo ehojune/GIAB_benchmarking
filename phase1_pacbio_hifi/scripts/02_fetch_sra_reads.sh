@@ -61,7 +61,8 @@ fetch_one() {
         # (파일명이 파이프라인의 unit = BAM의 RG ID가 되므로 movie 쪽이 유용하다).
         # 망에 따라 https가 막힌 경우가 있어 ftp://로 재시도.
         if ! wget -q -c -O "$out" "https://ftp.sra.ebi.ac.uk/$ena_path"; then
-            echo "  https 실패, ftp:// 재시도: $srr"
+            # nbb2에서 실측: ftp.sra.ebi.ac.uk 는 https가 TCP 단계에서 막힌다. 정상 경로다.
+            echo "  note: https 차단됨 -> ftp:// 로 전환 (실패 아님): $srr"
             if ! wget -q -c -O "$out" "ftp://ftp.sra.ebi.ac.uk/$ena_path"; then
                 echo "  ERROR: 두 경로 모두 실패 — $ena_path"; return 1
             fi
