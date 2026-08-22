@@ -10,7 +10,9 @@ GIAB PacBio HiFi 전 데이터셋을 **각자의 가장 raw한 형태부터** �
 - 진입점: fastq 17 / HiFi uBAM 21. **aligned BAM 진입은 없다** — HG001·HG005 SequelII 11kb도
   SRA에서 리드를 받아 fastq부터 돈다 (아래 SRA 항목).
 - 이 중 4개는 `dup_of` 표시 — HG001·HG003·HG004·HG005의 chemistry2는 HudsonAlpha와 **movie가 동일**
-  (형태만 fastq/uBAM). 기본 제출에서 빠지며, 돌릴 필요도 없다 (VCF가 필요하면 primary 결과를 복사).
+  (형태만 fastq/uBAM). 기본 제출에서 빠진다. 다만 카탈로그상 별개 데이터셋이라 "전부 VCF까지" 정책을
+  문자 그대로 채우려면 돌려야 하고, 실측 기준 4개(406 GiB) 동시 실행에 6~7시간이면 끝난다:
+  `DUP_OK=1 scripts/10_submit.sh <dsid>` (돌리지 않으면 `50_update_catalog.py`가 그 4행을 계속 "대기"로 보고).
 - 산출: `/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/<sample>/PacBio/<dataset>/{02_alignedBAM,03_VCF,04_QC}`
 - 입력 합계 3.13 TiB (중복 제외 2.73 TiB, 34 runs). 노드 3개 / 노드당 2잡 = 동시 6런.
 

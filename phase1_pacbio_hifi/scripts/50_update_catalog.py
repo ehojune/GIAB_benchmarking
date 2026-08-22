@@ -34,6 +34,8 @@ REPO = PHASE1.parent
 CATALOG = REPO / "catalog" / "master_catalog.tsv"
 NF_CONFIG = PHASE1 / "pipeline" / "pacbio-hifi-wgs" / "nextflow.config"
 SCRIPT_REF = "phase1_pacbio_hifi/scripts/10_submit.sh"
+NEXT_STEP_DONE = ("phase1 raw→VCF 완료 (pbmm2 정렬 + DeepVariant/Clair3 + pbsv + WhatsHap 위상). "
+                  "산출물 경로는 variant_local_path. 다음: truth set 대비 hap.py 정확도 평가.")
 
 
 def tool_versions():
@@ -145,6 +147,9 @@ def main():
         set_cell(row, "variant_by", "me", changes)
         set_cell(row, "variant_local_path", f"{mid}/03_VCF", changes)
         set_cell(row, "variant_script", SCRIPT_REF, changes)
+        # next_step은 "정렬→변이 호출을 해야 한다" 같은 문구로 남아 있어 방금 채운 칸과 모순된다.
+        # 날짜를 넣지 않아 재실행해도 같은 값이다(멱등).
+        set_cell(row, "next_step", NEXT_STEP_DONE, changes)
         if changes:
             updated.append((label, changes))
 
@@ -167,7 +172,6 @@ def main():
         fh.write("\n".join("\t".join(r) for r in rows) + "\n")
     subprocess.run([sys.executable, str(REPO / "catalog" / "build_readme.py")], check=True)
     print(f"{len(updated)}개 행 갱신 + README 표 재생성 완료. git diff 확인 후 커밋할 것.")
-    print("참고: 갱신된 행의 next_step 문구는 자동으로 안 고침 — 낡았으면 직접 수정.")
 
 
 if __name__ == "__main__":
