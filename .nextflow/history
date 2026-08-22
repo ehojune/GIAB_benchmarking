@@ -1,0 +1,2 @@
+2026-08-19 15:21:50	-	sad_stonebraker	-	6e563e54362cddb8e48d15c156251708c22d0e8d	e97e8615-ee89-4e52-9e5f-f373dfee91c8	nextflow run nf-core/nanoseq -r 3.1.0 -profile singularity --help
+2026-08-19 15:28:58	5.9s	zen_hawking	ERR	6e563e54362cddb8e48d15c156251708c22d0e8d	ac594281-69b5-43e0-862e-faa26ff79460	nextflow run nf-core/nanoseq -r 3.1.0 -profile test,singularity --outdir /BiO/scratch/ehojune/nanoseq_test -w /BiO/scratch/ehojune/nxf_work

@@ -40,7 +40,7 @@ python catalog/build_readme.py
 
 | category | 데이터셋 | GiB | 정렬 | 페이징 | 변이 | 메틸 | somatic | 어셈블리 | GIAB 처리물 보유 |
 |---|---|---|---|---|---|---|---|---|---|
-| PacBio HiFi | 28 | 8,634 | 20 | 20 | 17 | 14 | 4 | 0 | 0 |
+| PacBio HiFi | 28 | 8,634 | 28 | 28 | 28 | 14 | 4 | 0 | 0 |
 | PacBio CLR | 8 | 13,388 | 7 | 3 | 1 | 0 | 0 | 0 | 0 |
 | Oxford Nanopore | 18 | 11,854 | 17 | 9 | 1 | 5 | 4 | 2 | 17 |
 | Illumina WGS | 28 | 21,689 | 23 | 0 | 8 | 0 | 0 | 0 | 24 |
@@ -58,29 +58,29 @@ python catalog/build_readme.py
 
 | 데이터셋 | 샘플 | 플랫폼 | GiB | 리드 | index | 정렬 | 페이징 | 변이 | 메틸 | somatic | 어셈블리 | 출처 | 다음 할 일 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| HiFi CCS (HudsonAlpha) | HG001 | Sequel II (m64109) | 66 | ✓ FASTQ | – | ✗ | ✗ | ✗ | – | – | ✗ | 문서 | FASTQ를 pbmm2 --preset CCS(HiFi)로 GRCh38-GIABv3에 정렬 후 Deep… |
+| HiFi CCS (HudsonAlpha) | HG001 | Sequel II (m64109) | 66 | ✓ FASTQ | – | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | – | – | ✗ | 문서 | FASTQ를 pbmm2 --preset CCS(HiFi)로 GRCh38-GIABv3에 정렬 후 Deep… |
 | HiFi SequelII 11kb | HG001 | Sequel II | 110 | ✓ FASTQ | ✓ | ✓ pbmm2 align | ✓ WhatsHap 0.17 haplotag | ✓ pbsv v2.2.1 | – | – | ✗ | 문서 | PRJNA540705 리드 6 cell 확보 완료(2026-08-21, 64.6 GiB, md5 검증)… |
 | HiFi chemistry2 | HG001 | Sequel II (m64109) | 210 | ✓ hifi_reads/uBAM | △ 6개 | ✓ pbmm2 v1.1.0 | ✓ N/A | ✓ GATK 4.0.10.1 HaplotypeCaller +1 | ✓ N/A | – | ✗ | 문서 | uBAM(염기수식 태그 포함)을 pbmm2 --preset HIFI로 GRCh38-GIABv3에 재정렬… |
-| HiFi CCS 10kb | HG002 | Sequel | 282 | ✓ FASTQ | ✓ | ✓ pbmm2 align +1 | ✓ WhatsHap 0.17 haplotag | ✗ | – | – | ✗ | 문서 | 39개 FASTQ를 병합해 pbmm2 --preset HIFI로 GRCh38-GIABv3 재정렬 → D… |
-| HiFi CCS 15kb | HG002 | Sequel | 292 | ✓ FASTQ | ✓ | ✓ pbmm2 align +1 | ✓ WhatsHap 0.17 haplotag | ✗ | – | – | ✗ | 문서 | 39개 FASTQ 병합 후 pbmm2 --preset HIFI로 GRCh38-GIABv3 재정렬 → D… |
-| HiFi Revio 20231031 | HG002 | Revio (m84039) | 287 | ✓ hifi_reads/uBAM | △ 2개 | ✓ pbmm2 v1.10.0 | ✓ HiPhase | ✓ DeepVariant +2 | ✓ pb-CpG-tools | – | ✗ | 문서 | uBAM을 그대로 HiFi-human-WGS-WDL(또는 pbmm2 → DeepVariant → HiP… |
-| HiFi SequelII 11kb | HG002 | Sequel II | 209 | ✓ FASTQ | ✓ | ✓ pbmm2 align | ✓ WhatsHap 0.17 haplotag | ✗ | – | – | ✗ | 문서 | 6개 FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 재정렬 → DeepVa… |
-| HiFi chemistry2 | HG002 | Sequel II | 573 | ✓ FASTQ | ✓ | ✓ pbmm2 align +1 | ✓ whatshap haplotag, 버전 미기재 | ✓ GATK 4.0.10.1 HaplotypeCaller… +1 | – | – | ✗ | 문서 | 6개 FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 재정렬 → DeepVa… |
-| HiFi CCS (Google) | HG003 | Sequel II | 45 | ✓ FASTQ | – | ✗ | ✗ | ✗ | – | – | ✗ | 문서 | 3개 FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 DeepVar… |
-| HiFi CCS (HudsonAlpha) | HG003 | Sequel II (m64017) | 191 | ✓ FASTQ | – | ✗ | ✗ | ✗ | – | – | ✗ | 파일명 | 중복 FASTQ 하나만 골라 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 변… |
-| HiFi Revio 20231031 | HG003 | Revio (m84039) | 276 | ✓ hifi_reads/uBAM | △ 2개 | ✓ pbmm2 v1.10.0 | ✓ HiPhase | ✓ DeepVariant +2 | ✓ pb-CpG-tools | – | ✗ | 문서 | uBAM을 HiFi-human-WGS-WDL(또는 pbmm2 → DeepVariant → HiPhase… |
+| HiFi CCS 10kb | HG002 | Sequel | 282 | ✓ FASTQ | ✓ | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | – | – | ✗ | 문서 | 39개 FASTQ를 병합해 pbmm2 --preset HIFI로 GRCh38-GIABv3 재정렬 → D… |
+| HiFi CCS 15kb | HG002 | Sequel | 292 | ✓ FASTQ | ✓ | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | – | – | ✗ | 문서 | 39개 FASTQ 병합 후 pbmm2 --preset HIFI로 GRCh38-GIABv3 재정렬 → D… |
+| HiFi Revio 20231031 | HG002 | Revio (m84039) | 287 | ✓ hifi_reads/uBAM | △ 2개 | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | ✓ pb-CpG-tools | – | ✗ | 문서 | uBAM을 그대로 HiFi-human-WGS-WDL(또는 pbmm2 → DeepVariant → HiP… |
+| HiFi SequelII 11kb | HG002 | Sequel II | 209 | ✓ FASTQ | ✓ | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | – | – | ✗ | 문서 | 6개 FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 재정렬 → DeepVa… |
+| HiFi chemistry2 | HG002 | Sequel II | 573 | ✓ FASTQ | ✓ | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | – | – | ✗ | 문서 | 6개 FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 재정렬 → DeepVa… |
+| HiFi CCS (Google) | HG003 | Sequel II | 45 | ✓ FASTQ | – | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | – | – | ✗ | 문서 | 3개 FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 DeepVar… |
+| HiFi CCS (HudsonAlpha) | HG003 | Sequel II (m64017) | 191 | ✓ FASTQ | – | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | – | – | ✗ | 파일명 | 중복 FASTQ 하나만 골라 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 변… |
+| HiFi Revio 20231031 | HG003 | Revio (m84039) | 276 | ✓ hifi_reads/uBAM | △ 2개 | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | ✓ pb-CpG-tools | – | ✗ | 문서 | uBAM을 HiFi-human-WGS-WDL(또는 pbmm2 → DeepVariant → HiPhase… |
 | HiFi chemistry2 | HG003 | Sequel II (m64017) | 658 | ✓ hifi_reads/uBAM | △ 6개 | ✓ pbmm2 | ✓ whatshap haplotag \| GIAB_5mC… +1 | ✓ DeepVariant v0.9.0 + GATK MAP… | ✓ ccs v6.2.0 +1 | – | ✗ | 문서 | uBAM을 입력으로 ccs/primrose 대신 최신 pbmm2 + DeepVariant + HiPha… |
-| HiFi CCS (Google) | HG004 | Sequel II (m64017) | 43 | ✓ FASTQ | – | ✗ | ✗ | ✗ | – | – | ✗ | 문서 | 3개 FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 DeepVar… |
-| HiFi CCS (HudsonAlpha) | HG004 | Sequel II (m64017) | 196 | ✓ FASTQ | – | ✗ | ✗ | ✗ | – | – | ✗ | 문서 | 중복 FASTQ 하나만 골라 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 변… |
-| HiFi Revio 20231031 | HG004 | Revio (m84039) | 208 | ✓ hifi_reads/uBAM | △ 2개 | ✓ pbmm2 v1.10.0 | ✓ HiPhase | ✓ DeepVariant +2 | ✓ pb-CpG-tools | – | ✗ | 문서 | uBAM을 HiFi-human-WGS-WDL 또는 pbmm2 → DeepVariant → HiPhase… |
+| HiFi CCS (Google) | HG004 | Sequel II (m64017) | 43 | ✓ FASTQ | – | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | – | – | ✗ | 문서 | 3개 FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 DeepVar… |
+| HiFi CCS (HudsonAlpha) | HG004 | Sequel II (m64017) | 196 | ✓ FASTQ | – | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | – | – | ✗ | 문서 | 중복 FASTQ 하나만 골라 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 변… |
+| HiFi Revio 20231031 | HG004 | Revio (m84039) | 208 | ✓ hifi_reads/uBAM | △ 2개 | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | ✓ pb-CpG-tools | – | ✗ | 문서 | uBAM을 HiFi-human-WGS-WDL 또는 pbmm2 → DeepVariant → HiPhase… |
 | HiFi chemistry2 | HG004 | Sequel II (m64017) | 577 | ✓ hifi_reads/uBAM | △ 6개 | ✓ pbmm2 | ✓ whatshap haplotag, 버전 미기재 | ✓ DeepVariant v0.9.0 + GATK MAP… | ✓ N/A | – | ✗ | 문서 | uBAM을 pbmm2 --preset HIFI로 GRCh38-GIABv3 재정렬 → DeepVarian… |
-| HiFi CCS (HudsonAlpha) | HG005 | Sequel II (m64109, m64017) | 119 | ✓ FASTQ | – | ✗ | ✗ | ✗ | – | – | ✗ | 문서 | FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 DeepVarian… |
+| HiFi CCS (HudsonAlpha) | HG005 | Sequel II (m64109, m64017) | 119 | ✓ FASTQ | – | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | – | – | ✗ | 문서 | FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 DeepVarian… |
 | HiFi SequelII 11kb | HG005 | Sequel II | 123 | ✓ FASTQ | ✓ | ✓ pbmm2 align | ✓ WhatsHap 0.17 haplotag | ✓ pbsv v2.2.1 | – | – | ✗ | 문서 | PRJNA540706 리드 6 cell 확보 완료(2026-08-21, 70.7 GiB, md5 검증)… |
 | HiFi chemistry2 | HG005 | Sequel II (m64109, m64017) | 369 | ✓ hifi_reads/uBAM | △ 7개 | ✓ N/A | ✓ N/A | ✓ DeepVariant | ✓ N/A | – | ✗ | 파일명 | uBAM을 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 → DeepVariant… |
-| HiFi (Google) | HG006 | Sequel II | 56 | ✓ FASTQ | – | ✗ | ✗ | ✗ | – | – | ✗ | 문서 | 3개 FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 DeepVar… |
-| HiFi chemistry2 | HG006 | Sequel II (m64017, m64109) | 386 | ✓ hifi_reads/uBAM | △ 6개 | ✓ N/A | ✓ N/A | ✓ DeepVariant | ✓ N/A | – | ✗ | 문서 | uBAM을 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 → DeepVariant… |
-| HiFi (Google) | HG007 | Sequel II (m64062) | 44 | ✓ FASTQ | – | ✗ | ✗ | ✗ | – | – | ✗ | 문서 | 3개 FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 DeepVar… |
-| HiFi chemistry2 | HG007 | Sequel II (m64017) | 380 | ✓ hifi_reads/uBAM | △ 6개 | ✓ N/A | ✓ N/A | ✓ DeepVariant | ✓ N/A | – | ✗ | 문서 | uBAM을 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 → DeepVariant… |
+| HiFi (Google) | HG006 | Sequel II | 56 | ✓ FASTQ | – | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | – | – | ✗ | 문서 | 3개 FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 DeepVar… |
+| HiFi chemistry2 | HG006 | Sequel II (m64017, m64109) | 386 | ✓ hifi_reads/uBAM | △ 6개 | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | ✓ N/A | – | ✗ | 문서 | uBAM을 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 → DeepVariant… |
+| HiFi (Google) | HG007 | Sequel II (m64062) | 44 | ✓ FASTQ | – | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | – | – | ✗ | 문서 | 3개 FASTQ를 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 후 DeepVar… |
+| HiFi chemistry2 | HG007 | Sequel II (m64017) | 380 | ✓ hifi_reads/uBAM | △ 6개 | ✓ pbmm2 v26.2.0 *(나)* | ✓ WhatsHap v2.8 *(나)* | ✓ DeepVariant v1.10.0 + Clair3… *(나)* | ✓ N/A | – | ✗ | 문서 | uBAM을 pbmm2 --preset HIFI로 GRCh38-GIABv3 정렬 → DeepVariant… |
 | HiFi Revio (BCM) 20240313 | HG008 | Revio (m84059, m84101) | 757 | ✓ hifi_reads | ✓ | ✓ pbmm2 v1.12.0 | ✓ HiPhase | ✓ Clair3 | ✓ pb-CpG-tools +1 | ✓ Severus — PacBio Somatic Pipe… | ✗ | 문서 | T/N uBAM 쌍을 HiFi-Somatic-WDL(또는 pbmm2 → Clair3 → HiPhase… |
 | HiFi Revio 20240125 | HG008 | Revio (m84039) | 637 | ✓ hifi_reads/uBAM | △ 3개 | ✓ pbmm2 v1.10.0 | ✓ HiPhase | ✓ DeepVariant +2 | ✓ pb-CpG-tools | ✗ | ✗ | 문서 | HG008-T와 HG008-N-P(췌장 정상조직) uBAM 쌍으로 소마틱 파이프라인(DeepSomati… |
 | N bulk HiFi Revio + somatic | HG009 | Revio (m84059) | 428 | ✓ uBAM/BAM | ✓ | ✓ pbmm2 v1.17.0 | ✓ HiPhase v1.5.0 | ✓ Clair3 | ✓ pb-CpG-tools v2.3.1 +2 | ✓ DeepSomatic v1.9.0 +4 | ✗ | 문서 | HiFi-somatic-WDL v0.9.4를 그대로 재현하려면 demux uBAM + WT-p4를 정상… |

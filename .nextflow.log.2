@@ -1,0 +1,143 @@
+Aug-19 15:21:32.911 [main] DEBUG nextflow.cli.Launcher - $> nextflow run nf-core/nanoseq -r 3.1.0 -profile singularity --help
+Aug-19 15:21:32.964 [main] DEBUG nextflow.cli.CmdRun - N E X T F L O W  ~  version 24.10.5
+Aug-19 15:21:33.000 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/home/ehojune/.nextflow/plugins; core-plugins: nf-amazon@2.9.2,nf-azure@1.10.2,nf-cloudcache@0.4.2,nf-codecommit@0.2.2,nf-console@1.1.4,nf-google@1.15.4,nf-tower@1.9.3,nf-wave@1.7.4
+Aug-19 15:21:33.017 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Aug-19 15:21:33.018 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Aug-19 15:21:33.020 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.12.0 in 'deployment' mode
+Aug-19 15:21:33.030 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Aug-19 15:21:33.038 [main] DEBUG nextflow.scm.ProviderConfig - Using SCM config path: /home/ehojune/.nextflow/scm
+Aug-19 15:21:33.061 [main] DEBUG nextflow.scm.RepositoryFactory - Found Git repository result: [RepositoryFactory]
+Aug-19 15:21:33.069 [main] INFO  nextflow.cli.CmdRun - Pulling nf-core/nanoseq ...
+Aug-19 15:21:33.072 [main] DEBUG nextflow.scm.RepositoryProvider - Request [credentials -:-] -> https://api.github.com/repos/nf-core/nanoseq/contents/nextflow.config?ref=3.1.0
+Aug-19 15:21:35.253 [main] DEBUG nextflow.scm.RepositoryProvider - Request [credentials -:-] -> https://api.github.com/repos/nf-core/nanoseq/contents/main.nf?ref=3.1.0
+Aug-19 15:21:35.507 [main] DEBUG nextflow.scm.RepositoryProvider - Request [credentials -:-] -> https://api.github.com/repos/nf-core/nanoseq
+Aug-19 15:21:36.127 [main] DEBUG nextflow.scm.AssetManager - Pulling nf-core/nanoseq -- Using remote clone url: https://github.com/nf-core/nanoseq.git
+Aug-19 15:21:43.458 [main] INFO  nextflow.cli.CmdRun -  downloaded from https://github.com/nf-core/nanoseq.git
+Aug-19 15:21:43.474 [main] DEBUG nextflow.config.ConfigBuilder - Found config base: /home/ehojune/.nextflow/assets/nf-core/nanoseq/nextflow.config
+Aug-19 15:21:43.475 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /home/ehojune/.nextflow/assets/nf-core/nanoseq/nextflow.config
+Aug-19 15:21:43.480 [main] DEBUG n.secret.LocalSecretsProvider - Secrets store: /home/ehojune/.nextflow/secrets/store.json
+Aug-19 15:21:43.482 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@3a0b6a] - activable => nextflow.secret.LocalSecretsProvider@3a0b6a
+Aug-19 15:21:43.490 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `singularity`
+Aug-19 15:21:50.417 [main] DEBUG nextflow.config.ConfigBuilder - Available config profiles: [bih, cfc_dev, uzl_omics, ifb_core, embl_hd, mcw_rcc, denbi_qbic, alice, mjolnir_globe, uppmax, giga, verily_workbench, incliva, ilifu, ki_luria, uge, icr_alma, rosalind_uge, lugh, mccleary, unibe_ibu, vai, czbiohub_aws, jax, roslin, iris, tes, unc_longleaf, tigem, tubingen_apg, apollo, ipop_up, vsc_calcua, pdc_kth, test_nodx_vc, ceci_nic5, ccga_cau, humantechnopole, stjude, daisybio, eddie, medair, biowulf, mahuika, bi, bigpurple, adcra, cedars, pawsey_setonix, vsc_kul_uhasselt, purdue_gautschi, rki, ucl_myriad, test_nodx_rnamod, charliecloud, fred_hutch, seattlechildrens, ceres, purdue_negishi, munin, arm, rosalind, hasta, cfc, uzh, shu_bmrc, ebi_codon_slurm, ebc, ccga_dx, crick, ku_sund_danhead, marvin, lrz_cm4, purdue_bell, biohpc_gen, shifter, kelvin2, mana, mamba, york_viking, unc_lccc, wehi, awsbatch, arcc, ceci_dragon2, imperial, maestro, cannon, genotoul, nci_gadi, abims, eva_grace, janelia, nu_genomics, googlebatch, oist, sahmri, kaust, alliance_canada, mpcdf, leicester, vsc_ugent, create, sage, cambridge, jex, podman, ebi_codon, cheaha, xanadu, nyu_hpc, test, marjorie, palmetto, computerome, ucd_sonic, seg_globe, mssm, sanger, dkfz, bluebear, pasteur, einstein, ethz_euler, m3c, test_full, imb, ucl_cscluster, tuos_stanage, test_nodx_noaln, test_nodx_stringtie, azurebatch, seadragon, crukmi, csiro_petrichor, qmul_apocrita, docker, engaging, gis, hypatia, psmn, eva, unity, cropdiversityhpc, nygc, fgcz, conda, crg, singularity, mpcdf_viper, dirac, self_hosted_runner, tufts, uw_hyak_pedslabs, binac2, hki_genie, debug, genouest, cbe, unsw_katana, utd_juno, hazel, phoenix, gitpod, seawulf, uod_hpc, fub_curta, lovelace, uct_hpc, aws_tower, fsu_draco]
+Aug-19 15:21:50.448 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declaration
+Aug-19 15:21:50.449 [main] DEBUG nextflow.cli.CmdRun - Launching `https://github.com/nf-core/nanoseq` [sad_stonebraker] DSL2 - revision: 6e563e5436 [3.1.0]
+Aug-19 15:21:50.450 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Aug-19 15:21:50.450 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
+Aug-19 15:21:50.491 [main] DEBUG nextflow.Session - Session UUID: e97e8615-ee89-4e52-9e5f-f373dfee91c8
+Aug-19 15:21:50.491 [main] DEBUG nextflow.Session - Run name: sad_stonebraker
+Aug-19 15:21:50.492 [main] DEBUG nextflow.Session - Executor pool size: 72
+Aug-19 15:21:50.498 [main] DEBUG nextflow.file.FilePorter - File porter settings maxRetries=3; maxTransfers=50; pollTimeout=null
+Aug-19 15:21:50.501 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=216; workQueue=LinkedBlockingQueue[-1]; allowCoreThreadTimeout=false
+Aug-19 15:21:50.514 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 24.10.5 build 5935
+  Created: 04-03-2025 17:55 UTC (05-03-2025 02:55 KDT)
+  System: Linux 4.18.0-477.10.1.el8_8.x86_64
+  Runtime: Groovy 4.0.23 on OpenJDK 64-Bit Server VM 17.0.18-internal+0-adhoc.conda.src
+  Encoding: UTF-8 (UTF-8)
+  Process: 1819111@nbbcluster2 [1.9.1.41]
+  CPUs: 72 - Mem: 377 GB (256.6 GB) - Swap: 16 GB (16 GB)
+Aug-19 15:21:50.525 [main] DEBUG nextflow.Session - Work-dir: /home/ehojune/GIAB_benchmarking/work [xfs]
+Aug-19 15:21:50.545 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Aug-19 15:21:50.552 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Aug-19 15:21:50.590 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Aug-19 15:21:50.597 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 73; maxThreads: 1000
+Aug-19 15:21:50.637 [main] DEBUG nextflow.Session - Session start
+Aug-19 15:21:50.639 [main] DEBUG nextflow.trace.TraceFileObserver - Workflow started -- trace file: /home/ehojune/GIAB_benchmarking/results/pipeline_info/execution_trace_2026-08-19_15-21-50.txt
+Aug-19 15:21:50.643 [main] DEBUG nextflow.Session - Using default localLib path: /home/ehojune/.nextflow/assets/nf-core/nanoseq/lib
+Aug-19 15:21:50.645 [main] DEBUG nextflow.Session - Adding to the classpath library: /home/ehojune/.nextflow/assets/nf-core/nanoseq/lib
+Aug-19 15:21:50.646 [main] DEBUG nextflow.Session - Adding to the classpath library: /home/ehojune/.nextflow/assets/nf-core/nanoseq/lib/nfcore_external_java_deps.jar
+Aug-19 15:21:51.173 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Aug-19 15:21:51.211 [main] INFO  nextflow.Nextflow - 
+
+-[2m----------------------------------------------------[0m-
+                                        [0;32m,--.[0;30m/[0;32m,-.[0m
+[0;34m        ___     __   __   __   ___     [0;32m/,-._.--~'[0m
+[0;34m  |\ | |__  __ /  ` /  \ |__) |__         [0;33m}  {[0m
+[0;34m  | \| |       \__, \__/ |  \ |___     [0;32m\`-._,-`-,[0m
+                                        [0;32m`._,._,'[0m
+[0;35m  nf-core/nanoseq v3.1.0-g6e563e5[0m
+-[2m----------------------------------------------------[0m-
+Typical pipeline command:
+
+  [0;36mnextflow run nf-core/nanoseq --input samplesheet.csv --genome GRCh37 -profile docker[0m
+
+[4m[1mInput/output options[0m
+  --input                      [2m[string]  [0mPath to comma-separated file containing information about the samples in the experiment.[2m [default: 
+                                         ./samplesheet.csv][0m 
+  --protocol                   [2m[string]  [0mInput sample type. Valid options: 'DNA', 'cDNA',  and 'directRNA'.[2m[0m
+  --outdir                     [2m[string]  [0mThe output directory where the results will be saved. You have to use absolute paths to storage on Cloud 
+                                         infrastructure.[2m[0m 
+  --email                      [2m[string]  [0mEmail address for completion summary.[2m[0m
+  --multiqc_title              [2m[string]  [0mMultiQC report title. Printed as page header, used for filename if not otherwise specified.[2m[0m
+
+[4m[1mDemultiplexing options[0m
+  --input_path                 [2m[string]  [0mPath to Nanopore run directory files (e.g. 'fastq_pass/*') or a basecalled fastq file that requires 
+                                         demultiplexing.[2m[0m 
+  --barcode_kit                [2m[string]  [0mBarcode kit used to perform the sequencing e.g. 'SQK-PBK004'.[2m[0m
+  --barcode_both_ends          [2m[boolean] [0mRequire barcode on both ends for basecaller.[2m[0m
+  --trim_barcodes              [2m[boolean] [0mTrim barcodes from the output sequences in the FastQ files from basecaller.[2m[0m
+  --gpu_device                 [2m[string]  [0mDevice specified in GPU mode using '--device'.[2m [default: auto][0m
+  --gpu_cluster_options        [2m[string]  [0mCluster options required to use GPU resources (e.g. '--part=gpu --gres=gpu:1').[2m[0m
+  --qcat_min_score             [2m[integer] [0mSpecify the minimum quality score for qcat in the range 0-100.[2m [default: 60][0m
+  --qcat_detect_middle         [2m[boolean] [0mSearch for adapters in the whole read by applying the '--detect-middle' parameter in qcat.[2m[0m
+  --skip_demultiplexing        [2m[boolean] [0mSkip demultiplexing with qcat.[2m[0m
+  --run_nanolyse               [2m[boolean] [0mFilter reads from FastQ files using NanoLyse[2m[0m
+  --nanolyse_fasta             [2m[string]  [0mFasta file to be filtered against using NanoLyse[2m[0m
+
+[4m[1mAlignment options[0m
+  --aligner                    [2m[string]  [0mSpecifies the aligner to use i.e. 'minimap2' or 'graphmap2'.[2m [default: minimap2][0m
+  --stranded                   [2m[boolean] [0mSpecifies if the data is strand-specific. Automatically activated when using '--protocol directRNA'.[2m[0m
+  --save_align_intermeds       [2m[boolean] [0mSave the '.sam' files from the alignment step - not done by default.[2m[0m
+  --skip_alignment             [2m[boolean] [0mSkip alignment and downstream processes.[2m[0m
+
+[4m[1mVariant calling options[0m
+  --call_variants              [2m[boolean] [0mSpecifies if variant calling will executed.[2m[0m
+  --variant_caller             [2m[string]  [0mSpecifies the variant caller that will used to call small variants (available are: medaka, deepvariant, and 
+                                         pepper_margin_deepvariant). Variant calling is only available if '--call_variants' is set and the protocol is set to 
+                                         `DNA`. Please note `deepvariant` and `pepper_margin_deepvariant` are only avaible if using singularity or docker.[2m 
+                                         [default: medaka][0m 
+  --structural_variant_caller  [2m[string]  [0mSpecifies the variant caller that will be used to call structural variants (available are: sniffles and cutesv). 
+                                         Structural variant calling is only available if '--call_variants' is set and the protocol is set to `DNA`.[2m 
+                                         [default: sniffles][0m 
+  --split_mnps                 [2m[boolean] [0mSpecifies if MNPs will be split into SNPs when using medaka.[2m[0m
+  --deepvariant_gpu            [2m[boolean] [0mSpecifies whether to call variants with pepper_margin_deepvariant in GPU mode.[2m[0m
+  --phase_vcf                  [2m[boolean] [0mSpecifies if vcf will be phased when using medaka.[2m[0m
+  --skip_vc                    [2m[boolean] [0mSkip variant calling.[2m[0m
+  --skip_sv                    [2m[boolean] [0mSkip structural variant calling.[2m[0m
+
+[4m[1mDifferential analysis options[0m
+  --quantification_method      [2m[string]  [0mSpecifies the transcript quantification method to use (available are: bambu or stringtie2). Only available when 
+                                         protocol is cDNA or directRNA.[2m [default: bambu][0m 
+  --skip_quantification        [2m[boolean] [0mSkip transcript quantification and differential analysis.[2m[0m
+  --skip_differential_analysis [2m[boolean] [0mSkip differential analysis with DESeq2 and DEXSeq.[2m[0m
+
+[4m[1mRNA fusion analysis options[0m
+  --jaffal_ref_dir             [2m[string]  [0mSpecifies the reference directory for JAFFAL.[2m [default: for_jaffal][0m
+  --skip_fusion_analysis       [2m[boolean] [0mSkip differential analysis with DESeq2 and DEXSeq.[2m[0m
+
+[4m[1mRNA modification analysis options[0m
+  --skip_modification_analysis [2m[boolean] [0mSkip RNA modification analysis.[2m[0m
+  --skip_xpore                 [2m[boolean] [0mSkip differential modification analysis with xpore.[2m[0m
+  --skip_m6anet                [2m[boolean] [0mSkip m6A detection with m6anet.[2m[0m
+
+[4m[1mProcess skipping options[0m
+  --skip_bigbed                [2m[boolean] [0mSkip BigBed file generation.[2m[0m
+  --skip_bigwig                [2m[boolean] [0mSkip BigWig file generation.[2m[0m
+  --skip_nanoplot              [2m[boolean] [0mSkip NanoPlot.[2m[0m
+  --skip_fastqc                [2m[boolean] [0mSkip FastQC.[2m[0m
+  --skip_multiqc               [2m[boolean] [0mSkip MultiQC.[2m[0m
+  --skip_qc                    [2m[boolean] [0mSkip all QC steps apart from MultiQC.[2m[0m
+
+[2m!! Hiding 22 params, use --show_hidden_params to show them !!
+[0m-[2m----------------------------------------------------[0m-
+If you use nf-core/nanoseq for your analysis please cite:
+
+* The pipeline
+  https://doi.org/10.5281/zenodo.5740870
+
+* The nf-core framework
+  https://doi.org/10.1038/s41587-020-0439-x
+
+* Software dependencies
+  https://github.com/nf-core/nanoseq/blob/master/CITATIONS.md
+-[2m----------------------------------------------------[0m-
