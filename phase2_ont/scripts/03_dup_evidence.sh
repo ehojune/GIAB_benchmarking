@@ -17,6 +17,14 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$HERE/../env.sh"
+source "$HERE/lib.sh"
+
+# 로그인 노드에 samtools가 PATH로 없을 수 있다 (2026-08-23 nbb2 실측: command not found).
+# 이미 캐시해 둔 samtools 컨테이너로 대신 돌린다 — 나머지 스크립트가 samtools를 전부
+# Nextflow 컨테이너 안에서만 쓰는 것과 같은 원칙.
+SAMTOOLS_IMG="$(p2_img_path "$(p2_container_uris | grep '/samtools:')")"
+[ -s "$SAMTOOLS_IMG" ] || { echo "ERROR: samtools 컨테이너가 없다 ($SAMTOOLS_IMG) — 01_prepare_login_node.sh 먼저"; exit 1; }
+st() { singularity exec --bind "$GIAB_ROOT" "$SAMTOOLS_IMG" samtools "$@"; }
 
 OUT="${OUT:-$INFRA/logs/dup_evidence}"
 SAMPLE_N="${SAMPLE_N:-200000}"      # summary 없는 릴리스에서 뽑아 볼 리드 수
@@ -106,11 +114,11 @@ run_hg001() {
     local relsum="$G/ext/nanopore-wgs-consortium/rel6/rel_6_sequencing_summary.txt.gz"
     if have "$bam"; then
         echo "  -- BAM 헤더의 @RG / @PG (무엇을 정렬한 것인지) --"
-        samtools view -H "$bam" | grep -E '^@(RG|PG)' | head -20 | sed 's/^/    /'
+        st view -H "$bam" | grep -E '^@(RG|PG)' | head -20 | sed 's/^/    /'
         echo "  -- 리드 수 (idxstats 합계) --"
-        samtools idxstats "$bam" | awk '{m+=$3; u+=$4} END{printf "    mapped=%d unmapped=%d 합계=%d\n", m, u, m+u}'
+        st idxstats "$bam" | awk '{m+=$3; u+=$4} END{printf "    mapped=%d unmapped=%d 합계=%d\n", m, u, m+u}'
         echo "  -- BAM 앞부분 read_id 표본 --"
-        { samtools view "$bam" 2>/dev/null || true; } | awk -v n=50000 '{print $1; c++; if(c>=n) exit}' \
+        { st view "$bam" 2>/dev/null || true; } | awk -v n=50000 '{print $1; c++; if(c>=n) exit}' \
             | LC_ALL=C sort -u | gzip > "$OUT/hg001_bam.readids.gz"
         printf '    표본 %s개\n' "$(zcat "$OUT/hg001_bam.readids.gz" | wc -l)"
     fi
