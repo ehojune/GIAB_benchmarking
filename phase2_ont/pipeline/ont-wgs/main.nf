@@ -548,19 +548,25 @@ process CLAIR3 {
     output:
         tuple val(meta), path("${meta.id}.${ref_name}.clair3.vcf.gz"), path("${meta.id}.${ref_name}.clair3.vcf.gz.tbi"), emit: vcf
     script:
-    def prefix   = "${meta.id}.${ref_name}.clair3"
-    def ext      = model_dir.name != 'NO_MODEL_DIR'
-    def mpath    = ext ? "${model_dir}/${params.clair3_model}" : "/opt/models/${params.clair3_model}"
-    def extra_ls = ext ? "ls ${model_dir}/ >&2 || true" : "true"
+    def prefix  = "${meta.id}.${ref_name}.clair3"
+    def has_ext = model_dir.name != 'NO_MODEL_DIR'
+    def try_ext = has_ext
+        ? "[ -d \"${model_dir}/${params.clair3_model}\" ] && MPATH=\"${model_dir}/${params.clair3_model}\""
+        : ": # --clair3_model_dir 없음"
+    def ls_ext  = has_ext ? "echo '  in --clair3_model_dir:' >&2; ls ${model_dir}/ >&2 || true" : "true"
     """
-    # 모델이 없으면 Clair3는 엉뚱한 오류로 죽거나 조용히 이상한 결과를 낸다.
-    # 여기서 먼저 끊고 어떤 모델이 있는지 보여준다.
-    if [ ! -d "${mpath}" ]; then
-        echo "ERROR: clair3 model not found: ${mpath}" >&2
+    # 모델은 이미지 /opt/models와 --clair3_model_dir 양쪽에 나뉘어 있을 수 있다 (일부 모델은
+    # 이미지에만, 일부는 model_dir에만). --clair3_model_dir가 주어졌다고 무조건 그쪽만 보면
+    # 이미지 전용 모델을 쓰는 런이 여기서 조용히 죽는다 — 2026-08-23 nbb2 실측으로 실제 걸림
+    # (제출 12개 중 8개가 이 경로로 실패). 그래서 두 곳을 다 보고 실제로 있는 쪽을 쓴다.
+    MPATH=""
+    ${try_ext}
+    [ -z "\$MPATH" ] && [ -d "/opt/models/${params.clair3_model}" ] && MPATH="/opt/models/${params.clair3_model}"
+    if [ -z "\$MPATH" ]; then
+        echo "ERROR: clair3 model '${params.clair3_model}' not found in image /opt/models or --clair3_model_dir" >&2
         echo "  in image /opt/models:" >&2
         ls /opt/models/ >&2 || true
-        echo "  in --clair3_model_dir (있으면):" >&2
-        ${extra_ls}
+        ${ls_ext}
         exit 1
     fi
     /opt/bin/run_clair3.sh \\
@@ -568,7 +574,7 @@ process CLAIR3 {
         --ref_fn=${fasta} \\
         --threads=${task.cpus} \\
         --platform=${params.clair3_platform} \\
-        --model_path="${mpath}" \\
+        --model_path="\$MPATH" \\
         --sample_name=${meta.sample} \\
         --output=clair3_out \\
         ${params.clair3_args}
