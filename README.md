@@ -43,7 +43,7 @@ python catalog/build_readme.py
 |---|---|---|---|---|---|---|---|---|---|
 | PacBio HiFi | 28 | 8,634 | 28 | 28 | 28 | 14 | 4 | 0 | 0 |
 | PacBio CLR | 8 | 13,388 | 7 | 3 | 1 | 0 | 0 | 0 | 0 |
-| Oxford Nanopore | 18 | 11,854 | 17 | 15 | 12 | 5 | 4 | 2 | 17 |
+| Oxford Nanopore | 18 | 11,854 | 17 | 16 | 13 | 5 | 4 | 2 | 17 |
 | Illumina WGS | 28 | 21,689 | 23 | 0 | 8 | 0 | 0 | 0 | 24 |
 | BGI / MGI | 14 | 5,302 | 3 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Exome | 11 | 977 | 11 | 0 | 2 | 0 | 0 | 0 | 0 |
@@ -125,7 +125,7 @@ python catalog/build_readme.py
 | UCSC ONT-UL PromethION R9.4.1 Guppy 4.2.2 (phased) | HG006 | PromethION ultralong, R9.… | 470 | ✓ fastq | ✓ | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + Sniffles2 v2.… *(나)* | – | – | ✗ | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
 | UCSC ONT-UL PromethION R9.4.1 Guppy 4.2.2 (phased) | HG007 | PromethION ultralong, R9.… | 382 | ✓ fastq | ✓ | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + Sniffles2 v2.… *(나)* | – | – | ✗ | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
 | N (십이지장/췌장) Northeastern ONT-std R10.4.1 dorado 0.5.3 | HG008 | ONT R10.4.1 standard | 2,754 | ✓ fastq/BAM | △ 7개 | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + DeepVariant v… *(나)* | ✓ dorado v0.5.3 +1 | ✓ Severus v1.0 +4 | ✓ hifiasm v0.19.9-r616 | 툴 값은 유지하되 tool_source에 giab_doc:data_somatic/HG008/Liss_lab/other_passages/analysis/GRCh38/BCM_ONT-std_HG008T-p2_20260313/HG008-T_vs_HG008-N-P/README_HG008-T_vs_HG008-N-P_ONT.md 를 추가해야 함 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
-| T Northeastern ONT-UL R10.4.1 dorado 0.8.1 (54x) | HG008 | ONT R10.4.1 ultralong | 537 | ✓ BAM/pod5 | △ 1개 | ✓ minimap2 2.26-r1175 +1 | ✗ | ✗ | ✓ dorado v0.8.1 | ✗ | ✗ | 문서 | unaligned BAM으로 modkit 파일업(메틸)이나 HG008-N 대비 소마틱 SV/SNV 호출… |
+| T Northeastern ONT-UL R10.4.1 dorado 0.8.1 (54x) | HG008 | ONT R10.4.1 ultralong | 537 | ✓ BAM/pod5 | △ 1개 | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + DeepVariant v… *(나)* | ✓ dorado v0.8.1 | ✗ | ✗ | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
 | T UCSC ONT-UL R10.4.1 dorado 0.4.3 (54x, 5mCG-5hmCG) | HG008 | ONT R10.4.1 ultralong | 437 | ✓ BAM/pod5 | △ 3개 | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + DeepVariant v… *(나)* | ✓ dorado v0.4.3 | ✓ Sniffles v2.2 | ✓ hifiasm v0.19.9-r616 +1 | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
 | T UCSC ONT-std R10.4.1 dorado 0.3.4 (63x, 5mCG-5hmC) | HG008 | ONT R10.4.1 standard | 510 | ✓ BAM | △ 1개 | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + DeepVariant v… *(나)* | ✓ dorado v0.3.4 | ✓ Sniffles v2.2; Severus v1.0 +4 | ✗ | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
 | HG008T-p2 BCM ONT-std 100X (플로우셀 2개, ubam 1090) | HG008 | ONT | 853 | ✓ BAM | △ 1090개 | ✓ minimap2 | ✓ longphase | ✓ Clair3 | ✓ dorado +1 | ✓ ClairS + Severus | ✗ | 문서 | 정렬·haplotag·소마틱·메틸까지 끝난 GIAB 산출물 그대로 사용. 재현하려면 pass ubam… |
