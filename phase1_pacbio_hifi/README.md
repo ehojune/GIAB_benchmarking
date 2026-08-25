@@ -79,13 +79,22 @@ bash phase1_pacbio_hifi/scripts/01_prepare_login_node.sh   # 1회: SGE 점검 + 
 bash phase1_pacbio_hifi/scripts/02_fetch_sra_reads.sh      # 1회: HG001·HG005 리드 (SRA, 135 GiB)
 bash phase1_pacbio_hifi/scripts/10_submit.sh --ready       # 준비된 것 전부 제출 (dup 제외; --list로 미리보기)
 bash phase1_pacbio_hifi/scripts/20_status.sh               # 진행 대시보드 (입력/잡 상태/단계별 산출물)
-bash phase1_pacbio_hifi/scripts/30_verify_outputs.sh       # 완료 검증 (dsid 인자 주면 그것만)
+bash phase1_pacbio_hifi/scripts/30_verify_outputs.sh       # 산출물 존재 검증 (dsid 인자 주면 그것만)
+python phase1_pacbio_hifi/scripts/35_review_qc.py          # QC 지표 리뷰 (이상치 표시; --tsv 로 요약 저장)
 python phase1_pacbio_hifi/scripts/50_update_catalog.py     # 완료분 → 카탈로그+README 표 반영, git diff 보고 커밋
 ```
 
 - 특정 것만: `10_submit.sh HG002.PacBio_CCS_15kb ...` / 로그: `tail -f $INFRA/logs/<dsid>.<jobid>.log`
 - 잡이 죽으면 **같은 dsid로 재제출하면 -resume** 으로 이어서 돈다 (완료분 재계산 없음).
 - 끝난 run의 중간 파일 정리: `scripts/40_clean_work.sh <dsid>` (verify 통과분만 지움).
+- **30은 파일이 있는지만 본다.** 커버리지가 반토막이거나 변이 수가 두 배거나 위상이 거의 안 잡힌
+  런도 통과한다. `35_review_qc.py`가 그 틈을 메운다 — 파이프라인이 이미 만든 QC 파일
+  (mosdepth·samtools stats·bcftools stats·whatshap stats·MultiQC)만 읽어서 실행 단위별로
+  커버리지·매핑률·error rate·리드길이·SNP/INDEL 수·ts/tv·SV 수·위상 비율·block N50을 표로 뽑고,
+  기준을 벗어난 것과 **DeepVariant↔Clair3 불일치(20% 이상)** 를 표시한다. 새로 계산하지 않아 몇 초면 끝난다.
+  기준값은 스크립트 맨 위 `TH` dict에서 조정한다. 종양(HG008·HG009)은 배수성 때문에 변이 수 검사에서 면제.
+  exit 1은 QC 파일 자체가 없을 때만이고(파이프라인 QC 스테이지 실패), 기준 초과는 경고로만 남긴다.
+  `50_update_catalog.py`의 완료 판정도 30과 같은 파일 목록이라 QC 내용은 보지 않는다 — 35를 별도로 돌릴 것.
 - **다운로드가 진행 중이어도 그냥 제출하면 된다.** `--ready`는 입력이 (1) manifest와 크기가 같고
   (2) 최근 10분간 쓰이지 않은 실행 단위만 집는다. 나중에 다시 돌리면 새로 준비된 것이 제출된다
   (완료/실행 중인 것은 자동 스킵). 대기 시간은 `READY_AGE_MIN=N`으로 조정.
