@@ -15,13 +15,18 @@
   python phase1_pacbio_hifi/scripts/35_review_qc.py                 # 전체
   python phase1_pacbio_hifi/scripts/35_review_qc.py HG002.PacBio_CCS_10kb
   python phase1_pacbio_hifi/scripts/35_review_qc.py --tsv qc_review.tsv   # 공유용 요약 저장
-  python phase1_pacbio_hifi/scripts/35_review_qc.py --wide            # 전체 컬럼 콘솔 출력
+  python phase1_pacbio_hifi/scripts/35_review_qc.py --pass-counts     # PASS만 다시 세어 변이 수까지 판정
+
+주의: 파이프라인의 04_QC/bcftools_stats 는 PASS 필터 없이 돌아서 SNP/INDEL/ts-tv 가
+RefCall 포함 raw 카운트다. 기본 실행은 그 값을 ~표시로 보여주기만 하고 판정하지 않는다.
+변이 수로 판정하려면 --pass-counts (bcftools 필요, 런당 수십 초).
 
 exit 1 = 완료된 런인데 QC 파일이 없음(파이프라인 QC 스테이지 실패). WARN만이면 exit 0.
 """
 import argparse
 import csv
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -35,21 +40,39 @@ HERE = Path(__file__).resolve().parent
 PHASE1 = HERE.parent
 RUN_TABLE = PHASE1 / "run_table.tsv"
 
-# 사람 WGS(GRCh38) germline HiFi 기준 경험값. 넘으면 WARN만 띄우고 실패로 보지 않는다.
-# 종양(HG008·HG009)은 배수성·클론성 때문에 변이 수가 정상 범위를 벗어나는 게 정상이라 면제한다.
+# ── 파이프라인의 bcftools stats 는 PASS 필터 없이 돈다 ────────────────────────
+# BCFTOOLS_STATS 가 받는 것은 raw caller VCF (main.nf: ch_dv_vcf / ch_clair3_vcf / ch_pbsv_vcf).
+# DeepVariant 는 FILTER=RefCall 레코드를, Clair3 는 merge_output.vcf.gz 의 RefCall 을 그대로 담는다
+# (--no_ref_calls 미사용). 그래서 04_QC/bcftools_stats 의 SNP/INDEL/ts-tv 는 **후보 레코드 수**이고
+# 진짜 변이 수가 아니다. 실측 확인: dv_snp+dv_indel = 9.766M ≈ dv_records 9.754M (모든 레코드가 집계됨),
+# 정상군에서 cov↔dv_snp 상관 r=+0.711 (진짜 germline 이면 20x 이상에서 커버리지와 무관해야 한다).
+#
+# 따라서 변이 수·ts/tv·caller 일치는 **--pass-counts 로 PASS 만 다시 셀 때만** 판정한다.
+# 기본 실행은 필터와 무관하게 유효한 지표(커버리지·매핑률·error rate·리드길이·MultiQC)만 판정한다.
 TH = {
+    # 항상 유효 (FILTER 무관)
     "cov_min": 15.0,          # 이하면 변이 호출 품질이 떨어짐
     "mapped_min": 95.0,       # HiFi→GRCh38은 보통 99% 이상
-    "err_max": 0.02,          # samtools error rate (참변이 포함이라 0이 될 수 없음)
+    "err_max": 0.02,          # samtools error rate = mismatches/bases_mapped, 참변이 포함
     "readlen_min": 5000,      # HiFi인데 이보다 짧으면 subreads가 섞인 것일 수 있음
+    # PASS 기준으로만 의미 있음 (--pass-counts 필요)
     "snp_lo": 2_500_000, "snp_hi": 5_500_000,
     "indel_lo": 300_000, "indel_hi": 1_500_000,
     "tstv_lo": 1.8, "tstv_hi": 2.3,
+    "caller_ratio_min": 0.8,  # DV↔C3 SNV 수 비가 이보다 벌어지면 한쪽이 잘못 돈 것
     "sv_lo": 5_000, "sv_hi": 60_000,
-    "phased_min": 85.0,       # HiFi WhatsHap은 보통 het의 95% 이상을 위상
+    # 위상 — germline / tumor 를 나눈다. 종양은 LOH·aneuploidy로 het 자체가 줄어
+    # 위상 대상이 줄기 때문에 낮은 값이 정상이다 (실측 정상 76.9% vs 종양 66.8%, het 비 0.712).
+    "phased_min": 70.0,
+    "phased_min_tumor": 55.0,
     "n50_min": 20_000,
 }
-TUMOR = ("HG008", "HG009")
+# 종양 실행 단위: HG008-T / HG009T-* (HG008-N-*, HG009N-* 는 정상이다)
+TUMOR_PAT = ("HG008-T", "HG009T")
+
+
+def is_tumor(sample):
+    return any(sample.startswith(p) for p in TUMOR_PAT)
 
 
 def num(s):
@@ -159,7 +182,46 @@ def read_whatshap(p):
     return out
 
 
-def one(dsid, sample, dataset, entry, dup, run_base, ref):
+def pass_counts(vcf):
+    """VCF 에서 PASS 레코드만 세어 SNV/INDEL/ts-tv 를 돌려준다.
+
+    파이프라인의 04_QC/bcftools_stats 는 RefCall 을 포함한 raw 카운트라
+    진짜 변이 수를 알려면 여기서 다시 세야 한다. bcftools 가 필요하고
+    VCF 1개에 수십 초 걸리므로 --pass-counts 로만 켠다.
+    """
+    if not vcf.is_file():
+        return {}
+    cmd = ["bcftools", "stats", "-f", "PASS", str(vcf)]
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
+    except (FileNotFoundError, subprocess.TimeoutExpired) as e:
+        print(f"  ! bcftools 실행 실패 ({e.__class__.__name__}): {vcf.name}", file=sys.stderr)
+        return {}
+    if r.returncode != 0:
+        print(f"  ! bcftools stats 실패 rc={r.returncode}: {vcf.name}\n"
+              f"    {r.stderr.strip().splitlines()[-1] if r.stderr.strip() else ''}",
+              file=sys.stderr)
+        return {}
+    out = {}
+    for line in r.stdout.splitlines():
+        if line.startswith("SN\t"):
+            f = line.split("\t")
+            if len(f) >= 4:
+                k, v = f[2].rstrip(":").strip(), num(f[3])
+                if k == "number of SNPs":
+                    out["snp"] = v
+                elif k == "number of indels":
+                    out["indel"] = v
+                elif k == "number of records":
+                    out["records"] = v
+        elif line.startswith("TSTV\t"):
+            f = line.split("\t")
+            if len(f) >= 5:
+                out["tstv"] = num(f[4])
+    return out
+
+
+def one(dsid, sample, dataset, entry, dup, run_base, ref, want_pass=False):
     """dsid 하나의 지표 + 상태."""
     base = run_base / sample / "PacBio" / dataset
     rid = f"{sample}.{dataset}.{ref}"
@@ -192,10 +254,18 @@ def one(dsid, sample, dataset, entry, dup, run_base, ref):
     mq = run_base / "multiqc" / dsid / "multiqc_report.html"
     row["multiqc"] = "ok" if (mq.is_file() and mq.stat().st_size > 1) else "MISSING"
 
+    if want_pass:
+        for caller in ("deepvariant", "clair3"):
+            pc = pass_counts(base / f"03_VCF/{caller}" / f"{rid}.{caller}.vcf.gz")
+            pre = {"deepvariant": "dv", "clair3": "c3"}[caller]
+            for k, v in pc.items():
+                row[f"{pre}_pass_{k}"] = v
+
     # ---- 판정 ----------------------------------------------------------
     F = row["flags"]
-    tumor = sample in TUMOR
+    tumor = is_tumor(sample)
 
+    # (1) FILTER 와 무관하게 유효한 지표 -----------------------------------
     if row.get("cov") is None:
         F.append("QC:mosdepth없음")
     elif row["cov"] < TH["cov_min"]:
@@ -213,34 +283,52 @@ def one(dsid, sample, dataset, entry, dup, run_base, ref):
 
     if row.get("dv_snp") is None:
         F.append("QC:bcftools없음")
-    elif not tumor:
-        if not (TH["snp_lo"] <= row["dv_snp"] <= TH["snp_hi"]):
-            F.append(f"SNP{row['dv_snp']/1e6:.2f}M")
-        if row.get("dv_indel") and not (TH["indel_lo"] <= row["dv_indel"] <= TH["indel_hi"]):
-            F.append(f"INDEL{row['dv_indel']/1e3:.0f}k")
-        if row.get("dv_tstv") and not (TH["tstv_lo"] <= row["dv_tstv"] <= TH["tstv_hi"]):
-            F.append(f"ts/tv{row['dv_tstv']:.2f}")
-        if row.get("sv_records") and not (TH["sv_lo"] <= row["sv_records"] <= TH["sv_hi"]):
-            F.append(f"SV{row['sv_records']/1e3:.0f}k")
 
-    # DeepVariant와 Clair3가 크게 다르면 한쪽이 잘못 돈 것
-    if row.get("dv_snp") and row.get("c3_snp"):
-        hi = max(row["dv_snp"], row["c3_snp"])
-        lo = min(row["dv_snp"], row["c3_snp"])
-        if hi > 0 and lo / hi < 0.8:
-            F.append(f"caller불일치(DV {row['dv_snp']/1e6:.2f}M vs C3 {row['c3_snp']/1e6:.2f}M)")
+    # (2) 변이 수·ts/tv·caller 일치 — PASS 를 실제로 셌을 때만 판정한다.
+    #     raw 카운트는 RefCall 포함이라 판정 근거가 못 된다 (위 주석 참고).
+    snp, indel, tstv = row.get("dv_pass_snp"), row.get("dv_pass_indel"), row.get("dv_pass_tstv")
+    if snp is not None and not tumor:
+        if not (TH["snp_lo"] <= snp <= TH["snp_hi"]):
+            F.append(f"PASS_SNP{snp/1e6:.2f}M")
+        if indel and not (TH["indel_lo"] <= indel <= TH["indel_hi"]):
+            F.append(f"PASS_INDEL{indel/1e3:.0f}k")
+        if tstv and not (TH["tstv_lo"] <= tstv <= TH["tstv_hi"]):
+            F.append(f"PASS_ts/tv{tstv:.2f}")
+    c3snp = row.get("c3_pass_snp")
+    if snp and c3snp:
+        hi, lo = max(snp, c3snp), min(snp, c3snp)
+        if hi > 0 and lo / hi < TH["caller_ratio_min"]:
+            F.append(f"caller불일치(PASS DV {snp/1e6:.2f}M vs C3 {c3snp/1e6:.2f}M)")
+    if row.get("sv_records") and not tumor and \
+            not (TH["sv_lo"] <= row["sv_records"] <= TH["sv_hi"]):
+        F.append(f"SV{row['sv_records']/1e3:.0f}k")
 
+    # (3) 위상 — 분모(heterozygous_variants)도 unfiltered VCF 기준이라 절대값은 낮게 나온다.
+    #     germline/tumor 를 나눈 느슨한 하한만 본다.
     if row.get("wh_phased_pct") is None:
         F.append("QC:whatshap없음")
     else:
-        if row["wh_phased_pct"] < TH["phased_min"]:
+        lim = TH["phased_min_tumor"] if tumor else TH["phased_min"]
+        if row["wh_phased_pct"] < lim:
             F.append(f"위상{row['wh_phased_pct']:.0f}%")
-        if row.get("wh_n50") and row["wh_n50"] < TH["n50_min"]:
-            F.append(f"blockN50 {row['wh_n50']/1e3:.0f}kb")
+        n50 = row.get("wh_n50")
+        if n50 == 0:
+            # whatshap ALL 행에서 N50 이 0 으로 나오는 경우가 있다. 실측상 종양 중
+            # 위상률 최하위권에서만 발생 → 지표 미산출로 보고 경고에서 제외한다.
+            row["wh_n50"] = None
+            F.append("N50미산출")
+        elif n50 and n50 < TH["n50_min"]:
+            F.append(f"blockN50 {n50/1e3:.0f}kb")
 
     if row["multiqc"] == "MISSING":
         F.append("MultiQC없음")
     return row
+
+
+def pick_v(row, key):
+    """PASS 카운트가 있으면 그것을, 없으면 raw 를 쓴다."""
+    pre, rest = key.split("_", 1)
+    return row.get(f"{pre}_pass_{rest}", row.get(key))
 
 
 def fmt(v, spec=""):
@@ -264,6 +352,9 @@ def main():
     ap.add_argument("--ref-name", default=os.environ.get("REF_NAME", "GRCh38"))
     ap.add_argument("--tsv", help="요약을 TSV로 저장 (공유용)")
     ap.add_argument("--wide", action="store_true", help="전체 컬럼 콘솔 출력")
+    ap.add_argument("--pass-counts", action="store_true",
+                    help="VCF에서 PASS만 다시 세어 변이 수·ts/tv·caller 일치를 판정한다. "
+                         "bcftools 필요, 런당 수십 초~수 분. 켜지 않으면 그 판정은 건너뛴다.")
     a = ap.parse_args()
 
     run_base = Path(a.run_base)
@@ -278,16 +369,22 @@ def main():
         for m in sorted(missing):
             print(f"?? {m}: run_table.tsv에 없음")
 
+    if a.pass_counts:
+        print("PASS 카운트 계산 중 (bcftools, 런당 수십 초)...", file=sys.stderr)
     rows = [one(r["dsid"], r["sample"], r["dataset"], r["entry_type"],
-                r.get("dup_of", ""), run_base, a.ref_name) for r in runs]
+                r.get("dup_of", ""), run_base, a.ref_name, a.pass_counts)
+            for r in runs]
 
     done = [r for r in rows if r["status"] == "done"]
     pend = [r for r in rows if r["status"] == "pending"]
     dups = [r for r in rows if r["status"] == "dup-skip"]
 
+    # DV_SNP/C3_SNP/INDEL/ts-tv 는 --pass-counts 없이는 RefCall 포함 raw 값이라
+    # 헤더에 raw 를 붙여 판정 근거가 아님을 드러낸다.
+    tag = "" if a.pass_counts else "~"
     cols = [("dsid", 44, ""), ("cov", 6, ".0f"), ("map%", 6, ".1f"),
-            ("err", 7, ".4f"), ("len", 6, ".0f"), ("DV_SNP", 8, ".2f"),
-            ("C3_SNP", 8, ".2f"), ("INDEL", 7, ".0f"), ("ts/tv", 6, ".2f"),
+            ("err", 7, ".4f"), ("len", 6, ".0f"), (tag + "DV_SNP", 8, ".2f"),
+            (tag + "C3_SNP", 8, ".2f"), (tag + "INDEL", 7, ".0f"), (tag + "ts/tv", 6, ".2f"),
             ("SV", 6, ".0f"), ("phase%", 7, ".0f"), ("N50kb", 7, ".0f"), ("MQC", 8, "")]
     print()
     print("  ".join(h.ljust(w) for h, w, _ in cols))
@@ -299,10 +396,10 @@ def main():
             fmt(r.get("mapped_pct"), ".1f"),
             fmt(r.get("err_rate"), ".4f"),
             fmt(r.get("avg_len"), ".0f"),
-            fmt(r.get("dv_snp") / 1e6 if r.get("dv_snp") else None, ".2f"),
-            fmt(r.get("c3_snp") / 1e6 if r.get("c3_snp") else None, ".2f"),
-            fmt(r.get("dv_indel") / 1e3 if r.get("dv_indel") else None, ".0f"),
-            fmt(r.get("dv_tstv"), ".2f"),
+            fmt(pick_v(r, "dv_snp") / 1e6 if pick_v(r, "dv_snp") else None, ".2f"),
+            fmt(pick_v(r, "c3_snp") / 1e6 if pick_v(r, "c3_snp") else None, ".2f"),
+            fmt(pick_v(r, "dv_indel") / 1e3 if pick_v(r, "dv_indel") else None, ".0f"),
+            fmt(pick_v(r, "dv_tstv"), ".2f"),
             fmt(r.get("sv_records") / 1e3 if r.get("sv_records") else None, ".0f"),
             fmt(r.get("wh_phased_pct"), ".0f"),
             fmt(r.get("wh_n50") / 1e3 if r.get("wh_n50") else None, ".0f"),
