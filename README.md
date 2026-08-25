@@ -43,7 +43,7 @@ python catalog/build_readme.py
 |---|---|---|---|---|---|---|---|---|---|
 | PacBio HiFi | 28 | 8,634 | 28 | 28 | 28 | 14 | 4 | 0 | 0 |
 | PacBio CLR | 8 | 13,388 | 7 | 3 | 1 | 0 | 0 | 0 | 0 |
-| Oxford Nanopore | 18 | 11,854 | 17 | 14 | 8 | 5 | 4 | 2 | 17 |
+| Oxford Nanopore | 18 | 11,854 | 17 | 15 | 12 | 5 | 4 | 2 | 17 |
 | Illumina WGS | 28 | 21,689 | 23 | 0 | 8 | 0 | 0 | 0 | 24 |
 | BGI / MGI | 14 | 5,302 | 3 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Exome | 11 | 977 | 11 | 0 | 2 | 0 | 0 | 0 | 0 |
@@ -111,7 +111,7 @@ python catalog/build_readme.py
 
 | 데이터셋 | 샘플 | 플랫폼 | GiB | 리드 | index | 정렬 | 페이징 | 변이 | 메틸 | somatic | 어셈블리 | 출처 | 다음 할 일 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| ONT ultralong (MinION UL, GRCh37/38 BAM) | HG001 | MinION ultralong | 329 | ✗ | ✓ | ✓ minimap2 | ✓ whatshap haplotag | ✗ | – | – | ✗ | 문서 | GRCh37/38 haplotag BAM을 ONT 벤치마킹 입력으로 바로 사용. 재정렬은 이 디렉토리에… |
+| ONT ultralong (MinION UL, GRCh37/38 BAM) | HG001 | MinION ultralong | 329 | ✗ | ✓ | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + Sniffles2 v2.… *(나)* | – | – | ✗ | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
 | Cornell ONT 2D (fast5 원시 2912개 + 2D 리드) | HG002 | ONT 2D 케미스트리 | 6 | ✓ fastq/fasta | – | ✗ | – | ✗ | – | – | ✗ | 문서 | phase2에서 제외: 2D 리드가 fastq 96 MB(+fasta 43 MB) = 0.03x 수준이… |
 | ONT-UL Guppy 2.3.4 (2019-06-26) | HG002 | ONT ultralong | 627 | ✓ fastq | ✓ | ✓ minimap2 | ✓ whatshap haplotag | ✗ | – | – | ✗ | 문서 | 오라벨 3개 플로우셀 리드를 먼저 제외할 것. hs37d5 phased BAM은 그대로 사용 가능하고,… |
 | ONT-UL Guppy 3.2.4 (2020-01-22, phased) | HG002 | ONT ultralong | 571 | ✓ fastq | ✓ | ✓ minimap2 | ✓ whatshap haplotag | ✗ | – | – | ✗ | 문서 | GRCh37/38 phased BAM 그대로 사용. 정렬을 다시 하려면 같은 디렉토리의 guppy 3.… |
@@ -120,10 +120,10 @@ python catalog/build_readme.py
 | ONT-UL combined 2018-08-10 (rel2, raw fast5 tar 포함) | HG002 | ONT ultralong | 937 | ✓ fastq/fast5 | ✓ | ✓ minimap2 | ✓ whatshap haplotag | ✗ | – | – | ✗ | 문서 | raw_fast5s.1~10.tar로 dorado R9 legacy 재베이스콜 → 재정렬하는 실험이 가… |
 | UCSC ONT-UL PromethION (20200508, phased) | HG002 | PromethION ultralong | 511 | ✓ fastq | ✓ | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + Sniffles2 v2.… *(나)* | – | – | ✗ | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
 | UCSC ONT-UL PromethION (20200508) | HG003 | PromethION ultralong | 896 | ✓ fastq | ✓ | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + Sniffles2 v2.… *(나)* | – | – | ✗ | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
-| UCSC ONT-UL PromethION (20200508) | HG004 | PromethION ultralong | 917 | ✓ fastq | ✓ | ✓ minimap2 | ✗ | ✗ | – | – | ✗ | 문서 | 정렬본 그대로 사용. 페이징은 사용자가 whatshap haplotag / longphase로 추가할… |
+| UCSC ONT-UL PromethION (20200508) | HG004 | PromethION ultralong | 917 | ✓ fastq | ✓ | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + Sniffles2 v2.… *(나)* | – | – | ✗ | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
 | UCSC ONT-UL PromethION R9.4.1 Guppy 4.2.2 (phased) | HG005 | PromethION ultralong, R9.… | 527 | ✓ fastq | ✓ | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + Sniffles2 v2.… *(나)* | – | – | ✗ | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
-| UCSC ONT-UL PromethION R9.4.1 Guppy 4.2.2 (phased) | HG006 | PromethION ultralong, R9.… | 470 | ✓ fastq | ✓ | ✓ minimap2 | ✓ whatshap haplotag | ✗ | – | – | ✗ | 문서 | phased BAM 그대로 사용. 재정렬은 fastq.gz 3개로 가능, 재베이스콜은 외부 S3 fas… |
-| UCSC ONT-UL PromethION R9.4.1 Guppy 4.2.2 (phased) | HG007 | PromethION ultralong, R9.… | 382 | ✓ fastq | ✓ | ✓ minimap2 | ✓ whatshap haplotag | ✗ | – | – | ✗ | 문서 | phased BAM 그대로 사용. 재정렬은 fastq.gz 3개로 가능 |
+| UCSC ONT-UL PromethION R9.4.1 Guppy 4.2.2 (phased) | HG006 | PromethION ultralong, R9.… | 470 | ✓ fastq | ✓ | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + Sniffles2 v2.… *(나)* | – | – | ✗ | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
+| UCSC ONT-UL PromethION R9.4.1 Guppy 4.2.2 (phased) | HG007 | PromethION ultralong, R9.… | 382 | ✓ fastq | ✓ | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + Sniffles2 v2.… *(나)* | – | – | ✗ | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
 | N (십이지장/췌장) Northeastern ONT-std R10.4.1 dorado 0.5.3 | HG008 | ONT R10.4.1 standard | 2,754 | ✓ fastq/BAM | △ 7개 | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + DeepVariant v… *(나)* | ✓ dorado v0.5.3 +1 | ✓ Severus v1.0 +4 | ✓ hifiasm v0.19.9-r616 | 툴 값은 유지하되 tool_source에 giab_doc:data_somatic/HG008/Liss_lab/other_passages/analysis/GRCh38/BCM_ONT-std_HG008T-p2_20260313/HG008-T_vs_HG008-N-P/README_HG008-T_vs_HG008-N-P_ONT.md 를 추가해야 함 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
 | T Northeastern ONT-UL R10.4.1 dorado 0.8.1 (54x) | HG008 | ONT R10.4.1 ultralong | 537 | ✓ BAM/pod5 | △ 1개 | ✓ minimap2 2.26-r1175 +1 | ✗ | ✗ | ✓ dorado v0.8.1 | ✗ | ✗ | 문서 | unaligned BAM으로 modkit 파일업(메틸)이나 HG008-N 대비 소마틱 SV/SNV 호출… |
 | T UCSC ONT-UL R10.4.1 dorado 0.4.3 (54x, 5mCG-5hmCG) | HG008 | ONT R10.4.1 ultralong | 437 | ✓ BAM/pod5 | △ 3개 | ✓ minimap2 vb09096fc890429ce *(나)* | ✓ LongPhase v2.0.2 *(나)* | ✓ Clair3 v1.2.0 + DeepVariant v… *(나)* | ✓ dorado v0.4.3 | ✓ Sniffles v2.2 | ✓ hifiasm v0.19.9-r616 +1 | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + Lon… |
