@@ -40,7 +40,9 @@ bash phase2_ont/scripts/03_dup_evidence.sh                 # 중복 판정 근�
 bash phase2_ont/scripts/04_stub_test.sh                    # 1회: 파이프라인 배선 스모크 테스트 (1분)
 bash phase2_ont/scripts/10_submit.sh --ready               # 준비된 것 전부 제출 (dup 제외; --list로 미리보기)
 bash phase2_ont/scripts/20_status.sh                       # 진행 대시보드
-bash phase2_ont/scripts/30_verify_outputs.sh               # 완료 검증
+bash phase2_ont/scripts/30_verify_outputs.sh               # 완료 검증 (파일 존재 여부)
+python phase2_ont/scripts/35_review_qc.py                  # QC 지표 리뷰 (이상치 표시)
+bash phase2_ont/scripts/36_multiqc_all.sh                  # 전 런을 MultiQC 리포트 하나로
 python phase2_ont/scripts/50_update_catalog.py             # 완료분 → 카탈로그+README 표, git diff 보고 커밋
 ```
 
@@ -86,6 +88,34 @@ python phase2_ont/scripts/50_update_catalog.py             # 완료분 → 카�
   (2026-08-22 nbb2 실측. `r941_prom_hac_g360+g422`는 Clair3 README 표와 달리 이미지에 있다).
   `01_prepare_login_node.sh`가 이미지 목록과 대조해 없는 것만 HKU/Rerio에서 받고, 제출 시점에도 다시 확인한다.
   `_g238`은 gate된 dup 런만 쓰므로 못 받아도 경고로 넘어간다.
+
+## QC 보는 순서
+
+`30_verify_outputs.sh`는 **파일이 있는지**만 본다. 커버리지가 반토막이거나 위상이 거의 안 잡힌 런도
+파일만 있으면 통과하므로 그 틈은 [35_review_qc.py](scripts/35_review_qc.py)가 메운다.
+
+```bash
+python phase2_ont/scripts/35_review_qc.py                   # 지표 표 + 이상치
+python phase2_ont/scripts/35_review_qc.py --pass-counts     # 변이 수까지 판정 (bcftools, 런당 수십 초)
+python phase2_ont/scripts/35_review_qc.py --calibrate       # 케미스트리별 실측 분포 (임계값 조정용)
+python phase2_ont/scripts/35_review_qc.py --check-meth      # uBAM 런의 MM/ML 태그 보존 확인
+bash   phase2_ont/scripts/36_multiqc_all.sh                 # 전 런 → MultiQC 리포트 1개
+```
+
+| 판정 축 | phase1과 다른 점 |
+|---|---|
+| 임계값 | **R9.4.1 / R10.4.1로 나눈다.** R9의 리드 오류율은 R10 sup의 5배 수준이라 phase1의 단일 `err_max=0.02`를 쓰면 R9 12개가 전부 오탐이 된다 (매핑률·error rate·indel 상한이 갈린다) |
+| DeepVariant | R10 런에만 있으니 R9의 DV 칸은 `.`(해당 없음)으로 찍고 caller 일치 판정에서 뺀다 |
+| 커버리지 | 설계상 6x~100x로 벌어져 하한만 본다 |
+| 위상 block N50 | ONT 장리드는 블록이 길어 하한을 HiFi(20kb)보다 높게(50kb) 뒀다 |
+| MM/ML 태그 | uBAM 진입 경로의 존재 이유가 메틸 태그 보존인데 검증하는 곳이 없었다 — `--check-meth`가 정렬 BAM을 표본으로 확인한다 |
+
+**변이 수는 `--pass-counts` 없이는 판정하지 않는다.** 파이프라인의 `bcftools_stats`가 PASS 필터 없이
+돌아서 RefCall이 섞인 raw 카운트이기 때문이다 (phase1에서 확인된 것과 같은 함정). 기본 실행은 그 값에
+`~`를 붙여 보여주기만 한다.
+
+**임계값은 아직 잠정값이다** — 케미스트리 특성에 기댄 값이고 실측 조정 전이다. 완주분이 모이면
+`--calibrate`로 분포를 뽑아 고치고 근거를 주석에 적을 것.
 
 ## 자원 실측은 아직 없다
 
