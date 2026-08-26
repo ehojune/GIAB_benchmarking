@@ -90,29 +90,9 @@ def idx_cell(row):
     return out
 
 
-FMT_KEYS = ['hifi_reads', 'uBAM', 'subreads', 'scraps', 'FASTQ', 'fastq', 'FASTA', 'fasta',
-            'BAM', 'CRAM', 'POD5', 'pod5', 'FAST5', 'fast5', 'bax.h5', 'BCL', 'bedMethyl']
-
-
-def short_fmt(f, limit=20):
-    """리드 포맷 산문에서 형식 토큰만 추출한다. 전문은 TSV의 reads_format에 있다."""
-    f = esc(f)
-    if not f or f == '-':
-        return ''
-    hits = []
-    for k in FMT_KEYS:
-        if k in f and k.lower() not in [h.lower() for h in hits]:
-            hits.append(k)
-    if hits:
-        s = '/'.join(hits[:2])
-    else:
-        s = f.split(',')[0].split('(')[0].strip()
-    return s[:limit - 1].rstrip() + '…' if len(s) > limit else s
-
-
 def reads_cell(row):
     if truthy(row.get('reads_present')):
-        f = short_fmt(row.get('reads_format', ''))
+        f = esc(row.get('reads_format', ''))
         return f'✓ {f}' if f else '✓'
     if str(row.get('reads_present', '')).strip().upper() == 'N/A':
         return 'N/A'
@@ -123,17 +103,6 @@ def reads_cell(row):
 
 def esc(s):
     return str(s).replace('|', r'\|').replace('\n', ' ').strip()
-
-
-def short_platform(s, limit=26):
-    """표 폭을 위해 장비 표기를 줄인다. 괄호 안 설명이 길면 잘라낸다."""
-    s = esc(s)
-    if len(s) <= limit:
-        return s
-    head = s.split('(')[0].strip()
-    if head and len(head) <= limit:
-        return head
-    return s[:limit - 1].rstrip() + '…'
 
 
 def short_label(label, sample):
@@ -200,7 +169,7 @@ def main():
             line = [
                 short_label(r['dataset'], r['sample']),
                 esc(r['sample']),
-                short_platform(r['platform']),
+                esc(r['platform']),
                 f'{float(r["size_gib"] or 0):,.0f}',
                 reads_cell(r),
                 idx_cell(r),
@@ -208,10 +177,7 @@ def main():
             for done, tool, _ in STEPS:
                 by = tool.replace('_tool', '_by')
                 line.append(cell(r.get(done), r.get(tool), r.get(by)))
-            nxt = esc(r.get('next_step', ''))
-            if len(nxt) > 58:
-                nxt = nxt[:57].rstrip() + '…'
-            line += [src, nxt]
+            line += [src, esc(r.get('next_step', ''))]
             out.append('| ' + ' | '.join(line) + ' |')
         out.append('\n</details>\n')
 

@@ -1,10 +1,13 @@
 # 결정 기록
 
-## 2026-08-26 — GitHub 표의 tool 문자열 전체 표시
+## 2026-08-26 — 처리표 원문 전체 표시와 현재 평가 기준
 
-- `*_tool` 값은 괄호·파이프라인 단계·대안·버전을 줄이지 않고 TSV 원문 그대로 표시한다.
-- `next_step` 등 다른 열의 기존 축약은 유지한다. 이번 변경은 tool 열에만 적용한다.
-- 엑셀은 기존 파일명을 유지하고 내부 버전을 `0826`으로 갱신하며, 최신 `master_catalog.tsv`를 새 시트에 싣는다.
+- 이전의 “tool만 전체 표시, 다른 축약 유지” 결정을 폐기했다.
+- 플랫폼·리드 포맷·모든 tool·`next_step`은 자수 제한 없이 TSV 원문 전체를 표시한다.
+- 상태 필드는 `TRUE/FALSE/N/A/-`만 허용한다. 편집 메모가 섞인 7건은 실제 상태로 복구했다.
+- HG008은 somatic small variant V0.3과 SV/CNV V0.5를 현행 기준으로 삼고, HG009는 공식 benchmark가 아직 없다고 적는다.
+- 근거는 [reference/2026-08-26-hg008-benchmark-refresh.md](reference/2026-08-26-hg008-benchmark-refresh.md)에 뒀다.
+- 엑셀 파일명과 내부 버전 `0826`은 유지하고 `Master Catalog`를 최신 TSV와 맞춘다.
 
 ## 2026-08-23 — Yuan 최소 준수 retrofit
 

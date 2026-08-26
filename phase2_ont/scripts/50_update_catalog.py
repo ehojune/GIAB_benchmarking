@@ -36,6 +36,26 @@ NF_CONFIG = PHASE2 / "pipeline" / "ont-wgs" / "nextflow.config"
 SCRIPT_REF = "phase2_ont/scripts/10_submit.sh"
 
 
+def next_step_done(sample, dv_note=""):
+    prefix = ("phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + LongPhase 위상)"
+              f"{dv_note}. 산출물 경로는 variant_local_path. ")
+    if sample == "HG002":
+        return prefix + ("다음: NIST v4.2.1 VCF+BED로 Clair3/DeepVariant 소형변이를 hap.py 또는 "
+                         "rtg vcfeval로 평가하고, SV benchmark v0.6으로 Sniffles2를 Truvari 평가.")
+    if sample in {"HG001", "HG003", "HG004", "HG005", "HG006", "HG007"}:
+        return prefix + ("다음: 해당 샘플의 NIST v4.2.1 VCF+BED로 Clair3/DeepVariant 소형변이를 "
+                         "hap.py 또는 rtg vcfeval로 평가. 공식 샘플별 SV benchmark는 없으므로 "
+                         "Sniffles2는 교차 콜러 일치도와 수동 검토로 평가.")
+    if sample == "HG008":
+        return prefix + ("다음: HG008-T와 N-D/N-P를 짝지어 자체 somatic SNV/INDEL·SV 콜셋 생성. "
+                         "소형변이는 NIST draft V0.3으로 aardvark(보조: rtg vcfeval/hap.py), "
+                         "SV는 draft V0.5로 Truvari v5+ 평가. batch 0823p23 외 passage에는 V0.5 clonal BED 사용.")
+    if sample == "HG009":
+        return prefix + ("공식 HG009 truth/benchmark는 아직 없음. 다음: WT-p4를 matched normal로 "
+                         "종양 passage·clone 콜셋을 만들고 GIAB WDL 산출물과 교차검증. truth 성능으로 보고하지 않음.")
+    return prefix + "다음 평가 기준은 샘플별 공식 benchmark 유무를 확인한 뒤 정함."
+
+
 def tool_versions():
     """nextflow.config의 컨테이너 핀에서 버전 추출 (버전의 단일 출처)."""
     text = NF_CONFIG.read_text(encoding="utf-8")
@@ -169,10 +189,7 @@ def main():
         # 날짜를 넣지 않아 재실행해도 같은 값이다(멱등).
         dv_note = "" if any(r["dv_model"] != "-" for r in ds_runs) else \
                   " (R9.4.1이라 DeepVariant는 해당 모델이 없어 생략)"
-        set_cell(row, "next_step",
-                 "phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + LongPhase 위상)"
-                 f"{dv_note}. 산출물 경로는 variant_local_path. 다음: truth set 대비 hap.py/truvari 평가.",
-                 changes)
+        set_cell(row, "next_step", next_step_done(row[ix["sample"]], dv_note), changes)
         if changes:
             updated.append((label, changes))
 
