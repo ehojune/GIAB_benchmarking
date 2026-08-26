@@ -81,6 +81,7 @@ bash phase1_pacbio_hifi/scripts/10_submit.sh --ready       # 준비된 것 전�
 bash phase1_pacbio_hifi/scripts/20_status.sh               # 진행 대시보드 (입력/잡 상태/단계별 산출물)
 bash phase1_pacbio_hifi/scripts/30_verify_outputs.sh       # 산출물 존재 검증 (dsid 인자 주면 그것만)
 python phase1_pacbio_hifi/scripts/35_review_qc.py          # QC 지표 리뷰 (이상치 표시; --tsv 로 요약 저장)
+bash phase1_pacbio_hifi/scripts/36_multiqc_all.sh          # 전 런을 MultiQC 리포트 하나로 병합
 python phase1_pacbio_hifi/scripts/50_update_catalog.py     # 완료분 → 카탈로그+README 표 반영, git diff 보고 커밋
 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --list     # 정확도 평가 대상 확인 (truth set 유무)
 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --ready    # hap.py 제출 (HG001~HG007)
