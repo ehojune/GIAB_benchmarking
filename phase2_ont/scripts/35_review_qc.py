@@ -68,51 +68,54 @@ RUN_TABLE = PHASE2 / "run_table.tsv"
 NF_CONFIG = PHASE2 / "pipeline" / "ont-wgs" / "nextflow.config"
 
 # ── 임계값 ────────────────────────────────────────────────────────────────
-# ONT 13런 실측 (2026-08-27, 첫 완주분) 으로 한 번 조정했다. 근거는 아래.
+# ONT 13런 실측 (2026-08-27, 첫 완주분 + --pass-counts) 으로 조정했다.
+# 전체 수치와 해석은 docs/reference/2026-08-27-ont-qc-first-pass.md.
 #
-# **리드 개수 기준 매핑률은 ONT에서 파이프라인 건강도 지표가 못 된다.** 실측 R9 8런의
-# reads-mapped% 가 39.1 ~ 89.3 으로 벌어졌는데 그게 정렬 실패가 아니었다:
-#   dsid                    입력GiB  cov  GiB/1x  map%   avg_len
-#   HG002.UCSC_..._Promethion  159.6   43    3.71  39.1     8098
-#   HG007.UCSC_..._Promethion  120.7   40    3.02  89.3    26620
-# 매핑률이 39%인 런이 커버리지 43x를 낸다. 미매핑 리드가 진짜 장리드였다면 파일이 커버리지
-# 대비 훨씬 커야 하는데 1x당 바이트는 23%만 크다 → 미매핑분은 **짧은 리드**(fail/adapter)이고
-# 염기 기여가 거의 없다. UCSC 2020-05-08 릴리스(HG002~004)가 fail 리드를 포함하고
-# Guppy 4.2.2 릴리스(HG005~007, avg_len 26.6kb)는 pass만 담은 차이로 보인다.
-# 근거 보강: 같은 8런의 SNP 수가 4.20~4.47M, ts/tv 1.85~1.95, 위상 76~81%로 매핑률과 무관하게
-# 일정하다. 정렬이 깨졌다면 이 값들이 같이 무너진다.
+# **리드 개수 기준 매핑률은 ONT에서 파이프라인 건강도 지표가 못 된다.** R9 8런의 rd% 가
+# 39.1~89.3 으로 벌어졌지만 정렬 실패가 아니었다 — 미매핑 리드의 평균 길이가 매핑된 리드의
+# 1/7~1/12 이다 (HG004: 매핑 19,676bp vs 미매핑 1,599bp = 12.3배). 짧은 fail/adapter 리드가
+# 개수만 채우고 염기는 기여하지 않는다. 같은 런들의 염기 매핑률은 90.6~95.2% 로 정상이고
+# SNP 수·ts/tv·위상률도 rd% 와 무관하게 일정하다.
+#   예외: HG001(rel6)은 미매핑/매핑 길이비가 1.0 이다 — 짧은 리드가 아니라 2016~17년 R9.4
+#   구형 베이스콜의 진짜 미매핑이고, 그래서 염기 매핑률도 최저(83.3%)다. 버그는 아니다.
+# 그래서 판정은 **염기 기준(bases mapped (cigar) / total length)** 으로 하고, 리드 개수 기준은
+# 표시만 하며 트립와이어로만 쓴다. 미매핑 리드 평균 길이(unmap_len)를 같이 찍어 원인을 보여준다.
 #
-# 그래서 판정은 **염기 기준(bases mapped (cigar) / total length)** 으로 하고,
-# 리드 개수 기준은 표시만 하며 "정말 깨진" 경우를 잡는 트립와이어로만 쓴다.
+# ts/tv 는 전 런이 이상치(~2.0~2.1)보다 낮다 (R9 1.86~1.97, R10 1.65~1.73). 코호트 전체가
+# 같이 낮으므로 **개별 런 게이트로는 쓸 수 없다** — 하한을 코호트 밖을 잡는 값으로 느슨하게 두고,
+# 절대 수준의 문제(FP 과다)는 truth set 대비 hap.py 로 따로 판정한다 (phase2에는 아직 없음).
 TH = {
     # 케미스트리와 무관
     "cov_min": 8.0,           # ONT는 데이터셋별 설계 심도가 6x~100x로 벌어진다. 하한만 둔다
     "readmap_tripwire": 30.0, # 리드 개수 기준. 이 밑이면 짧은 리드로도 설명이 안 된다
-    "snp_lo": 2_500_000, "snp_hi": 6_500_000,
-    "tstv_lo": 1.7, "tstv_hi": 2.4,   # ONT는 HiFi보다 약간 넓게
-    "sv_lo": 5_000, "sv_hi": 80_000,  # Sniffles2. pbsv와 비슷한 대역
+    "snp_lo": 3_500_000, "snp_hi": 5_200_000,   # 실측 PASS 4.05~4.76M
+    "tstv_lo": 1.60, "tstv_hi": 2.30,  # 실측 1.65~1.97. 코호트 전체가 이상치보다 낮아
+                                       # 게이트는 코호트 밖만 잡는다 (위 주석 참고)
+    "sv_lo": 15_000, "sv_hi": 40_000,  # 실측 Sniffles2 21.6~24.6k (13런이 좁게 모였다)
     "caller_ratio_min": 0.8,  # R10에서만 (DV↔C3 둘 다 있을 때)
     # 위상 — LongPhase. ONT 장리드는 블록이 길다
     "phased_min": 70.0,
     "phased_min_tumor": 55.0,   # 종양은 LOH·aneuploidy로 het 자체가 줄어 위상 대상이 줄어든다
-    "n50_min": 50_000,          # HiFi(20kb)보다 높게. UL이면 수백 kb~Mb 기대
+    "n50_min": 300_000,         # 실측 526kb~87Mb. HiFi(20kb)와 자릿수가 다르다
     "meth_min_pct": 50.0,       # uBAM 진입 런의 표본 리드 중 MM 태그 보유 비율
 }
 # 케미스트리별로 갈리는 것: 리드 오류율과 그 파생 지표
 TH_CHEM = {
     "R9": {
-        "basemap_min": 80.0,   # 염기 기준. 잠정 — 첫 --calibrate 출력으로 조일 것
-        "err_max": 0.15,       # 실측 R9 8런 0.0896~0.1360 → 여유 두고 0.15
+        "basemap_min": 80.0,   # 실측 83.3~95.2 (최저는 HG001 rel6 구형 베이스콜)
+        "err_max": 0.15,       # 실측 0.0896~0.1360
         "readlen_min": 1_000,
-        "indel_lo": 200_000, "indel_hi": 4_000_000,   # R9 homopolymer 오류로 크게 부풀 수 있다
-                                                      # (실측 raw 807k~2577k. 릴리스별로 3배 차이)
+        # 실측 PASS 544k~1969k. **베이스콜러 버전이 지배한다** — guppy 4.2.2는 544~551k인데
+        # guppy 3.2.x는 1751~1969k로 3.5배다 (homopolymer indel FP). 정상 범위가 원래 넓으니
+        # 상한을 느슨하게 두고, 어느 런의 indel을 신뢰할지는 베이스콜러로 판단한다.
+        "indel_lo": 400_000, "indel_hi": 2_200_000,
     },
     "R10": {
-        "basemap_min": 90.0,   # 염기 기준. 잠정
-        "err_max": 0.06,       # 실측 R10 5런 0.0328~0.0531. 0.05는 UL 런(avg_len 52.9kb)을
-                               # 오탐으로 잡았다 — 리드가 길수록 error rate가 조금 올라간다
+        "basemap_min": 96.0,   # 실측 98.2~99.8 (dorado sup은 거의 전부 정렬된다)
+        "err_max": 0.06,       # 실측 0.0328~0.0531. 0.05는 UL 런(avg_len 52.9kb)을 오탐으로
+                               # 잡았다 — 리드가 길수록 error rate가 조금 올라간다
         "readlen_min": 1_000,
-        "indel_lo": 300_000, "indel_hi": 1_800_000,
+        "indel_lo": 500_000, "indel_hi": 1_100_000,   # 실측 PASS 644~838k
     },
 }
 TUMOR_PAT = ("HG008-T", "HG008T")   # HG008-N-D / HG008-N-P 는 정상이다
@@ -175,6 +178,14 @@ def read_samtools(p):
         out["mapped_pct"] = 100.0 * out["n_mapped"] / out["n_reads"]
     if out.get("total_bases") and out.get("bases_mapped") is not None:
         out["basemap_pct"] = 100.0 * out["bases_mapped"] / out["total_bases"]
+    # 미매핑 리드의 평균 길이. rd% 가 낮을 때 그게 "짧은 fail 리드" 때문인지
+    # "진짜 정렬 실패" 때문인지 가르는 지표다 (위 TH 주석의 실측 참고).
+    n_un = (out.get("n_reads") or 0) - (out.get("n_mapped") or 0)
+    b_un = (out.get("total_bases") or 0) - (out.get("bases_mapped") or 0)
+    if n_un > 0 and b_un > 0:
+        out["unmap_len"] = b_un / n_un
+        if out.get("avg_len"):
+            out["unmap_ratio"] = out["avg_len"] / out["unmap_len"]
     return out
 
 
@@ -458,7 +469,8 @@ def fmt(v, spec=""):
 def calibrate(done):
     """케미스트리별 실측 분포. TH를 실측으로 고칠 때 쓴다."""
     metrics = [("cov", "평균 depth", 1), ("basemap_pct", "염기 매핑률%", 1),
-               ("mapped_pct", "리드 매핑률%", 1),
+               ("mapped_pct", "리드 매핑률%", 1), ("unmap_len", "미매핑 평균길이bp", 0),
+               ("unmap_ratio", "매핑/미매핑 길이비", 1),
                ("err_rate", "error rate", 4), ("avg_len", "평균 리드길이bp", 0),
                ("c3_snp", "C3 SNP(raw)", 0), ("c3_indel", "C3 INDEL(raw)", 0),
                ("c3_tstv", "C3 ts/tv(raw)", 2), ("sv_records", "SV 레코드", 0),
@@ -527,7 +539,8 @@ def main():
     # 헤더에 ~를 붙여 판정 근거가 아님을 드러낸다.
     tag = "" if a.pass_counts else "~"
     cols = [("dsid", 46, ""), ("chem", 5, ""), ("cov", 6, ".0f"), ("base%", 6, ".1f"),
-            ("rd%", 5, ".1f"), ("err", 7, ".4f"), ("len", 7, ".0f"), (tag + "C3_SNP", 8, ".2f"),
+            ("rd%", 5, ".1f"), ("err", 7, ".4f"), ("len", 7, ".0f"), ("unmapLen", 8, ".0f"),
+            (tag + "C3_SNP", 8, ".2f"),
             (tag + "DV_SNP", 8, ".2f"), (tag + "INDEL", 7, ".0f"), (tag + "ts/tv", 6, ".2f"),
             ("SV", 6, ".0f"), ("phase%", 7, ".0f"), ("N50kb", 7, ".0f")]
     if a.check_meth:
@@ -543,6 +556,7 @@ def main():
             fmt(r.get("cov"), ".0f"), fmt(r.get("basemap_pct"), ".1f"),
             fmt(r.get("mapped_pct"), ".1f"),
             fmt(r.get("err_rate"), ".4f"), fmt(r.get("avg_len"), ".0f"),
+            fmt(r.get("unmap_len"), ".0f"),
             fmt(pick_v(r, "c3_snp") / 1e6 if pick_v(r, "c3_snp") else None, ".2f"),
             # R9은 DeepVariant 모델이 없어 안 돌린다 — '없음'(-)과 구분해 '.'으로 찍는다
             ("." if r["dv_model"] == "-" else fmt(dv / 1e6 if dv else None, ".2f")),
@@ -589,7 +603,7 @@ def main():
     if a.tsv:
         keys = ["dsid", "sample", "dataset", "entry", "chem", "dv_model", "status",
                 "cov", "basemap_pct", "mapped_pct", "err_rate", "avg_len", "max_len",
-                "n_reads", "total_bases", "bases_mapped", "avg_qual",
+                "unmap_len", "unmap_ratio", "n_reads", "total_bases", "bases_mapped", "avg_qual",
                 "c3_snp", "c3_indel", "c3_tstv", "c3_records",
                 "dv_snp", "dv_indel", "dv_tstv", "dv_records",
                 "c3_pass_snp", "c3_pass_indel", "c3_pass_tstv",

@@ -10,3 +10,6 @@
 | minimap2 `-y` + Guppy fastq 코멘트 | incident-note | `-y`는 uBAM에서 옮긴 태그를 살리는 옵션인데, Guppy fastq의 `runid=... ch=...` 코멘트에 쓰면 SAM aux 형식이 아니라 BAM이 깨진다 |
 | `ont-wgs` 파이프라인 (minimap2/Clair3/Sniffles2/LongPhase) | nextflow-pipeline | 첫 실행 검증 후 판단. 검증 전에는 올리지 않는다 |
 | SGE 잡 1개 + Nextflow local executor 패턴 | lesson | 노드 수 제한이 있고 계산 노드에 외부망이 없는 클러스터의 정석. phase1/phase2가 같은 형태를 두 번 썼다 |
+| ONT 매핑 건강도는 리드 개수가 아니라 염기 기준 | lesson | ONT 릴리스에 섞인 짧은 fail 리드가 reads-mapped%를 39%까지 끌어내리는데 정렬은 정상이다. 미매핑/매핑 리드 평균 길이비로 가른다 (실측 7~12배). 근거: `docs/reference/2026-08-27-ont-qc-first-pass.md` |
+| DeepVariant raw 카운트는 RefCall로 1.7~3.4배 부풀어 있다 | lesson | PASS만 세면 Clair3와 3~7% 일치. caller 일치 판정을 raw로 하면 전건 오탐. phase1·phase2에서 각각 확인 |
+| R9 ONT indel 정확도는 베이스콜러 버전이 지배한다 | lesson | guppy 3.2.x 1.75~1.97M vs 4.2.2 544~551k (3.5배). R9 indel 분석은 4.2.2+ 데이터셋만 |
