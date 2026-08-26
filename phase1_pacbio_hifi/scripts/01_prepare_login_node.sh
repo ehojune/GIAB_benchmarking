@@ -30,7 +30,9 @@ nextflow -version | grep -m1 version || true
 echo "== [2/4] Singularity 이미지 ($NXF_SINGULARITY_CACHEDIR) =="
 command -v singularity >/dev/null || { echo "ERROR: singularity가 PATH에 없음 — conda env의 apptainer에 singularity 심링크 필요"; exit 1; }
 # 캐시 파일명 규약: 프로토콜 없이 [/:] -> '-' 치환 + .img (Nextflow가 이 이름으로 찾음)
-uris=$(grep -oE "container_[a-z0-9_]+ *= *'[^']+'" "$PIPE/nextflow.config" | cut -d"'" -f2 | sort -u)
+# 파이프라인 이미지 + 벤치마킹 이미지(BENCH_IMAGES, env.sh). 계산 노드는 외부망이 없어 여기서 다 받아둔다.
+uris=$( { grep -oE "container_[a-z0-9_]+ *= *'[^']+'" "$PIPE/nextflow.config" | cut -d"'" -f2; \n         printf '%s
+' ${BENCH_IMAGES:-}; } | sed '/^$/d' | sort -u)
 fail=0
 cd "$NXF_SINGULARITY_CACHEDIR"
 for uri in $uris; do

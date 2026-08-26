@@ -75,13 +75,16 @@ ONT 쪽 같은 그림은 [phase2_ont/pipeline/ont-wgs/README.md](../phase2_ont/p
 ```bash
 cd ~/GIAB_benchmarking && git pull    # 서버의 클론 위치 기준
 cp phase1_pacbio_hifi/env.local.sh{.example,}              # 잡 크기 프리셋 선택 (안 하면 노드당 3잡 기본값)
-bash phase1_pacbio_hifi/scripts/01_prepare_login_node.sh   # 1회: SGE 점검 + 컨테이너 11개 + 레퍼런스 + TRF bed
+bash phase1_pacbio_hifi/scripts/01_prepare_login_node.sh   # 1회: SGE 점검 + 컨테이너 13개(파이프라인 11 + 벤치 2) + 레퍼런스 + TRF bed
 bash phase1_pacbio_hifi/scripts/02_fetch_sra_reads.sh      # 1회: HG001·HG005 리드 (SRA, 135 GiB)
 bash phase1_pacbio_hifi/scripts/10_submit.sh --ready       # 준비된 것 전부 제출 (dup 제외; --list로 미리보기)
 bash phase1_pacbio_hifi/scripts/20_status.sh               # 진행 대시보드 (입력/잡 상태/단계별 산출물)
 bash phase1_pacbio_hifi/scripts/30_verify_outputs.sh       # 산출물 존재 검증 (dsid 인자 주면 그것만)
 python phase1_pacbio_hifi/scripts/35_review_qc.py          # QC 지표 리뷰 (이상치 표시; --tsv 로 요약 저장)
 python phase1_pacbio_hifi/scripts/50_update_catalog.py     # 완료분 → 카탈로그+README 표 반영, git diff 보고 커밋
+bash phase1_pacbio_hifi/scripts/60_benchmark.sh --list     # 정확도 평가 대상 확인 (truth set 유무)
+bash phase1_pacbio_hifi/scripts/60_benchmark.sh --ready    # hap.py 제출 (HG001~HG007)
+bash phase1_pacbio_hifi/scripts/60_benchmark.sh --collect  # 결과를 한 TSV로 모음
 ```
 
 - 특정 것만: `10_submit.sh HG002.PacBio_CCS_15kb ...` / 로그: `tail -f $INFRA/logs/<dsid>.<jobid>.log`
@@ -92,7 +95,10 @@ python phase1_pacbio_hifi/scripts/50_update_catalog.py     # 완료분 → 카�
   (mosdepth·samtools stats·bcftools stats·whatshap stats·MultiQC)만 읽어서 실행 단위별로
   커버리지·매핑률·error rate·리드길이·SNP/INDEL 수·ts/tv·SV 수·위상 비율·block N50을 표로 뽑고,
   기준을 벗어난 것과 **DeepVariant↔Clair3 불일치(20% 이상)** 를 표시한다. 새로 계산하지 않아 몇 초면 끝난다.
-  기준값은 스크립트 맨 위 `TH` dict에서 조정한다. 종양(HG008·HG009)은 배수성 때문에 변이 수 검사에서 면제.
+  기준값은 스크립트 맨 위 `TH` dict에서 조정한다. 종양(HG008-T·HG009T-*)은 LOH·배수성 때문에
+  변이 수 검사에서 면제하고 위상 하한도 따로 쓴다 (정상 70% / 종양 55%).
+  **변이 수·ts/tv·caller 일치는 `--pass-counts`를 붙일 때만 판정한다** — 파이프라인의
+  `bcftools stats`가 PASS 필터 없이 돌아 RefCall이 섞인 raw 카운트라서, 그대로 판정하면 전건 오탐이 난다.
   exit 1은 QC 파일 자체가 없을 때만이고(파이프라인 QC 스테이지 실패), 기준 초과는 경고로만 남긴다.
   `50_update_catalog.py`의 완료 판정도 30과 같은 파일 목록이라 QC 내용은 보지 않는다 — 35를 별도로 돌릴 것.
 - **다운로드가 진행 중이어도 그냥 제출하면 된다.** `--ready`는 입력이 (1) manifest와 크기가 같고
@@ -103,6 +109,31 @@ python phase1_pacbio_hifi/scripts/50_update_catalog.py     # 완료분 → 카�
     중간이 빈 구멍인** 순간이 생겨서, 크기만 보면 완료로 오판한다. (wget 경로는 `.part`→`mv`라 무관)
   - `20_status.sh`의 input 열에서 `settling`이 그 상태다. 다운로드가 끝난 뒤에도 계속 `settling`이면
     그 파일을 실제로 쓰는 중이 아닌지(`ls -l --time-style=full-iso`) 확인할 것.
+
+## 정확도 평가 ([60_benchmark.sh](scripts/60_benchmark.sh))
+
+GIAB truth set 대비 hap.py. germline small variant만 — **HG001~HG007 23런**이 대상이고
+HG008·HG009는 germline truth가 없어 자동으로 빠진다.
+
+- 입력은 `03_VCF/<caller>/*.vcf.gz` **원본**이다. hap.py가 FILTER를 자체 처리해
+  `summary.csv`에 ALL 행과 PASS 행을 둘 다 내므로, PASS 필터가 없는 파이프라인 산출물을
+  그대로 넣고 PASS 행을 읽으면 된다. **재실행이 필요 없다.**
+  `SNV_*`/`INDEL_*` 분리본은 넣지 않는다 — hap.py 자체 분류와 어긋난다.
+- truth set은 `release/*/NISTv4.2.1/GRCh38/`에서 자동 탐색한다. 경로 깊이와 BED 이름이
+  샘플마다 다르다: HG001은 `release/NA12878_HG001/`, HG002~HG007은 `release/<Trio>/<Sample>/`,
+  Ashkenazim 트리오(HG002~HG004)의 BED은 `_benchmark_noinconsistent.bed`다.
+  truth VCF의 `.tbi`가 없으면 제출 단계에서 걸러낸다.
+- 산출: `<dataset>/05_BENCH/happy/<id>.<caller>.summary.csv` 등. `--collect`가 이를 모아
+  `phase1_bench_summary.tsv`(dsid × caller × SNP/INDEL × ALL/PASS)로 만든다.
+- 잡 크기는 파이프라인보다 작다 (`BENCH_SLOTS=8`, `BENCH_VMEM=32G`) — hap.py는 병렬성이 낮다.
+- 컨테이너는 `env.sh`의 `HAPPY_IMG`(`jmcdani20/hap.py:v0.3.12`, GIAB/NIST 문서가 쓰는 이미지)와
+  `TRUVARI_IMG`. `nextflow.config`가 아니라 `env.sh`에 둔 이유는 파이프라인이 쓰지 않기 때문이고,
+  `01_prepare_login_node.sh`가 `BENCH_IMAGES`도 함께 미리 받는다.
+
+**SV와 somatic은 아직 못 한다.** SV는 Truvari v5.0+ (이미지는 핀해 뒀다). HG008-T somatic은
+현행 기준인 smvar V0.3(2026-04-25)·stvar-CNV V0.5(2026-03-18)가 **매니페스트에 없다** —
+받아둔 것은 stvar V0.1~V0.3(2025-02)뿐이다. 먼저 phase0 매니페스트에 추가해야 한다.
+기준 근거는 [docs/reference/2026-08-26-hg008-benchmark-refresh.md](../docs/reference/2026-08-26-hg008-benchmark-refresh.md).
 
 ## 설정 (전부 [env.sh](env.sh))
 

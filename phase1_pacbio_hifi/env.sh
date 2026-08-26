@@ -42,3 +42,15 @@ export SGE_HOSTS="${SGE_HOSTS:-(shepherd-1-7|shepherd-1-8|shepherd-1-9)}"
 # 잡 안에서 Nextflow local executor가 동시에 잡을 수 있는 자원 상한 (kobic.config가 읽음).
 # NF_LOCAL_CPUS는 잡 스크립트가 NSLOTS로 덮는다. SGE_VMEM보다 작게 둬서 오버헤드를 남긴다.
 export NF_LOCAL_MEM_GB="${NF_LOCAL_MEM_GB:-70}"
+
+# ── 벤치마킹 (60_benchmark.sh) ────────────────────────────────────────────────
+# 파이프라인이 쓰지 않는 이미지라 nextflow.config 가 아니라 여기에 둔다.
+# 01_prepare_login_node.sh 가 이 목록도 함께 미리 받는다 (계산 노드는 외부망이 없다).
+# hap.py 는 GIAB/NIST 문서가 쓰는 이미지를 그대로 쓴다 (biocontainers 에는 없다).
+export HAPPY_IMG="${HAPPY_IMG:-jmcdani20/hap.py:v0.3.12}"
+export TRUVARI_IMG="${TRUVARI_IMG:-quay.io/biocontainers/truvari:5.4.0--pyhdfd78af_0}"
+export BENCH_IMAGES="${BENCH_IMAGES:-$HAPPY_IMG $TRUVARI_IMG}"
+# hap.py 는 병렬성이 낮아 파이프라인 잡보다 작게 잡는다
+export BENCH_SLOTS="${BENCH_SLOTS:-8}"
+export BENCH_VMEM="${BENCH_VMEM:-32G}"
+export BENCH_TRUTH_VER="${BENCH_TRUTH_VER:-v4.2.1}"   # germline truth set 판 (release/*/NISTv4.2.1/)
