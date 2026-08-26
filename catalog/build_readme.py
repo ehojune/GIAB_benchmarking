@@ -8,7 +8,6 @@ README.md 안의 <!-- MASTER-TABLE:BEGIN --> ... <!-- MASTER-TABLE:END --> 사�
 """
 import csv
 import os
-import re
 import sys
 from collections import Counter, defaultdict
 
@@ -53,25 +52,6 @@ def na(v):
     return str(v).strip() in ('-', '')
 
 
-def short_tool(t, limit=30):
-    """표에는 툴 이름+버전만. 파이프라인 설명·부가 단계는 TSV에만 둔다."""
-    t = esc(t)
-    if not t or t in ('N/A', '-'):
-        return t
-    # "A → B → C" 는 첫 툴 + 개수 표기로 줄인다. " / " 와 " | " 는 대안 나열.
-    t = re.sub(r'\s*\([^)]*\)', '', t)                        # 괄호 설명 제거
-    parts = [x.strip() for x in t.replace('->', '→').split('→') if x.strip()]
-    alts = [x.strip() for x in re.split(r'\s+[/|]\s+', parts[0]) if x.strip()]
-    head = alts[0] if alts else parts[0]
-    head = re.sub(r'\s+(align|call|--preset\b.*)$', '', head).strip()
-    extra = (len(parts) - 1) + (len(alts) - 1)
-    if len(head) > limit:
-        head = head[:limit - 1].rstrip() + '…'
-    if extra > 0:
-        head += f' +{extra}'
-    return head
-
-
 def cell(done, tool, by):
     """단계 셀: 완료 여부 + 툴 + 수행 주체."""
     d = str(done).strip()
@@ -81,7 +61,7 @@ def cell(done, tool, by):
         return 'N/A'
     if d.upper() != 'TRUE':
         return '✗'
-    t = short_tool(tool)
+    t = esc(tool)
     b = str(by).strip()
     label = '✓'
     if t and t not in ('N/A', '-'):
