@@ -513,5 +513,6 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-08-30 — phase0 다운로드 전량 완료 확인: verify.sh all 기준 76,595/76,595 files, 107,637 GiB (115.6 TB), 100.0%. HG001–HG009 + release + RNA-seq + trio_analysis 전부. 8/13 시작, 정전 1회 포함 약 2주.
 - 2026-08-26 — HG008 최신 benchmark를 반영하고 플랫폼·리드·툴·다음 할 일의 모든 자동 축약을 없앴다.
 - 2026-08-23 — Yuan 최소 준수 retrofit을 적용했다. 기존 카탈로그·PacBio HiFi·ONT 분석 구조와 HARVEST 후보는 유지했다.
