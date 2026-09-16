@@ -116,10 +116,17 @@ def sample_of(path):
 AUTO_MARK = "FTP data/ 라이브 크롤로 발견"   # 이 스크립트가 만든 행의 표식(notes). 재실행 때 파생 필드를 다시 계산한다
 REF_TOKENS = [("GRCh38-GIABv3", r"GRCh38[-_]GIABv3"), ("GRCh38_ERCC_RSEM", r"GRCh38_ERCC_RSEM"), ("CHM13v2.0", r"CHM13v2\.0|CHM13"),
               ("GRCh37", r"GRCh37|hs37d5|\bhg19\b"), ("GRCh38", r"GRCh38|\bhg38\b")]
-# smvar/stvar는 GIAB germline 벤치마크 용어(small/structural variant)라 somatic 토큰에 넣지 않는다.
-# 단 파일 단위로 볼 때 somatic 표기가 있으면 그쪽이 이긴다(`somatic-stvar` 등) — 아래 classify_vcfs 참조.
-SOMATIC_RE = re.compile(r"somatic|ClairS|DeepSomatic|Strelka|Mutect|Lancet|Severus|Oncoanalyzer|purple|cnvkit|_vs_|ppmSeq|GRIDSS|minda|Wakhan", re.I)
-GERMLINE_RE = re.compile(r"germline|dipcall|deepvariant|clair3(?!S)|freebayes|haplotypecaller|benchmark\.vcf|smvar|stvar", re.I)
+# VCF 분류는 2단계다. **명시 표기(label)가 콜러 이름 힌트(hint)를 이긴다.**
+#   `HG008-T.purple.germline.vcf.gz` → germline (purple은 somatic 콜러지만 germline 표기가 우선)
+#   `NIST_HG008-T_somatic-stvar_...vcf.gz` → somatic (stvar는 GIAB 벤치마크 용어 힌트일 뿐)
+GERMLINE_LABEL_RE = re.compile(r"germline", re.I)
+SOMATIC_LABEL_RE = re.compile(r"somatic|_vs_|tumou?r[-_.]", re.I)
+SOMATIC_HINT_RE = re.compile(r"ClairS|DeepSomatic|Strelka|Mutect|Lancet|Severus|Oncoanalyzer|purple|cnvkit|ppmSeq|GRIDSS|minda|Wakhan", re.I)
+GERMLINE_HINT_RE = re.compile(r"dipcall|deepvariant|clair3(?!S)|freebayes|haplotypecaller|benchmark\.vcf|smvar|stvar", re.I)
+SOMATIC_RE = re.compile("|".join((SOMATIC_LABEL_RE.pattern, SOMATIC_HINT_RE.pattern)), re.I)   # 디렉토리명 판정용
+# 메틸화 산출물 (HiFi Somatic WDL의 methylation/, modkit/pb-CpG-tools bedmethyl 등)
+METH_RE = re.compile(r"(^|/)methylation/|\.cpg[._]|5mc|5hmc|modkit|bedmethyl|pb-?cpg", re.I)
+METH_TOOLS = [(r"modkit", "modkit"), (r"pb-?cpg", "pb-CpG-tools"), (r"primrose", "primrose")]
 # 사용자가 직접 채운 단계는 재실행 때 덮어쓰지 않는다 (catalog/README.md: *_by = GIAB / me / N/A)
 STAGE_FIELDS = [
     ("index_present", "index_types", "index_unindexed_n", "index_by", "index_local_path", "index_script"),
@@ -158,14 +165,23 @@ def stage_tool(vcf_names, fallback):
 
 def classify_vcfs(vcfs, is_analysis, dirname, pat):
     """(somatic, germline) — 파일 단위로 보고, 명시적 somatic 표기가 generic 벤치마크 용어보다 우선한다"""
-    som = [v for v in vcfs if SOMATIC_RE.search(v)]
-    ger = [v for v in vcfs if GERMLINE_RE.search(v) and not SOMATIC_RE.search(v)]
     if pat == r"NIST_HG002_DraftBenchmark_defrabb":
         return [], list(vcfs)
-    if bool(vcfs) and not som and (is_analysis or SOMATIC_RE.search(dirname) is not None):
-        som = [v for v in vcfs if v not in ger]   # analysis 디렉토리: germline 표기가 없는 VCF는 somatic
-    if vcfs and not som and not ger:
-        ger = list(vcfs)   # 분류 근거 없으면 germline (카탈로그 기존 관례)
+    som, ger, unknown = [], [], []
+    for v in vcfs:
+        if GERMLINE_LABEL_RE.search(v):        # 명시 germline이 최우선
+            ger.append(v)
+        elif SOMATIC_LABEL_RE.search(v):       # 명시 somatic
+            som.append(v)
+        elif SOMATIC_HINT_RE.search(v):        # somatic 콜러 이름
+            som.append(v)
+        elif GERMLINE_HINT_RE.search(v):       # germline 콜러/벤치마크 용어
+            ger.append(v)
+        else:
+            unknown.append(v)
+    if unknown:
+        # analysis 디렉토리나 이름에 somatic 표기가 있는 디렉토리면 나머지는 somatic, 아니면 germline(카탈로그 기존 관례)
+        (som if (is_analysis or SOMATIC_RE.search(dirname)) else ger).extend(unknown)
     return som, ger
 PHASE_RE = re.compile(r"hiphase|whatshap|longphase|haplotag", re.I)   # 'phased' 단어는 너무 헐거워서(purple 등 파일명) 빼는다
 
@@ -333,6 +349,9 @@ def main():
         if cat == "rnaseq_all" and has_bam and refs == "N/A":
             refs = "GRCh38_ERCC_RSEM (BCM RNAseq README)"
         reads_format = " + ".join(x for x in ("FASTQ" if fastq_plain else "", "FASTQ tar.gz 아카이브" if fastq_tar else "", "BAM/CRAM" if has_bam else "") if x) or "N/A"
+        meth_paths = [p for p in paths if METH_RE.search(p)]
+        meth_found = [label for pt, label in METH_TOOLS if any(re.search(pt, os.path.basename(p), re.I) for p in meth_paths)]
+        meth_tool = (", ".join(meth_found) + " (파일명 토큰; 버전은 README 확인)") if meth_found else (tools if meth_paths else "-")
         derived = dict(
             files=str(n), size_gib=f"{size / GIB:.1f}",
             reads_present="TRUE" if has_fastq or (has_bam and cat in ("pacbio_hifi", "ont")) else "FALSE",
@@ -340,6 +359,7 @@ def main():
             index_present=idx_present, index_types=idx_types, index_unindexed_n=unindexed, index_by="GIAB" if idx_types else "-",
             aligned="TRUE" if has_bam else "-", align_tool=tools if has_bam else "-", align_ref=refs if has_bam else "-", align_by="GIAB" if has_bam else "-",
             phased="TRUE" if phased else "-", phase_tool=phase_tool, phase_by="GIAB" if phased else "-",
+            meth_called="TRUE" if meth_paths else "-", meth_tool=meth_tool, meth_by="GIAB" if meth_paths else "-",
             variant_called="TRUE" if germline else "-", variant_tool=(stage_tool(ger_vcfs, tools) if germline else "-"), variant_by="GIAB" if germline else "-",
             somatic_called="TRUE" if somatic else "-", somatic_tool=(stage_tool(som_vcfs, tools) if somatic else "-"), somatic_by="GIAB" if somatic else "-",
             assembled="TRUE" if pat == r"Verkko" else "-", assembly_tool="Verkko 2.2/2.2.1" if pat == r"Verkko" else "-", assembly_by="GIAB" if pat == r"Verkko" else "-",
@@ -369,8 +389,7 @@ def main():
             parent_hint = " ".join(x for x in (m.group(1), m.group(2), m.group(3), m.group(4)) if x)
         row.update(
             sample=sample, category=cat, dataset=f"{sample} {parent_hint} {base}".replace("  ", " ").strip(),
-            giab_path=d, platform=platform, coverage="",
-            meth_called="-", meth_tool="-", meth_by="-", next_step="",
+            giab_path=d, platform=platform, coverage="", next_step="",
             notes=f"{TODAY} {AUTO_MARK}(2026-08-13 목록 누락분). {note}" + ("" if readme else " — README 없음/미확인, 필드는 파일명 기준"),
         )
         row.update(derived)
