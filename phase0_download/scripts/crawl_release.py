@@ -38,7 +38,14 @@ UA = {"User-Agent": "giab-crawl/1.0"}
 LIST_THREADS, HEAD_THREADS, TRIES = 3, 4, 8  # NCBI는 동시 요청이 많으면 503을 준다 (2026-09-16 실측: 12+16 스레드에서 503)
 RETRY_CODES = (429, 500, 502, 503, 504)
 CACHE = os.environ.get("CRAWL_CACHE", os.path.join(PROJ, "logs", "crawl_cache"))
-FILES_CACHE, SIZES_CACHE = os.path.join(CACHE, "files.txt"), os.path.join(CACHE, "sizes.tsv")
+# 목록 캐시는 ROOT 범위별로 따로 둔다(부분 크롤 캐시를 전체 크롤에 재사용하면 범위 밖 파일이 통째로 빠진다).
+# 크기 캐시는 경로별 사실이라 공유하되, 읽을 때 ROOT 범위 안의 경로만 쓴다.
+ROOT_KEY = re.sub(r"[^A-Za-z0-9]+", "_", ",".join(ROOTS)).strip("_")
+FILES_CACHE, SIZES_CACHE = os.path.join(CACHE, f"files.{ROOT_KEY}.txt"), os.path.join(CACHE, "sizes.tsv")
+
+
+def in_scope(p):
+    return any(p.startswith(r) for r in ROOTS)
 GIB = 1024 ** 3
 
 
@@ -124,7 +131,7 @@ def main():
     os.makedirs(CACHE, exist_ok=True)
     t0 = time.time()
     if os.path.exists(FILES_CACHE) and not FRESH:
-        files = [l.rstrip("\n") for l in open(FILES_CACHE, encoding="utf-8") if l.strip()]
+        files = [l.rstrip("\n") for l in open(FILES_CACHE, encoding="utf-8") if l.strip() and in_scope(l.rstrip("\n"))]
         print(f"crawl: {len(files)} files from cache {FILES_CACHE} (--fresh 로 다시 크롤)", file=sys.stderr)
     else:
         todo, files, ndirs = list(ROOTS), [], 0
@@ -146,7 +153,7 @@ def main():
         if line.strip():
             p, b = line.rstrip("\n").split("\t")
             old[p] = int(b) if b else None
-    in_scope_old = {p: b for p, b in old.items() if any(p.startswith(r) for r in ROOTS)}
+    in_scope_old = {p: b for p, b in old.items() if in_scope(p)}
 
     t0 = time.time()
     sizes = {}
@@ -154,8 +161,9 @@ def main():
         for l in open(SIZES_CACHE, encoding="utf-8"):
             if l.strip():
                 p, b = l.rstrip("\n").split("\t")
-                sizes[p] = None if b == "404" else int(b)
-        print(f"HEAD: {len(sizes)} sizes from cache", file=sys.stderr)
+                if in_scope(p):
+                    sizes[p] = None if b == "404" else int(b)
+        print(f"HEAD: {len(sizes)} sizes from cache (ROOT 범위 안만)", file=sys.stderr)
     elif FRESH and os.path.exists(SIZES_CACHE):
         os.remove(SIZES_CACHE)
     pending = [p for p in files if p not in sizes]
@@ -182,9 +190,14 @@ def main():
     gone404 = sorted(p for p, s in sizes.items() if s is None and p in listed)
     nosize = sorted(p for p, s in sizes.items() if s == -1)
     sizes = {p: s for p, s in sizes.items() if s is not None and s >= 0}
+    # 크기를 못 받은 파일: 존재는 확인된 것이므로 manifest에서 빼지 않는다. 옛 항목이면 이전 크기를 유지하고,
+    # 신규 파일이면 크기가 없어 manifest에 넣을 수 없다 — 둘 다 보고서에 남긴다.
+    nosize_kept = {p: in_scope_old[p] for p in nosize if p in in_scope_old and in_scope_old[p] is not None}
+    nosize_new = [p for p in nosize if p not in nosize_kept]
+    sizes.update(nosize_kept)
 
     added = {p: s for p, s in sizes.items() if p not in in_scope_old}
-    removed = {p: b for p, b in in_scope_old.items() if p not in sizes and p not in nosize}
+    removed = {p: b for p, b in in_scope_old.items() if p not in sizes}
     changed = {p: (in_scope_old[p], s) for p, s in sizes.items() if p in in_scope_old and in_scope_old[p] != s}
     gib = lambda b: b / GIB
 
@@ -212,19 +225,21 @@ def main():
         rep += ["## 크기 변경 (manifest → FTP)", ""] + [f"- `{p}` {a:,} → {b:,}" for p, (a, b) in sorted(changed.items())] + [""]
     if gone404:
         rep += ["## 인덱스에는 있으나 HEAD 404", ""] + [f"- `{p}`" for p in gone404] + [""]
-    if nosize:
-        rep += ["## 크기를 못 받은 파일 (manifest 미반영)", ""] + [f"- `{p}`" for p in nosize] + [""]
+    if nosize_kept:
+        rep += ["## 크기를 못 받은 파일 — 이전 manifest 크기 유지", ""] + [f"- `{p}` {nosize_kept[p]:,}" for p in sorted(nosize_kept)] + [""]
+    if nosize_new:
+        rep += ["## 크기를 못 받은 신규 파일 (manifest 미반영 — 다음 크롤에서 재시도)", ""] + [f"- `{p}`" for p in nosize_new] + [""]
     os.makedirs(os.path.join(PROJ, "docs", "reference"), exist_ok=True)
     rp = os.path.join(PROJ, "docs", "reference", f"release_crawl_{date}.md")
     with open(rp, "w", encoding="utf-8", newline="\n") as fh:
         fh.write("\n".join(rep))
     print(f"report: {rp}", file=sys.stderr)
     print(f"added {len(added)} ({gib(sum(added.values())):.2f} GiB), removed {len(removed)}, changed {len(changed)}, "
-          f"404 {len(gone404)}, nosize {len(nosize)}")
+          f"404 {len(gone404)}, nosize kept {len(nosize_kept)} / new {len(nosize_new)}")
 
     if not DRY:
-        new = {p: b for p, b in old.items() if not any(p.startswith(r) for r in ROOTS)}
-        new.update(sizes)
+        new = {p: b for p, b in old.items() if not in_scope(p)}
+        new.update({p: s for p, s in sizes.items() if in_scope(p)})
         with open(MANIFEST, "w", encoding="utf-8", newline="\n") as fh:
             for p in sorted(new):
                 fh.write(f"{p}\t{new[p]}\n")
