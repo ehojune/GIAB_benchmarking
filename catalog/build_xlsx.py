@@ -42,6 +42,12 @@ for i, r in enumerate(rows):
             except ValueError: pass
         c = ws.cell(HEADER_ROW + 1 + i, j + 1, v if v != '' else None)
         c.font, c.alignment, c.border = (copy(x) for x in data_style)
+last_row = HEADER_ROW + len(rows)
+last_col = openpyxl.utils.get_column_letter(len(cols))
+for tbl in ws.tables.values():  # 표(MasterCatalogTable) 범위를 새 행 수에 맞춘다 — 안 맞추면 추가 행이 표 정렬/필터에서 빠진다
+    tbl.ref = f'A{HEADER_ROW}:{last_col}{last_row}'
+if ws.auto_filter.ref:
+    ws.auto_filter.ref = f'A{HEADER_ROW}:{last_col}{last_row}'
 ws['A1'] = f'GIAB Master Catalog — v{a.version}'
 ws['A2'] = f'원본: catalog/master_catalog.tsv · {len(rows)} datasets · {n_files:,} files · {tib:.1f} TiB · 플랫폼·리드·tool·next_step을 원문 그대로 보존'
 
