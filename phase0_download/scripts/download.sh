@@ -55,6 +55,9 @@ elif [ "$CAT" = "all" ]; then
     for s in "${SAMPLES[@]}"; do
         for m in "$REPO_DIR/manifests/$s"/*.tsv; do [ -e "$m" ] && MANIFESTS+=("$m"); done
     done
+elif [ -f "$REPO_DIR/manifests/$CAT.tsv" ]; then
+    # 선택 manifest (예: optional_trio_analysis_legacy) — all/run_priority에는 안 들어간다. 이름으로 직접 지정해야 받는다
+    MANIFESTS+=("$REPO_DIR/manifests/$CAT.tsv")
 else
     ok=0; for c in "${CATEGORIES[@]}"; do [ "$c" = "$CAT" ] && ok=1; done
     [ $ok -eq 1 ] || { echo "unknown category: $CAT"; usage; }

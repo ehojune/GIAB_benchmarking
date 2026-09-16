@@ -1,7 +1,7 @@
 # Phase 0 — 데이터 다운로드
 
 GIAB 원시 데이터 + truth set을 nbb2로 받는 단계. 대상 목록은 `manifests/`가 전부다.
-**총 78,120 files / 115.6 TB** (2026-08-13 기준: S3 실시간 목록 + FTP `current.tree` + 신규 디렉토리 라이브 조회, 파일별 HEAD 검증. `release/`는 2026-09-16 FTP 라이브 크롤로 재확인 — 아래 [release/ 갱신](#release-갱신-2026-09-16)).
+**총 85,497 files / 128.3 TB** (2026-08-13 S3 목록 + `current.tree` 기반 HEAD 검증 → 2026-09-16 FTP `release/`·`data/` 라이브 크롤로 재대조. 아래 [release/ 갱신](#release-갱신-2026-09-16), [data/ 갱신](#data-갱신-2026-09-16)). 선택 manifest(2014~2020 trio 분석 7.8 TiB)는 미포함.
 
 데이터셋별 처리 현황은 저장소 루트 [README.md](../README.md)의 master table 참고.
 
@@ -47,37 +47,37 @@ screen 나오기 `Ctrl-A d`, 다시 붙기 `screen -r giab`.
 
 | category | TB | days @83MB/s |
 |---|---|---|
-| pacbio_hifi (HG009 포함) | 9.3 | 1.3 |
+| pacbio_hifi (HG009 포함) | 10.3 | 1.4 |
 | ont | 12.7 | 1.8 |
 | pacbio_clr | 14.4 | 2.0 |
-| rnaseq (HG002/4/5만; Illumina·Iso-Seq·MAS-seq·directRNA) | 7.2 | 1.0 |
-| illumina_wgs | 23.3 | 3.2 |
+| rnaseq (HG002/4/5 data_RNAseq + HG008/HG009 RNA-seq) | 7.5 | 1.0 |
+| illumina_wgs | 29.8 | 4.2 |
 | bgi_mgi | 6.2 | 0.9 |
 | linked_reads (10X, stLFR) | 4.9 | 0.7 |
 | exome | 1.0 | 0.1 |
 | complete_genomics | 16.0 | 2.2 |
-| other (BioNano, Strand-seq, HiC, AVITI, UG100 등) | 20.2 | 2.8 |
-| release (truth set, stratifications, references) | 0.34 | <0.1 |
-| trio_analysis (HG002 T2T-Q100 draft benchmark 등) | 0.1 | <0.1 |
-| **전체** | **115.6** | **16.1** |
+| other (BioNano, Strand-seq, HiC, AVITI, UG100, 단일세포, somatic 분석, Verkko 등) | 25.0 | 3.5 |
+| release (truth set, stratifications, references) | 0.3 | 0.0 |
+| trio_analysis (HG002 T2T-Q100 draft benchmark 등) | 0.1 | 0.0 |
+| **전체** | **128.3** | **17.9** |
 
 샘플 × 카테고리 (GiB):
 
 | sample | pacbio_hifi | ont | pacbio_clr | illumina_wgs | bgi_mgi | linked_reads | exome | complete_genomics | other | TOTAL | days@83MB/s |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | HG001 | 386 | 329 | 211 | 2,003 | 1,014 | 1,542 | 123 | 2,087 | 1,138 | 8,833 | 1.3 |
-| HG002 | 1,643 | 3,242 | 4,502 | 3,179 | 1,726 | 659 | 225 | 1,805 | 3,023 | 20,005 | 3.0 |
+| HG002 | 1,643 | 3,242 | 4,502 | 3,179 | 1,726 | 659 | 225 | 1,805 | 3,022 | 20,005 | 3.0 |
 | HG003 | 1,170 | 896 | 2,686 | 3,141 | 395 | 572 | 199 | 1,854 | 515 | 11,426 | 1.7 |
 | HG004 | 1,023 | 917 | 2,549 | 3,487 | 564 | 529 | 214 | 1,747 | 555 | 11,585 | 1.7 |
 | HG005 | 611 | 527 | 1,731 | 3,299 | 1,655 | 429 | 216 | 3,660 | 1,342 | 13,470 | 2.0 |
 | HG006 | 442 | 470 | 861 | 1,244 | 192 | 422 | - | 1,859 | 6 | 5,497 | 0.8 |
 | HG007 | 424 | 382 | 849 | 1,271 | 209 | 431 | - | 1,867 | 8 | 5,441 | 0.8 |
-| HG008 (T + N-D + N-P) | 1,394 | 5,091 | - | 4,065 | - | - | - | - | 12,245 | 22,795 | 3.2 |
-| HG009 (T + N, 2026-07 신규) | 1,542 | - | - | - | - | - | - | - | - | 1,542 | 0.2 |
+| HG008 (T + N-D + N-P) | 2,396 | 5,109 | - | 6,660 | - | - | - | - | 16,310 | 30,475 | 4.6 |
+| HG009 (T + N) | 1,542 | - | - | 3,471 | - | - | - | - | 412 | 5,424 | 0.8 |
 
-- HG008 other(12.2 TiB) 구성: Element AVITI 4.9, Ultima UG100 1.9, PacBio Onso 1.2, analysis 1.7, superseded 2022 데이터 1.8, Dovetail LinkPrep 0.2 TiB. superseded는 제외해도 무방
+- HG008 other(16.3 TiB) 구성: Element AVITI 4.9, Ultima UG100 1.9, PacBio Onso 1.2, analysis 3.4(Verkko 작업 디렉토리 1.5 포함), superseded 2022 데이터 3.5(2026-09 raw 1.7 추가), NIST 트리 단일세포·Hi-C·somatic 분석 1.0, Dovetail LinkPrep 0.2. superseded는 제외해도 무방
 - HG008은 T/N-D/N-P, HG009는 T(bulk p16·p42 + 클론 6종)/N(WT-p4·p25, LVTert-p23)이 파일명으로 구분됨
-- HG009는 PacBio HiFi Revio만 제공 (NIST somatic WDL 분석 결과 포함, 563 files / 1.5 TiB)
+- HG009는 PacBio HiFi Revio(1.5 TiB) + 2026-09 크롤로 추가된 BCM NovaSeq X 125x WGS(3.4 TiB)·LinkPrep Hi-C·RNA-seq·핵형·sarek somatic 분석 (950 files / 5.3 TiB)
 
 플랫폼 디렉토리 단위 정확 바이트는 [docs/SIZES.md](../docs/SIZES.md) 참고 (조회용).
 
@@ -99,14 +99,16 @@ TOOL=s3 JOBS=4 ./phase0_download/scripts/download.sh pacbio_hifi
 - `manifests/<SAMPLE>/<category>.tsv` — `상대경로<TAB>bytes`. 다운로드 대상의 전부 (HG001~HG009)
 - `manifests/release_truthsets.tsv` — truth set VCF/BED, stratification, reference (전체 버전 포함). **FTP `release/` 라이브 크롤로 유지** (`scripts/crawl_release.py`, 2026-09-16 기준 7,989 files / 318.2 GiB)
 - `manifests/release_stale_ftp_removed.tsv` — FTP에서 사라져 manifest에서 뺀 항목(경로, 바이트, 확인일). 로컬에는 남아 있음
-- `manifests/rnaseq_all.tsv` — `data_RNAseq/` 전체 (324 files, 6.5 TiB). HG002·HG004·HG005만 존재. `all`에는 미포함, run_priority에는 포함
+- `manifests/optional_trio_analysis_legacy.tsv` — 2014~2020 trio 레벨 분석 107 디렉토리(8,228 files / 7.8 TiB). `all`·run_priority 미포함. `download.sh optional_trio_analysis_legacy` 로만 받는다
+- `manifests/data_unrouted_new.tsv` — data/ 크롤이 카탈로그 행 없이 만난 신규 파일(현재는 위 legacy와 동일). `catalog_new_dirs.py` → `crawl_data.py --route-all` 로 manifest에 넣는다
+- `manifests/rnaseq_all.tsv` — `data_RNAseq/` 전체 (HG002·HG004·HG005) + 2026-09-16 추가된 HG008·HG009 RNA-seq(`data_somatic/` 하위, UMD·BCM). `all`에는 미포함, run_priority에는 포함
 - `manifests/trio_analysis.tsv` — trio 레벨 analysis (HG002 T2T-Q100 draft benchmark defrabb 등, 325 files / 59 GiB). `all`에는 미포함, run_priority에는 포함
 
 헤더 없음. 1열이 GIAB 상대경로, 2열이 바이트.
 
 ### S3 미러 누락 주의 (2026-08-13 확인)
 
-S3 미러는 FTP보다 불완전하다. FTP `current.tree` + 신규 디렉토리 라이브 크롤과 S3 실시간 목록을 대조한 결과
+S3 미러는 FTP보다 불완전하다. (2026-09-16 추가: 반대 방향도 있다 — FTP에서 사라졌지만 S3에는 남은 파일 2,173건, FTP 사본만 재압축돼 크기가 다른 Illumina FASTQ 7,122건. 상세는 [data/ 갱신](#data-갱신-2026-09-16).) FTP `current.tree` + 신규 디렉토리 라이브 크롤과 S3 실시간 목록을 대조한 결과
 아래는 **FTP에만 존재**한다 (전부 파일별 HEAD로 실존·크기 검증 후 manifest 반영).
 
 | 누락 데이터 | 용량 |
@@ -146,6 +148,41 @@ Apache 인덱스가 숨기는 dotfile(`.DS_Store`, `._*` 394건)은 옛 manifest
 S3 미러에 없는 파일은 FTP로 자동 대체된다. 로컬 HG002 `latest/`에는 v4.2.1과 v5.0q가 공존하므로 평가는 `NISTv4.2.1/`·`v5.0q/`를 직접 지정한다.
 
 이 스크립트는 `release/` 전용이다(release/ 밖 `ROOT`는 거부). `data/`·`data_somatic/`·`data_RNAseq/`는 샘플별 manifest로 나뉘어 있어 별도 도구가 필요하고, 이번에 크롤하지 않았다.
+
+## data/ 갱신 (2026-09-16)
+
+`data/`·`data_somatic/`·`data_RNAseq/`도 FTP 인덱스를 직접 크롤해 맞춘다. 파일이 8만 개라 전부 HEAD하지 않고,
+인덱스의 수정일·근사 크기로 신규/변경 후보만 골라 HEAD한다(`scripts/crawl_data.py`).
+
+```bash
+python phase0_download/scripts/crawl_data.py --dry-run     # 보고서만 (logs/crawl_cache/)
+python phase0_download/scripts/crawl_data.py               # 기존 디렉토리의 신규 파일은 manifest에 바로 넣고, 새 디렉토리는 data_unrouted_new.tsv에
+python phase0_download/scripts/catalog_new_dirs.py         # 새 디렉토리마다 카탈로그 행 생성(플랫폼 이름 패턴 → category)
+python phase0_download/scripts/crawl_data.py --route-all   # 캐시로 재실행 → 새 행의 파일을 manifest에 반영
+```
+
+2026-09-16 결과 ([발견](../docs/reference/data_crawl_2026-09-16.md) · [반영](../docs/reference/data_crawl_2026-09-16_2.md)):
+
+| 변화 | 파일 | TiB | 내용 |
+|---|---|---|---|
+| 기존 디렉토리에 추가 | 273 | 0.12 | HG008 Liss_lab analysis 하위(HKU ClairS 0.4.1, Hartwig OncoAnalyser, Lancet2 등), BGISEQ QC 리포트 |
+| 새 디렉토리 → 카탈로그 행 102개 | 7,104 | 11.4 | HG008 NIST 트리(T_bulk p21/p41/p100/p103 + 클론 8종: BCM NovaSeq X WGS·Revio SPRQ·somatic 분석·ResolveOME·Tapestri·10x Multiome·Hi-C·RNA-seq·핵형), HG009 신규(NovaSeq X 125x WGS·LinkPrep Hi-C·RNA-seq·핵형·sarek 분석), HG008 Verkko 작업 디렉토리 1.2, superseded 2022 raw 1.7, HG002 defrabb v0.011·v0.020 |
+| 선택 manifest로 분리 | 8,228 | 7.8 | `data/*/analysis/` 2014~2020 trio 레벨 분석 107 디렉토리(10X LongRanger/Supernova 어셈블리 5.4, DISCOVAR 0.8, CG 콜셋 등). 카탈로그 행 없음 |
+| FTP에서만 사라짐 — S3에 있어 유지 | 2,173 | 12.3 | PacBio_MtSinai_NIST·PacBio_CLR·SOLiD·Strand-Seq EMBL·BioNano DLE·HiC_UCSC·CG normal 등. 이미 로컬에 있음 |
+| FTP 사본 크기만 다름 — 유지 | 7,122 | - | Illumina HiSeq 300x/2x250/mate-pair FASTQ. FTP 사본이 S3보다 ~14% 작음(재압축). manifest는 S3 기준 |
+| 양쪽 미러에서 사라짐 | 0 | 0 | |
+
+**FTP와 S3 미러는 양방향으로 어긋난다.** download.sh는 S3를 먼저 쓰고 manifest 크기는 S3 기준으로 검증된 것이므로,
+크롤러는 FTP와 어긋난 기존 항목을 S3에 HEAD해 S3가 manifest와 맞으면 그대로 둔다. FTP만 보고 갱신했다면 7,122 파일이
+전부 크기 불일치로 재다운로드됐을 것이다.
+
+2026-08-13 목록이 이렇게 많이 빠진 이유: 그 목록은 S3 실시간 목록이 주였고, HG008 NIST 트리·Verkko·HG009 신규처럼
+FTP에만 있는 것은 `current.tree`(2025-02 정지) 에 없어 보이지 않았다. 신규 게시(2026-08-13 이후 수정)는 713 파일뿐이고
+나머지는 그 전부터 FTP에 있었다.
+
+받기: `TOOL=s3 JOBS=8 bash phase0_download/scripts/run_priority.sh` 를 다시 돌리면 신규 11.5 TiB만 받는다(기존은 크기 일치로 스킵).
+`data_somatic/HG008/Liss_lab/superseded-2022-data`(3.5 TiB)와 Verkko 작업 디렉토리(1.2 TiB)는 빼고 싶으면 manifest에서 지운다.
+legacy 분석은 `TOOL=s3 JOBS=8 bash phase0_download/scripts/download.sh optional_trio_analysis_legacy`.
 
 ## 경로 변경 이력
 

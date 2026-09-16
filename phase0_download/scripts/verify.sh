@@ -33,6 +33,8 @@ elif [ "$CAT" = "all" ]; then
     for m in release_truthsets rnaseq_all trio_analysis; do
         [ -e "$REPO_DIR/manifests/$m.tsv" ] && MANIFESTS+=("$REPO_DIR/manifests/$m.tsv")
     done
+elif [ -f "$REPO_DIR/manifests/$CAT.tsv" ]; then
+    MANIFESTS+=("$REPO_DIR/manifests/$CAT.tsv")   # 선택 manifest (optional_*) — all 집계에는 미포함
 else
     for s in "${SAMPLES[@]}"; do
         m="$REPO_DIR/manifests/$s/$CAT.tsv"
