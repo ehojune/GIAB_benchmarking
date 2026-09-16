@@ -18,6 +18,7 @@ import glob
 import os
 import re
 import sys
+from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
@@ -115,9 +116,39 @@ def sample_of(path):
 AUTO_MARK = "FTP data/ 라이브 크롤로 발견"   # 이 스크립트가 만든 행의 표식(notes). 재실행 때 파생 필드를 다시 계산한다
 REF_TOKENS = [("GRCh38-GIABv3", r"GRCh38[-_]GIABv3"), ("GRCh38_ERCC_RSEM", r"GRCh38_ERCC_RSEM"), ("CHM13v2.0", r"CHM13v2\.0|CHM13"),
               ("GRCh37", r"GRCh37|hs37d5|\bhg19\b"), ("GRCh38", r"GRCh38|\bhg38\b")]
-# smvar/stvar는 GIAB germline 벤치마크 용어(small/structural variant)라 somatic 토큰에 넣지 않는다
+# smvar/stvar는 GIAB germline 벤치마크 용어(small/structural variant)라 somatic 토큰에 넣지 않는다.
+# 단 파일 단위로 볼 때 somatic 표기가 있으면 그쪽이 이긴다(`somatic-stvar` 등) — 아래 classify_vcfs 참조.
 SOMATIC_RE = re.compile(r"somatic|ClairS|DeepSomatic|Strelka|Mutect|Lancet|Severus|Oncoanalyzer|purple|cnvkit|_vs_|ppmSeq|GRIDSS|minda|Wakhan", re.I)
 GERMLINE_RE = re.compile(r"germline|dipcall|deepvariant|clair3(?!S)|freebayes|haplotypecaller|benchmark\.vcf|smvar|stvar", re.I)
+# 사용자가 직접 채운 단계는 재실행 때 덮어쓰지 않는다 (catalog/README.md: *_by = GIAB / me / N/A)
+STAGE_FIELDS = [
+    ("index_present", "index_types", "index_unindexed_n", "index_by", "index_local_path", "index_script"),
+    ("aligned", "align_tool", "align_ref", "align_by", "align_local_path", "align_script"),
+    ("phased", "phase_tool", None, "phase_by", "phase_local_path", "phase_script"),
+    ("variant_called", "variant_tool", None, "variant_by", "variant_local_path", "variant_script"),
+    ("meth_called", "meth_tool", None, "meth_by", "meth_local_path", "meth_script"),
+    ("somatic_called", "somatic_tool", None, "somatic_by", "somatic_local_path", "somatic_script"),
+    ("assembled", "assembly_tool", None, "assembly_by", "assembly_local_path", "assembly_script"),
+]
+
+
+def user_owned(row, stage):
+    """그 단계를 사람이 채웠나 — `*_by=me` 또는 local_path/script가 있으면 건드리지 않는다"""
+    _, _, _, by, local_path, script = stage
+    return (row.get(by) or "").strip().lower() == "me" or (row.get(local_path) or "").strip() or (row.get(script) or "").strip()
+
+
+def classify_vcfs(vcfs, is_analysis, dirname, pat):
+    """(somatic, germline) — 파일 단위로 보고, 명시적 somatic 표기가 generic 벤치마크 용어보다 우선한다"""
+    som = [v for v in vcfs if SOMATIC_RE.search(v)]
+    ger = [v for v in vcfs if GERMLINE_RE.search(v) and not SOMATIC_RE.search(v)]
+    if pat == r"NIST_HG002_DraftBenchmark_defrabb":
+        return False, bool(vcfs)
+    somatic = bool(som) or (bool(vcfs) and (is_analysis or SOMATIC_RE.search(dirname) is not None))
+    germline = bool(ger)
+    if vcfs and not somatic and not germline:
+        germline = True   # 분류 근거 없으면 germline (카탈로그 기존 관례)
+    return somatic, germline
 PHASE_RE = re.compile(r"hiphase|whatshap|longphase|haplotag", re.I)   # 'phased' 단어는 너무 헐거워서(purple 등 파일명) 빼는다
 
 
@@ -132,27 +163,54 @@ def load_manifest_files():
     return out
 
 
-def index_status(names):
-    """(index_present, index_types, unindexed_n) — 인덱스 대상 파일마다 사이드카가 있는지 본다"""
-    s = set(names)
-    pairs = [(".bam", (".bam.bai", ".bai", ".bam.pbi")), (".cram", (".cram.crai", ".crai")), (".vcf.gz", (".vcf.gz.tbi", ".vcf.gz.csi"))]  # PacBio uBAM은 .pbi
+def index_status(paths):
+    """(index_present, index_types, unindexed_n) — 인덱스 대상 파일마다 **같은 디렉토리의** 사이드카가 있는지 본다.
+
+    전체 상대경로로 비교한다(basename으로 비교하면 다른 디렉토리의 동명 인덱스를 빌려 쓴다).
+    BAM은 .bai/.csi/.pbi, CRAM은 .crai, VCF는 .tbi/.csi를 인정한다.
+    """
+    s = set(paths)
+    def cands(p):
+        if p.endswith(".bam"):
+            return [p + ".bai", p + ".csi", p + ".pbi", p[:-4] + ".bai", p[:-4] + ".csi"]
+        if p.endswith(".cram"):
+            return [p + ".crai", p[:-5] + ".crai"]
+        if p.endswith(".vcf.gz"):
+            return [p + ".tbi", p + ".csi"]
+        return None
     targets, indexed, types = 0, 0, set()
-    for n in names:
-        for ext, sides in pairs:
-            if n.endswith(ext):
-                targets += 1
-                cands = [n + sd[len(ext):] if sd.startswith(ext) else n[: -len(ext)] + sd for sd in sides]
-                hit = [c for c in cands if c in s]
-                if hit:
-                    indexed += 1
-                    types.add(os.path.splitext(hit[0])[1])
-        if n.endswith(".bam.pbi"):
-            types.add(".pbi")
+    for p in paths:
+        c = cands(p)
+        if c is None:
+            continue
+        targets += 1
+        hit = next((x for x in c if x in s), None)
+        if hit:
+            indexed += 1
+            types.add("." + hit.rsplit(".", 1)[1])
     if targets == 0:
         return "-", ",".join(sorted(types)), ""
     if indexed == targets:
         return "TRUE", ",".join(sorted(types)), "0"
     return ("PARTIAL" if indexed else "FALSE"), ",".join(sorted(types)), str(targets - indexed)
+
+
+def assign_inventory(files, catalog_paths):
+    """파일마다 가장 긴 giab_path 접두(또는 정확 일치) 하나에만 배타적으로 배정한다.
+
+    부모 행과 자식 행이 같은 파일을 이중으로 세지 않게 한다 — 자식 행(예: `<passage>/analysis`)을 새로 만들면
+    부모 행(예: `HG009-T_bulk`)의 files/size는 그만큼 줄어야 한다.
+    """
+    pset = set(catalog_paths)
+    out = defaultdict(dict)
+    for p, b in files.items():
+        parts = p.split("/")
+        for i in range(len(parts), 0, -1):
+            cand = "/".join(parts[:i])
+            if cand in pset:
+                out[cand][p] = b
+                break
+    return out
 
 
 def refs_in(names):
@@ -199,36 +257,53 @@ def main():
             if pat:
                 groups[r["giab_path"]] = {"pat": pat, "files": []}
 
-    new_rows, updated = [], []
-    for d, g in sorted(groups.items()):
+    # 인벤토리 배타 배정: manifest ∪ 이번 신규 파일을, 카탈로그 행(기존 + 이번에 생길 행) 중 가장 긴 접두에 하나씩만 배정한다.
+    all_files = dict(manifest_files)
+    for g in groups.values():
+        all_files.update(dict(g["files"]))
+    catalog_paths = {r["giab_path"].rstrip("/") for r in rows if r["category"] != "release_truthsets"} | set(groups)
+    assigned = assign_inventory(all_files, catalog_paths)
+    # 자식 행이 새로 생기면 부모 행의 files/size도 줄어야 한다 → 조상 행도 갱신 대상에 넣는다
+    ancestors = {c for c in catalog_paths if any(d != c and d.startswith(c + "/") for d in groups)}
+
+    new_rows, updated, parent_adjusted = [], [], []
+    for d in sorted(set(groups) | ancestors):
+        g = groups.get(d)
+        if g is None:                       # 조상 행: files/size만 배타 배정으로 다시 센다
+            r = by_path.get(d)
+            inv = assigned.get(d, {})
+            if r is None or (not inv and int(r["files"] or 0) > 0 and d not in assigned):
+                continue                    # manifest에 파일이 하나도 없으면 건드리지 않는다(다운로드 전 데이터셋 등)
+            before = r["files"]
+            r["files"], r["size_gib"] = str(len(inv)), f"{sum(inv.values()) / GIB:.1f}"
+            if before != r["files"]:
+                parent_adjusted.append((d, before, r["files"]))
+            continue
         pat = g["pat"]
         _, cat, platform, tools, note = next(x for x in PATTERNS if x[0] == pat)
-        # 인벤토리 = manifest에 이미 있는 파일 ∪ 이번 unrouted 파일 (경로 기준 중복 없음). 재실행해도 수가 불지 않는다.
-        inv = {p: b for p, b in manifest_files.items() if p == d or p.startswith(d + "/")}
-        inv.update(dict(g["files"]))
+        inv = assigned.get(d, {})
         n, size = len(inv), sum(inv.values())
-        names = [os.path.basename(p) for p in inv]
-        has_fastq = any(re.search(r"\.(fastq|fq)\.gz$", x) for x in names)
+        paths = list(inv)
+        names = [os.path.basename(p) for p in paths]
+        fastq_plain = [x for x in names if re.search(r"\.(fastq|fq)\.gz$", x)]
+        fastq_tar = [x for x in names if re.search(r"(fastq|fq)s?[^/]*\.tar\.gz$", x, re.I)]   # ResolveOME 등은 FASTQ를 tar.gz로 묶어 배포
+        has_fastq = bool(fastq_plain or fastq_tar)
         has_bam = any(x.endswith((".bam", ".cram")) for x in names)
         vcfs = [x for x in names if x.endswith((".vcf.gz", ".vcf"))]
-        idx_present, idx_types, unindexed = index_status(names)
+        idx_present, idx_types, unindexed = index_status(paths)
         readme = sorted(p for p in inv if re.search(r"README", os.path.basename(p), re.I) and os.path.dirname(p) == d)
-        # VCF 성격: somatic(T/N 비교·somatic 콜러) vs germline. analysis 디렉토리는 somatic이 기본, germline 토큰이 있으면 둘 다
         is_analysis = pat == r"^analysis$" or "/analysis/" in d + "/"
-        somatic = bool(vcfs) and pat != r"NIST_HG002_DraftBenchmark_defrabb" and (
-            any(SOMATIC_RE.search(x) for x in vcfs) or is_analysis or SOMATIC_RE.search(os.path.basename(d)) is not None)
-        germline = any(GERMLINE_RE.search(x) for x in vcfs) or (bool(vcfs) and pat == r"NIST_HG002_DraftBenchmark_defrabb")
-        if vcfs and not somatic and not germline:
-            germline = True  # 분류 근거 없으면 germline으로(카탈로그 기존 관례)
+        somatic, germline = classify_vcfs(vcfs, is_analysis, os.path.basename(d), pat)
         phased = any(PHASE_RE.search(x) for x in names)
-        phase_tool = ("HiPhase v1.5.0 (BCM Revio README)" if pat == r"BCM_Revio" else "파일명 토큰 기준(hiphase/whatshap/longphase/phased) — 툴 버전은 README 확인") if phased else "-"
-        refs = refs_in([p for p in inv if p.endswith((".bam", ".cram", ".vcf.gz", ".vcf"))]) if (has_bam or vcfs) else "-"
+        phase_tool = ("HiPhase v1.5.0 (BCM Revio README)" if pat == r"BCM_Revio" else "파일명 토큰 기준(hiphase/whatshap/longphase) — 툴 버전은 README 확인") if phased else "-"
+        refs = refs_in([p for p in paths if p.endswith((".bam", ".cram", ".vcf.gz", ".vcf"))]) if (has_bam or vcfs) else "-"
         if cat == "rnaseq_all" and has_bam and refs == "N/A":
             refs = "GRCh38_ERCC_RSEM (BCM RNAseq README)"
+        reads_format = " + ".join(x for x in ("FASTQ" if fastq_plain else "", "FASTQ tar.gz 아카이브" if fastq_tar else "", "BAM/CRAM" if has_bam else "") if x) or "N/A"
         derived = dict(
             files=str(n), size_gib=f"{size / GIB:.1f}",
             reads_present="TRUE" if has_fastq or (has_bam and cat in ("pacbio_hifi", "ont")) else "FALSE",
-            reads_format=("FASTQ" if has_fastq else "") + (" + BAM/CRAM" if has_bam else "") or "N/A",
+            reads_format=reads_format,
             index_present=idx_present, index_types=idx_types, index_unindexed_n=unindexed, index_by="GIAB" if idx_types else "-",
             aligned="TRUE" if has_bam else "-", align_tool=tools if has_bam else "-", align_ref=refs if has_bam else "-", align_by="GIAB" if has_bam else "-",
             phased="TRUE" if phased else "-", phase_tool=phase_tool, phase_by="GIAB" if phased else "-",
@@ -240,8 +315,12 @@ def main():
         )
         if d in by_path:
             r = by_path[d]
-            if AUTO_MARK in (r.get("notes") or ""):   # 이 스크립트가 만든 행 → 파생 필드 전부 재계산
-                r.update(derived)
+            if AUTO_MARK in (r.get("notes") or ""):   # 이 스크립트가 만든 행 → 파생 필드 재계산. 단 사람이 채운 단계는 그대로 둔다
+                keep = set()
+                for stage in STAGE_FIELDS:
+                    if user_owned(r, stage):
+                        keep |= {f for f in stage if f}
+                r.update({k: v for k, v in derived.items() if k not in keep})
             else:                                     # 사람이 채운 기존 행 → files/size만 인벤토리 기준으로 맞추고 비고는 한 번만
                 r["files"], r["size_gib"] = derived["files"], derived["size_gib"]
                 if f"{TODAY} data/ 크롤" not in (r.get("notes") or ""):
@@ -273,7 +352,9 @@ def main():
     for p in skipped[:20]:
         print("  UNCLASSIFIED:", p)
     for d, n, size in updated:
-        print(f"  EXISTING ROW +{n} files / {size / GIB:.1f} GiB: {d}")
+        print(f"  EXISTING ROW → {n} files / {size / GIB:.1f} GiB: {d}")
+    for d, before, after in parent_adjusted:
+        print(f"  PARENT ROW {before} → {after} files (자식 행이 가져감): {d}")
     if DRY:
         for r in new_rows[:120]:
             print(f"  {r['category']:13s} {r['files']:>5s} {r['size_gib']:>8s}  {r['giab_path']}")
