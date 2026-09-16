@@ -138,17 +138,35 @@ def user_owned(row, stage):
     return (row.get(by) or "").strip().lower() == "me" or (row.get(local_path) or "").strip() or (row.get(script) or "").strip()
 
 
+# 파일명에서 확인 가능한 콜러 — 단계별 tool 필드를 파이프라인 요약 대신 실제 산출물 기준으로 적는다
+CALLERS = [(r"dipcall", "dipcall"), (r"clairs", "ClairS"), (r"clair3", "Clair3"), (r"deepsomatic", "DeepSomatic"),
+           (r"deepvariant|\bdv\b", "DeepVariant"), (r"severus", "Severus"), (r"sniffles", "Sniffles"),
+           (r"strelka", "Strelka2"), (r"mutect", "Mutect2"), (r"lancet", "Lancet2"), (r"freebayes", "FreeBayes"),
+           (r"haplotypecaller|gatk", "GATK"), (r"manta", "Manta"), (r"gridss", "GRIDSS2"), (r"cnvkit", "CNVkit"),
+           (r"purple", "PURPLE"), (r"pbsv", "pbsv"), (r"indexcov", "indexcov"), (r"wakhan", "Wakhan"), (r"minda", "minda")]
+
+
+def callers_in(names):
+    return [label for pat, label in CALLERS if any(re.search(pat, n, re.I) for n in names)]
+
+
+def stage_tool(vcf_names, fallback):
+    """그 단계의 VCF 파일명에서 확인된 콜러. 없으면 파이프라인 요약으로 돌아간다."""
+    found = callers_in(vcf_names)
+    return (", ".join(found) + " (파일명 토큰; 버전은 README 확인)") if found else fallback
+
+
 def classify_vcfs(vcfs, is_analysis, dirname, pat):
     """(somatic, germline) — 파일 단위로 보고, 명시적 somatic 표기가 generic 벤치마크 용어보다 우선한다"""
     som = [v for v in vcfs if SOMATIC_RE.search(v)]
     ger = [v for v in vcfs if GERMLINE_RE.search(v) and not SOMATIC_RE.search(v)]
     if pat == r"NIST_HG002_DraftBenchmark_defrabb":
-        return False, bool(vcfs)
-    somatic = bool(som) or (bool(vcfs) and (is_analysis or SOMATIC_RE.search(dirname) is not None))
-    germline = bool(ger)
-    if vcfs and not somatic and not germline:
-        germline = True   # 분류 근거 없으면 germline (카탈로그 기존 관례)
-    return somatic, germline
+        return [], list(vcfs)
+    if bool(vcfs) and not som and (is_analysis or SOMATIC_RE.search(dirname) is not None):
+        som = [v for v in vcfs if v not in ger]   # analysis 디렉토리: germline 표기가 없는 VCF는 somatic
+    if vcfs and not som and not ger:
+        ger = list(vcfs)   # 분류 근거 없으면 germline (카탈로그 기존 관례)
+    return som, ger
 PHASE_RE = re.compile(r"hiphase|whatshap|longphase|haplotag", re.I)   # 'phased' 단어는 너무 헐거워서(purple 등 파일명) 빼는다
 
 
@@ -177,6 +195,8 @@ def index_status(paths):
             return [p + ".crai", p[:-5] + ".crai"]
         if p.endswith(".vcf.gz"):
             return [p + ".tbi", p + ".csi"]
+        if p.endswith(".vcf"):
+            return []      # 비압축 VCF: 인덱스 대상이지만 사이드카가 있을 수 없다(bgzip+tabix 필요) → 미인덱스로 센다
         return None
     targets, indexed, types = 0, 0, set()
     for p in paths:
@@ -263,21 +283,33 @@ def main():
         all_files.update(dict(g["files"]))
     catalog_paths = {r["giab_path"].rstrip("/") for r in rows if r["category"] != "release_truthsets"} | set(groups)
     assigned = assign_inventory(all_files, catalog_paths)
-    # 자식 행이 새로 생기면 부모 행의 files/size도 줄어야 한다 → 조상 행도 갱신 대상에 넣는다
-    ancestors = {c for c in catalog_paths if any(d != c and d.startswith(c + "/") for d in groups)}
+    # 배타 배정이 끝났으므로 **모든** 비-release 행의 files/size를 다시 센다.
+    # 자식 행이 새로 생겨 줄어든 부모 행, crawl이 기존 디렉토리에 직접 넣은 파일(예: BGISEQ QC 디렉토리)이 모두 여기서 맞춰진다.
+    has_any = {}   # 그 경로 아래 manifest 파일이 하나라도 있나 (자식에게 전부 넘어가 배정이 빈 경우와 구분)
+    for p in all_files:
+        parts = p.split("/")
+        for i in range(len(parts), 0, -1):
+            has_any["/".join(parts[:i])] = True
 
-    new_rows, updated, parent_adjusted = [], [], []
-    for d in sorted(set(groups) | ancestors):
+    new_rows, updated, recounted = [], [], []
+    for d in sorted(catalog_paths | set(groups)):
         g = groups.get(d)
-        if g is None:                       # 조상 행: files/size만 배타 배정으로 다시 센다
+        if g is None:                       # 이번에 만든 행이 아닌 기존 행: files/size만 배타 배정으로 다시 센다
             r = by_path.get(d)
+            if r is None:
+                continue
             inv = assigned.get(d, {})
-            if r is None or (not inv and int(r["files"] or 0) > 0 and d not in assigned):
-                continue                    # manifest에 파일이 하나도 없으면 건드리지 않는다(다운로드 전 데이터셋 등)
-            before = r["files"]
+            if not inv and not has_any.get(d):
+                continue                    # manifest에 이 경로의 파일이 아예 없다 → 다운로드 전 데이터셋. 건드리지 않는다
+            before, before_gib = r["files"], r["size_gib"]
             r["files"], r["size_gib"] = str(len(inv)), f"{sum(inv.values()) / GIB:.1f}"
             if before != r["files"]:
-                parent_adjusted.append((d, before, r["files"]))
+                recounted.append((d, before, r["files"]))
+                if int(r["files"]) > int(before or 0) and f"{TODAY} data/ 크롤" not in (r.get("notes") or ""):
+                    added_ext = sorted({os.path.splitext(p)[1] or "(확장자 없음)" for p in inv} - {".md", ".md5", ".txt"})
+                    r["notes"] = (r.get("notes") or "") + (
+                        f" | {TODAY} data/ 크롤: 하위 파일이 {before}→{r['files']}개로 늘었다"
+                        f"(manifest 실측, 확장자: {', '.join(added_ext[:8])}). 설명·처리 필드는 갱신 전")
             continue
         pat = g["pat"]
         _, cat, platform, tools, note = next(x for x in PATTERNS if x[0] == pat)
@@ -293,7 +325,8 @@ def main():
         idx_present, idx_types, unindexed = index_status(paths)
         readme = sorted(p for p in inv if re.search(r"README", os.path.basename(p), re.I) and os.path.dirname(p) == d)
         is_analysis = pat == r"^analysis$" or "/analysis/" in d + "/"
-        somatic, germline = classify_vcfs(vcfs, is_analysis, os.path.basename(d), pat)
+        som_vcfs, ger_vcfs = classify_vcfs(vcfs, is_analysis, os.path.basename(d), pat)
+        somatic, germline = bool(som_vcfs), bool(ger_vcfs)
         phased = any(PHASE_RE.search(x) for x in names)
         phase_tool = ("HiPhase v1.5.0 (BCM Revio README)" if pat == r"BCM_Revio" else "파일명 토큰 기준(hiphase/whatshap/longphase) — 툴 버전은 README 확인") if phased else "-"
         refs = refs_in([p for p in paths if p.endswith((".bam", ".cram", ".vcf.gz", ".vcf"))]) if (has_bam or vcfs) else "-"
@@ -307,8 +340,8 @@ def main():
             index_present=idx_present, index_types=idx_types, index_unindexed_n=unindexed, index_by="GIAB" if idx_types else "-",
             aligned="TRUE" if has_bam else "-", align_tool=tools if has_bam else "-", align_ref=refs if has_bam else "-", align_by="GIAB" if has_bam else "-",
             phased="TRUE" if phased else "-", phase_tool=phase_tool, phase_by="GIAB" if phased else "-",
-            variant_called="TRUE" if germline else "-", variant_tool=(tools if germline else "-"), variant_by="GIAB" if germline else "-",
-            somatic_called="TRUE" if somatic else "-", somatic_tool=(tools if somatic else "-"), somatic_by="GIAB" if somatic else "-",
+            variant_called="TRUE" if germline else "-", variant_tool=(stage_tool(ger_vcfs, tools) if germline else "-"), variant_by="GIAB" if germline else "-",
+            somatic_called="TRUE" if somatic else "-", somatic_tool=(stage_tool(som_vcfs, tools) if somatic else "-"), somatic_by="GIAB" if somatic else "-",
             assembled="TRUE" if pat == r"Verkko" else "-", assembly_tool="Verkko 2.2/2.2.1" if pat == r"Verkko" else "-", assembly_by="GIAB" if pat == r"Verkko" else "-",
             giab_processed="TRUE" if (has_bam or vcfs) else "FALSE",
             tool_source=("giab_doc:" + readme[0]) if readme else "N/A",
@@ -353,8 +386,8 @@ def main():
         print("  UNCLASSIFIED:", p)
     for d, n, size in updated:
         print(f"  EXISTING ROW → {n} files / {size / GIB:.1f} GiB: {d}")
-    for d, before, after in parent_adjusted:
-        print(f"  PARENT ROW {before} → {after} files (자식 행이 가져감): {d}")
+    for d, before, after in recounted:
+        print(f"  EXISTING ROW {before} → {after} files (배타 배정 재계산): {d}")
     if DRY:
         for r in new_rows[:120]:
             print(f"  {r['category']:13s} {r['files']:>5s} {r['size_gib']:>8s}  {r['giab_path']}")
@@ -366,11 +399,19 @@ def main():
         w.writeheader()
         w.writerows(rows)
     if legacy:
-        already = {l.split("\t")[0] for l in open(LEGACY, encoding="utf-8") if l.strip()} if os.path.exists(LEGACY) else set()
-        with open(LEGACY, "a", encoding="utf-8", newline="\n") as fh:
-            for p, b, _ in sorted(legacy):
-                if p not in already:
-                    fh.write(f"{p}\t{b}\n")
+        # 병합: 이번 크롤이 잰 크기로 갱신하고(파일이 바뀌었을 수 있다), 이번 범위 밖 기존 항목은 그대로 둔다
+        merged = {}
+        if os.path.exists(LEGACY):
+            for l in open(LEGACY, encoding="utf-8"):
+                if l.strip() and not l.startswith("#"):
+                    p, b = l.rstrip("\n").split("\t")[:2]
+                    merged[p] = int(b)
+        changed = sum(1 for p, b, _ in legacy if merged.get(p) not in (None, b))
+        merged.update({p: b for p, b, _ in legacy})
+        with open(LEGACY, "w", encoding="utf-8", newline="\n") as fh:
+            for p in sorted(merged):
+                fh.write(f"{p}\t{merged[p]}\n")
+        print(f"legacy manifest: {len(merged)} files ({changed} sizes refreshed)")
     print(f"catalog: {len(rows)} rows; legacy manifest: {LEGACY}")
     print("다음: python phase0_download/scripts/crawl_data.py --route-all   (캐시로 재실행 → manifest 반영)")
 
