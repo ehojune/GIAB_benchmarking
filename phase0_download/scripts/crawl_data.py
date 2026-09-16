@@ -275,8 +275,12 @@ def main():
                 p, b = l.rstrip("\n").split("\t")
                 if in_scope(p) and b != "-1":
                     sizes[p] = None if b == "404" else int(b)
-    elif FRESH and os.path.exists(SIZES_CACHE):
-        os.remove(SIZES_CACHE)
+    elif FRESH:
+        # --fresh: 크기 캐시와 S3 캐시를 모두 버린다. S3 캐시를 남기면 이번 조회가 실패했을 때
+        # 다음 실행이 옛 결과를 읽고 재시도를 건너뛴다(append 모드라 실패는 기록되지 않는다).
+        for f in (SIZES_CACHE, S3_CACHE):
+            if os.path.exists(f):
+                os.remove(f)
     pending = [p for p in to_head if p not in sizes]
     t1 = time.time()
     with cf.ThreadPoolExecutor(HEAD_THREADS) as ex, open(SIZES_CACHE, "a", encoding="utf-8", newline="\n") as cache:
