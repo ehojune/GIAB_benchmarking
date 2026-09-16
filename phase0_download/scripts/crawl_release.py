@@ -165,12 +165,18 @@ def main():
             fh.write("\n".join(files) + "\n")
         print(f"crawl: {ndirs} dirs, {len(files) } files in {time.time() - t0:.0f}s", file=sys.stderr)
 
-    # 대조 기준(old): 현재 manifest, 또는 --baseline 파일. 재작성 대상은 항상 MANIFEST.
-    old = {}
-    for line in open(BASELINE or MANIFEST, encoding="utf-8"):
-        if line.strip():
-            p, b = line.rstrip("\n").split("\t")[:2]
-            old[p] = int(b) if b else None
+    def read_manifest(path):
+        d = {}
+        for line in open(path, encoding="utf-8"):
+            if line.strip():
+                p, b = line.rstrip("\n").split("\t")[:2]
+                d[p] = int(b) if b else None
+        return d
+
+    # current: 지금 manifest — 범위 밖 항목 보존과 크기 폴백에 쓴다(재작성 대상도 이것).
+    # old: 대조 기준 — 현재 manifest, 또는 --baseline 파일. 보고서 비교에만 쓴다.
+    current = read_manifest(MANIFEST)
+    old = read_manifest(BASELINE) if BASELINE else current
     in_scope_old = {p: b for p, b in old.items() if in_scope(p)}
 
     t0 = time.time()
@@ -213,7 +219,11 @@ def main():
     sizes = {p: s for p, s in sizes.items() if s is not None and s >= 0}
     # 크기를 못 받은 파일: 존재는 확인된 것이므로 manifest에서 빼지 않는다. 옛 항목이면 이전 크기를 유지하고,
     # 신규 파일이면 크기가 없어 manifest에 넣을 수 없다 — 둘 다 보고서에 남긴다.
-    nosize_kept = {p: in_scope_old[p] for p in nosize if p in in_scope_old and in_scope_old[p] is not None}
+    nosize_kept = {}
+    for p in nosize:
+        prev = current.get(p) if current.get(p) is not None else in_scope_old.get(p)
+        if prev is not None:
+            nosize_kept[p] = prev
     nosize_new = [p for p in nosize if p not in nosize_kept]
     sizes.update(nosize_kept)
 
@@ -268,7 +278,8 @@ def main():
           f"404 {len(gone404)}, nosize kept {len(nosize_kept)} / new {len(nosize_new)}")
 
     if not DRY:
-        new = {p: b for p, b in old.items() if not in_scope(p)}
+        # 범위 밖은 현재 manifest 그대로(baseline이 아니라) 보존하고, 범위 안만 FTP 실측으로 바꾼다
+        new = {p: b for p, b in current.items() if not in_scope(p)}
         new.update({p: s for p, s in sizes.items() if in_scope(p)})
         with open(MANIFEST, "w", encoding="utf-8", newline="\n") as fh:
             for p in sorted(new):
