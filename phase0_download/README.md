@@ -126,26 +126,26 @@ GIAB `current.tree`는 **2025-02-27 이후 갱신되지 않는다**(Last-Modifie
 그 뒤 올라온 벤치마크가 통째로 빠져 있었다. `release/`는 이제 FTP 디렉토리 인덱스를 직접 크롤해 맞춘다.
 
 ```bash
-python phase0_download/scripts/crawl_release.py            # 크롤 → manifest 재작성 → docs/reference/release_crawl_<날짜>.md
-python phase0_download/scripts/crawl_release.py --dry-run  # 보고서만
+python phase0_download/scripts/crawl_release.py            # 크롤 → manifest 재작성 → docs/reference/release_crawl_<날짜>.md (같은 날 재실행은 _2, _3…)
+python phase0_download/scripts/crawl_release.py --dry-run  # 보고서만, logs/crawl_cache/ 에 쓴다
 ```
 
 파일별 HEAD로 정확한 바이트를 받는다(인덱스 크기는 반올림). 동시성은 3+4 스레드 — 더 올리면 NCBI가 503을 준다.
 Apache 인덱스가 숨기는 dotfile(`.DS_Store`, `._*` 394건)은 옛 manifest 항목을 HEAD로 확인해 유지한다.
 `logs/crawl_cache/`에 목록·크기를 캐시하므로 중단 후 재실행은 이어서 한다(`--fresh`로 무시).
 
-2026-09-16 대조 결과 ([상세](../docs/reference/release_crawl_2026-09-16.md)):
+2026-09-16 대조 결과 — 기준은 2026-08-13 manifest(커밋 `2fe9c2b`, 6,464 files / 285.2 GiB), 현재 FTP 7,989 files / 318.2 GiB ([상세](../docs/reference/release_crawl_2026-09-16.md)):
 
 | 변화 | 파일 | GiB | 내용 |
 |---|---|---|---|
-| 추가 | 1,525 | 31.9 | HG002 **v5.0q**(Q100 v1.1 어셈블리 기반 smvar+stvar, 52 files 9.4 GiB) · **stratifications v3.6**(1,471 files 22.5 GiB) · mosaic_v1.10에 MosaicSNVv1.1 VCF 2건 · 빈 파일(0 B) 8건 |
+| 추가 | 1,577 | 41.4 | HG002 **v5.0q**(Q100 v1.1 어셈블리 기반 smvar+stvar, 52 files 9.4 GiB) + 그 `latest/` 복사본(52 files 9.4 GiB) · **stratifications v3.6**(1,471 files 22.5 GiB) · mosaic_v1.10에 MosaicSNVv1.1 VCF 2건 |
 | 제거 | 52 | 8.4 | HG002 `latest/`의 v4.2.1 파일 51건(latest가 2026-05-27 v5.0q로 교체됨) + `references/GRCh38/README_GIAB_Mapping_References.md.txt` |
-| 크기 변경 | 10 | - | README·checksum·regions-md5s 류 문서 파일만 |
+| 크기 변경 | 8 | - | README·checksum·regions-md5s 류 문서 파일만 |
 
-받기: 로그인 노드에서 `TOOL=s3 JOBS=4 bash phase0_download/scripts/download.sh release` — 기존 파일은 크기 일치로 건너뛰고 새 1,525건만 받는다.
+받기: 로그인 노드에서 `TOOL=s3 JOBS=4 bash phase0_download/scripts/download.sh release` — 기존 파일은 크기 일치로 건너뛰고 새 1,577건(41.4 GiB)만 받는다.
 S3 미러에 없는 파일은 FTP로 자동 대체된다. 로컬 HG002 `latest/`에는 v4.2.1과 v5.0q가 공존하므로 평가는 `NISTv4.2.1/`·`v5.0q/`를 직접 지정한다.
 
-`data/`·`data_somatic/`·`data_RNAseq/`는 이번에 크롤하지 않았다. 같은 스크립트를 `ROOT=data/...`로 돌리면 되지만 디렉토리가 수천 개라 시간이 든다.
+이 스크립트는 `release/` 전용이다(release/ 밖 `ROOT`는 거부). `data/`·`data_somatic/`·`data_RNAseq/`는 샘플별 manifest로 나뉘어 있어 별도 도구가 필요하고, 이번에 크롤하지 않았다.
 
 ## 경로 변경 이력
 

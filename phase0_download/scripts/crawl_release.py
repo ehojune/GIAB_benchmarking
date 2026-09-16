@@ -7,11 +7,16 @@ current.tree는 2025-02-27 이후 갱신되지 않아(2026-09-16 확인) 쓰지 
   python phase0_download/scripts/crawl_release.py            # 크롤 + 대조 + manifest 갱신 + 보고서
   python phase0_download/scripts/crawl_release.py --dry-run  # manifest는 건드리지 않고 보고서만
   python phase0_download/scripts/crawl_release.py --fresh    # 캐시(logs/crawl_cache/) 무시하고 다시 크롤. 캐시가 있으면 이어서 한다
-  ROOT=release/AshkenazimTrio/HG002_NA24385_son/v5.0q python ... # 일부만 (여러 개는 콤마)
+  python phase0_download/scripts/crawl_release.py --baseline <manifest.tsv>  # 대조 기준을 현재 manifest 대신 이 파일로 (보고서 재생성용)
+  ROOT=release/AshkenazimTrio/HG002_NA24385_son/v5.0q python ... # release/ 아래 일부만 (여러 개는 콤마)
+
+release/ 전용이다. data/·data_somatic/·data_RNAseq/는 샘플별 manifest(manifests/<SAMPLE>/<category>.tsv)로 나뉘어
+있어 이 스크립트가 다루지 않는다 — release/ 밖 ROOT는 거부한다.
 
 산출: manifests/release_truthsets.tsv (FTP 기준으로 재작성, 경로 정렬),
-      manifests/release_stale_ftp_removed.tsv (FTP에서 사라진 옛 항목, 기록용 append),
-      docs/reference/release_crawl_<date>.md (추가/삭제/크기변경 목록)
+      manifests/release_stale_ftp_removed.tsv (FTP에서 사라진 옛 항목, 기록용 append, 중복 없음),
+      docs/reference/release_crawl_<date>.md (추가/삭제/크기변경 목록. 같은 날 두 번째 실행은 _2, _3… 로 보존)
+      --dry-run 보고서는 docs/가 아니라 logs/crawl_cache/ 에 쓴다.
 """
 import concurrent.futures as cf
 import datetime
@@ -31,8 +36,12 @@ PROJ = os.path.dirname(REPO)
 MANIFEST = os.path.join(REPO, "manifests", "release_truthsets.tsv")
 STALE = os.path.join(REPO, "manifests", "release_stale_ftp_removed.tsv")
 ROOTS = [r.strip().strip("/") + "/" for r in os.environ.get("ROOT", "release").split(",")]
+for _r in ROOTS:
+    if _r != "release/" and not _r.startswith("release/"):
+        sys.exit(f"ROOT={_r} 는 release/ 밖이다. 이 스크립트는 release_truthsets.tsv 전용 — data/ 계열은 샘플별 manifest라 다루지 않는다.")
 DRY = "--dry-run" in sys.argv
 FRESH = "--fresh" in sys.argv
+BASELINE = sys.argv[sys.argv.index("--baseline") + 1] if "--baseline" in sys.argv else None
 HREF = re.compile(r'href="([^"]+)"')
 UA = {"User-Agent": "giab-crawl/1.0"}
 LIST_THREADS, HEAD_THREADS, TRIES = 3, 4, 8  # NCBI는 동시 요청이 많으면 503을 준다 (2026-09-16 실측: 12+16 스레드에서 503)
@@ -117,6 +126,14 @@ def listdir(d):
     return files, dirs
 
 
+def baseline_label():
+    """보고서에 적는 대조 기준. repo 밖 파일이면 이름만 (임시 경로는 재현에 쓸모가 없다)."""
+    if not BASELINE:
+        return "manifests/release_truthsets.tsv (실행 전)"
+    rel = os.path.relpath(os.path.abspath(BASELINE), PROJ)
+    return os.path.basename(BASELINE) if rel.startswith("..") else rel.replace(os.sep, "/")
+
+
 def group(paths):
     """디렉토리(샘플/버전) 단위 집계 키"""
     g = {}
@@ -148,10 +165,11 @@ def main():
             fh.write("\n".join(files) + "\n")
         print(f"crawl: {ndirs} dirs, {len(files) } files in {time.time() - t0:.0f}s", file=sys.stderr)
 
+    # 대조 기준(old): 현재 manifest, 또는 --baseline 파일. 재작성 대상은 항상 MANIFEST.
     old = {}
-    for line in open(MANIFEST, encoding="utf-8"):
+    for line in open(BASELINE or MANIFEST, encoding="utf-8"):
         if line.strip():
-            p, b = line.rstrip("\n").split("\t")
+            p, b = line.rstrip("\n").split("\t")[:2]
             old[p] = int(b) if b else None
     in_scope_old = {p: b for p, b in old.items() if in_scope(p)}
 
@@ -161,32 +179,35 @@ def main():
         for l in open(SIZES_CACHE, encoding="utf-8"):
             if l.strip():
                 p, b = l.rstrip("\n").split("\t")
-                if in_scope(p):
+                if in_scope(p) and b != "-1":  # 실패(-1)는 캐시로 인정하지 않는다 → 재시도
                     sizes[p] = None if b == "404" else int(b)
         print(f"HEAD: {len(sizes)} sizes from cache (ROOT 범위 안만)", file=sys.stderr)
     elif FRESH and os.path.exists(SIZES_CACHE):
         os.remove(SIZES_CACHE)
+
+    def lookup(paths, cache):
+        """HEAD를 돌려 sizes에 넣고, 성공(바이트·404)만 캐시에 쓴다. 실패(-1)는 다음 실행에서 다시 조회된다."""
+        for n, (p, s) in enumerate(zip(paths, ex.map(head_size, paths)), 1):
+            sizes[p] = s
+            if s != -1:
+                cache.write(f"{p}\t{'404' if s is None else s}\n")
+                cache.flush()
+            if n % 500 == 0:
+                print(f"  HEAD {n}/{len(paths)} {time.time() - t0:.0f}s", file=sys.stderr, flush=True)
+
     pending = [p for p in files if p not in sizes]
     with cf.ThreadPoolExecutor(HEAD_THREADS) as ex, open(SIZES_CACHE, "a", encoding="utf-8", newline="\n") as cache:
-        for n, (p, s) in enumerate(zip(pending, ex.map(head_size, pending)), 1):
-            sizes[p] = s
-            cache.write(f"{p}\t{'404' if s is None else s}\n")
-            cache.flush()
-            if n % 500 == 0:
-                print(f"  HEAD {n}/{len(pending)} {time.time() - t0:.0f}s", file=sys.stderr, flush=True)
+        lookup(pending, cache)
     print(f"HEAD: {len(pending)} new lookups in {time.time() - t0:.0f}s", file=sys.stderr)
 
     # 인덱스에 안 보이는 옛 항목 — Apache는 dotfile(.DS_Store, ._*)을 숨긴다. 직접 HEAD해서 있으면 유지, 404만 제거.
     unlisted = [p for p in in_scope_old if p not in sizes]
     with cf.ThreadPoolExecutor(HEAD_THREADS) as ex, open(SIZES_CACHE, "a", encoding="utf-8", newline="\n") as cache:
-        for p, s in zip(unlisted, ex.map(head_size, unlisted)):
-            sizes[p] = s
-            cache.write(f"{p}\t{'404' if s is None else s}\n")
-    hidden = sorted(p for p in unlisted if sizes.get(p) is not None and sizes[p] >= 0)
-    print(f"unlisted old entries: {len(unlisted)} checked, {len(hidden)} exist (hidden), "
-          f"{sum(1 for p in unlisted if sizes.get(p) is None)} gone", file=sys.stderr)
-
+        lookup(unlisted, cache)
     listed = set(files)
+    hidden = sorted(p for p in in_scope_old if p not in listed and sizes.get(p) is not None and sizes[p] >= 0)
+    print(f"unlisted old entries: {len(unlisted)} checked; hidden-but-present {len(hidden)}, "
+          f"gone {sum(1 for p in unlisted if sizes.get(p) is None)}", file=sys.stderr)
     gone404 = sorted(p for p, s in sizes.items() if s is None and p in listed)
     nosize = sorted(p for p, s in sizes.items() if s == -1)
     sizes = {p: s for p, s in sizes.items() if s is not None and s >= 0}
@@ -203,7 +224,9 @@ def main():
 
     date = datetime.date.today().isoformat()
     rep = [f"# release/ 크롤 대조 {date}", "",
-           f"FTP `{BASE}release/` 라이브 인덱스 재귀 크롤 + 파일별 HEAD. 도구: `phase0_download/scripts/crawl_release.py`.", "",
+           f"FTP `{BASE}release/` 라이브 인덱스 재귀 크롤 + 파일별 HEAD. 도구: `phase0_download/scripts/crawl_release.py`.",
+           f"대조 기준: `{baseline_label()}` · ROOT: {', '.join(ROOTS)}"
+           + (" · **dry-run**" if DRY else ""), "",
            "| 항목 | 파일 | GiB |", "|---|---|---|",
            f"| FTP 현재 | {len(sizes)} | {gib(sum(sizes.values())):.2f} |",
            f"| manifest(이전) | {len(in_scope_old)} | {gib(sum(b for b in in_scope_old.values() if b)):.2f} |",
@@ -229,8 +252,15 @@ def main():
         rep += ["## 크기를 못 받은 파일 — 이전 manifest 크기 유지", ""] + [f"- `{p}` {nosize_kept[p]:,}" for p in sorted(nosize_kept)] + [""]
     if nosize_new:
         rep += ["## 크기를 못 받은 신규 파일 (manifest 미반영 — 다음 크롤에서 재시도)", ""] + [f"- `{p}`" for p in nosize_new] + [""]
-    os.makedirs(os.path.join(PROJ, "docs", "reference"), exist_ok=True)
-    rp = os.path.join(PROJ, "docs", "reference", f"release_crawl_{date}.md")
+    if DRY:  # 보고서를 docs/에 남기지 않는다 — 실행 보고서를 덮어쓰면 증거가 사라진다
+        rp = os.path.join(CACHE, f"release_crawl_{datetime.datetime.now():%Y%m%d-%H%M%S}.dry.md")
+    else:
+        os.makedirs(os.path.join(PROJ, "docs", "reference"), exist_ok=True)
+        rp = os.path.join(PROJ, "docs", "reference", f"release_crawl_{date}.md")
+        k = 2
+        while os.path.exists(rp):  # 같은 날 두 번째 실행부터 _2, _3 … (덮어쓰지 않음)
+            rp = os.path.join(PROJ, "docs", "reference", f"release_crawl_{date}_{k}.md")
+            k += 1
     with open(rp, "w", encoding="utf-8", newline="\n") as fh:
         fh.write("\n".join(rep))
     print(f"report: {rp}", file=sys.stderr)
@@ -243,11 +273,15 @@ def main():
         with open(MANIFEST, "w", encoding="utf-8", newline="\n") as fh:
             for p in sorted(new):
                 fh.write(f"{p}\t{new[p]}\n")
-        if removed:
+        already = set()
+        if os.path.exists(STALE):
+            already = {l.split("\t")[0] for l in open(STALE, encoding="utf-8") if l.strip()}
+        to_log = [p for p in sorted(removed) if p not in already]
+        if to_log:
             with open(STALE, "a", encoding="utf-8", newline="\n") as fh:
-                for p in sorted(removed):
+                for p in to_log:
                     fh.write(f"{p}\t{removed[p]}\t{date}\n")
-        print(f"manifest rewritten: {len(new)} lines; stale appended: {len(removed)}", file=sys.stderr)
+        print(f"manifest rewritten: {len(new)} lines; stale appended: {len(to_log)} (already logged: {len(removed) - len(to_log)})", file=sys.stderr)
 
 
 if __name__ == "__main__":
