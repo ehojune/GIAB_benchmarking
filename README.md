@@ -515,7 +515,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
-- 2026-09-16 — release/를 FTP 라이브 크롤로 재대조(`crawl_release.py`): HG002 v5.0q(9.4 GiB)·stratifications v3.6(22.5 GiB) 등 1,525 files 추가, HG002 latest/ 옛 v4.2.1 51건 제거. `current.tree`가 2025-02-27 이후 미갱신인 것이 원인. 카탈로그 334 datasets, 엑셀 v0916.
+- 2026-09-16 — release/를 FTP 라이브 크롤로 재대조(`crawl_release.py`): HG002 v5.0q(9.4 GiB, latest/ 복사본 포함 2벌)·stratifications v3.6(22.5 GiB) 등 1,577 files / 41.4 GiB 추가, HG002 latest/ 옛 v4.2.1 51건 제거(순증 +1,525 files). `current.tree`가 2025-02-27 이후 미갱신인 것이 원인. 카탈로그 334 datasets, 엑셀 v0916.
 - 2026-09-09 — phase3 시작: HG002·3·4 숏리드 WGS 입력 목록(`phase3_shortread_wgs/inputs_manifest.tsv`, 18 실행 단위 / 6,178 FASTQ / 5.55 TiB)과 small-variant 정답셋 경로 정리.
 - 2026-08-30 — phase0 다운로드 전량 완료 확인: verify.sh all 기준 76,595/76,595 files, 107,637 GiB (115.6 TB), 100.0%. HG001–HG009 + release + RNA-seq + trio_analysis 전부. 8/13 시작, 정전 1회 포함 약 2주.
 - 2026-08-26 — HG008 최신 benchmark를 반영하고 플랫폼·리드·툴·다음 할 일의 모든 자동 축약을 없앴다.
