@@ -21,6 +21,9 @@ data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/03_13_24_R1041_GIAB_No
 data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/03_13_24_R1041_GIAB_Normal_Pancreas_2.dorado_0.5.3_5mC_5hmC.longer_than_50kb.fastq.gz	4799792712
 data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/03_13_24_R1041_GIAB_Normal_Pancreas_3.dorado_0.5.3_5mC_5hmC.longer_than_25kb.fastq.gz	25912962178
 data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/03_13_24_R1041_GIAB_Normal_Pancreas_3.dorado_0.5.3_5mC_5hmC.longer_than_50kb.fastq.gz	4563226856
+data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/HERR0-corrrected-20250218/HG008-N-combined_herro_corrected_ONT_longer_than_25kb.fastq.gz	19568469974
+data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/HERR0-corrrected-20250218/README	863
+data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/HERR0-corrrected-20250218/checksums.md5	97
 data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/HG008-N-D_CHM13v2.0_ONT-R1041-dorado_0.5.3_5mC_5hmC_13x_gt25kb.bam	58699287587
 data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/HG008-N-D_CHM13v2.0_ONT-R1041-dorado_0.5.3_5mC_5hmC_13x_gt25kb.bam.bai	3577072
 data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/HG008-N-D_CHM13v2.0_ONT-R1041-dorado_0.5.3_5mC_5hmC_94x.bam	438566006119

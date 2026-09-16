@@ -15,3 +15,6 @@
 | R9 ONT indel 정확도는 베이스콜러 버전이 지배한다 | lesson | guppy 3.2.x 1.75~1.97M vs 4.2.2 544~551k (3.5배). R9 indel 분석은 4.2.2+ 데이터셋만 |
 | `crawl_release.py` — GIAB FTP 디렉토리 인덱스 재귀 크롤 + 파일별 HEAD → manifest diff | script | `current.tree`가 2025-02-27 이후 갱신되지 않아(2026-09-16 확인) 새 벤치마크(HG002 v5.0q 등)가 manifest에서 통째로 빠졌다. 인덱스 크기는 반올림이라 HEAD가 필수. NCBI는 동시 12+16 스레드에서 503 — 3+4 스레드·지수 백오프로 통과 |
 | GIAB `latest/`는 심링크가 아니라 복사본이고 내용이 바뀐다 | lesson | HG002 latest/가 2026-05-27 v4.2.1→v5.0q로 교체됐다. 로컬 미러에는 두 버전이 공존하므로 평가는 버전 디렉토리를 직접 지정한다 |
+| GIAB FTP와 S3 미러는 양방향으로 어긋난다 | lesson | HiSeq300x FASTQ 7천여 개는 FTP 사본이 S3보다 15% 작고(재압축), Strand-Seq EMBL·PacBio MtSinai 등 2,173 파일은 FTP에서만 사라졌다(S3에는 있음). manifest 크기는 다운로드 소스(S3) 기준이라 FTP만 보고 갱신하면 verify 전부 불일치·재다운로드가 난다. 크롤러는 FTP 불일치를 S3 HEAD로 교차 확인한다 (`crawl_data.py`, 2026-09-16) |
+| GIAB `data/` 인덱스 기반 선별 HEAD 크롤 | script | 파일 7만 개를 전부 HEAD하지 않고 인덱스의 수정일·근사 크기로 신규/변경 후보만 고른다. 2026-08-13 manifest는 S3 목록 기반이라 FTP에만 있던 HG008 NIST 트리·Verkko·HG009 신규 등 15,605 파일(19.7 TiB)이 빠져 있었다 (`crawl_data.py`) |
+| 카탈로그 파생 필드는 파일명 토큰으로 추정할 때 GIAB 용어를 조심 | lesson | `smvar`/`stvar`는 GIAB germline 벤치마크의 small/structural variant이지 somatic이 아니다. `phased` 단어는 purple 등 somatic 산출물 파일명에도 나온다. 인덱스 유무는 "어떤 인덱스라도 있음"이 아니라 BAM/CRAM/VCF 각각의 사이드카 짝으로 세야 PARTIAL이 잡힌다 (Codex 리뷰 지적, `catalog_new_dirs.py`) |
