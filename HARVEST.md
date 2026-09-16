@@ -13,3 +13,5 @@
 | ONT 매핑 건강도는 리드 개수가 아니라 염기 기준 | lesson | ONT 릴리스에 섞인 짧은 fail 리드가 reads-mapped%를 39%까지 끌어내리는데 정렬은 정상이다. 미매핑/매핑 리드 평균 길이비로 가른다 (실측 7~12배). 근거: `docs/reference/2026-08-27-ont-qc-first-pass.md` |
 | DeepVariant raw 카운트는 RefCall로 1.7~3.4배 부풀어 있다 | lesson | PASS만 세면 Clair3와 3~7% 일치. caller 일치 판정을 raw로 하면 전건 오탐. phase1·phase2에서 각각 확인 |
 | R9 ONT indel 정확도는 베이스콜러 버전이 지배한다 | lesson | guppy 3.2.x 1.75~1.97M vs 4.2.2 544~551k (3.5배). R9 indel 분석은 4.2.2+ 데이터셋만 |
+| `crawl_release.py` — GIAB FTP 디렉토리 인덱스 재귀 크롤 + 파일별 HEAD → manifest diff | script | `current.tree`가 2025-02-27 이후 갱신되지 않아(2026-09-16 확인) 새 벤치마크(HG002 v5.0q 등)가 manifest에서 통째로 빠졌다. 인덱스 크기는 반올림이라 HEAD가 필수. NCBI는 동시 12+16 스레드에서 503 — 3+4 스레드·지수 백오프로 통과 |
+| GIAB `latest/`는 심링크가 아니라 복사본이고 내용이 바뀐다 | lesson | HG002 latest/가 2026-05-27 v4.2.1→v5.0q로 교체됐다. 로컬 미러에는 두 버전이 공존하므로 평가는 버전 디렉토리를 직접 지정한다 |
