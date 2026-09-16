@@ -6,7 +6,7 @@ GIAB 9개 샘플(HG001–HG007 germline, HG008·HG009 tumor-normal)의 **전체 
 
 | | |
 |---|---|
-| 데이터 규모 | **332 datasets / 76,620 files / 115.6 TB** (기존 2026-08-13 HEAD 검증 + 2026-08-26 HG008 공식 benchmark 2건) |
+| 데이터 규모 | **334 datasets / 78,145 files / 115.6 TB** (2026-08-13 HEAD 검증 + 2026-08-26 HG008 공식 benchmark 2건 + 2026-09-16 release/ FTP 라이브 크롤: HG002 v5.0q·stratifications v3.6 추가) |
 | 다운로드 | [phase0_download/](phase0_download/) — 스크립트, 매니페스트, 속도·용량 계획 |
 | PacBio HiFi 처리 | [phase1_pacbio_hifi/](phase1_pacbio_hifi/) — 38개 실행 단위, raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
 | ONT 처리 | [phase2_ont/](phase2_ont/) — 18개 실행 단위(기본 제출 14), raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
@@ -38,7 +38,7 @@ python catalog/build_readme.py
 <!-- MASTER-TABLE:BEGIN -->
 ### 요약
 
-전체 **332개 데이터셋 / 76,620 files / 105.1 TiB**. 단계별 도달 데이터셋 수:
+전체 **334개 데이터셋 / 78,145 files / 105.1 TiB**. 단계별 도달 데이터셋 수:
 
 | category | 데이터셋 | GiB | 정렬 | 페이징 | 변이 | 메틸 | somatic | 어셈블리 | GIAB 처리물 보유 |
 |---|---|---|---|---|---|---|---|---|---|
@@ -51,7 +51,7 @@ python catalog/build_readme.py
 | Linked reads (10X, stLFR) | 18 | 5,038 | 13 | 6 | 3 | 0 | 0 | 0 | 13 |
 | Complete Genomics | 11 | 14,880 | 9 | 0 | 9 | 0 | 0 | 0 | 10 |
 | 기타 기술 (BioNano, Hi-C, AVITI, UG100, Strand-seq 등) | 109 | 18,830 | 36 | 15 | 29 | 3 | 29 | 11 | 0 |
-| Release — truth set / stratification / reference | 58 | 285 | 20 | 13 | 47 | 0 | 2 | 8 | 55 |
+| Release — truth set / stratification / reference | 60 | 318 | 22 | 14 | 48 | 0 | 2 | 9 | 57 |
 | RNA-seq | 20 | 6,700 | 9 | 0 | 0 | 0 | 0 | 0 | 11 |
 | Trio-level analysis | 9 | 59 | 4 | 1 | 7 | 1 | 0 | 0 | 9 |
 
@@ -373,7 +373,7 @@ python catalog/build_readme.py
 </details>
 
 <details>
-<summary><b>Release — truth set / stratification / reference</b> — 58 datasets, 285 GiB</summary>
+<summary><b>Release — truth set / stratification / reference</b> — 60 datasets, 318 GiB</summary>
 
 | 데이터셋 | 샘플 | 플랫폼 | GiB | 리드 | index | 정렬 | 페이징 | 변이 | 메틸 | somatic | 어셈블리 | 출처 | 다음 할 일 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -403,7 +403,8 @@ python catalog/build_readme.py
 | SV benchmark v0.6 + 평가결과 | HG002 | 다중(10X, PacBio, Illumina 평가 콜셋) | 1 | ✗ | △ 122개 | – | – | ✓ 커뮤니티 30+ SV 콜러 union → SVanalyzer SVcomp 클러스터링 → svviz2(genosv) 재유전형 → 합의 GT 결정 — 버전 미기재 | – | – | – | 문서 | HG002 SV 벤치마크 기준. truvari bench --includebed Tier1 BED로 내 SV 콜셋 평가에 사용(Tier2는 제외영역 정의용) |
 | TandemRepeats v1.0 | HG002 | 미표기 (HPRC HG002 어셈블리 기반; Tier 판정에 TR 콜러 4종 사용) | 0 | ✗ | ✓ | – | ✓ 모계/부계 하플로타입별 allele delta 컬럼 제공 (어셈블리 유래) — 툴/버전 미기재 | ✓ adotto v0.1 변이 세트의 HG002 subset; TR 카탈로그 adotto TRregions v1.2; TandemRepeatsFinder 주석은 truvari anno trf; 벤치마킹은 Truvari v4.1(개발 브랜치) | – | – | – | 문서 | 탠덤리피트 벤치마크. truvari bench --sizemin 5 --pick ac + truvari refine 로 TR 콜셋 평가에 사용 |
 | chrXY smallvar v1.0 | HG002 | 미표기(T2T 어셈블리 기반) | 0 | ✗ | △ 1개 | ✓ dipcall (minimap2; -z 확장 파라미터, 파일명 dipcall-z2k) — 버전 미기재 | ✓ T2T 완성 어셈블리의 hap1(부계)/hap2(모계) → dipcall dip VCF | ✓ dipcall (dip.vcf.gz) → snakemake 파이프라인 제외규칙 + 수동 큐레이션으로 chrXY smallvar 벤치마크 확정; 검증은 hap.py — 버전 미기재 | – | – | ✓ T2T-XY-v2.7 (T2T Consortium 완성 어셈블리; 어셈블러 미기재) | 문서 | chrX/chrY 소형변이 벤치마크. 성염색체 성능 평가 baseline으로 사용(v4.2.1은 1-22만 커버) |
-| latest(v4.2.1 미러) | HG002 | PacBio HiFi + 10X Genomics(입력 콜셋) | 8 | ✗ | ✓ | – | ✓ hifiasm v0.11 trio 어셈블리 dipcall VCF 위상 전이 → whatshap + Strand-seq pat\|mat 위상 — 버전 미기재 | ✓ DeepVariant + GATK4 (PacBio HiFi) + 10x Genomics LongRanger → hifiasm 기반 MHC 이배체 어셈블리 + dipcall — 버전 미기재 | – | – | ✓ hifiasm v0.11 (파일명 토큰 hifiasm_v11) | 문서 | NISTv4.2.1과 동일 내용이므로 둘 중 하나만 받아 벤치마크 baseline으로 사용 |
+| latest(v5.0q 미러) | HG002 | 미표기(어셈블리 기반; T2T HG002 Q100 v1.1) | 9 | ✗ | ✓ | ✓ dipcall v0.3 (minimap2, -z200000,10000; DeFrABB v0.020 run 20250117) | ✓ T2T HG002 Q100 v1.1 이배체 어셈블리(hap1/hap2) → dipcall dip VCF (어셈블리 위상) | ✓ dipcall v0.3 dip.vcf.gz → DeFrABB v0.020 제외영역 적용(gap·>10kb 반복·SD·satellite·inversion·SV 영향·dipcall 버그·PAV 불일치·어셈블리 오류·mosaic) → smvar/stvar 벤치마크 | – | – | ✓ T2T HG002 Q100 v1.1 (T2T 컨소시엄, github.com/marbl/hg002; doi:10.1101/2025.09.21.677443) | 문서 | v5.0q와 동일 내용. 평가는 latest/가 아니라 버전 디렉토리(NISTv4.2.1/, v5.0q/)를 직접 지정 |
+| v5.0q (어셈블리 기반 smvar+stvar, draft) | HG002 | 미표기(어셈블리 기반; T2T HG002 Q100 v1.1) | 9 | ✗ | ✓ | ✓ dipcall v0.3 (minimap2, -z200000,10000; DeFrABB v0.020 run 20250117) | ✓ T2T HG002 Q100 v1.1 이배체 어셈블리(hap1/hap2) → dipcall dip VCF (어셈블리 위상) | ✓ dipcall v0.3 dip.vcf.gz → DeFrABB v0.020 제외영역 적용(gap·>10kb 반복·SD·satellite·inversion·SV 영향·dipcall 버그·PAV 불일치·어셈블리 오류·mosaic) → smvar/stvar 벤치마크 | – | – | ✓ T2T HG002 Q100 v1.1 (T2T 컨소시엄, github.com/marbl/hg002; doi:10.1101/2025.09.21.677443) | 문서 | v4.2.1 baseline 평가 뒤 보조 평가: hap.py --engine vcfeval --gender male + stratification v3.6, SV는 truvari bench --pick ac --passonly -r 2000 -C 5000 --refine (ALT="*" 먼저 제거). 세 샘플 비교 기준으로는 못 쓴다(HG002만) |
 | NIST v3.2.2 | HG003 | Illumina + CG + Ion | 0 | ✗ | ✓ | ✓ novoalign (Illumina) → tmap (Ion exome); Complete Genomics 표준 파이프라인 — 버전 미기재 | – | ✓ GATK HaplotypeCaller + freebayes (Illumina) → TVC (Ion) → CG vcfBeta — 버전 미기재 | – | – | – | 문서 | 구버전 truth set. 이력 참고용 |
 | NIST v3.3 | HG003 | CG + Illumina + Ion + 10X | 0 | ✗ | ✓ | ✓ novoalign (Illumina) → tmap (Ion); CG 표준 파이프라인; 10X Genomics 파이프라인 — 버전 미기재 | – | ✓ GATK HaplotypeCaller + freebayes (Illumina) → 10X 하플로타입별 GATK HaplotypeCaller → TVC (Ion) → CG vcfBeta; callable 영역은 gvcf GQ 기반 — 버전 미기재 | – | – | – | 문서 | 구버전 truth set. supplementaryFiles 반복영역 BED는 계층 분석에 재사용 가능 |
 | NIST v3.3.2 | HG003 | Ion AmpliSeq Exome 추가. 콜셋 이름에 Ion이 들어가고 AmpliseqExome 입력 VCF도 있다. HG004 NISTv3.3.2도 같은 누락 | 13 | ✗ | ✓ | ✓ novoalign (Illumina) → bwa mem (Illumina MatePair); tmap (Ion); CG 표준 파이프라인 — 버전 미기재 | – | ✓ GATK HaplotypeCaller(GATKHC) + freebayes(FB) (GRCh37) → Sentieon haplotyper(sentieonHC) + 10X sentieonHCbyhaplo (GRCh38) → Ion AmpliSeq exome → CG vcfBeta — 버전 미기재 | – | – | – | 문서 | 구버전 truth set. HG002 trio 분석의 부모 콜셋으로만 참조 |
@@ -434,7 +435,8 @@ python catalog/build_readme.py
 | Genome stratifications v3.2 | 공용 | 해당없음(참조 주석 트랙) | 7 | ✗ | – | – | – | – | – | – | – | 문서 | hap.py 계층 BED. 카테고리별 생성 근거가 필요하면 같은 파이프라인의 v3.5 카테고리 README를 참조 |
 | Genome stratifications v3.3 | 공용 | 해당없음(참조 주석 트랙) | 7 | ✗ | – | – | – | – | – | – | – | 문서 | hap.py 계층 BED. validation/diagnostics.tsv로 계층 커버리지 온전성을 먼저 확인한 뒤 사용 |
 | Genome stratifications v3.4 | 공용 | 해당없음(참조 주석 트랙) | 11 | ✗ | – | – | – | – | – | – | – | 문서 | hap.py 계층 BED. 어셈블리 좌표계 벤치마킹이 필요하면 v3.5의 mat/pat 판을 우선 검토 |
-| Genome stratifications v3.5 | 공용 | 해당없음(참조 주석 트랙) | 22 | ✗ | – | – | – | – | – | – | – | 문서 | 최신 계층 BED. hap.py --stratification 으로 난이도 구간별 성능 산출에 사용하고, 브라우저 표시가 필요하면 .bb 트랙 사용 |
+| Genome stratifications v3.5 | 공용 | 해당없음(참조 주석 트랙) | 22 | ✗ | – | – | – | – | – | – | – | 문서 | v3.6이 나왔으므로 새 평가에는 v3.6을 쓴다. v3.5는 이미 돌린 평가의 재현용 |
+| Genome stratifications v3.6 | 공용 | 해당없음(참조 주석 트랙) | 22 | ✗ | – | – | – | – | – | – | – | 문서 | hap.py --stratification 의 기본 계층으로 사용(v5.0q README가 v3.6을 지정). v4.2.1 평가에도 v3.5 대신 이 판을 쓰면 한 버전으로 통일된다 |
 
 </details>
 
@@ -513,6 +515,8 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-16 — release/를 FTP 라이브 크롤로 재대조(`crawl_release.py`): HG002 v5.0q(9.4 GiB)·stratifications v3.6(22.5 GiB) 등 1,525 files 추가, HG002 latest/ 옛 v4.2.1 51건 제거. `current.tree`가 2025-02-27 이후 미갱신인 것이 원인. 카탈로그 334 datasets, 엑셀 v0916.
+- 2026-09-09 — phase3 시작: HG002·3·4 숏리드 WGS 입력 목록(`phase3_shortread_wgs/inputs_manifest.tsv`, 18 실행 단위 / 6,178 FASTQ / 5.55 TiB)과 small-variant 정답셋 경로 정리.
 - 2026-08-30 — phase0 다운로드 전량 완료 확인: verify.sh all 기준 76,595/76,595 files, 107,637 GiB (115.6 TB), 100.0%. HG001–HG009 + release + RNA-seq + trio_analysis 전부. 8/13 시작, 정전 1회 포함 약 2주.
 - 2026-08-26 — HG008 최신 benchmark를 반영하고 플랫폼·리드·툴·다음 할 일의 모든 자동 축약을 없앴다.
 - 2026-08-23 — Yuan 최소 준수 retrofit을 적용했다. 기존 카탈로그·PacBio HiFi·ONT 분석 구조와 HARVEST 후보는 유지했다.

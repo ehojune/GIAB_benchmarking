@@ -1,7 +1,7 @@
 # Phase 0 — 데이터 다운로드
 
 GIAB 원시 데이터 + truth set을 nbb2로 받는 단계. 대상 목록은 `manifests/`가 전부다.
-**총 76,595 files / 115.6 TB** (2026-08-13 기준: S3 실시간 목록 + FTP `current.tree` + 신규 디렉토리 라이브 조회, 파일별 HEAD 검증).
+**총 78,120 files / 115.6 TB** (2026-08-13 기준: S3 실시간 목록 + FTP `current.tree` + 신규 디렉토리 라이브 조회, 파일별 HEAD 검증. `release/`는 2026-09-16 FTP 라이브 크롤로 재확인 — 아래 [release/ 갱신](#release-갱신-2026-09-16)).
 
 데이터셋별 처리 현황은 저장소 루트 [README.md](../README.md)의 master table 참고.
 
@@ -57,7 +57,7 @@ screen 나오기 `Ctrl-A d`, 다시 붙기 `screen -r giab`.
 | exome | 1.0 | 0.1 |
 | complete_genomics | 16.0 | 2.2 |
 | other (BioNano, Strand-seq, HiC, AVITI, UG100 등) | 20.2 | 2.8 |
-| release (truth set, stratifications, references) | 0.3 | <0.1 |
+| release (truth set, stratifications, references) | 0.34 | <0.1 |
 | trio_analysis (HG002 T2T-Q100 draft benchmark 등) | 0.1 | <0.1 |
 | **전체** | **115.6** | **16.1** |
 
@@ -97,7 +97,8 @@ TOOL=s3 JOBS=4 ./phase0_download/scripts/download.sh pacbio_hifi
 ## manifests 구조
 
 - `manifests/<SAMPLE>/<category>.tsv` — `상대경로<TAB>bytes`. 다운로드 대상의 전부 (HG001~HG009)
-- `manifests/release_truthsets.tsv` — truth set VCF/BED, stratification, reference (전체 버전 포함)
+- `manifests/release_truthsets.tsv` — truth set VCF/BED, stratification, reference (전체 버전 포함). **FTP `release/` 라이브 크롤로 유지** (`scripts/crawl_release.py`, 2026-09-16 기준 7,989 files / 318.2 GiB)
+- `manifests/release_stale_ftp_removed.tsv` — FTP에서 사라져 manifest에서 뺀 항목(경로, 바이트, 확인일). 로컬에는 남아 있음
 - `manifests/rnaseq_all.tsv` — `data_RNAseq/` 전체 (324 files, 6.5 TiB). HG002·HG004·HG005만 존재. `all`에는 미포함, run_priority에는 포함
 - `manifests/trio_analysis.tsv` — trio 레벨 analysis (HG002 T2T-Q100 draft benchmark defrabb 등, 325 files / 59 GiB). `all`에는 미포함, run_priority에는 포함
 
@@ -118,6 +119,33 @@ S3 미러는 FTP보다 불완전하다. FTP `current.tree` + 신규 디렉토리
 
 `TOOL=s3`에서 S3에 없는 파일은 자동으로 FTP(wget)로 대체된다 (`download.sh` fallback).
 manifest 자체가 FTP 검증 기준이므로 중단 후 재실행하면 누락분까지 전부 받아진다.
+
+## release/ 갱신 (2026-09-16)
+
+GIAB `current.tree`는 **2025-02-27 이후 갱신되지 않는다**(Last-Modified 확인). 그래서 2026-08-13 manifest에는
+그 뒤 올라온 벤치마크가 통째로 빠져 있었다. `release/`는 이제 FTP 디렉토리 인덱스를 직접 크롤해 맞춘다.
+
+```bash
+python phase0_download/scripts/crawl_release.py            # 크롤 → manifest 재작성 → docs/reference/release_crawl_<날짜>.md
+python phase0_download/scripts/crawl_release.py --dry-run  # 보고서만
+```
+
+파일별 HEAD로 정확한 바이트를 받는다(인덱스 크기는 반올림). 동시성은 3+4 스레드 — 더 올리면 NCBI가 503을 준다.
+Apache 인덱스가 숨기는 dotfile(`.DS_Store`, `._*` 394건)은 옛 manifest 항목을 HEAD로 확인해 유지한다.
+`logs/crawl_cache/`에 목록·크기를 캐시하므로 중단 후 재실행은 이어서 한다(`--fresh`로 무시).
+
+2026-09-16 대조 결과 ([상세](../docs/reference/release_crawl_2026-09-16.md)):
+
+| 변화 | 파일 | GiB | 내용 |
+|---|---|---|---|
+| 추가 | 1,525 | 31.9 | HG002 **v5.0q**(Q100 v1.1 어셈블리 기반 smvar+stvar, 52 files 9.4 GiB) · **stratifications v3.6**(1,471 files 22.5 GiB) · mosaic_v1.10에 MosaicSNVv1.1 VCF 2건 · 빈 파일(0 B) 8건 |
+| 제거 | 52 | 8.4 | HG002 `latest/`의 v4.2.1 파일 51건(latest가 2026-05-27 v5.0q로 교체됨) + `references/GRCh38/README_GIAB_Mapping_References.md.txt` |
+| 크기 변경 | 10 | - | README·checksum·regions-md5s 류 문서 파일만 |
+
+받기: 로그인 노드에서 `TOOL=s3 JOBS=4 bash phase0_download/scripts/download.sh release` — 기존 파일은 크기 일치로 건너뛰고 새 1,525건만 받는다.
+S3 미러에 없는 파일은 FTP로 자동 대체된다. 로컬 HG002 `latest/`에는 v4.2.1과 v5.0q가 공존하므로 평가는 `NISTv4.2.1/`·`v5.0q/`를 직접 지정한다.
+
+`data/`·`data_somatic/`·`data_RNAseq/`는 이번에 크롤하지 않았다. 같은 스크립트를 `ROOT=data/...`로 돌리면 되지만 디렉토리가 수천 개라 시간이 든다.
 
 ## 경로 변경 이력
 

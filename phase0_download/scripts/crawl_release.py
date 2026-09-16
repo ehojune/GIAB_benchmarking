@@ -1,0 +1,239 @@
+#!/usr/bin/env python3
+"""GIAB FTP release/ 라이브 크롤 → manifests/release_truthsets.tsv 갱신.
+
+current.tree는 2025-02-27 이후 갱신되지 않아(2026-09-16 확인) 쓰지 않는다. Apache 디렉토리 인덱스를 재귀로 읽고,
+파일마다 HEAD로 정확한 바이트를 받는다(인덱스의 크기는 40M처럼 반올림이라 download.sh의 크기 비교에 못 쓴다).
+
+  python phase0_download/scripts/crawl_release.py            # 크롤 + 대조 + manifest 갱신 + 보고서
+  python phase0_download/scripts/crawl_release.py --dry-run  # manifest는 건드리지 않고 보고서만
+  python phase0_download/scripts/crawl_release.py --fresh    # 캐시(logs/crawl_cache/) 무시하고 다시 크롤. 캐시가 있으면 이어서 한다
+  ROOT=release/AshkenazimTrio/HG002_NA24385_son/v5.0q python ... # 일부만 (여러 개는 콤마)
+
+산출: manifests/release_truthsets.tsv (FTP 기준으로 재작성, 경로 정렬),
+      manifests/release_stale_ftp_removed.tsv (FTP에서 사라진 옛 항목, 기록용 append),
+      docs/reference/release_crawl_<date>.md (추가/삭제/크기변경 목록)
+"""
+import concurrent.futures as cf
+import datetime
+import html
+import os
+import re
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+
+BASE = "https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/"
+HERE = os.path.dirname(os.path.abspath(__file__))
+REPO = os.path.dirname(HERE)
+PROJ = os.path.dirname(REPO)
+MANIFEST = os.path.join(REPO, "manifests", "release_truthsets.tsv")
+STALE = os.path.join(REPO, "manifests", "release_stale_ftp_removed.tsv")
+ROOTS = [r.strip().strip("/") + "/" for r in os.environ.get("ROOT", "release").split(",")]
+DRY = "--dry-run" in sys.argv
+FRESH = "--fresh" in sys.argv
+HREF = re.compile(r'href="([^"]+)"')
+UA = {"User-Agent": "giab-crawl/1.0"}
+LIST_THREADS, HEAD_THREADS, TRIES = 3, 4, 8  # NCBI는 동시 요청이 많으면 503을 준다 (2026-09-16 실측: 12+16 스레드에서 503)
+RETRY_CODES = (429, 500, 502, 503, 504)
+CACHE = os.environ.get("CRAWL_CACHE", os.path.join(PROJ, "logs", "crawl_cache"))
+FILES_CACHE, SIZES_CACHE = os.path.join(CACHE, "files.txt"), os.path.join(CACHE, "sizes.tsv")
+GIB = 1024 ** 3
+
+
+def _sleep(i):
+    time.sleep(min(60, 3 * 2 ** i))
+
+
+def get(url, tries=TRIES):
+    for i in range(tries):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60) as r:
+                return r.read().decode("utf-8", "replace")
+        except urllib.error.HTTPError as e:
+            if e.code in RETRY_CODES and i < tries - 1:
+                _sleep(i)
+                continue
+            raise
+        except (urllib.error.URLError, TimeoutError, OSError):
+            if i == tries - 1:
+                raise
+            _sleep(i)
+
+
+def head_size(path, tries=TRIES):
+    """bytes, None(404), -1(크기를 못 받음)"""
+    url = BASE + urllib.parse.quote(path)
+    for i in range(tries):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, method="HEAD", headers=UA), timeout=60) as r:
+                cl = r.headers.get("Content-Length")
+            if cl is not None:
+                return int(cl)
+            rng = dict(UA, Range="bytes=0-0")
+            with urllib.request.urlopen(urllib.request.Request(url, headers=rng), timeout=60) as r:
+                cr = r.headers.get("Content-Range", "")  # bytes 0-0/TOTAL
+            total = cr.rsplit("/", 1)[-1]
+            if total.isdigit():
+                return int(total)
+            # Content-Length도 Content-Range도 없음(빈 파일 등) → 본문을 직접 읽어 잰다 (200 MiB 상한)
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=300) as r:
+                body = r.read(200 * 1024 * 1024 + 1)
+            if len(body) <= 200 * 1024 * 1024:
+                return len(body)
+            print(f"  no size: {path}", file=sys.stderr, flush=True)
+            return -1
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return None
+            if e.code in RETRY_CODES and i < tries - 1:
+                _sleep(i)
+                continue
+            raise RuntimeError(f"{path}: HTTP {e.code}") from e
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
+            if i == tries - 1:
+                raise RuntimeError(f"{path}: {e}") from e
+            _sleep(i)
+
+
+def listdir(d):
+    """d = 'release/x/y/' → (files, subdirs) as full relative paths"""
+    page = get(BASE + urllib.parse.quote(d))
+    files, dirs = [], []
+    for h in HREF.findall(page):
+        h = html.unescape(h)
+        if h.startswith(("?", "/", "http://", "https://")) or h == "../":
+            continue
+        name = urllib.parse.unquote(h)
+        (dirs if name.endswith("/") else files).append(d + name)
+    return files, dirs
+
+
+def group(paths):
+    """디렉토리(샘플/버전) 단위 집계 키"""
+    g = {}
+    for p in paths:
+        parts = p.split("/")
+        key = "/".join(parts[:4]) if parts[1] in ("AshkenazimTrio", "ChineseTrio") else "/".join(parts[:3])
+        g.setdefault(key, []).append(p)
+    return g
+
+
+def main():
+    os.makedirs(CACHE, exist_ok=True)
+    t0 = time.time()
+    if os.path.exists(FILES_CACHE) and not FRESH:
+        files = [l.rstrip("\n") for l in open(FILES_CACHE, encoding="utf-8") if l.strip()]
+        print(f"crawl: {len(files)} files from cache {FILES_CACHE} (--fresh 로 다시 크롤)", file=sys.stderr)
+    else:
+        todo, files, ndirs = list(ROOTS), [], 0
+        with cf.ThreadPoolExecutor(LIST_THREADS) as ex:
+            while todo:
+                batch, todo = todo, []
+                for fs, ds in ex.map(listdir, batch):
+                    files += fs
+                    todo += ds
+                    ndirs += 1
+                print(f"  dirs listed {ndirs}, files {len(files)}, queue {len(todo)}", file=sys.stderr, flush=True)
+        files = sorted(set(files))
+        with open(FILES_CACHE, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write("\n".join(files) + "\n")
+        print(f"crawl: {ndirs} dirs, {len(files) } files in {time.time() - t0:.0f}s", file=sys.stderr)
+
+    old = {}
+    for line in open(MANIFEST, encoding="utf-8"):
+        if line.strip():
+            p, b = line.rstrip("\n").split("\t")
+            old[p] = int(b) if b else None
+    in_scope_old = {p: b for p, b in old.items() if any(p.startswith(r) for r in ROOTS)}
+
+    t0 = time.time()
+    sizes = {}
+    if os.path.exists(SIZES_CACHE) and not FRESH:
+        for l in open(SIZES_CACHE, encoding="utf-8"):
+            if l.strip():
+                p, b = l.rstrip("\n").split("\t")
+                sizes[p] = None if b == "404" else int(b)
+        print(f"HEAD: {len(sizes)} sizes from cache", file=sys.stderr)
+    elif FRESH and os.path.exists(SIZES_CACHE):
+        os.remove(SIZES_CACHE)
+    pending = [p for p in files if p not in sizes]
+    with cf.ThreadPoolExecutor(HEAD_THREADS) as ex, open(SIZES_CACHE, "a", encoding="utf-8", newline="\n") as cache:
+        for n, (p, s) in enumerate(zip(pending, ex.map(head_size, pending)), 1):
+            sizes[p] = s
+            cache.write(f"{p}\t{'404' if s is None else s}\n")
+            cache.flush()
+            if n % 500 == 0:
+                print(f"  HEAD {n}/{len(pending)} {time.time() - t0:.0f}s", file=sys.stderr, flush=True)
+    print(f"HEAD: {len(pending)} new lookups in {time.time() - t0:.0f}s", file=sys.stderr)
+
+    # 인덱스에 안 보이는 옛 항목 — Apache는 dotfile(.DS_Store, ._*)을 숨긴다. 직접 HEAD해서 있으면 유지, 404만 제거.
+    unlisted = [p for p in in_scope_old if p not in sizes]
+    with cf.ThreadPoolExecutor(HEAD_THREADS) as ex, open(SIZES_CACHE, "a", encoding="utf-8", newline="\n") as cache:
+        for p, s in zip(unlisted, ex.map(head_size, unlisted)):
+            sizes[p] = s
+            cache.write(f"{p}\t{'404' if s is None else s}\n")
+    hidden = sorted(p for p in unlisted if sizes.get(p) is not None and sizes[p] >= 0)
+    print(f"unlisted old entries: {len(unlisted)} checked, {len(hidden)} exist (hidden), "
+          f"{sum(1 for p in unlisted if sizes.get(p) is None)} gone", file=sys.stderr)
+
+    listed = set(files)
+    gone404 = sorted(p for p, s in sizes.items() if s is None and p in listed)
+    nosize = sorted(p for p, s in sizes.items() if s == -1)
+    sizes = {p: s for p, s in sizes.items() if s is not None and s >= 0}
+
+    added = {p: s for p, s in sizes.items() if p not in in_scope_old}
+    removed = {p: b for p, b in in_scope_old.items() if p not in sizes and p not in nosize}
+    changed = {p: (in_scope_old[p], s) for p, s in sizes.items() if p in in_scope_old and in_scope_old[p] != s}
+    gib = lambda b: b / GIB
+
+    date = datetime.date.today().isoformat()
+    rep = [f"# release/ 크롤 대조 {date}", "",
+           f"FTP `{BASE}release/` 라이브 인덱스 재귀 크롤 + 파일별 HEAD. 도구: `phase0_download/scripts/crawl_release.py`.", "",
+           "| 항목 | 파일 | GiB |", "|---|---|---|",
+           f"| FTP 현재 | {len(sizes)} | {gib(sum(sizes.values())):.2f} |",
+           f"| manifest(이전) | {len(in_scope_old)} | {gib(sum(b for b in in_scope_old.values() if b)):.2f} |",
+           f"| 추가 | {len(added)} | {gib(sum(added.values())):.2f} |",
+           f"| FTP에서 사라짐(manifest에서 제거) | {len(removed)} | {gib(sum(b for b in removed.values() if b)):.2f} |",
+           f"| 인덱스에 숨겨진 파일(dotfile 등, HEAD로 존재 확인해 유지) | {len(hidden)} | {gib(sum(sizes[p] for p in hidden)):.2f} |",
+           f"| 크기 변경 | {len(changed)} | - |", ""]
+    if added:
+        rep += ["## 추가 (디렉토리 단위)", "", "| 디렉토리 | 파일 | GiB |", "|---|---|---|"]
+        for k, ps in sorted(group(added).items()):
+            rep.append(f"| `{k}` | {len(ps)} | {gib(sum(added[p] for p in ps)):.2f} |")
+        rep += ["", "<details><summary>파일 목록</summary>", ""] + [f"- `{p}` {added[p]:,}" for p in sorted(added)] + ["", "</details>", ""]
+    if removed:
+        rep += ["## FTP에서 사라짐", "", "| 디렉토리 | 파일 |", "|---|---|"]
+        for k, ps in sorted(group(removed).items()):
+            rep.append(f"| `{k}` | {len(ps)} |")
+        rep += ["", "<details><summary>파일 목록</summary>", ""] + [f"- `{p}`" for p in sorted(removed)] + ["", "</details>", ""]
+    if changed:
+        rep += ["## 크기 변경 (manifest → FTP)", ""] + [f"- `{p}` {a:,} → {b:,}" for p, (a, b) in sorted(changed.items())] + [""]
+    if gone404:
+        rep += ["## 인덱스에는 있으나 HEAD 404", ""] + [f"- `{p}`" for p in gone404] + [""]
+    if nosize:
+        rep += ["## 크기를 못 받은 파일 (manifest 미반영)", ""] + [f"- `{p}`" for p in nosize] + [""]
+    os.makedirs(os.path.join(PROJ, "docs", "reference"), exist_ok=True)
+    rp = os.path.join(PROJ, "docs", "reference", f"release_crawl_{date}.md")
+    with open(rp, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write("\n".join(rep))
+    print(f"report: {rp}", file=sys.stderr)
+    print(f"added {len(added)} ({gib(sum(added.values())):.2f} GiB), removed {len(removed)}, changed {len(changed)}, "
+          f"404 {len(gone404)}, nosize {len(nosize)}")
+
+    if not DRY:
+        new = {p: b for p, b in old.items() if not any(p.startswith(r) for r in ROOTS)}
+        new.update(sizes)
+        with open(MANIFEST, "w", encoding="utf-8", newline="\n") as fh:
+            for p in sorted(new):
+                fh.write(f"{p}\t{new[p]}\n")
+        if removed:
+            with open(STALE, "a", encoding="utf-8", newline="\n") as fh:
+                for p in sorted(removed):
+                    fh.write(f"{p}\t{removed[p]}\t{date}\n")
+        print(f"manifest rewritten: {len(new)} lines; stale appended: {len(removed)}", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()
