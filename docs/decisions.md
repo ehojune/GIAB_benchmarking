@@ -66,3 +66,24 @@
 - 5회차 리뷰는 Codex 사용 한도로 못 돌렸다(재설정 2026-09-17 03:25). 3회에 걸친 지적 14건을 모두 반영한 뒤,
   자체 검증(스크립트 재실행 멱등성, 카탈로그 436행×51열, files 85,497 = manifest 77,508+7,989 일치, giab_path 중복 0,
   라우팅 누락 0, README·엑셀 동기)을 확인하고 merge했다.
+
+## 2026-09-17 — 발견했으나 받지 않기로 한 데이터 3건
+
+2026-09-16 크롤이 찾은 것 중 셋은 받지 않는다(사용자 결정). 2026-09-16 항목의 "superseded-2022 raw와 Verkko 작업 디렉토리는
+기존 관례대로 manifest에 포함했다"와 "legacy 분석을 받을지는 사용자 결정"을 이 항목이 대체한다.
+
+| 그룹 | 파일 | TiB | 판단 근거 |
+|---|---|---|---|
+| legacy-trio-analysis | 8,228 | 7.78 | 2014~2020 trio 레벨 분석 107 디렉토리. 카탈로그 행이 없고 현재 작업과 무관 |
+| hg008-superseded-2022-raw | 26 | 1.63 | GIAB이 superseded로 표시. **이미 받은 `BCM_ILMN-somatic-analysis_20220816/`와 파일명·크기가 전부 동일한 중복**이라 받아도 얻는 게 없다(워크플로 검증에서 확인) |
+| hg008-verkko-workdirs | 4,169 | 1.28 | Verkko 작업 디렉토리 중간 산출물. 어셈블리 결과 353 files / 197.5 GiB는 그대로 보유 |
+
+- **기록은 세 곳에 남긴다.** manifest에서 지우기만 하면 다음 크롤이 "기존 디렉토리의 신규 파일"로 되돌려 넣는다.
+  (1) `manifests/declined_by_decision.tsv` — 경로·바이트·그룹 12,423행. (2) `crawl_data.py`가 이 목록을 읽어 신규에서 제외.
+  (3) `catalog_new_dirs.py`의 PATTERNS 비고와 unrouted 필터.
+- 제거 범위는 **크롤이 추가한 것만**이다. 2026-08-30에 이미 받은 파일(커밋 62acb11 기준)은 한 건도 manifest에서 빠지지 않았다(실측 확인).
+  `optional_trio_analysis_legacy.tsv`와 `data_unrouted_new.tsv`는 declined 목록에 흡수돼 삭제했다.
+- 카탈로그에서 `superseded-2022-data/BCM_Illumina_WGS_20220816` 행은 파일이 0이 되어 지웠다(435 datasets).
+  같은 26 files / 1666 GiB를 주장하던 `BCM_ILMN-somatic-analysis_20220816` 행과의 이중 계수도 이걸로 해소됐다.
+- **S3 미러에 신규 데이터가 사실상 없다**(표본 96건 중 1건, 용량 상위 25건은 0건). `TOOL=s3`이어도 FTP fallback으로 받으므로
+  83 MB/s 기준 추정은 쓰면 안 된다. 실제 내려받을 양은 8,954 files / 8.67 TiB.

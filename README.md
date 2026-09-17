@@ -6,7 +6,7 @@ GIAB 9개 샘플(HG001–HG007 germline, HG008·HG009 tumor-normal)의 **전체 
 
 | | |
 |---|---|
-| 데이터 규모 | **436 datasets / 85,497 files / 128.3 TB** (2026-08-13 HEAD 검증 + 2026-09-16 FTP `release/`·`data/` 라이브 크롤: HG002 v5.0q·stratifications v3.6, HG008/HG009 신규 102 데이터셋 11.4 TiB 추가. 2014~2020 trio 분석 7.8 TiB는 선택 manifest로 별도) |
+| 데이터 규모 | **435 datasets / 81,302 files / 125.1 TB** (2026-08-13 HEAD 검증 + 2026-09-16 FTP `release/`·`data/` 라이브 크롤: HG002 v5.0q·stratifications v3.6, HG008/HG009 신규 데이터셋 추가. 2026-09-17에 받지 않기로 한 3건 12,423 files / 10.7 TiB는 [manifests/declined_by_decision.tsv](phase0_download/manifests/declined_by_decision.tsv)에 목록만 남기고 제외) |
 | 다운로드 | [phase0_download/](phase0_download/) — 스크립트, 매니페스트, 속도·용량 계획 |
 | PacBio HiFi 처리 | [phase1_pacbio_hifi/](phase1_pacbio_hifi/) — 38개 실행 단위, raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
 | ONT 처리 | [phase2_ont/](phase2_ont/) — 18개 실행 단위(기본 제출 14), raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
@@ -38,7 +38,7 @@ python catalog/build_readme.py
 <!-- MASTER-TABLE:BEGIN -->
 ### 요약
 
-전체 **436개 데이터셋 / 85,497 files / 116.7 TiB**. 단계별 도달 데이터셋 수:
+전체 **435개 데이터셋 / 81,302 files / 113.8 TiB**. 단계별 도달 데이터셋 수:
 
 | category | 데이터셋 | GiB | 정렬 | 페이징 | 변이 | 메틸 | somatic | 어셈블리 | GIAB 처리물 보유 |
 |---|---|---|---|---|---|---|---|---|---|
@@ -50,7 +50,7 @@ python catalog/build_readme.py
 | Exome | 11 | 977 | 11 | 0 | 2 | 0 | 0 | 0 | 0 |
 | Linked reads (10X, stLFR) | 18 | 5,038 | 13 | 6 | 3 | 0 | 0 | 0 | 13 |
 | Complete Genomics | 11 | 14,880 | 9 | 0 | 9 | 0 | 0 | 0 | 10 |
-| 기타 기술 (BioNano, Hi-C, AVITI, UG100, Strand-seq 등) | 166 | 23,329 | 42 | 15 | 51 | 22 | 57 | 11 | 32 |
+| 기타 기술 (BioNano, Hi-C, AVITI, UG100, Strand-seq 등) | 165 | 20,350 | 41 | 15 | 51 | 22 | 57 | 11 | 31 |
 | Release — truth set / stratification / reference | 60 | 318 | 22 | 14 | 48 | 0 | 2 | 9 | 57 |
 | RNA-seq | 31 | 6,941 | 17 | 0 | 0 | 0 | 0 | 0 | 19 |
 | Trio-level analysis | 11 | 73 | 6 | 1 | 9 | 1 | 0 | 0 | 11 |
@@ -288,7 +288,7 @@ python catalog/build_readme.py
 </details>
 
 <details>
-<summary><b>기타 기술 (BioNano, Hi-C, AVITI, UG100, Strand-seq 등)</b> — 166 datasets, 23,329 GiB</summary>
+<summary><b>기타 기술 (BioNano, Hi-C, AVITI, UG100, Strand-seq 등)</b> — 165 datasets, 20,350 GiB</summary>
 
 | 데이터셋 | 샘플 | 플랫폼 | GiB | 리드 | index | 정렬 | 페이징 | 변이 | 메틸 | somatic | 어셈블리 | 출처 | 다음 할 일 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -348,7 +348,6 @@ python catalog/build_readme.py
 | BCM 2022 Manta/Strelka/xAtlas(대체됨) | HG008 | Illumina WGS(모델 미표기) | 2 | ✗ | △ 5개 | – | – | ✓ Manta (germline diploidSV, candidateSV) / xAtlas (small variant, IDUDI0002·0003 각각) | – | ✓ Manta (4세트: IDUDI0002, IDUDI0003, Tumor_Only --tumorBam, Normal_Tumor --normalBam+--tumorBam) → SURVIVOR 통계 / Strelka somatic (configureStrelkaSomaticWorkflow.py, MantaCandidateIndel 유무 2종) | – | 문서 | superseded이고 툴 버전도 없어 기준선 가치가 낮다. Manta ± candidateIndel 두 구성 비교로 indel 후보 전달이 somatic indel 민감도에 주는 영향만 참고하고, 실제 비교 기준선은 DRAGEN 4.2.4나 NYGC v7을 쓸 것. |
 | BCM Illumina WGS 2022(대체됨) | HG008 | Illumina WGS(모델 미표기) | 1,666 | ✓ FASTQ (N, T 각 R1/R2) | ✓ | ✓ BCM: BWA-MEM (BCM hgv 파이프라인 hgv-19.2.34) / NIST 재정렬: BWA-MEM 0.7.17-r1188 → samtools 1.3.1 (sam→bam 변환, 정렬, 인덱싱) | ✗ | ✗ | – | ✗ | – | 문서 | 패세지가 다르므로 2024년 데이터와 직접 합치지 말 것. 패세지 간 somatic 변이 변화를 보려면 이 FASTQ를 GRCh38-GIABv3로 재정렬해 p23 데이터와 같은 조건으로 맞춘 뒤 비교. |
 | BCM Revio somatic WDL | HG008 | PacBio Revio HiFi | 565 | ✗ | ✓ | ✓ N/A (PacBio HiFi-somatic-WDL v0.7 내부 정렬; 이 문서에 정렬 툴명 없음) | ✓ HiPhase | ✓ Clair3 (germline small variant) | ✓ pb-CpG-tools (hap1/hap2/combined bigWig) → DMR 주석 (dmrs.tsv) | ✓ DeepSomatic → VEP (SNV/INDEL, GRCh38-GIABv3만) / Severus → svpack (SV, control VCF 필터+주석) | – | 문서 | GIAB 산출물 그대로 기준선으로 사용. 자체 HiFi somatic 파이프라인 결과와 Severus/DeepSomatic 콜을 비교하고, 필요하면 Additional_files tar를 풀어 중간 산출물 확인. |
-| BCM_Illumina_WGS_20220816 | HG008 | Illumina WGS 2022(superseded) | 1,666 | ✓ FASTQ + BAM/CRAM | ✓ | ✓ 정렬 BAM/CRAM + FASTQ | – | – | – | – | – | 문서 |  |
 | Bionano SV/CNV 분석 | HG008 | Bionano 광학맵(장비 모델 미표기) | 0 | ✗ | ✗ 2개 | – | – | – | – | ✓ Bionano Rare Variant Analysis (RVA) pipeline — Bionano Access 1.8 / Solve 3.8 / VIA (CNV는 hypodiploid 재중심화 후 VIA로 콜) | – | 문서 | 직교 기술 SV 근거로 사용. 자체 시퀀싱 기반 SV 콜셋을 이 UniqueSVs와 대조해 5kb 이상 대형 SV 재현율 확인 (좌표 정확도는 광학맵 특성상 수 kb 오차 가정). |
 | Bionano 광학맵 원시 | HG008 | Bionano 광학맵(장비 모델 미표기) | 3 | ✓ BNX.gz + CMAP (Saphyr 광학맵 분자 데이터, 시퀀싱 리드 아님) | – | ✓ Bionano Access 1.8 → Bionano Solve 3.8 | – | ✗ | – | ✗ | ✗ | 문서 | BNX 원자료가 있으니 Bionano Solve로 재분석 가능하지만 Bionano 라이선스 소프트웨어가 필요. 라이선스 없으면 GIAB의 SV/CNV 콜셋(analysis 디렉토리)을 그대로 직교 검증 근거로 사용. |
 | DRAGEN v4.2.4 (graph/standard) | HG008 | Illumina WGS(모델 미표기) | 683 | ✗ | ✓ | ✓ DRAGEN 4.2.4 (graph/multigenome hashtable 및 standard hg38 hashtable, sorted+duplicate-marked BAM) | ✗ | ✗ | – | ✓ DRAGEN 4.2.4 Tumor-Normal WGS workflow (small variant + SV + CNV; CNV는 --cnv-somatic-het-state-multiplier=3) | – | 문서 | GIAB 산출물 그대로 벤치마크 입력 계보 확인용으로 사용. graph vs standard 레퍼런스 비교가 목적이면 두 BAM 세트로 자체 콜러를 돌려 재현. |
@@ -406,7 +405,7 @@ python catalog/build_readme.py
 | Ultima UG100 WGS | HG008 | Ultima UG100 | 1,454 | ✗ | ✓ | ✓ UA (Ultima가 자사 데이터용으로 최적화한 BWA) — Ultima Analysis Pipeline (APL) v5.1.0.19 | ✗ | ✗ | – | ✗ | ✗ | 문서 | CRAM 그대로 T/N somatic 콜(Ultima 데이터는 flow-based라 UG 전용 모델/파라미터 필요) 수행. 원시 FASTQ가 없어 정렬 단계 재현은 CRAM 역변환이 필요하다. |
 | Ultima ppmSeq UG100 | HG008 | Ultima UG100 ppmSeq | 448 | ✗ | ✓ | ✓ Ultima UG100 on-tool 트리밍/정렬/정렬정렬 (version BL1.7, healthomics-workflows ppmSeq_preprocess) | ✗ | ✗ | – | ✗ | ✗ | 문서 | CRAM만 있고 FASTQ가 없어 완전 재정렬은 CRAM→FASTQ 역변환이 필요. 레퍼런스가 GIABv3가 아니므로 GIAB 벤치마크와 맞추려면 재정렬이 사실상 필수. 그대로 쓰려면 somatic 콜만 자체 수행. |
 | Ultima-ppmSeq-SNV_20241028 | HG008 | Ultima ppmSeq somatic SNV 분석 | 66 | ✗ | ✓ | – | – | – | – | ✓ | – | 문서 |  |
-| Verkko 어셈블리 모음 | HG008 | PacBio HiFi + ONT + Hi-C(모델 미표기) | 1,511 | ✗ | ✗ 2개 | ✗ | ✓ verkko 내부 Hi-C 페이징 (8-hicPipeline, rukki; Hi-C 매핑에 bwa 사용 — index_bwa.sh / mergeBWA.sh 등 파일명) | ✗ | – | ✗ | ✓ verkko v2.0 (문서 확인, 기본 설정) / v2.1·v2.2·v2.2.1·v2.2.1_herro_corrected (디렉토리명 토큰) | 문서 | HG008T_verkko_v2.2.1_herro_corrected와 HG008N v2.1 하플로타입 FASTA를 골라 GRCh38 정렬 + dipcall로 어셈블리 기반 변이 콜 수행. 벤치마크 V0.3 영역 BED가 verkko 2.2 정상 어셈블리 기반이므로 계보를 맞추려면 정상은 verkko 계열을 쓸 것. |
+| Verkko 어셈블리 모음 | HG008 | PacBio HiFi + ONT + Hi-C(모델 미표기) | 198 | ✗ | ✗ 2개 | ✗ | ✓ verkko 내부 Hi-C 페이징 (8-hicPipeline, rukki; Hi-C 매핑에 bwa 사용 — index_bwa.sh / mergeBWA.sh 등 파일명) | ✗ | – | ✗ | ✓ verkko v2.0 (문서 확인, 기본 설정) / v2.1·v2.2·v2.2.1·v2.2.1_herro_corrected (디렉토리명 토큰) | 문서 | HG008T_verkko_v2.2.1_herro_corrected와 HG008N v2.1 하플로타입 FASTA를 골라 GRCh38 정렬 + dipcall로 어셈블리 기반 변이 콜 수행. 벤치마크 V0.3 영역 BED가 verkko 2.2 정상 어셈블리 기반이므로 계보를 맞추려면 정상은 verkko 계열을 쓸 것. |
 | Wakhan CNA (HiFi) | HG008 | PacBio HiFi(모델 미표기) | 0 | ✗ | ✗ 2개 | – | ✓ Clair3 v1.0.4 (변이 콜 및 페이징) | ✓ Clair3 v1.0.4 | – | ✓ Wakhan (버전 미기재; tumor/normal 모드, --copynumbers-enable --unphased-reads-coverage-enable --phaseblock-flipping-enable --phaseblocks-enable --cut-threshold 150) | – | 문서 | HiFi 기반 somatic CNA 기준선으로 사용. 자체 CNA 콜과 copynumber/LOH BED를 비교하고, 20240424 Hi-C 페이징 버전과 함께 3중 비교. |
 | Wakhan CNA (HiFi+Hi-C) | HG008 | PacBio HiFi + Hi-C(모델 미표기) | 0 | ✗ | ✗ 1개 | – | ✓ HapCUT2 (HiC_Longread pipeline recipe) | – | – | ✓ Wakhan (버전 미기재; tumor/normal 모드, --copynumbers-enable --unphased-reads-coverage-enable --phaseblocks-enable --cut-threshold 150) | – | 문서 | NIH_HiFi_Wakhan-CNA_20240308 결과와 copynumber/LOH BED를 직접 diff해서 장거리 페이징 효과를 정량. 자체 CNA 콜(예: Wakhan, HiFi-somatic-WDL) 실행 시 페이징 소스를 명시적으로 기록. |
 | analysis | HG008 | Illumina WGS 2022(superseded) | 2 | ✗ | △ 5개 | – | – | – | – | ✓ 정렬 BAM/CRAM + FASTQ | – | N/A |  |
@@ -594,8 +593,8 @@ python catalog/build_readme.py
 숫자와 툴 이름을 분리해서, 각각 다른 근거로 채웠다.
 
 **결정론적으로 계산한 것** — 파일 개수, 바이트, index 존재 여부, 파일 종류 분포.
-`phase0_download/manifests/`의 76,595행과 330개 prefix는 빠짐없이, 중복 없이 대응한다
-(미매칭 0건). 2026-08-26 HG008 공식 benchmark index 2건·25파일을 더해 현재 332개·76,620파일이다.
+`phase0_download/manifests/`의 모든 행은 카탈로그 giab_path에 빠짐없이, 중복 없이 대응한다(미매칭 0건).
+2026-09-16 크롤 반영 후 현재 435개 prefix · 81,302파일이며, 파일은 가장 긴 giab_path 하나에만 배타적으로 배정된다.
 
 **GIAB 공식 문서에서 확인한 것** — 툴 이름과 버전, 파이프라인, 처리 주체.
 매니페스트에 있는 GIAB README 514개를 S3/FTP에서 전부 받아 본문을 근거로 삼았다.
@@ -617,6 +616,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-17 — 2026-09-16 크롤이 찾은 3건을 받지 않기로 확정: legacy trio 분석 8,228 files / 7.78 TiB, HG008 superseded-2022 raw 26 / 1.63 TiB(이미 받은 디렉토리와 동일 내용), Verkko 작업 디렉토리 4,169 / 1.28 TiB. 목록은 `manifests/declined_by_decision.tsv`에 남기고 `crawl_data.py`가 재추가하지 않도록 가드를 넣었다. 카탈로그 435 datasets / 81,302 files. 실제 내려받을 신규분은 8,954 files / 8.67 TiB.
 - 2026-09-16 — data/·data_somatic/·data_RNAseq/도 FTP 라이브 크롤(`crawl_data.py`): 2026-08-13 S3 기반 목록에서 빠졌던 HG008 NIST 트리·HG009 신규·Verkko 등 7,377 files / 11.5 TiB를 manifest에 추가(카탈로그 436 datasets), 2014~2020 trio 분석 8,228 files / 7.8 TiB는 `optional_trio_analysis_legacy.tsv`로 분리. FTP·S3 미러가 양방향으로 어긋남을 확인(FTP만 다른 7,122 + FTP에서만 사라진 2,173 → S3 기준 유지).
 - 2026-09-16 — release/를 FTP 라이브 크롤로 재대조(`crawl_release.py`): HG002 v5.0q(9.4 GiB, latest/ 복사본 포함 2벌)·stratifications v3.6(22.5 GiB) 등 1,577 files / 41.4 GiB 추가, HG002 latest/ 옛 v4.2.1 51건 제거(순증 +1,525 files). `current.tree`가 2025-02-27 이후 미갱신인 것이 원인. 카탈로그 334 datasets, 엑셀 v0916.
 - 2026-09-09 — phase3 시작: HG002·3·4 숏리드 WGS 입력 목록(`phase3_shortread_wgs/inputs_manifest.tsv`, 18 실행 단위 / 6,178 FASTQ / 5.55 TiB)과 small-variant 정답셋 경로 정리.

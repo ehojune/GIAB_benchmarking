@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """crawl_data.py가 남긴 manifests/data_unrouted_new.tsv(새 디렉토리의 신규 파일)를 카탈로그 행으로 만든다.
 
-  python phase0_download/scripts/catalog_new_dirs.py            # 카탈로그 행 추가 + optional manifest 작성 + 요약
+  python phase0_download/scripts/catalog_new_dirs.py            # 카탈로그 행 추가·재계산 + declined 목록 갱신 + 요약
   python phase0_download/scripts/catalog_new_dirs.py --dry-run  # 요약만
 
 규칙
@@ -9,7 +9,7 @@
   그 디렉토리가 이미 카탈로그 giab_path면 기존 행에 붙인다(files/size 갱신). 아니면 새 행을 만든다.
 - category는 디렉토리 이름 패턴으로 정한다(아래 PATTERNS). HG008 관례: analysis·Hi-C·단일세포·핵형·superseded = other.
 - data/<trio>/analysis/<dir> (2014~2020 trio 레벨 분석, 카탈로그에 없던 것)는 카탈로그 행을 만들지 않고
-  manifests/optional_trio_analysis_legacy.tsv 에만 적는다. `download.sh optional_trio_analysis_legacy` 로만 받는다.
+  manifests/declined_by_decision.tsv 에만 적는다 (2026-09-17 받지 않기로 결정).
   예외: NIST_HG002_DraftBenchmark_defrabb* 는 기존 defrabb 행들과 같은 trio_analysis 행으로 만든다.
 - 행을 만든 뒤 `crawl_data.py --route-all` 을 캐시로 다시 돌리면 파일이 manifest에 들어간다.
 """
@@ -26,7 +26,7 @@ PROJ = os.path.dirname(REPO)
 MANI = os.path.join(REPO, "manifests")
 CATALOG = os.path.join(PROJ, "catalog", "master_catalog.tsv")
 UNROUTED = os.path.join(MANI, "data_unrouted_new.tsv")
-LEGACY = os.path.join(MANI, "optional_trio_analysis_legacy.tsv")
+DECLINED = os.path.join(MANI, "declined_by_decision.tsv")   # 받지 않기로 한 경로: 카탈로그 행을 만들지 않는다
 DRY = "--dry-run" in sys.argv
 GIB = 1024 ** 3
 TODAY = "2026-09-16"
@@ -62,11 +62,11 @@ PATTERNS = [
     (r"NYGC_ILMN_Lancet2", "other", "Lancet2 somatic 콜셋(NYGC ILMN)", "Lancet2", "README 미확인"),
     (r"Ultima-ppmSeq-SNV", "other", "Ultima ppmSeq somatic SNV 분석", "-", "README 미확인"),
     (r"NIST_HG008-T_somatic", "other", "NIST HG008-T somatic draft benchmark", "NIST somatic benchmark 산출물", "README 미확인"),
-    (r"Verkko", "other", "Verkko 어셈블리(HG008-T v2.2.1 HERRO 보정, HG008-N v2.2)", "Verkko 2.2/2.2.1 작업 디렉토리 전체(.sh/.red/.range 중간 산출물 포함)", "중간 산출물이 대부분. README_HG8N-verkko.md 참고"),
+    (r"Verkko", "other", "Verkko 어셈블리(HG008-T v2.2.1 HERRO 보정, HG008-N v2.2)", "Verkko 2.2/2.2.1 작업 디렉토리 전체(.sh/.red/.range 중간 산출물 포함)", "중간 산출물이 대부분. 작업 디렉토리 4,169 files/1.28 TiB는 2026-09-17에 받지 않기로 결정 → manifests/declined_by_decision.tsv. 어셈블리 결과 353 files만 보유"),
     (r"^analysis$", "other", "somatic 분석 결과(GRCh38)", "HiFi: HiFi Somatic WDL v0.9.4(DeepSomatic 1.9.0, Severus 1.6.0, CNVkit 0.9.10, PURPLE 4.0, VEP 112) · ILMN: nf-core/sarek 3.8.1 T/N(FreeBayes, Strelka2, Manta, indexcov)",
      "패시지/클론별 analysis 디렉토리. HG009는 기존 pacbio_hifi 행(2026-08) 분석 파일과 나뉘어 들어간다"),
     (r"NIST_HG002_DraftBenchmark_defrabb", "trio_analysis", "미표기(어셈블리 기반 draft benchmark)", "DeFrABB(dipcall) draft benchmark", "v5.0q의 전신(defrabb v0.020, 2025-01-17)"),
-    (r"superseded-2022-data", "other", "Illumina WGS 2022(superseded)", "정렬 BAM/CRAM + FASTQ", "GIAB이 superseded로 표시. 받지 않아도 무방"),
+    (r"superseded-2022-data", "other", "Illumina WGS 2022(superseded)", "정렬 BAM/CRAM + FASTQ", "GIAB이 superseded로 표시. raw 26 files/1.63 TiB는 2026-09-17에 받지 않기로 결정(이미 받은 BCM_ILMN-somatic-analysis_20220816과 파일명·크기가 동일한 중복) → manifests/declined_by_decision.tsv"),
 ]
 PLATFORM_HINT = re.compile("|".join(f"(?:{p})" for p, *_ in PATTERNS))
 
@@ -260,13 +260,18 @@ def refs_in(names):
 
 
 def main():
-    if not os.path.exists(UNROUTED):
-        sys.exit(f"없음: {UNROUTED} (crawl_data.py를 먼저)")
+    declined = set()
+    if os.path.exists(DECLINED):
+        declined = {l.split("\t")[0] for l in open(DECLINED, encoding="utf-8") if l.strip() and not l.startswith("#")}
     items = []
-    for l in open(UNROUTED, encoding="utf-8"):
-        if l.strip() and not l.startswith("#"):
-            p, b, mtime, sug, date = l.rstrip("\n").split("\t")[:5]
-            items.append((p, int(b), mtime))
+    if os.path.exists(UNROUTED):
+        for l in open(UNROUTED, encoding="utf-8"):
+            if l.strip() and not l.startswith("#"):
+                p, b, mtime, sug, date = l.rstrip("\n").split("\t")[:5]
+                if p not in declined:          # 받지 않기로 한 것은 카탈로그에 올리지 않는다
+                    items.append((p, int(b), mtime))
+    else:
+        print(f"대기 목록 없음({os.path.basename(UNROUTED)}) — 기존 행의 files/size만 manifest 실측으로 다시 맞춘다")
     manifest_files = load_manifest_files()
     rows = list(csv.DictReader(open(CATALOG, encoding="utf-8", newline=""), delimiter="\t"))
     cols = list(rows[0].keys())
@@ -418,20 +423,25 @@ def main():
         w.writeheader()
         w.writerows(rows)
     if legacy:
-        # 병합: 이번 크롤이 잰 크기로 갱신하고(파일이 바뀌었을 수 있다), 이번 범위 밖 기존 항목은 그대로 둔다
-        merged = {}
-        if os.path.exists(LEGACY):
-            for l in open(LEGACY, encoding="utf-8"):
+        # 2014~2020 trio 레벨 분석은 2026-09-17에 받지 않기로 결정했다 → declined 목록에 병합한다(크기 갱신 포함).
+        merged, groups_of = {}, {}
+        if os.path.exists(DECLINED):
+            for l in open(DECLINED, encoding="utf-8"):
                 if l.strip() and not l.startswith("#"):
-                    p, b = l.rstrip("\n").split("\t")[:2]
+                    p, b, g = (l.rstrip("\n").split("\t") + ["", ""])[:3]
                     merged[p] = int(b)
+                    groups_of[p] = g
         changed = sum(1 for p, b, _ in legacy if merged.get(p) not in (None, b))
-        merged.update({p: b for p, b, _ in legacy})
-        with open(LEGACY, "w", encoding="utf-8", newline="\n") as fh:
+        for p, b, _ in legacy:
+            merged[p] = b
+            groups_of.setdefault(p, "legacy-trio-analysis")
+        with open(DECLINED, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write("# 상대경로\tbytes\t그룹 — FTP 크롤로 발견했으나 받지 않기로 결정한 데이터 (2026-09-17 사용자 결정).\n")
+            fh.write("# 어떤 manifest에도 넣지 않고 crawl_data.py가 다시 넣지도 않는다. download.sh에 직접 먹이지 말 것(3열).\n")
             for p in sorted(merged):
-                fh.write(f"{p}\t{merged[p]}\n")
-        print(f"legacy manifest: {len(merged)} files ({changed} sizes refreshed)")
-    print(f"catalog: {len(rows)} rows; legacy manifest: {LEGACY}")
+                fh.write(f"{p}\t{merged[p]}\t{groups_of.get(p, 'legacy-trio-analysis')}\n")
+        print(f"declined 목록: {len(merged)} files ({changed} sizes refreshed)")
+    print(f"catalog: {len(rows)} rows; declined 목록: {os.path.relpath(DECLINED, PROJ)}")
     print("다음: python phase0_download/scripts/crawl_data.py --route-all   (캐시로 재실행 → manifest 반영)")
 
 
