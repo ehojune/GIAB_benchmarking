@@ -616,7 +616,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
-- 2026-09-17 — 2026-09-16 크롤이 찾은 3건을 받지 않기로 확정: legacy trio 분석 8,228 files / 7.78 TiB, HG008 superseded-2022 raw 26 / 1.63 TiB(이미 받은 디렉토리와 동일 내용), Verkko 작업 디렉토리 4,169 / 1.28 TiB. 목록은 `manifests/declined_by_decision.tsv`에 남기고 `crawl_data.py`가 재추가하지 않도록 가드를 넣었다. 카탈로그 435 datasets / 81,302 files. 실제 내려받을 신규분은 8,954 files / 8.67 TiB.
+- 2026-09-17 — 2026-09-16 크롤이 찾은 3건을 받지 않기로 확정: legacy trio 분석 8,228 files / 7.78 TiB, HG008 superseded-2022 raw 26 / 1.63 TiB(이미 받은 디렉토리와 동일 내용), Verkko 작업 디렉토리 4,169 / 1.28 TiB. 목록은 `manifests/declined_by_decision.tsv`에 남기고 `crawl_data.py`가 재추가하지 않도록 가드를 넣었다. 카탈로그 435 datasets / 81,302 files. 실제 내려받을 신규분은 4,759 files / 8.67 TiB (2026-08-30 완료 시점 76,595 files 대비).
 - 2026-09-16 — data/·data_somatic/·data_RNAseq/도 FTP 라이브 크롤(`crawl_data.py`): 2026-08-13 S3 기반 목록에서 빠졌던 HG008 NIST 트리·HG009 신규·Verkko 등 7,377 files / 11.5 TiB를 manifest에 추가(카탈로그 436 datasets), 2014~2020 trio 분석 8,228 files / 7.8 TiB는 `optional_trio_analysis_legacy.tsv`로 분리. FTP·S3 미러가 양방향으로 어긋남을 확인(FTP만 다른 7,122 + FTP에서만 사라진 2,173 → S3 기준 유지).
 - 2026-09-16 — release/를 FTP 라이브 크롤로 재대조(`crawl_release.py`): HG002 v5.0q(9.4 GiB, latest/ 복사본 포함 2벌)·stratifications v3.6(22.5 GiB) 등 1,577 files / 41.4 GiB 추가, HG002 latest/ 옛 v4.2.1 51건 제거(순증 +1,525 files). `current.tree`가 2025-02-27 이후 미갱신인 것이 원인. 카탈로그 334 datasets, 엑셀 v0916.
 - 2026-09-09 — phase3 시작: HG002·3·4 숏리드 WGS 입력 목록(`phase3_shortread_wgs/inputs_manifest.tsv`, 18 실행 단위 / 6,178 FASTQ / 5.55 TiB)과 small-variant 정답셋 경로 정리.
