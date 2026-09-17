@@ -9,6 +9,9 @@ current.tree가 2025-02-27 이후 갱신되지 않아 새 데이터가 manifest�
 기존 항목이 FTP와 어긋나면(크기 다름·404) S3 미러를 HEAD해 교차 확인한다. download.sh가 S3를 먼저 쓰고 manifest 크기는
 S3 기준으로 검증된 것이므로, S3가 manifest와 맞으면 그대로 둔다(FTP 사본만 다른 파일 7천여 개, FTP에서만 사라진 파일 2천여 개 — 2026-09-16).
 
+`manifests/declined_by_decision.tsv`에 적힌 경로는 건너뛴다 — 받지 않기로 결정한 데이터다(2026-09-17). 이 가드가 없으면
+manifest에서 지운 파일이 다음 크롤에 다시 들어온다.
+
 새 파일은 catalog/master_catalog.tsv의 giab_path(가장 긴 접두 일치)로 sample/category를 정해
 manifests/<SAMPLE>/<category>.tsv (rnaseq_all·trio_analysis는 각자 파일)에 넣는다.
 어느 giab_path에도 안 맞는 새 파일은 manifest에 넣지 않고 manifests/data_unrouted_new.tsv에 적는다
@@ -45,6 +48,9 @@ MANI = os.path.join(REPO, "manifests")
 CATALOG = os.path.join(PROJ, "catalog", "master_catalog.tsv")
 STALE = os.path.join(MANI, "data_stale_ftp_removed.tsv")
 UNROUTED = os.path.join(MANI, "data_unrouted_new.tsv")
+# 받지 않기로 결정한 파일 목록(경로/바이트/그룹). 여기 있는 경로는 manifest에 넣지도, 신규로 보고하지도 않는다.
+# 이 가드가 없으면 manifest에서 지운 파일을 다음 크롤이 "기존 디렉토리의 신규 파일"로 되돌려 넣는다.
+DECLINED = os.path.join(MANI, "declined_by_decision.tsv")
 ALLOWED = ("data/", "data_somatic/", "data_RNAseq/")
 ROOTS = [r.strip().strip("/") + "/" for r in os.environ.get("ROOT", "data,data_somatic,data_RNAseq").split(",")]
 for _r in ROOTS:
@@ -176,6 +182,16 @@ def in_scope(p):
     return any(p.startswith(r) for r in ROOTS)
 
 
+def load_declined():
+    """받지 않기로 한 경로 집합. 파일이 없으면 빈 집합."""
+    out = set()
+    if os.path.exists(DECLINED):
+        for l in open(DECLINED, encoding="utf-8"):
+            if l.strip() and not l.startswith("#"):
+                out.add(l.split("\t")[0])
+    return out
+
+
 def load_manifests():
     """path → (bytes, manifest file)"""
     out = {}
@@ -254,8 +270,10 @@ def main():
     for p, (_, f) in mani.items():
         dirs_of.setdefault(f, set()).add(os.path.dirname(p))
 
-    # HEAD 대상 선정
-    new_paths = [p for p in listed if p not in in_scope_old]
+    # HEAD 대상 선정 — 받지 않기로 한 경로는 신규로 치지 않는다(재추가 방지)
+    declined = load_declined()
+    declined_seen = sum(1 for p in listed if p in declined)
+    new_paths = [p for p in listed if p not in in_scope_old and p not in declined]
     modified = [p for p, (mt, sz) in listed.items() if p in in_scope_old and mt[:10] > CUTOFF]
     approx_off = []
     for p, (mt, sz) in listed.items():
@@ -377,7 +395,8 @@ def main():
            f"| S3 확인 실패 — 판단 보류(유지, 다음 실행에서 재확인) | {len(s3_unverified)} | - |",
            f"| 인덱스에 숨겨진 파일(HEAD로 존재 확인해 유지) | {len(hidden)} | - |",
            f"| 크기 변경(적용) | {len(changed)} | - |",
-           f"| 크기 못 받음(변경 없음 처리) | {len(nosize)} | - |", ""]
+           f"| 크기 못 받음(변경 없음 처리) | {len(nosize)} | - |",
+           f"| 받지 않기로 결정(declined_by_decision.tsv, 신규에서 제외) | {declined_seen} | - |", ""]
     if added:
         rep += ["## 추가 (디렉토리 단위 → manifest)", "", "| 디렉토리 | 파일 | GiB | manifest |", "|---|---|---|---|"]
         for k, ps in sorted(group(added).items()):
@@ -432,7 +451,7 @@ def main():
     print(f"added {len(added)} ({gib(sum(v[0] for v in added.values())):.2f} GiB), "
           f"new-dir candidates {len(unrouted)} ({gib(sum(v[0] for v in unrouted.values())):.2f} GiB), removed {len(removed)}, "
           f"s3-only kept {len(s3_only)}, mirror-diff kept {len(mirror_diff)}, s3-unverified kept {len(s3_unverified)}, "
-          f"changed {len(changed)}, hidden {len(hidden)}, nosize {len(nosize)}")
+          f"changed {len(changed)}, hidden {len(hidden)}, nosize {len(nosize)}, declined {declined_seen}")
 
     if DRY:
         return

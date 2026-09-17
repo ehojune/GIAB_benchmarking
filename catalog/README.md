@@ -60,6 +60,7 @@ python catalog/build_readme.py      # master_catalog.tsv -> README.md 표 재생
 ## 새 디렉토리가 FTP에 생기면
 
 `phase0_download/scripts/crawl_data.py`가 카탈로그 행이 없는 새 디렉토리의 파일을 `manifests/data_unrouted_new.tsv`에 모은다.
+받지 않기로 한 경로(`manifests/declined_by_decision.tsv`)는 여기서도 제외되어 카탈로그 행이 생기지 않는다.
 `phase0_download/scripts/catalog_new_dirs.py`가 그 목록에서 플랫폼 디렉토리 단위로 행을 만든다(플랫폼 이름 패턴 → category,
 README가 있으면 `tool_source`에 경로). 만든 뒤 `crawl_data.py --route-all`로 manifest에 넣고 `build_readme.py`·`build_xlsx.py`를 다시 돌린다.
 2026-09-16에 HG008·HG009 행 102개를 이렇게 만들었다. 패턴에 없는 새 플랫폼은 `catalog_new_dirs.py`의 PATTERNS에 추가한다.

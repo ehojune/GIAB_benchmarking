@@ -1,7 +1,7 @@
 # Phase 0 — 데이터 다운로드
 
 GIAB 원시 데이터 + truth set을 nbb2로 받는 단계. 대상 목록은 `manifests/`가 전부다.
-**총 85,497 files / 128.3 TB** (2026-08-13 S3 목록 + `current.tree` 기반 HEAD 검증 → 2026-09-16 FTP `release/`·`data/` 라이브 크롤로 재대조. 아래 [release/ 갱신](#release-갱신-2026-09-16), [data/ 갱신](#data-갱신-2026-09-16)). 선택 manifest(2014~2020 trio 분석 7.8 TiB)는 미포함.
+**총 81,302 files / 125.1 TB** (2026-08-13 S3 목록 + `current.tree` 기반 HEAD 검증 → 2026-09-16 FTP `release/`·`data/` 라이브 크롤로 재대조. 아래 [release/ 갱신](#release-갱신-2026-09-16), [data/ 갱신](#data-갱신-2026-09-16)). 2026-09-17에 받지 않기로 한 3건(12,423 files / 10.7 TiB)은 미포함 — [manifests/declined_by_decision.tsv](manifests/declined_by_decision.tsv).
 
 데이터셋별 처리 현황은 저장소 루트 [README.md](../README.md)의 master table 참고.
 
@@ -56,10 +56,10 @@ screen 나오기 `Ctrl-A d`, 다시 붙기 `screen -r giab`.
 | linked_reads (10X, stLFR) | 4.9 | 0.7 |
 | exome | 1.0 | 0.1 |
 | complete_genomics | 16.0 | 2.2 |
-| other (BioNano, Strand-seq, HiC, AVITI, UG100, 단일세포, somatic 분석, Verkko 등) | 25.0 | 3.5 |
+| other (BioNano, Strand-seq, HiC, AVITI, UG100, 단일세포, somatic 분석 등) | 21.8 | 3.0 |
 | release (truth set, stratifications, references) | 0.3 | 0.0 |
 | trio_analysis (HG002 T2T-Q100 draft benchmark 등) | 0.1 | 0.0 |
-| **전체** | **128.3** | **17.9** |
+| **전체** | **125.1** | **17.4** |
 
 샘플 × 카테고리 (GiB):
 
@@ -72,10 +72,10 @@ screen 나오기 `Ctrl-A d`, 다시 붙기 `screen -r giab`.
 | HG005 | 611 | 527 | 1,731 | 3,299 | 1,655 | 429 | 216 | 3,660 | 1,342 | 13,470 | 2.0 |
 | HG006 | 442 | 470 | 861 | 1,244 | 192 | 422 | - | 1,859 | 6 | 5,497 | 0.8 |
 | HG007 | 424 | 382 | 849 | 1,271 | 209 | 431 | - | 1,867 | 8 | 5,441 | 0.8 |
-| HG008 (T + N-D + N-P) | 2,396 | 5,109 | - | 6,660 | - | - | - | - | 16,310 | 30,475 | 4.6 |
+| HG008 (T + N-D + N-P) | 2,396 | 5,109 | - | 6,660 | - | - | - | - | 13,330 | 27,496 | 4.1 |
 | HG009 (T + N) | 1,542 | - | - | 3,471 | - | - | - | - | 412 | 5,424 | 0.8 |
 
-- HG008 other(16.3 TiB) 구성: Element AVITI 4.9, Ultima UG100 1.9, PacBio Onso 1.2, analysis 3.4(Verkko 작업 디렉토리 1.5 포함), superseded 2022 데이터 3.5(2026-09 raw 1.7 추가), NIST 트리 단일세포·Hi-C·somatic 분석 1.0, Dovetail LinkPrep 0.2. superseded는 제외해도 무방
+- HG008 other(13,330 GiB = 13.0 TiB) 구성: Element AVITI 4.9, Ultima UG100 1.9, PacBio Onso 1.2, analysis 2.1(Verkko는 어셈블리 결과 0.19만), superseded 2022 데이터 1.73, NIST 트리 단일세포·Hi-C·somatic 분석 1.0, Dovetail LinkPrep 0.2 TiB. 2026-09-17 결정으로 Verkko 작업 디렉토리 1.28과 superseded raw 1.63 TiB는 빠져 있다
 - HG008은 T/N-D/N-P, HG009는 T(bulk p16·p42 + 클론 6종)/N(WT-p4·p25, LVTert-p23)이 파일명으로 구분됨
 - HG009는 PacBio HiFi Revio(1.5 TiB) + 2026-09 크롤로 추가된 BCM NovaSeq X 125x WGS(3.4 TiB)·LinkPrep Hi-C·RNA-seq·핵형·sarek somatic 분석 (950 files / 5.3 TiB)
 
@@ -99,8 +99,9 @@ TOOL=s3 JOBS=4 ./phase0_download/scripts/download.sh pacbio_hifi
 - `manifests/<SAMPLE>/<category>.tsv` — `상대경로<TAB>bytes`. 다운로드 대상의 전부 (HG001~HG009)
 - `manifests/release_truthsets.tsv` — truth set VCF/BED, stratification, reference (전체 버전 포함). **FTP `release/` 라이브 크롤로 유지** (`scripts/crawl_release.py`, 2026-09-16 기준 7,989 files / 318.2 GiB)
 - `manifests/release_stale_ftp_removed.tsv` — FTP에서 사라져 manifest에서 뺀 항목(경로, 바이트, 확인일). 로컬에는 남아 있음
-- `manifests/optional_trio_analysis_legacy.tsv` — 2014~2020 trio 레벨 분석 107 디렉토리(8,228 files / 7.8 TiB). `all`·run_priority 미포함. `download.sh optional_trio_analysis_legacy` 로만 받는다
-- `manifests/data_unrouted_new.tsv` — data/ 크롤이 카탈로그 행 없이 만난 신규 파일(현재는 위 legacy와 동일). `catalog_new_dirs.py` → `crawl_data.py --route-all` 로 manifest에 넣는다
+- `manifests/declined_by_decision.tsv` — **발견했지만 받지 않기로 한 데이터**(경로, 바이트, 그룹). 2026-09-17 결정, 12,423 files / 10.69 TiB.
+  어떤 manifest에도 없고 `crawl_data.py`가 이 목록을 읽어 다시 넣지 않는다. 3열이라 `download.sh`에 직접 먹이면 안 된다 — 마음이 바뀌면 아래 '받지 않기로 한 데이터' 참고
+- `manifests/data_unrouted_new.tsv` — data/ 크롤이 카탈로그 행 없이 만난 신규 파일. 처리하면 사라진다(현재 없음). `catalog_new_dirs.py` → `crawl_data.py --route-all` 로 manifest에 넣는다
 - `manifests/rnaseq_all.tsv` — `data_RNAseq/` 전체 (HG002·HG004·HG005) + 2026-09-16 추가된 HG008·HG009 RNA-seq(`data_somatic/` 하위, UMD·BCM). `all`에는 미포함, run_priority에는 포함
 - `manifests/trio_analysis.tsv` — trio 레벨 analysis (HG002 T2T-Q100 draft benchmark defrabb 등, 325 files / 59 GiB). `all`에는 미포함, run_priority에는 포함
 
@@ -157,7 +158,7 @@ S3 미러에 없는 파일은 FTP로 자동 대체된다. 로컬 HG002 `latest/`
 ```bash
 python phase0_download/scripts/crawl_data.py --dry-run     # 보고서만 (logs/crawl_cache/)
 python phase0_download/scripts/crawl_data.py               # 기존 디렉토리의 신규 파일은 manifest에 바로 넣고, 새 디렉토리는 data_unrouted_new.tsv에
-python phase0_download/scripts/catalog_new_dirs.py         # 새 디렉토리마다 카탈로그 행 생성(플랫폼 이름 패턴 → category)
+python phase0_download/scripts/catalog_new_dirs.py         # 새 디렉토리마다 카탈로그 행 생성(플랫폼 이름 패턴 → category). 기존 행의 files/size도 실측으로 재계산
 python phase0_download/scripts/crawl_data.py --route-all   # 캐시로 재실행 → 새 행의 파일을 manifest에 반영
 ```
 
@@ -166,8 +167,8 @@ python phase0_download/scripts/crawl_data.py --route-all   # 캐시로 재실행
 | 변화 | 파일 | TiB | 내용 |
 |---|---|---|---|
 | 기존 디렉토리에 추가 | 273 | 0.12 | HG008 Liss_lab analysis 하위(HKU ClairS 0.4.1, Hartwig OncoAnalyser, Lancet2 등), BGISEQ QC 리포트 |
-| 새 디렉토리 → 카탈로그 행 102개 | 7,104 | 11.4 | HG008 NIST 트리(T_bulk p21/p41/p100/p103 + 클론 8종: BCM NovaSeq X WGS·Revio SPRQ·somatic 분석·ResolveOME·Tapestri·10x Multiome·Hi-C·RNA-seq·핵형), HG009 신규(NovaSeq X 125x WGS·LinkPrep Hi-C·RNA-seq·핵형·sarek 분석), HG008 Verkko 작업 디렉토리 1.2, superseded 2022 raw 1.7, HG002 defrabb v0.011·v0.020 |
-| 선택 manifest로 분리 | 8,228 | 7.8 | `data/*/analysis/` 2014~2020 trio 레벨 분석 107 디렉토리(10X LongRanger/Supernova 어셈블리 5.4, DISCOVAR 0.8, CG 콜셋 등). 카탈로그 행 없음 |
+| 새 디렉토리 → 카탈로그 행 102개 | 7,104 | 11.4 | HG008 NIST 트리(T_bulk p21/p41/p100/p103 + 클론 8종: BCM NovaSeq X WGS·Revio SPRQ·somatic 분석·ResolveOME·Tapestri·10x Multiome·Hi-C·RNA-seq·핵형), HG009 신규(NovaSeq X 125x WGS·LinkPrep Hi-C·RNA-seq·핵형·sarek 분석), HG008 Verkko 작업 디렉토리 1.28, superseded 2022 raw 1.63, HG002 defrabb v0.011·v0.020 |
+| 그중 받지 않기로 한 것 (2026-09-17) | 12,423 | 10.69 | 아래 '받지 않기로 한 데이터' 절. 카탈로그·manifest에서 빠졌다 |
 | FTP에서만 사라짐 — S3에 있어 유지 | 2,173 | 12.3 | PacBio_MtSinai_NIST·PacBio_CLR·SOLiD·Strand-Seq EMBL·BioNano DLE·HiC_UCSC·CG normal 등. 이미 로컬에 있음 |
 | FTP 사본 크기만 다름 — 유지 | 7,122 | - | Illumina HiSeq 300x/2x250/mate-pair FASTQ. FTP 사본이 S3보다 ~14% 작음(재압축). manifest는 S3 기준 |
 | 양쪽 미러에서 사라짐 | 0 | 0 | |
@@ -180,9 +181,31 @@ python phase0_download/scripts/crawl_data.py --route-all   # 캐시로 재실행
 FTP에만 있는 것은 `current.tree`(2025-02 정지) 에 없어 보이지 않았다. 신규 게시(2026-08-13 이후 수정)는 713 파일뿐이고
 나머지는 그 전부터 FTP에 있었다.
 
-받기: `TOOL=s3 JOBS=8 bash phase0_download/scripts/run_priority.sh` 를 다시 돌리면 신규 11.5 TiB만 받는다(기존은 크기 일치로 스킵).
-`data_somatic/HG008/Liss_lab/superseded-2022-data`(3.5 TiB)와 Verkko 작업 디렉토리(1.2 TiB)는 빼고 싶으면 manifest에서 지운다.
-legacy 분석은 `TOOL=s3 JOBS=8 bash phase0_download/scripts/download.sh optional_trio_analysis_legacy`.
+받기: `TOOL=s3 JOBS=8 bash phase0_download/scripts/run_priority.sh` 를 다시 돌리면 신규분만 받는다(기존은 크기 일치로 스킵).
+제외 결정 반영 후 실제 내려받을 양은 **8,954 files / 8.67 TiB** (release 1,577 files / 41.4 GiB + data 7,377 → 3,182 files / 8.63 TiB).
+
+**S3 미러에 신규 데이터가 없다** (2026-09-17 표본 96건 중 1건만 200, 용량 상위 25건은 0건).
+`TOOL=s3`이어도 거의 전부 `S3 miss → FTP fallback` 으로 wget을 타므로 실측 83 MB/s가 아니라 FTP 속도로 계산해야 한다.
+JOBS를 8~12로 두고 하루 단위가 아니라 며칠을 잡는 편이 맞다. 로그에서 `S3 miss` 줄 수로 확인할 수 있다.
+
+## 받지 않기로 한 데이터 (2026-09-17)
+
+2026-09-16 크롤이 찾았지만 사용자가 받지 않기로 결정한 3건이다. 목록은 [manifests/declined_by_decision.tsv](manifests/declined_by_decision.tsv)
+(경로·바이트·그룹). 어떤 manifest에도 없고 `crawl_data.py`가 이 목록을 읽어 다시 넣지 않는다.
+
+| 그룹 | 파일 | TiB | 왜 안 받나 |
+|---|---|---|---|
+| `legacy-trio-analysis` | 8,228 | 7.78 | `data/*/analysis/` 2014~2020 trio 레벨 분석 107 디렉토리(10X LongRanger/Supernova 어셈블리 5.4, DISCOVAR 0.8, CG 콜셋 등). 카탈로그 행이 없고 현재 작업과 무관 |
+| `hg008-superseded-2022-raw` | 26 | 1.63 | `superseded-2022-data/BCM_Illumina_WGS_20220816/`. GIAB이 superseded로 표시했고, **이미 받은 `BCM_ILMN-somatic-analysis_20220816/`와 파일명·크기가 전부 같은 중복**이다 |
+| `hg008-verkko-workdirs` | 4,169 | 1.28 | Verkko 2.2/2.2.1 작업 디렉토리의 중간 산출물(.sh/.red/.range 등). 어셈블리 결과 353 files / 197.5 GiB는 그대로 보유 |
+| **합계** | **12,423** | **10.69** | |
+
+마음이 바뀌면 그룹을 2열 manifest로 뽑아 이름으로 받는다:
+
+```bash
+awk -F'	' '$3=="legacy-trio-analysis"{print $1"	"$2}' phase0_download/manifests/declined_by_decision.tsv   > phase0_download/manifests/legacy_trio_analysis.tsv
+TOOL=s3 JOBS=8 bash phase0_download/scripts/download.sh legacy_trio_analysis
+```
 
 ## 경로 변경 이력
 
