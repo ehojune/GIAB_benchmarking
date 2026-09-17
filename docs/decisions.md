@@ -139,3 +139,11 @@
   Codex는 별도 포화·read group 실험으로 남기라 했다 — 후자를 택했다. Fable 워크플로(추가 후보 탐색·비판)는 비용 때문에 사용자 지시로 중단, 결과 없음.
   기록: `docs/reference/phase3_shortread_candidates_2026-09-17.md`.
 - 카탈로그(master_catalog.tsv)에는 넣지 않는다. 카탈로그는 GIAB FTP 인벤토리이고 크롤러가 giab_path로 라우팅한다. 외부 리드는 phase1·phase2처럼 phase 매니페스트에만 둔다.
+- (같은 날 추가) 업체 4곳의 플랫폼이 **Illumina NovaSeq X / X Plus**로 확인됐다(사용자 전달; 서버의 업체 FASTQ 4건이 기기ID `LH00xxx`, `detect_fastq_platform.sh`).
+  공개 데이터에 NovaSeq X **트리오**는 없다 — GCS `novaseqx/`도 ENA PRJNA1427896(Weill Cornell, NovaSeq X 25B/10B + UG100)도 HG002만. 그래서 트리오 기준 arm은
+  NovaSeq 6000 PCR-free 30x로 유지한다. 같은 Illumina 2x151 PCR-free 30x지만 화학이 다르다(SBS vs XLEAP-SBS)는 점은 비교 해석에 적어야 한다.
+  화학까지 맞춘 HG002 단일 대조군 후보로 Google `novaseqx/HG002.novaseqX.30x`(22.3+22.2 GB, md5 c9a66aaa…/1d2ca0d3…, SRA SRR37356338 = NovaSeq X 25B 2x150)를 둔다 — 받을지는 사용자 결정 대기.
+  MGISEQ2000 조건부 항목은 업체에 MGI가 없으므로 후순위로 내렸다.
+- (같은 날 추가) 외부 리드 저장 경로를 `ext/<버킷 경로>`에서 `external/<출처>/`로 바꿨다. 사용자가 이미 `external/google_novaseq_pcrfree_30x/`로 수동 wget 중이어서 매니페스트를 그쪽에 맞췄다.
+  `02_fetch_external_reads.sh`는 같은 경로를 보므로 받은 파일은 다시 받지 않고 md5·리드 길이·플랫폼만 확인한다. HPRC 4건은 `external/hprc_hiseq30x_subsampled/HG00{3,4}/`로 받는다.
+- (같은 날 추가) `02_fetch_external_reads.sh` 마지막 단계에 main에 merge된 `phase0_download/scripts/detect_fastq_platform.sh`(PR #7/#9)를 붙였다. 헤더로 Illumina·기종을 찍고 Illumina가 아니면 실패.

@@ -10,12 +10,14 @@
 #   DSID=HG003.NovaSeq_PCRfree_30x bash scripts/02_fetch_external_reads.sh   한 실행 단위만
 #
 # wget -c 라서 중단 후 재실행하면 이어받는다. md5가 있는 행(Google)은 md5sum으로, 없는 행(HPRC; S3 ETag는 멀티파트라
-# md5가 아니다)은 크기 + 앞 20k 리드 평균 길이(140~160 bp)로 본다.
+# md5가 아니다)은 크기 + 앞 20k 리드 평균 길이(140~160 bp)로 본다. 마지막에 phase0_download/scripts/detect_fastq_platform.sh
+# (PR #7/#9)로 헤더 기반 플랫폼·기종을 찍고 Illumina가 아니면 실패로 본다.
+# 저장 위치는 $GIAB_ROOT/external/<출처>/ — Google분은 사용자가 2026-09-17 수동 wget으로 받은 경로와 같다.
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GIAB_ROOT="${GIAB_ROOT:-/BiO/scratch/ehojune/GIAB_benchmark}"
-MAN="$HERE/../ext_manifest.tsv"
-LOG="${LOG:-$GIAB_ROOT/ext/phase3_ext_fetch.log}"
+MAN="${MAN:-$HERE/../ext_manifest.tsv}"   # 테스트용 override
+LOG="${LOG:-$GIAB_ROOT/external/phase3_ext_fetch.log}"
 mkdir -p "$(dirname "$LOG")"
 exec > >(tee -a "$LOG") 2>&1
 echo "== $(date '+%F %T') GIAB_ROOT=$GIAB_ROOT VERIFY_ONLY=${VERIFY_ONLY:-0} DSID=${DSID:-all}"
@@ -34,6 +36,15 @@ check_reads() {   # 앞 20k 리드 평균 길이. 2x148(HiSeq) / 2x151(NovaSeq) 
     echo "  리드 평균 길이 ${got}bp (앞 20k 리드)"
 }
 
+DETECT="$HERE/../../phase0_download/scripts/detect_fastq_platform.sh"
+check_platform() {   # 헤더로 플랫폼·기종 추정 (정보 + Illumina 확인)
+    local f=$1 out
+    [ -x "$DETECT" ] || { echo "  (detect_fastq_platform.sh 없음 — 플랫폼 확인 생략)"; return 0; }
+    out=$(bash "$DETECT" "$f" 2>&1) || { echo "  ERROR: detect_fastq_platform.sh 실패: $out"; return 1; }
+    echo "$out" | grep '추정 플랫폼' | sed 's/^/  /'
+    echo "$out" | grep -q '추정 플랫폼: Illumina' || { echo "  ERROR: Illumina로 판정되지 않음: $f"; return 1; }
+}
+
 check_md5() {
     local f=$1 want=$2 got
     got=$(md5sum "$f" | awk '{print $1}')
@@ -42,8 +53,8 @@ check_md5() {
 }
 
 rc=0
-while IFS=$'\t' read -r dsid relpath bytes url md5 kind note; do
-    [ "$dsid" = dsid ] && continue
+# 탭은 IFS 공백류라 빈 md5 칸(탭 두 개 연속)이 접혀 필드가 밀린다. 0x1f로 바꿔 읽는다.
+while IFS=$'\x1f' read -r dsid relpath bytes url md5 kind note; do
     [ -z "${dsid:-}" ] && continue
     [ -n "${DSID:-}" ] && [ "$dsid" != "$DSID" ] && continue
     [ "$kind" != reads ] && continue
@@ -66,8 +77,9 @@ while IFS=$'\t' read -r dsid relpath bytes url md5 kind note; do
     fi
     if [ -n "$md5" ]; then check_md5 "$out" "$md5" || { rc=1; continue; }; fi
     check_reads "$out" || { rc=1; continue; }
+    check_platform "$out" || { rc=1; continue; }
     echo "OK   $relpath"
-done < "$MAN"
+done < <(awk -F'\t' -v OFS=$'\x1f' 'NR>1 && NF {$1=$1; print}' "$MAN")
 
 echo
 if [ "$rc" = 0 ]; then

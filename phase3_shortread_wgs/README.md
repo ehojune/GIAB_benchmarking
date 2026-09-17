@@ -10,13 +10,16 @@ GIAB FTP 밖의 30x 트리오 2종(NovaSeq PCR-free, HiSeq 30x 서브샘플)을 
 - [all_files.tsv](all_files.tsv) — 같은 플랫폼 디렉토리의 모든 파일(GIAB BAM·VCF·md5 포함). `dsid / ftype / relpath / bytes`. 6,890 files
 - [run_table.tsv](run_table.tsv) — 실행 단위 23개 (GIAB 18 + 외부 5). `units` = read group 수 (플로우셀.레인.라이브러리)
 - [samplesheets/<dsid>.csv](samplesheets/) — R1/R2 짝 맞춘 범용 시트 `sample,dataset,unit,fastq_1,fastq_2,bytes`. 재생성: `python scripts/make_samplesheets.py` (`DATA_ROOT=` 로 경로 변경; ext_manifest도 함께 읽는다)
-- 로컬 절대경로 = `/BiO/scratch/ehojune/GIAB_benchmark/` + `relpath` (nbb2, phase0 DEST). 외부 리드는 그 아래 `ext/`
+- 로컬 절대경로 = `/BiO/scratch/ehojune/GIAB_benchmark/` + `relpath` (nbb2, phase0 DEST). 외부 리드는 그 아래 `external/<출처>/`
 - 출처: `phase0_download/manifests/` 실측. 다운로드는 2026-08-30 verify.sh all 100%로 확인됨.
 
 ## 실행 단위 23개
 
 업체 비교(gd001~004 산출물 ↔ GIAB raw, 같은 파이프라인)의 기준 arm은 **30x 트리오 2종**이다. 300x 전량은 깊이 상한 실험으로 남긴다
-(역할 재정의 2026-09-17, [docs/decisions.md](../docs/decisions.md)). 권고 순서: NovaSeq 30x → HiSeq 30x → (업체에 MGI가 있으면) MGISEQ2000 → 300x → AVITI StdInsert.
+(역할 재정의 2026-09-17, [docs/decisions.md](../docs/decisions.md)). 권고 순서: NovaSeq 30x → HiSeq 30x → 300x → AVITI StdInsert.
+업체 4곳은 모두 **Illumina NovaSeq X / X Plus**다(2026-09-17, 업체 FASTQ 기기ID `LH00xxx`). 공개 NovaSeq X **트리오**는 없어(GCS `novaseqx/`·ENA PRJNA1427896 모두 HG002만)
+NovaSeq 6000 30x를 트리오 기준으로 쓴다 — 같은 Illumina 2x151 PCR-free 30x지만 화학은 SBS vs XLEAP-SBS로 다르다. 화학까지 맞춘 HG002 단일 대조군 후보:
+Google `novaseqx/HG002.novaseqX.30x` (44.5 GB, md5 있음, 미다운로드 — 받을지 결정 대기). MGISEQ2000은 업체에 MGI가 없으므로 후순위로 내렸다.
 
 | dsid | FASTQ | GiB | 비고 |
 |---|---|---|---|
@@ -40,10 +43,11 @@ cd /BiO/scratch/ehojune/GIAB_benchmark && awk -F'\t' 'NR>1{print $2}' <repo>/pha
 
 | dsid | 출처 | 파일 | 검증(다운로드 전, 2026-09-17) |
 |---|---|---|---|
-| HG002/3/4.NovaSeq_PCRfree_30x | Google `gs://brain-genomics-public/research/sequencing/fastq/novaseq/wgs_pcr_free/30x/` (HTTPS, 로그인 없음) | 6 files / 147 GiB | HEAD 크기 일치, md5 6건(GCS md5Hash), 앞 256 KB 표본에서 2x151·NovaSeq 6000(A00744)·HV3C3DSXX L2 확인 |
-| HG003/4.Illumina_PCRfree_30x | HPRC S3 `s3://human-pangenomics/working/HPRC_PLUS/HG002/raw_data/Illumina/parents/HG00{3,4}/` | 4 files / 170 GiB | HEAD 크기 일치, 표본에서 2x148·HISEQ1·300x 플로우셀(HA0L6ADXX, HA5R5ADXX) 확인. md5 없음(ETag 멀티파트) → 크기+리드 길이로 검증 |
+| HG002/3/4.NovaSeq_PCRfree_30x | Google `gs://brain-genomics-public/research/sequencing/fastq/novaseq/wgs_pcr_free/30x/` (HTTPS, 로그인 없음) → 로컬 `external/google_novaseq_pcrfree_30x/` | 6 files / 147 GiB | HEAD 크기 일치, md5 6건(GCS md5Hash), 앞 256 KB 표본에서 2x151·NovaSeq 6000(A00744)·HV3C3DSXX L2 확인 |
+| HG003/4.Illumina_PCRfree_30x | HPRC S3 `s3://human-pangenomics/working/HPRC_PLUS/HG002/raw_data/Illumina/parents/HG00{3,4}/` → 로컬 `external/hprc_hiseq30x_subsampled/HG00{3,4}/` | 4 files / 170 GiB | HEAD 크기 일치, 표본에서 2x148·HISEQ1·300x 플로우셀(HA0L6ADXX, HA5R5ADXX) 확인. md5 없음(ETag 멀티파트) → 크기+리드 길이로 검증 |
 
-같은 버킷에 NovaSeq 20x/40x/50x, HiSeq X PCR-free·PCR-plus 20~40x 트리오, HG002 NovaSeq X 시리즈도 있다 — 업체 라이브러리가 PCR-plus로 판명되거나
+`02_fetch_external_reads.sh`는 크기·md5(있는 것만)·앞 20k 리드 평균 길이·[detect_fastq_platform.sh](../phase0_download/scripts/detect_fastq_platform.sh) 플랫폼 판정(Illumina여야 함)을 본다.
+같은 버킷에 NovaSeq 20x/40x/50x, HiSeq X PCR-free·PCR-plus 20~40x 트리오, HG002 NovaSeq X 10~40x 시리즈도 있다 — 업체 라이브러리가 PCR-plus로 판명되거나
 깊이 적정(titration)이 필요해지면 그때 받는다. 전체 후보 목록·근거·자문 기록: [docs/reference/phase3_shortread_candidates_2026-09-17.md](../docs/reference/phase3_shortread_candidates_2026-09-17.md).
 
 ## 정답셋 (small variant)
