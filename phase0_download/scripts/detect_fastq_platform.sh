@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # 리드 헤더 형식으로 FASTQ 한 개의 시퀀싱 플랫폼(Illumina/PacBio/ONT/MGI)을 추정한다.
+# Illumina면 기기ID 접두어로 구체 기종(MiSeq/HiSeq.../NovaSeq 6000/NovaSeq X 등)도 붙인다.
 # 헤더가 모호하면 리드 길이(<1000bp 숏리드, >=1000bp 롱리드)로 폴백한다.
 # 표본(첫 200리드) 이후의 gzip 손상은 못 잡는다 — 전체 파일 무결성 검증은 이 스크립트의
 # 몫이 아니다 (md5_verify_all.sh / verify.sh 또는 `gzip -t`를 쓸 것).
@@ -49,9 +50,11 @@ elif [[ "$header" =~ ^@m[^/[:space:]]*/[0-9]+/(ccs|[0-9]+_[0-9]+) ]]; then
 elif [[ "$header" =~ ^@[^:[:space:]]+:[0-9]+:[^:[:space:]]+:[0-9]+:[0-9]+:[0-9]+:[0-9]+([[:space:]]|$) ]]; then
     platform="Illumina (CASAVA 1.8+)"
     evidence="헤더가 <기기>:<런>:<플로우셀>:<레인>:<타일>:<x>:<y> 7필드 형식"
+    is_illumina=1
 elif [[ "$header" =~ ^@[^:[:space:]]+:[0-9]+:[0-9]+:[0-9]+:[0-9]+(#[A-Za-z0-9]+)?/[12]$ ]]; then
     platform="Illumina (구형 CASAVA <1.8)"
     evidence="헤더가 <기기>:<레인>:<타일>:<x>#<인덱스>/<mate> 형식"
+    is_illumina=1
 elif [[ "$header" =~ ^@[A-Za-z0-9]+L[0-9]+C[0-9]+R[0-9]+ ]]; then
     platform="MGI/BGI (DNBSEQ)"
     evidence="헤더가 <플로우셀>L<레인>C<컬럼>R<로우> 형식"
@@ -61,6 +64,31 @@ elif [ "$avg" -ge 1000 ]; then
 elif [ "$avg" -gt 0 ]; then
     platform="미상 (숏리드 추정: Illumina 또는 MGI)"
     evidence="헤더 패턴은 불일치하지만 평균 리드 길이 ${avg}bp가 숏리드 특성"
+fi
+
+# Illumina로 판정됐으면 기기ID 접두어로 구체 기종까지 추정한다. 일루미나 공식 문서가 아니라
+# 커뮤니티가 역추적한 비공식 관례라 접두어가 없거나 낯설면 조용히 건너뛴다(오탐보다 미상이 낫다).
+if [ "${is_illumina:-0}" = 1 ]; then
+    instrument="${header#@}"; instrument="${instrument%%:*}"
+    model=""
+    case "$instrument" in
+        HWI-M*|M[0-9][0-9][0-9][0-9]*)  model="MiSeq" ;;
+        HWUSI*)                         model="Genome Analyzer IIx" ;;
+        HWI-C*|C[0-9][0-9][0-9][0-9]*)  model="HiSeq 1500" ;;
+        HWI-D*|D[0-9][0-9][0-9][0-9]*)  model="HiSeq 2500" ;;
+        J[0-9][0-9][0-9][0-9]*)         model="HiSeq 3000" ;;
+        K[0-9][0-9][0-9][0-9]*)         model="HiSeq 3000/4000" ;;
+        E[0-9][0-9][0-9][0-9]*)         model="HiSeq X" ;;
+        NB[0-9]*|NS[0-9]*)              model="NextSeq 500/550" ;;
+        MN[0-9]*)                       model="MiniSeq" ;;
+        VH[0-9]*)                       model="NextSeq 1000/2000" ;;
+        LH[0-9]*)                       model="NovaSeq X/X Plus" ;;
+        A[0-9]*)                        model="NovaSeq 6000" ;;
+    esac
+    if [ -n "$model" ]; then
+        platform="Illumina $model ${platform#Illumina }"
+        evidence="$evidence; 기기ID(${instrument}) 접두어로 기종 추정 — 비공식 관례라 100% 보장은 아님"
+    fi
 fi
 
 echo "파일       : $f"
