@@ -6,7 +6,7 @@ GIAB FTP 밖의 30x 트리오 2종(NovaSeq PCR-free, HiSeq 30x 서브샘플)과 
 파이프라인은 사용자가 지정·실행한다.
 
 - [inputs_manifest.tsv](inputs_manifest.tsv) — GIAB FTP에서 받은 파이프라인 입력 FASTQ 전부. `dsid / relpath / bytes`. **6,178 files / 5.55 TiB**
-- [ext_manifest.tsv](ext_manifest.tsv) — GIAB FTP 밖에서 받는 입력 FASTQ. `dsid / relpath / bytes / url / md5 / kind / note`. **12 files / 359 GiB**. 받기: `bash scripts/02_fetch_external_reads.sh` (로그인 노드, `VERIFY_ONLY=1`로 점검만). **2026-09-17 12/12 OK** (크기·md5·리드 길이·플랫폼; 로그 `external/phase3_ext_fetch.log`)
+- [ext_manifest.tsv](ext_manifest.tsv) — GIAB FTP 밖에서 받는 입력 FASTQ. `dsid / relpath / bytes / url / md5 / kind / note`. **12 files / 359 GiB**. 카탈로그(`catalog/master_catalog.tsv`)에도 `external/` 행 6개로 들어가 있다. 받기: `bash scripts/02_fetch_external_reads.sh` (로그인 노드, `VERIFY_ONLY=1`로 점검만). **2026-09-17 12/12 OK** (크기·md5·리드 길이·플랫폼; 로그 `external/phase3_ext_fetch.log`)
 - [all_files.tsv](all_files.tsv) — 같은 플랫폼 디렉토리의 모든 파일(GIAB BAM·VCF·md5 포함). `dsid / ftype / relpath / bytes`. 6,890 files
 - [run_table.tsv](run_table.tsv) — 실행 단위 24개 (GIAB 18 + 외부 6). `units` = read group 수 (플로우셀.레인.라이브러리)
 - [samplesheets/<dsid>.csv](samplesheets/) — R1/R2 짝 맞춘 범용 시트 `sample,dataset,unit,fastq_1,fastq_2,bytes`. 재생성: `python scripts/make_samplesheets.py` (`DATA_ROOT=` 로 경로 변경; ext_manifest도 함께 읽는다)
