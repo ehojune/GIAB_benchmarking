@@ -34,9 +34,9 @@ evidence="헤더 패턴이 알려진 플랫폼과 일치하지 않음"
 if [[ "$header" =~ ^@[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12} ]] || [[ "$header" == *" runid="* ]]; then
     platform="Oxford Nanopore (ONT)"
     evidence="헤더가 UUID 리드 ID 또는 runid= 태그 (MinKNOW/Guppy/Dorado 산출물의 특징)"
-elif [[ "$header" =~ ^@m[0-9]+_[0-9]{6}_[0-9]{6}/[0-9]+/(ccs|[0-9]+_[0-9]+) ]]; then
+elif [[ "$header" =~ ^@m[^/[:space:]]*/[0-9]+/(ccs|[0-9]+_[0-9]+) ]]; then
     if [[ "$header" == *"/ccs"* ]]; then platform="PacBio HiFi (CCS)"; else platform="PacBio CLR (subread)"; fi
-    evidence="헤더가 PacBio movie/zmw 형식 (m<기기번호>_<날짜>_<시각>/<zmw>/...)"
+    evidence="헤더가 PacBio movie/zmw 형식 (m<무비명>/<zmw>/ccs 또는 <subread 범위> — Sequel/Revio 신형과 RS-II 구형 무비명 모두 포함)"
 elif [[ "$header" =~ ^@[A-Za-z0-9]+:[0-9]+:[A-Za-z0-9_-]+:[0-9]+:[0-9]+:[0-9]+:[0-9]+([[:space:]]|$) ]]; then
     platform="Illumina (CASAVA 1.8+)"
     evidence="헤더가 <기기>:<런>:<플로우셀>:<레인>:<타일>:<x>:<y> 7필드 형식"

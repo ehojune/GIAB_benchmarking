@@ -88,3 +88,16 @@
 - **S3 미러에 신규 데이터가 사실상 없다**(표본 96건 중 1건, 용량 상위 25건은 0건). `TOOL=s3`이어도 FTP fallback으로 받으므로
   83 MB/s 기준 추정은 쓰면 안 된다. 실제 내려받을 양은 4,759 files / 8.67 TiB다
   (2fe9c2b 대비 파일 단위 대조. 8,954는 제외 결정을 반영하기 전 수치였다 — 2026-09-17 정정).
+
+## 2026-09-17 — detect_fastq_platform.sh 판단 근거
+
+- 판정은 헤더 패턴(Illumina 콜론 필드 수, PacBio movie/zmw, ONT UUID·`runid=`, MGI `LxCxRx`)을 1순위로 쓰고,
+  리드 길이는 헤더가 안 걸릴 때만 쓰는 폴백으로 뒀다. 헤더 규약이 리드 길이보다 훨씬 구체적이라 오탐이 적다.
+- 롱리드/숏리드 컷오프는 1000bp로 뒀다. PacBio/ONT(수천~수만bp)와 Illumina/MGI(<300bp)가 갈리는 지점 어디든
+  안전해서 고른 값이지, 그 자체로 실측 근거가 있는 임계값은 아니다 — 조정이 필요하면 여기부터 볼 것.
+- `phase0_download/scripts/`에 뒀다. 새 top-level `scripts/`를 만드는 대신, 원본 fastq를 검증하는 기존
+  스크립트(verify.sh, md5_verify_all.sh)와 같은 성격으로 판단했다.
+- PacBio 정규식은 애초에 Sequel/Revio 신형 무비명(`mNNNNN_YYMMDD_HHMMSS`)만 받았는데, Codex 리뷰 1회차 P2로
+  RS-II 구형 무비명(`m<날짜>_<시각>_<기기>_c<셀바코드>_s<세트>_p<파트>`)이 빠진다는 지적을 받아 `m<무비명>/<zmw>/(ccs|범위)`
+  형태로 느슨하게 바꿨다. 세 필드를 각각 검증하는 대신 마지막 `/zmw/ccs-or-range` 접미사에만 기댄다.
+- 이 항목 자체가 Codex 리뷰 1회차 P1 지적(판단 기록 누락)으로 사후 추가됐다. 원 커밋(`5938d71`)에는 없었다.
