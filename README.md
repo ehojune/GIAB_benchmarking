@@ -616,6 +616,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-17 — phase3 외부 리드 12 files / 359 GiB 다운로드·검증 완료(`02_fetch_external_reads.sh` 12/12 OK, ERROR 0, NovaSeq X 쌍은 SRA 헤더로 플랫폼 미상 경고 2건 — 예상대로). 24 실행 단위 전부 nbb2에 있다. PR #10.
 - 2026-09-17 — 업체 4곳이 NovaSeq X/X Plus로 확인돼 phase3에 HG002 NovaSeq X 30x(Google 재배포, Weill Cornell PRJNA1427896, TruSeq PCR-free, 41 GiB)를 화학 매칭 단일 대조군으로 추가. 실행 단위 24. 외부 리드 경로는 실제 다운로드 위치 `external/<출처>/`로 통일.
 - 2026-09-17 — phase3에 업체 비교용 30x 트리오 2종을 외부에서 추가: Google NovaSeq 6000 PCR-free 30x(HG002/3/4, 147 GiB)와 HPRC S3의 HiSeq 30x 서브샘플(HG003/4, 170 GiB; GIAB FTP에는 HG002만). 실행 단위 18→23, 300x 전량은 깊이 상한 실험으로 역할 변경. 검증은 HEAD·리드 헤더 표본만(사용자 결정). Codex·Gemini 독립 자문은 둘 다 NovaSeq 30x를 1순위로 꼽았다.
 - 2026-09-17 — 2026-09-16 크롤이 찾은 3건을 받지 않기로 확정: legacy trio 분석 8,228 files / 7.78 TiB, HG008 superseded-2022 raw 26 / 1.63 TiB(이미 받은 디렉토리와 동일 내용), Verkko 작업 디렉토리 4,169 / 1.28 TiB. 목록은 `manifests/declined_by_decision.tsv`에 남기고 `crawl_data.py`가 재추가하지 않도록 가드를 넣었다. 카탈로그 435 datasets / 81,302 files. 실제 내려받을 신규분은 4,759 files / 8.67 TiB (2026-08-30 완료 시점 76,595 files 대비).
