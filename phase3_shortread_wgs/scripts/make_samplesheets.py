@@ -11,11 +11,11 @@ GIB = 1024**3
 COVERAGE = {"HiSeq300x": "300x (2x148, 플로우셀당 ~25x)", "Illumina_2x250": "~40-50x", "BGISEQ500": "N/A",
             "MGISEQ2000_PCRfree": "N/A", "Element_AVITI_20240920": "Std ~80x + Lng 32-38x",
             "Illumina_PCRfree_30x": "~30x", "NIST_BGIseq_2x150_100x": "100x", "Element_AVITI_20231018": "Std 81x + Lng 55x",
-            "NovaSeq_PCRfree_30x": "~30x (Google 배포 명칭)"}
+            "NovaSeq_PCRfree_30x": "~30x (Google 배포 명칭)", "NovaSeqX_30x": "~30x (Google 배포 명칭; 원 런 SRR37356338 ≈42x)"}
 PLATFORM = {"HiSeq300x": "Illumina HiSeq 2500 rapid, 2x148", "Illumina_2x250": "Illumina 2x250", "BGISEQ500": "BGISEQ-500 PCR-free",
             "MGISEQ2000_PCRfree": "MGISEQ-2000 PCR-free", "Element_AVITI_20240920": "Element AVITI 2x150", "Illumina_PCRfree_30x": "Illumina HiSeq 2500 PCR-free 2x148 (300x 서브샘플)",
             "NIST_BGIseq_2x150_100x": "MGI DNBSEQ 2x150", "Element_AVITI_20231018": "Element AVITI 2x150",
-            "NovaSeq_PCRfree_30x": "Illumina NovaSeq 6000 PCR-free 2x151"}
+            "NovaSeq_PCRfree_30x": "Illumina NovaSeq 6000 PCR-free 2x151", "NovaSeqX_30x": "Illumina NovaSeq X 25B TruSeq PCR-free 2x150 (SRA 재배포 헤더)"}
 
 def mate_key(path):
     """return (pair_key, mate) where pair_key identifies R1/R2 pair, mate in {1,2}"""
@@ -44,6 +44,8 @@ def unit_of(dataset, path):
         return "subsampled30x"
     if dataset == "NovaSeq_PCRfree_30x":      # 경로에 플로우셀 없음. 헤더 표본은 A00744:46:HV3C3DSXX:2 한 레인이었지만 전체를 보지는 않았다
         return "novaseq30x"
+    if dataset == "NovaSeqX_30x":             # 헤더 표본 pi1-04:533:22JTGYLT4:1 — 한 런, 레인 전체는 안 봤다
+        return "novaseqx30x"
     raise ValueError(dataset)
 
 rows = list(csv.DictReader(open(os.path.join(ROOT, "inputs_manifest.tsv"), encoding="utf-8"), delimiter="\t"))
@@ -79,6 +81,7 @@ for dsid in sorted(by_ds):
     elif dataset == "MGISEQ2000_PCRfree" and sample == "HG004": note = "라이브러리 2개(NA24143_1, NA24143_2)"
     elif dataset.startswith("Element_AVITI"): note = "StdInsert·LngInsert 라이브러리 2개 — 병합 여부는 파이프라인에서 결정"
     elif dataset == "NovaSeq_PCRfree_30x": note = "외부(Google brain-genomics-public GCS) — ext_manifest.tsv. 세 샘플이 같은 런 A00744:46 HV3C3DSXX L2의 다른 인덱스(2026-09-17 리드 헤더 표본). 업체 비교용 30x arm(2026-09-17 결정)"
+    elif dataset == "NovaSeqX_30x": note = "외부(Google GCS novaseqx/) — ext_manifest.tsv. 업체 화학(NovaSeq X, XLEAP-SBS) 매칭 HG002 단일 대조군(2026-09-17 결정). 원 데이터 Weill Cornell PRJNA1427896 SRR37356338; 리드 이름이 SRA 형식이라 detect_fastq_platform.sh는 미상(숏리드)으로 찍는다"
     elif dataset == "Illumina_PCRfree_30x" and sample != "HG002": note = "외부(HPRC S3 human-pangenomics) — ext_manifest.tsv. GIAB FTP에는 HG002만 있고 README가 이 사본을 가리킴. 300x와 같은 TruSeq PCR-free 라이브러리의 서브샘플"
     run_table.append(dict(dsid=dsid, sample=sample, dataset=dataset, entry_type="fastq_pe", platform=PLATFORM[dataset],
                           units=len(units), fastq_pairs=len(out), size_gib=f"{gib:.1f}", coverage_doc=COVERAGE[dataset],

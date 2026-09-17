@@ -10,7 +10,7 @@ GIAB 9개 샘플(HG001–HG007 germline, HG008·HG009 tumor-normal)의 **전체 
 | 다운로드 | [phase0_download/](phase0_download/) — 스크립트, 매니페스트, 속도·용량 계획 |
 | PacBio HiFi 처리 | [phase1_pacbio_hifi/](phase1_pacbio_hifi/) — 38개 실행 단위, raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
 | ONT 처리 | [phase2_ont/](phase2_ont/) — 18개 실행 단위(기본 제출 14), raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
-| 외부 보충 리드 | GIAB FTP에 리드가 없는 데이터셋은 외부에서 받는다. PacBio: HG001·HG005 SequelII 11kb → ENA PRJNA540705/540706, 12 cell 135 GiB ([sra_manifest.tsv](phase1_pacbio_hifi/sra_manifest.tsv)). ONT: HG001 ultralong → nanopore-wgs-consortium rel6, 136 GiB ([ext_manifest.tsv](phase2_ont/ext_manifest.tsv)). 숏리드: HG002/3/4 NovaSeq 6000 PCR-free 30x → Google brain-genomics-public(GCS), 6 files 147 GiB; HG003/4 HiSeq 30x 서브샘플 → HPRC S3, 4 files 170 GiB ([ext_manifest.tsv](phase3_shortread_wgs/ext_manifest.tsv)). 위 규모 집계에는 미포함 |
+| 외부 보충 리드 | GIAB FTP에 리드가 없는 데이터셋은 외부에서 받는다. PacBio: HG001·HG005 SequelII 11kb → ENA PRJNA540705/540706, 12 cell 135 GiB ([sra_manifest.tsv](phase1_pacbio_hifi/sra_manifest.tsv)). ONT: HG001 ultralong → nanopore-wgs-consortium rel6, 136 GiB ([ext_manifest.tsv](phase2_ont/ext_manifest.tsv)). 숏리드: HG002/3/4 NovaSeq 6000 PCR-free 30x → Google brain-genomics-public(GCS), 6 files 147 GiB; HG002 NovaSeq X 30x → 같은 버킷, 2 files 41 GiB; HG003/4 HiSeq 30x 서브샘플 → HPRC S3, 4 files 170 GiB ([ext_manifest.tsv](phase3_shortread_wgs/ext_manifest.tsv)). 위 규모 집계에는 미포함 |
 | 표 원본 | [catalog/master_catalog.tsv](catalog/master_catalog.tsv) — 51개 컬럼. 필드 정의는 [catalog/README.md](catalog/README.md) |
 | 정확 바이트 | [docs/SIZES.md](docs/SIZES.md) — 플랫폼 디렉토리 단위 (조회용) |
 | 분류 근거 | [docs/reference/catalog_evidence.md](docs/reference/catalog_evidence.md) |
@@ -616,6 +616,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-17 — 업체 4곳이 NovaSeq X/X Plus로 확인돼 phase3에 HG002 NovaSeq X 30x(Google 재배포, Weill Cornell PRJNA1427896, TruSeq PCR-free, 41 GiB)를 화학 매칭 단일 대조군으로 추가. 실행 단위 24. 외부 리드 경로는 실제 다운로드 위치 `external/<출처>/`로 통일.
 - 2026-09-17 — phase3에 업체 비교용 30x 트리오 2종을 외부에서 추가: Google NovaSeq 6000 PCR-free 30x(HG002/3/4, 147 GiB)와 HPRC S3의 HiSeq 30x 서브샘플(HG003/4, 170 GiB; GIAB FTP에는 HG002만). 실행 단위 18→23, 300x 전량은 깊이 상한 실험으로 역할 변경. 검증은 HEAD·리드 헤더 표본만(사용자 결정). Codex·Gemini 독립 자문은 둘 다 NovaSeq 30x를 1순위로 꼽았다.
 - 2026-09-17 — 2026-09-16 크롤이 찾은 3건을 받지 않기로 확정: legacy trio 분석 8,228 files / 7.78 TiB, HG008 superseded-2022 raw 26 / 1.63 TiB(이미 받은 디렉토리와 동일 내용), Verkko 작업 디렉토리 4,169 / 1.28 TiB. 목록은 `manifests/declined_by_decision.tsv`에 남기고 `crawl_data.py`가 재추가하지 않도록 가드를 넣었다. 카탈로그 435 datasets / 81,302 files. 실제 내려받을 신규분은 4,759 files / 8.67 TiB (2026-08-30 완료 시점 76,595 files 대비).
 - 2026-09-16 — data/·data_somatic/·data_RNAseq/도 FTP 라이브 크롤(`crawl_data.py`): 2026-08-13 S3 기반 목록에서 빠졌던 HG008 NIST 트리·HG009 신규·Verkko 등 7,377 files / 11.5 TiB를 manifest에 추가(카탈로그 436 datasets), 2014~2020 trio 분석 8,228 files / 7.8 TiB는 `optional_trio_analysis_legacy.tsv`로 분리. FTP·S3 미러가 양방향으로 어긋남을 확인(FTP만 다른 7,122 + FTP에서만 사라진 2,173 → S3 기준 유지).

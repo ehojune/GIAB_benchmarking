@@ -142,7 +142,10 @@
 - (같은 날 추가) 업체 4곳의 플랫폼이 **Illumina NovaSeq X / X Plus**로 확인됐다(사용자 전달; 서버의 업체 FASTQ 4건이 기기ID `LH00xxx`, `detect_fastq_platform.sh`).
   공개 데이터에 NovaSeq X **트리오**는 없다 — GCS `novaseqx/`도 ENA PRJNA1427896(Weill Cornell, NovaSeq X 25B/10B + UG100)도 HG002만. 그래서 트리오 기준 arm은
   NovaSeq 6000 PCR-free 30x로 유지한다. 같은 Illumina 2x151 PCR-free 30x지만 화학이 다르다(SBS vs XLEAP-SBS)는 점은 비교 해석에 적어야 한다.
-  화학까지 맞춘 HG002 단일 대조군 후보로 Google `novaseqx/HG002.novaseqX.30x`(22.3+22.2 GB, md5 c9a66aaa…/1d2ca0d3…, SRA SRR37356338 = NovaSeq X 25B 2x150)를 둔다 — 받을지는 사용자 결정 대기.
+  화학까지 맞춘 HG002 단일 대조군으로 Google `novaseqx/HG002.novaseqX.30x`(22.3+22.2 GB, md5 c9a66aaa…/1d2ca0d3…)를 **추가했다**(사용자 결정, 같은 날). dsid `HG002.NovaSeqX_30x`,
+  로컬 `external/google_novaseqx_hg002_30x/`. 원 데이터는 Weill Cornell PRJNA1427896 SRR37356338 — ENA SRX32270094 design에 "NovaSeq X 25B, 2x151bp, v1.3, TruSeq DNA PCR-Free, 64-plex"라고 적혀 있다.
+  리드 이름이 SRA 형식(`@SRR37356338.N pi1-04:...`)이라 `detect_fastq_platform.sh`가 Illumina 규칙에 못 걸려 "미상(숏리드)"을 낸다 — 그래서 fetch 스크립트의 플랫폼 판정은
+  PacBio/ONT/MGI로 **양성 판정될 때만 실패**하고 미상은 경고로 낮췄다. 실행 단위 24.
   MGISEQ2000 조건부 항목은 업체에 MGI가 없으므로 후순위로 내렸다.
 - (같은 날 추가) 외부 리드 저장 경로를 `ext/<버킷 경로>`에서 `external/<출처>/`로 바꿨다. 사용자가 이미 `external/google_novaseq_pcrfree_30x/`로 수동 wget 중이어서 매니페스트를 그쪽에 맞췄다.
   `02_fetch_external_reads.sh`는 같은 경로를 보므로 받은 파일은 다시 받지 않고 md5·리드 길이·플랫폼만 확인한다. HPRC 4건은 `external/hprc_hiseq30x_subsampled/HG00{3,4}/`로 받는다.

@@ -11,7 +11,7 @@
 #
 # wget -c 라서 중단 후 재실행하면 이어받는다. md5가 있는 행(Google)은 md5sum으로, 없는 행(HPRC; S3 ETag는 멀티파트라
 # md5가 아니다)은 크기 + 앞 20k 리드 평균 길이(140~160 bp)로 본다. 마지막에 phase0_download/scripts/detect_fastq_platform.sh
-# (PR #7/#9)로 헤더 기반 플랫폼·기종을 찍고 Illumina가 아니면 실패로 본다.
+# (PR #7/#9)로 헤더 기반 플랫폼·기종을 찍는다. PacBio/ONT/MGI로 판정되면 실패, 미상(SRA 형식 헤더)은 경고.
 # 저장 위치는 $GIAB_ROOT/external/<출처>/ — Google분은 사용자가 2026-09-17 수동 wget으로 받은 경로와 같다.
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -42,7 +42,10 @@ check_platform() {   # 헤더로 플랫폼·기종 추정 (정보 + Illumina 확
     [ -x "$DETECT" ] || { echo "  (detect_fastq_platform.sh 없음 — 플랫폼 확인 생략)"; return 0; }
     out=$(bash "$DETECT" "$f" 2>&1) || { echo "  ERROR: detect_fastq_platform.sh 실패: $out"; return 1; }
     echo "$out" | grep '추정 플랫폼' | sed 's/^/  /'
-    echo "$out" | grep -q '추정 플랫폼: Illumina' || { echo "  ERROR: Illumina로 판정되지 않음: $f"; return 1; }
+    if echo "$out" | grep -q '추정 플랫폼: Illumina'; then return 0; fi
+    # SRA가 리드 이름을 바꾼 파일(@SRRxxxx.N ...)은 Illumina 헤더 규칙에 안 걸려 "미상(숏리드)"이 나온다 — 경고만.
+    if echo "$out" | grep -q '추정 플랫폼: 미상'; then echo "  WARN: 플랫폼 미상(헤더가 SRA 형식이면 정상). 리드 길이 검사로만 통과: $f"; return 0; fi
+    echo "  ERROR: Illumina가 아닌 플랫폼으로 판정됨: $f"; return 1
 }
 
 check_md5() {
