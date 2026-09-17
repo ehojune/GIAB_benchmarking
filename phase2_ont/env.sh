@@ -35,6 +35,16 @@ export GIAB_HTTP_BASE="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab"
 # 우리가 쓰는 r1041_e82_400bps_sup_v420/v430과 r941_prom_hac_g238은 **없다** — 그래서 이 디렉토리가 필요하다.
 export CLAIR3_MODEL_DIR="${CLAIR3_MODEL_DIR:-$INFRA/reference/clair3_models}"
 
+# ---- 정확도 평가 (60_benchmark.sh) ----
+# phase1과 같은 이미지·같은 $INFRA 를 쓰므로 phase1이 이미 받아 뒀으면 다시 안 받는다.
+export HAPPY_IMG="${HAPPY_IMG:-jmcdani20/hap.py:v0.3.12}"      # GIAB/NIST 문서가 쓰는 이미지
+export TRUVARI_IMG="${TRUVARI_IMG:-quay.io/biocontainers/truvari:5.4.0--pyhdfd78af_0}"  # SV용, 아직 미사용
+export BENCH_IMAGES="${BENCH_IMAGES:-$HAPPY_IMG $TRUVARI_IMG}"
+# hap.py는 병렬성이 낮아 파이프라인 잡보다 작게 잡는다
+export BENCH_SLOTS="${BENCH_SLOTS:-8}"
+export BENCH_VMEM="${BENCH_VMEM:-32G}"
+export BENCH_TRUTH_VER="${BENCH_TRUTH_VER:-v4.2.1}"   # germline truth set 판 (release/*/NISTv4.2.1/)
+
 # ---- SGE ----
 # 노드 실측(2026-08-21): shepherd-1-7/8/9 각 64코어 / 251.1 GB. h_vmem은 consumable=NO —
 # 스케줄러가 메모리를 예약하지 않으므로 노드당 잡 수는 슬롯으로만 통제된다.

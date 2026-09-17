@@ -150,3 +150,18 @@
 - (같은 날 추가) 외부 리드 저장 경로를 `ext/<버킷 경로>`에서 `external/<출처>/`로 바꿨다. 사용자가 이미 `external/google_novaseq_pcrfree_30x/`로 수동 wget 중이어서 매니페스트를 그쪽에 맞췄다.
   `02_fetch_external_reads.sh`는 같은 경로를 보므로 받은 파일은 다시 받지 않고 md5·리드 길이·플랫폼만 확인한다. HPRC 4건은 `external/hprc_hiseq30x_subsampled/HG00{3,4}/`로 받는다.
 - (같은 날 추가) `02_fetch_external_reads.sh` 마지막 단계에 main에 merge된 `phase0_download/scripts/detect_fastq_platform.sh`(PR #7/#9)를 붙였다. 헤더로 Illumina·기종을 찍고 Illumina가 아니면 실패.
+
+## 2026-09-17 — phase2(ONT)에 hap.py 정확도 평가 단계
+
+phase2(ONT)에 hap.py 정확도 평가 단계를 붙였다(`phase2_ont/scripts/60_benchmark.sh`). phase1의 60을 본떴고
+ONT 차이는 두 가지다. (1) **caller를 런마다 `dv_model` 열로 정한다** — R9.4.1에는 DeepVariant ONT 모델이 없어 Clair3 단독으로
+돌기 때문이다. 전역 `CALLERS` 기본값을 쓰면 R9 런에서 없는 VCF를 찾다 실패한다. (2) `--collect` 출력에 `chem`·`basecaller` 열을
+넣었다 — ONT indel 성능이 베이스콜러 버전으로 3.5배 갈리므로(2026-08-27 실측) 그 축 없이는 표를 읽을 수 없다.
+
+- **평가 대상은 HG001~HG007 8런뿐이고 전부 Clair3 단독이다.** germline truth(v4.2.1)가 있는 샘플이 phase2에서는 전부 R9이고,
+  DeepVariant가 도는 R10 6런은 전부 HG008이다. HG008 draft benchmark는 매니페스트에 들어와 있지만 `somatic-stvar`/`CNV`라
+  단일 샘플 germline VCF 평가에 쓸 수 없다. 즉 **phase2에서 DeepVariant는 벤치마크되지 않는다.** 스크립트가 `dv_model`로
+  자동 판정하므로 나중에 germline truth가 생기면 코드 수정 없이 포함된다.
+- 그래서 2026-08-27에 남긴 ts/tv 열린 질문은 이 단계로 R9 8런까지만 답이 나온다. R10의 더 낮은 ts/tv(1.65~1.73)는 미해결이다.
+- 벤치마크 이미지·자원 변수는 phase1과 같은 값으로 `phase2_ont/env.sh`에 뒀다. `$INFRA`를 공유하므로 phase1이 받아 둔
+  hap.py 이미지를 그대로 쓴다.
