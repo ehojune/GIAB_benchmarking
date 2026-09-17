@@ -141,7 +141,9 @@ submit_one() {
     local job="$INFRA/jobs/bench.$dsid.sh" simg
     simg=$(p2_img_path "$HAPPY_IMG")
 
-    cat > "$job" <<EOF
+    # 쓰기가 실패하면(디스크 참, 권한) 예전 잡 스크립트가 남아 엉뚱한 걸 제출하게 된다.
+    # 호출부의 `|| rc=1` 때문에 이 함수 안에서는 errexit가 꺼져 있으니 직접 본다.
+    if ! cat > "$job" <<EOF
 #!/bin/bash
 #\$ -N b2.$dsid
 #\$ -q $SGE_QUEUE
@@ -179,7 +181,10 @@ for c in$todo; do
 done
 echo "ALL DONE $dsid"
 EOF
-    chmod +x "$job"
+    then
+        echo "FAIL $dsid: 잡 스크립트를 못 썼다 — $job"; return 1
+    fi
+    chmod +x "$job" || { echo "FAIL $dsid: chmod 실패 — $job"; return 1; }
 
     if [ "${DRY:-0}" = 1 ]; then
         echo "DRY $dsid: $job 생성만 함 (callers:$todo)"; return 0
@@ -192,7 +197,9 @@ EOF
     fi
     jid=$(echo "$out" | grep -oE '[0-9]+' | head -1)
     [ -n "$jid" ] || { echo "FAIL $dsid: qsub 출력에서 jobid를 못 읽었다 — $out"; return 1; }
-    echo "$jid" > "$INFRA/jobs/bench.$dsid.jobid"
+    # jobid 기록이 실패하면 중복 제출 가드가 그 dsid에 대해 무력해진다 — 잡은 이미 들어갔으므로
+    # 실패로 보고하되 잡 번호를 반드시 보여준다(사람이 qdel 할 수 있어야 한다).
+    echo "$jid" > "$INFRA/jobs/bench.$dsid.jobid"         || { echo "FAIL $dsid: jobid=$jid 로 제출됐으나 기록 실패 — $INFRA/jobs/bench.$dsid.jobid"; return 1; }
     echo "OK  $dsid: jobid=$jid callers:$todo truth=$(basename "$truth_vcf")"
 }
 

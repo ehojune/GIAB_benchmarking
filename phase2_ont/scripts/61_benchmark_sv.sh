@@ -85,12 +85,18 @@ sv_truth_filtered() {
     mkdir -p "$TRUTH_CACHE"
     echo "  ALT=* 를 걸러 truth 캐시 생성 (1회): $(basename "$dst")" >&2
     # 중간에 죽어도 반쪽짜리가 캐시로 남지 않게 임시 이름으로 만들고 마지막에 옮긴다.
+    # 임시 이름에 PID를 넣는 이유: 두 세션이 동시에 돌면 같은 .tmp 를 서로 자르고 덮어써
+    # 잘린 VCF에 남의 인덱스가 붙은 채로 공개될 수 있다.
+    local tmp="$dst.tmp.$$"
     singularity exec -B "$GIAB_ROOT:$GIAB_ROOT" -B "$INFRA:$INFRA" "$bt" \
-        bcftools view -e 'ALT="*"' -Oz -o "$dst.tmp" "$src" >&2 \
-        || { rm -f "$dst.tmp"; echo "ERROR: bcftools view 실패 — $src" >&2; return 1; }
-    singularity exec -B "$INFRA:$INFRA" "$bt" tabix -f -p vcf "$dst.tmp" >&2 \
-        || { rm -f "$dst.tmp" "$dst.tmp.tbi"; echo "ERROR: tabix 실패 — $dst.tmp" >&2; return 1; }
-    mv "$dst.tmp.tbi" "$dst.tbi" && mv "$dst.tmp" "$dst"
+        bcftools view -e 'ALT="*"' -Oz -o "$tmp" "$src" >&2 \
+        || { rm -f "$tmp"; echo "ERROR: bcftools view 실패 — $src" >&2; return 1; }
+    singularity exec -B "$INFRA:$INFRA" "$bt" tabix -f -p vcf "$tmp" >&2 \
+        || { rm -f "$tmp" "$tmp.tbi"; echo "ERROR: tabix 실패 — $tmp" >&2; return 1; }
+    # .tbi 를 먼저 공개한다 — 위의 캐시 판정이 vcf.gz + .tbi 를 둘 다 보므로,
+    # 이 순서라야 "둘 다 있다"가 곧 "완성됐다"가 된다. mv 실패를 삼키면 안 된다.
+    mv "$tmp.tbi" "$dst.tbi" || { rm -f "$tmp" "$tmp.tbi"; echo "ERROR: 인덱스 공개 실패 — $dst.tbi" >&2; return 1; }
+    mv "$tmp" "$dst"         || { rm -f "$tmp"; echo "ERROR: truth 공개 실패 — $dst" >&2; return 1; }
     echo "$dst"
 }
 
@@ -98,8 +104,17 @@ sv_call_vcf() {  # sample dataset -> Sniffles VCF 경로 (존재 여부는 호�
     echo "$RUN_BASE/$1/ONT/$2/03_VCF/SV_sniffles/$1.$2.$REF_NAME.sniffles.vcf.gz"
 }
 
-bench_sv_done() {  # sample dataset -> 0 if summary.json 존재
-    [ -s "$RUN_BASE/$1/ONT/$2/$BENCH_SV_SUB/summary.json" ]
+# sample dataset -> 0 if 평가가 "끝까지" 갔을 때.
+# 잡은 임시 디렉토리에서 돌고 전부 성공해야 $BENCH_SV_SUB 로 옮기므로, 이 디렉토리가 있다는 것
+# 자체가 완주 신호다. refine을 켰으면 refine 산출까지 있어야 완료로 본다 — bench만 끝나고
+# refine에서 죽은 결과를 완료로 세면 다음 제출이 조용히 건너뛴다.
+bench_sv_done() {
+    local d="$RUN_BASE/$1/ONT/$2/$BENCH_SV_SUB"
+    [ -s "$d/summary.json" ] || return 1
+    if [ "${BENCH_SV_REFINE:-1}" = 1 ]; then
+        [ -s "$d/refine.variant_summary.json" ] || return 1
+    fi
+    return 0
 }
 
 # 같은 dsid가 두 번 들어오면 같은 출력 경로에 잡 둘이 동시에 쓴다.
@@ -173,13 +188,17 @@ submit_one() {
     mkdir -p "$base/05_BENCH" "$INFRA/launch/svbench.$dsid"
     job="$INFRA/jobs/svbench.$dsid.sh"
     simg=$(p2_img_path "$TRUVARI_IMG")
-    refine_arg=""
-    if [ "${BENCH_SV_REFINE:-1}" = 1 ]; then
-        refine_arg="--refine"
-        [ -n "${BENCH_SV_ALIGN:-}" ] && refine_arg="$refine_arg --align $BENCH_SV_ALIGN"
-    fi
+    # refine은 bench의 --refine 대신 별도 단계로 돌린다. bench의 --refine 은 내부에서
+    # refine_main([outdir]) 을 **인자 없이** 부르므로(truvari 5.4.0 bench.py:803) --align·--threads 를
+    # 넘길 방법이 없고, bench 파서에는 --align 자체가 없어서 붙이면 argparse 에러로 죽는다.
+    # 두 단계로 나눈 결과는 --refine 과 동일하다 (기본 align=poa). threads만 슬롯 수로 올린다.
+    # 분기는 잡 스크립트 **안**에 넣는다 — 생성 쪽에서 ${var:+...} 로 여러 줄을 끼워 넣으면
+    # 확장 과정에서 따옴표가 벗겨져 echo 인자의 괄호가 노출된다(실측).
+    local do_refine="${BENCH_SV_REFINE:-1}" align="${BENCH_SV_ALIGN:-poa}"
 
-    cat > "$job" <<EOF
+    # 쓰기가 실패하면(디스크 참, 권한) 예전 잡 스크립트가 남아 엉뚱한 걸 제출하게 된다.
+    # 호출부의 `|| rc=1` 때문에 이 함수 안에서는 errexit가 꺼져 있으니 직접 본다.
+    if ! cat > "$job" <<EOF
 #!/bin/bash
 #\$ -N s2.$dsid
 #\$ -q $SGE_QUEUE
@@ -197,32 +216,54 @@ source "$PHASE2/env.sh"
 export TMPDIR="$INFRA/launch/svbench.$dsid/tmp"
 mkdir -p "\$TMPDIR"
 
-# truvari bench 는 출력 디렉토리가 이미 있으면 거부한다. 재실행(FORCE=1)을 위해 비우고 시작한다.
-rm -rf "$out"
+# truvari bench 는 출력 디렉토리가 이미 있으면 거부한다. 그렇다고 기존 결과를 **미리** 지우면,
+# 몇 시간짜리 잡이 죽거나 다른 잡이 같은 dsid로 들어왔을 때 멀쩡한 결과만 날린다.
+# 그래서 잡별 임시 디렉토리에서 돌고, 전부 성공한 뒤에만 제자리로 옮긴다.
+# 이러면 중간에 죽은 실행이 반쪽 summary.json 을 남기지 않아 "완료"로 오판되지도 않는다.
+WORK="$out.inprogress.\$JOB_ID"
+rm -rf "\$WORK"
+
+run_truvari() {
+    singularity exec \\
+        -B "$GIAB_ROOT:$GIAB_ROOT" \\
+        -B "$RUN_BASE:$RUN_BASE" \\
+        -B "$INFRA:$INFRA" \\
+        "$simg" "\$@"
+}
 
 echo "== truvari bench : $sample.$dataset =="
 echo "   truth = $truth_use"
 echo "   call  = $call"
-singularity exec \\
-    -B "$GIAB_ROOT:$GIAB_ROOT" \\
-    -B "$RUN_BASE:$RUN_BASE" \\
-    -B "$INFRA:$INFRA" \\
-    "$simg" \\
-    truvari bench \\
+run_truvari truvari bench \\
         -b "$truth_use" \\
         -c "$call" \\
-        -o "$out" \\
+        -o "\$WORK" \\
         -f "$REF_FASTA" \\
         --includebed "$truth_bed" \\
         --pick ac \\
         --passonly \\
         -r 2000 \\
-        -C 5000 \\
-        $refine_arg ${BENCH_SV_ARGS:-}
+        -C 5000 ${BENCH_SV_ARGS:-}
+
+if [ "$do_refine" = 1 ]; then
+    echo "== truvari refine (align=$align) =="
+    run_truvari truvari refine \\
+        -f "$REF_FASTA" \\
+        -a "$align" \\
+        -t "\${NSLOTS:-$BENCH_SV_SLOTS}" \\
+        "\$WORK"
+fi
+
+# 여기까지 왔으면 전 단계가 성공했다 (set -e). 이제 공개한다.
+rm -rf "$out"
+mv "\$WORK" "$out"
 
 echo "ALL DONE $dsid"
 EOF
-    chmod +x "$job"
+    then
+        echo "FAIL $dsid: 잡 스크립트를 못 썼다 — $job"; return 1
+    fi
+    chmod +x "$job" || { echo "FAIL $dsid: chmod 실패 — $job"; return 1; }
 
     if [ "${DRY:-0}" = 1 ]; then
         echo "DRY $dsid: $job 생성만 함 (refine:${BENCH_SV_REFINE:-1})"; return 0
@@ -234,7 +275,10 @@ EOF
     fi
     jid=$(echo "$qout" | grep -oE '[0-9]+' | head -1)
     [ -n "$jid" ] || { echo "FAIL $dsid: qsub 출력에서 jobid를 못 읽었다 — $qout"; return 1; }
-    echo "$jid" > "$INFRA/jobs/svbench.$dsid.jobid"
+    # jobid 기록이 실패하면 중복 제출 가드가 그 dsid에 대해 무력해진다 — 잡은 이미 들어갔으므로
+    # 실패로 보고하되 잡 번호를 반드시 보여준다(사람이 qdel 할 수 있어야 한다).
+    echo "$jid" > "$INFRA/jobs/svbench.$dsid.jobid" \
+        || { echo "FAIL $dsid: jobid=$jid 로 제출됐으나 기록 실패 — $INFRA/jobs/svbench.$dsid.jobid"; return 1; }
     echo "OK  $dsid: jobid=$jid truth=$(basename "$truth_vcf") refine=${BENCH_SV_REFINE:-1}"
 }
 
