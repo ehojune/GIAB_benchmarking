@@ -119,3 +119,34 @@
   이 접두어-기종 표는 **일루미나 공식 문서가 아니라 커뮤니티가 역추적한 비공식 관례**다 — 웹 검색으로 `LH00`→NovaSeq
   X/X Plus는 확인했지만(ASeq Newsletter 등), 표 전체를 하나의 공식 출처로 검증하지는 못했다. 그래서 접두어가 없거나
   표에 없으면 조용히 generic `Illumina (...)`로 남기고 모델을 지어내지 않는다 — 오탐보다 미상이 낫다는 원칙.
+
+## 2026-09-17 — phase3에 외부 숏리드 30x 트리오 2종 추가 (업체 비교 arm)
+
+- 목적 재확인: gd001~004 업체가 만든 HG002/3/4 데이터를 자체 WGRS 파이프라인으로 돌린 결과(A)를, 같은 파이프라인으로 돌린 GIAB 공개 raw(B)와
+  GIAB 정답셋(C)에 대조한다. joint calling은 이번 범위 밖.
+- 기존 18 실행 단위에는 업체 산출물(NovaSeq/DNBSEQ 2x150, ~30x, 1 라이브러리)과 조건이 맞는 것이 없었다 — 300x·12 라이브러리, 2x250, PE100,
+  AVITI 80x. GIAB FTP의 HG002/3/4 숏리드 WGS 디렉토리는 S3 목록으로 재확인했고 18개가 전부다.
+- 추가 (사용자 결정, 둘 다 받는다):
+  (1) `HG00{2,3,4}.NovaSeq_PCRfree_30x` — Google brain-genomics-public(GCS). NovaSeq 6000 PCR-free 2x151, 세 샘플이 같은 런(A00744:46 HV3C3DSXX L2), md5 공개, 147 GiB.
+  (2) `HG00{3,4}.Illumina_PCRfree_30x` — HPRC S3. GIAB FTP `Illumina_PCRfree_downsampled`에는 HG002만 있고 그 README가 HPRC 링크를 가리킨다.
+  300x와 같은 TruSeq PCR-free 라이브러리에서 뽑은 2x148 ~30x, 170 GiB. 기존 HG002 행과 같은 dataset 이름을 쓴다.
+- 300x 전량 실행(2026-09-09)은 유지하되 역할을 바꾼다: 업체 비교의 기준이 아니라 깊이 상한(포화) 실험. 업체 비교는 30x arm으로 한다.
+- 권고 순서: NovaSeq 30x → HiSeq 30x → (업체 중 MGI가 있으면) MGISEQ2000 PCR-free(2x150, 압축비 추정 ~70x/67x/127x) → 300x → AVITI StdInsert.
+  2x250(리드 길이)·BGISEQ500(PE100, 헤더 실측)·AVITI 20231018(R&D 시약, HG002만)은 후순위.
+- 검증은 간략하게 한다(사용자 결정, 비용): HEAD 크기, 앞 256 KB 표본의 리드 길이·장비·플로우셀. md5는 Google만 있다(HPRC ETag는 멀티파트).
+  다운로드 뒤 `scripts/02_fetch_external_reads.sh`가 크기(+md5)·앞 20k 리드 평균 길이(140~160 bp)를 본다.
+- 자문: Codex gpt-5.6-sol과 Gemini 3.1 Pro에 같은 질문을 독립적으로 물었다. 둘 다 NovaSeq 30x 트리오 1순위. Gemini는 300x를 빼라 했고
+  Codex는 별도 포화·read group 실험으로 남기라 했다 — 후자를 택했다. Fable 워크플로(추가 후보 탐색·비판)는 비용 때문에 사용자 지시로 중단, 결과 없음.
+  기록: `docs/reference/phase3_shortread_candidates_2026-09-17.md`.
+- 카탈로그(master_catalog.tsv)에는 넣지 않는다. 카탈로그는 GIAB FTP 인벤토리이고 크롤러가 giab_path로 라우팅한다. 외부 리드는 phase1·phase2처럼 phase 매니페스트에만 둔다.
+- (같은 날 추가) 업체 4곳의 플랫폼이 **Illumina NovaSeq X / X Plus**로 확인됐다(사용자 전달; 서버의 업체 FASTQ 4건이 기기ID `LH00xxx`, `detect_fastq_platform.sh`).
+  공개 데이터에 NovaSeq X **트리오**는 없다 — GCS `novaseqx/`도 ENA PRJNA1427896(Weill Cornell, NovaSeq X 25B/10B + UG100)도 HG002만. 그래서 트리오 기준 arm은
+  NovaSeq 6000 PCR-free 30x로 유지한다. 같은 Illumina 2x151 PCR-free 30x지만 화학이 다르다(SBS vs XLEAP-SBS)는 점은 비교 해석에 적어야 한다.
+  화학까지 맞춘 HG002 단일 대조군으로 Google `novaseqx/HG002.novaseqX.30x`(22.3+22.2 GB, md5 c9a66aaa…/1d2ca0d3…)를 **추가했다**(사용자 결정, 같은 날). dsid `HG002.NovaSeqX_30x`,
+  로컬 `external/google_novaseqx_hg002_30x/`. 원 데이터는 Weill Cornell PRJNA1427896 SRR37356338 — ENA SRX32270094 design에 "NovaSeq X 25B, 2x151bp, v1.3, TruSeq DNA PCR-Free, 64-plex"라고 적혀 있다.
+  리드 이름이 SRA 형식(`@SRR37356338.N pi1-04:...`)이라 `detect_fastq_platform.sh`가 Illumina 규칙에 못 걸려 "미상(숏리드)"을 낸다 — 그래서 fetch 스크립트의 플랫폼 판정은
+  PacBio/ONT/MGI로 **양성 판정될 때만 실패**하고 미상은 경고로 낮췄다. 실행 단위 24.
+  MGISEQ2000 조건부 항목은 업체에 MGI가 없으므로 후순위로 내렸다.
+- (같은 날 추가) 외부 리드 저장 경로를 `ext/<버킷 경로>`에서 `external/<출처>/`로 바꿨다. 사용자가 이미 `external/google_novaseq_pcrfree_30x/`로 수동 wget 중이어서 매니페스트를 그쪽에 맞췄다.
+  `02_fetch_external_reads.sh`는 같은 경로를 보므로 받은 파일은 다시 받지 않고 md5·리드 길이·플랫폼만 확인한다. HPRC 4건은 `external/hprc_hiseq30x_subsampled/HG00{3,4}/`로 받는다.
+- (같은 날 추가) `02_fetch_external_reads.sh` 마지막 단계에 main에 merge된 `phase0_download/scripts/detect_fastq_platform.sh`(PR #7/#9)를 붙였다. 헤더로 Illumina·기종을 찍고 Illumina가 아니면 실패.
