@@ -13,9 +13,13 @@ f="$1"
 
 reader() { case "$f" in *.gz) zcat "$f" ;; *) cat "$f" ;; esac; }
 
-# 첫 200리드에서 헤더 1줄 + 서열 길이 분포를 한 번에 뽑는다. awk가 200개를 채우고
-# 먼저 종료하면 reader가 SIGPIPE로 죽는데, pipefail이 이걸 오류로 보지 않도록 이 파이프에서만 끈다.
-stats="$(set +o pipefail; reader | awk '
+# 첫 200리드에서 헤더 1줄 + 서열 길이 분포를 한 번에 뽑는다. awk가 200개를 채우고 먼저
+# 종료하면 reader가 SIGPIPE(141)로 죽는데 이건 정상 종료라 무시한다. 그 외 reader 실패
+# (손상된 gzip 등)는 PIPESTATUS로 따로 잡아서 부분 데이터로 조용히 성공 처리하지 않는다.
+statsfile="$(mktemp)"
+trap 'rm -f "$statsfile"' EXIT
+set +o pipefail   # PIPESTATUS로 reader 실패를 직접 가릴 것이므로 파이프라인 자체의 집계 실패는 안 봄
+reader | awk '
     NR==1 { hdr=$0 }
     NR%4==2 {
         n++; l=length($0); sum+=l
@@ -23,9 +27,12 @@ stats="$(set +o pipefail; reader | awk '
         if (l>max) max=l
         if (n==200) exit
     }
-    END { printf "%s\t%d\t%d\t%.0f", hdr, (n>0?min:0), (n>0?max:0), (n>0?sum/n:0) }
-')"
-IFS=$'\t' read -r header min max avg <<<"$stats"
+    END { printf "%s\t%d\t%d\t%.0f\n", hdr, (n>0?min:0), (n>0?max:0), (n>0?sum/n:0) }
+' > "$statsfile"
+reader_rc=${PIPESTATUS[0]}
+set -o pipefail
+[ "$reader_rc" = 0 ] || [ "$reader_rc" = 141 ] || { echo "읽기 실패 (exit $reader_rc, 손상되었거나 잘린 파일일 수 있음): $f" >&2; exit 1; }
+IFS=$'\t' read -r header min max avg < "$statsfile"
 [ -n "$header" ] && [ "${header:0:1}" = "@" ] || { echo "FASTQ 형식이 아님 (첫 줄이 '@'로 시작하지 않음): $f" >&2; exit 1; }
 
 platform="미상"
@@ -37,10 +44,10 @@ if [[ "$header" =~ ^@[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}
 elif [[ "$header" =~ ^@m[^/[:space:]]*/[0-9]+/(ccs|[0-9]+_[0-9]+) ]]; then
     if [[ "$header" == *"/ccs"* ]]; then platform="PacBio HiFi (CCS)"; else platform="PacBio CLR (subread)"; fi
     evidence="헤더가 PacBio movie/zmw 형식 (m<무비명>/<zmw>/ccs 또는 <subread 범위> — Sequel/Revio 신형과 RS-II 구형 무비명 모두 포함)"
-elif [[ "$header" =~ ^@[A-Za-z0-9]+:[0-9]+:[A-Za-z0-9_-]+:[0-9]+:[0-9]+:[0-9]+:[0-9]+([[:space:]]|$) ]]; then
+elif [[ "$header" =~ ^@[^:[:space:]]+:[0-9]+:[^:[:space:]]+:[0-9]+:[0-9]+:[0-9]+:[0-9]+([[:space:]]|$) ]]; then
     platform="Illumina (CASAVA 1.8+)"
     evidence="헤더가 <기기>:<런>:<플로우셀>:<레인>:<타일>:<x>:<y> 7필드 형식"
-elif [[ "$header" =~ ^@[A-Za-z0-9_.-]+:[0-9]+:[0-9]+:[0-9]+:[0-9]+(#[A-Za-z0-9]+)?/[12]$ ]]; then
+elif [[ "$header" =~ ^@[^:[:space:]]+:[0-9]+:[0-9]+:[0-9]+:[0-9]+(#[A-Za-z0-9]+)?/[12]$ ]]; then
     platform="Illumina (구형 CASAVA <1.8)"
     evidence="헤더가 <기기>:<레인>:<타일>:<x>#<인덱스>/<mate> 형식"
 elif [[ "$header" =~ ^@[A-Za-z0-9]+L[0-9]+C[0-9]+R[0-9]+ ]]; then
