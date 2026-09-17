@@ -155,6 +155,11 @@
   `giab_path`는 GIAB 경로가 아니라 **로컬 relpath(`external/...`)** 이고, 같은 디렉토리에 세 샘플이 섞인 Google 트리오는 파일 접두(`.../HG002.novaseq.pcr-free.30x`)까지 붙여 행을 유일하게 했다.
   크롤러에 안전한 이유: `crawl_data.py`는 FTP 경로를 giab_path 접두로 라우팅하므로 `external/`은 절대 매치되지 않고, `catalog_new_dirs.py`의 files/size 재계산은 phase0 manifest에 그 경로의 파일이 하나도 없으면(`has_any`) 행을 건드리지 않는다.
   files/size의 원본은 `phase3_shortread_wgs/ext_manifest.tsv`다. 규칙은 `catalog/README.md` "외부 유래 행"에 적었다. phase1(ENA)·phase2(rel6) 외부 리드는 기존 GIAB 행에 붙어 있어 그대로 둔다.
+- (PR #12 Codex 리뷰, 사용자 지시로 상한 10라운드) built-in review 1회 "regression 없음" → adversarial 3회. 지적 3건 전부 반영:
+  ① NovaSeq 6000 트리오를 "장비 매칭"이라 쓴 next_step·phase3 README 행·fetch 스크립트 주석 → "Illumina·2x151·PCR-free·30x는 맞지만 화학(SBS vs XLEAP-SBS)은 다름, 화학 매칭은 HG002.NovaSeqX_30x"로 정정.
+  ② README 외부 리드 행의 "규모 집계 미포함"이 상단 441행 집계와 모순 → PacBio·ONT 외부분만 미포함, phase3 외부 6행은 포함으로 명시.
+  ③ `02_fetch_external_reads.sh`가 DSID 오타·빈 매니페스트에서 0건 검사 후 exit 0 → 매니페스트 없음/0건 선택 시 exit 1.
+  4라운드 approve("No material findings"). 남은 한계(Codex도 인정): HPRC 4건은 md5가 없어 크기·리드 길이·플랫폼 검증까지만.
 
 ## 2026-09-17 — phase2(ONT)에 hap.py 정확도 평가 단계
 
