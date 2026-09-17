@@ -165,3 +165,50 @@ ONT 차이는 두 가지다. (1) **caller를 런마다 `dv_model` 열로 정한�
 - 그래서 2026-08-27에 남긴 ts/tv 열린 질문은 이 단계로 R9 8런까지만 답이 나온다. R10의 더 낮은 ts/tv(1.65~1.73)는 미해결이다.
 - 벤치마크 이미지·자원 변수는 phase1과 같은 값으로 `phase2_ont/env.sh`에 뒀다. `$INFRA`를 공유하므로 phase1이 받아 둔
   hap.py 이미지를 그대로 쓴다.
+
+## 2026-09-17 — phase2(ONT)에 Truvari SV 정확도 평가 단계
+
+`61_benchmark_sv.sh`. Sniffles2 콜을 GIAB HG002 SV truth set 대비 Truvari로 채점한다. 소변이(60_benchmark.sh)와
+분리한 이유는 도구·truth·대상 샘플·산출 형식이 전부 다르기 때문이다 — 한 스크립트에 넣으면 분기가 두 배가 된다.
+
+- **truth를 `HG002_GRCh38_v5.0q_stvar`로 골랐다.** 매니페스트에서 GRCh38 germline SV truth를 가진 GIAB 샘플은
+  HG002 하나다. 후보가 셋이었다.
+  | 후보 | 판단 |
+  |---|---|
+  | `HG002_GRCh38_v5.0q_stvar` | **채택.** 전장, T2T-Q100 유래, `.benchmark.bed` 동봉 |
+  | `HG002_GRCh38_CMRG_SV_v1.00` | 의학적 중요 유전자 한정(38 KB). 전장 성능 지표로는 못 씀 |
+  | `HG002_SVs_Tier1_v0.6` | **GRCh37 전용.** 가장 널리 인용되지만 GRCh38 판이 없어 우리 런에 못 쓴다 |
+  `latest/`에도 같은 파일이 있지만 버전 디렉토리(`v5.0q/`)를 본다 — 판이 바뀌면 수치가 바뀌는데
+  `latest`를 보면 그 변화가 조용히 섞인다.
+- **평가 대상은 HG002 2런(guppy-V3.4.5, UCSC_Ultralong_..._Promethion)이고 둘 다 R9.4.1이다.**
+  60_benchmark.sh가 소변이에서 부딪힌 벽과 같다 — truth가 있는 샘플과 R10 런이 겹치지 않는다.
+  **R10의 SV 성능은 이 단계로도 알 수 없다.** HG008 draft benchmark는 somatic-stvar/CNV라 germline 평가에 못 쓴다.
+- **파라미터는 GIAB v5.0q README 지정값을 그대로 쓴다**(`--pick ac --passonly -r 2000 -C 5000 --refine`).
+  자체 판단으로 고르지 않은 이유는 SV 매칭 파라미터가 결과를 크게 흔들어서, 근거를 댈 수 있는 값이
+  "발행처가 지정한 값"뿐이기 때문이다. truvari 5.4.0 기본값과 다른 건 `-r`(500→2000)과 `-C`(1000→5000)뿐이다.
+  **`-C`는 chunksize지 sizemin이 아니다** — 소스(`truvari/bench.py`, `variant_params.py`)로 확인했다.
+  README가 `-d/--dup-to-ins`를 지정하지 않는 건 `--refine`이 그 표현 차이를 흡수하기 때문으로 읽었다.
+  refine을 끄고 돌릴 거면 `BENCH_SV_ARGS="-d"`를 같이 줘야 한다(Sniffles는 `<DUP>`을 낸다).
+- **refine을 기본으로 켰다.** 끄면 탠덤반복 구간의 Sniffles 콜이 표현 차이만으로 FP가 되어 수치가 실제보다
+  나쁘게 나온다. 대신 기본 정렬기 poa가 **머신 간 비결정적**이라(truvari 문서) 재현이 필요하면
+  `BENCH_SV_ALIGN=mafft`로 고정한다. `--collect`가 refine 전(`summary.json`)과 후
+  (`refine.variant_summary.json`)를 `stage` 열로 **둘 다** 내보내는 건 이 때문이다 — 수치가 얼마나
+  움직였는지 보이지 않으면 refine 값을 믿을 근거가 없다.
+- truth의 `ALT=*`는 README가 "오분류되니 미리 걸러라"고 해서 `bcftools view -e 'ALT="*"'`로 한 번 걸러
+  `$INFRA/reference/sv_truth/`에 캐시한다. 잡 안에서 만들면 동시 실행이 같은 파일을 덮어쓰므로
+  로그인 노드(preflight/submit)에서 만들고, 중간에 죽어도 반쪽이 캐시로 남지 않게 임시 이름으로 쓴 뒤 옮긴다.
+- mafft은 bioconda truvari 패키지의 런타임 의존성이라 핀한 이미지
+  (`quay.io/biocontainers/truvari:5.4.0--pyhdfd78af_0`, quay.io에 실재 확인)에 들어 있다. 따로 받을 게 없다.
+
+### 같은 PR에서 60_benchmark.sh의 Codex 지적 2건 반영
+
+PR #6이 merge된 뒤 돌린 adversarial 리뷰가 3건을 냈다. 같은 파일을 건드리는 이 PR에서 두 건을 고쳤다.
+
+- **중복 제출이 가드를 지나간다**(반영). `p2_job_alive`는 preflight 때 뜬 qstat 스냅샷을 보므로 방금 넣은 잡을
+  못 본다 — 같은 dsid를 한 줄에 두 번 주면 같은 출력 경로에 잡 둘이 동시에 쓴다. 입력 dsid를 dedup해 막았다.
+  `--ready`는 run_table의 1열(고유 키)을 읽어 원래 영향이 없었다.
+- **qsub이 거부돼도 exit 0**(반영). 디스패치 루프의 `|| true`가 개별 실패를 삼켜 스크립트 전체는 성공으로
+  끝났다. 실패를 모아 non-zero로 끝내되 루프는 멈추지 않게 `submit_many()`로 바꿨다.
+- **노드당 메모리 초과 가능성**(기각). 8슬롯 잡 8개가 한 노드에 들어가면 명목 32G×8 = 256G > 251.1G라는
+  지적. Codex 스스로 "관측된 OOM이 아니라 용량 추론"이라고 단 항목이고, **사용자가 8슬롯/32G는 안전하다고
+  판정**해 그대로 둔다. 근거가 생기면 `BENCH_SLOTS`/`BENCH_SV_SLOTS`만 올리면 된다.

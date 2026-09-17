@@ -38,12 +38,21 @@ export CLAIR3_MODEL_DIR="${CLAIR3_MODEL_DIR:-$INFRA/reference/clair3_models}"
 # ---- 정확도 평가 (60_benchmark.sh) ----
 # phase1과 같은 이미지·같은 $INFRA 를 쓰므로 phase1이 이미 받아 뒀으면 다시 안 받는다.
 export HAPPY_IMG="${HAPPY_IMG:-jmcdani20/hap.py:v0.3.12}"      # GIAB/NIST 문서가 쓰는 이미지
-export TRUVARI_IMG="${TRUVARI_IMG:-quay.io/biocontainers/truvari:5.4.0--pyhdfd78af_0}"  # SV용, 아직 미사용
+export TRUVARI_IMG="${TRUVARI_IMG:-quay.io/biocontainers/truvari:5.4.0--pyhdfd78af_0}"  # SV용 (61_benchmark_sv.sh)
 export BENCH_IMAGES="${BENCH_IMAGES:-$HAPPY_IMG $TRUVARI_IMG}"
 # hap.py는 병렬성이 낮아 파이프라인 잡보다 작게 잡는다
 export BENCH_SLOTS="${BENCH_SLOTS:-8}"
 export BENCH_VMEM="${BENCH_VMEM:-32G}"
 export BENCH_TRUTH_VER="${BENCH_TRUTH_VER:-v4.2.1}"   # germline truth set 판 (release/*/NISTv4.2.1/)
+
+# ---- SV 정확도 평가 (61_benchmark_sv.sh) ----
+# truvari refine의 기본 스레드는 4다(truvari 5.4.0 refine.py) — 슬롯을 더 줘도 안 쓴다.
+export BENCH_SV_SLOTS="${BENCH_SV_SLOTS:-8}"
+export BENCH_SV_VMEM="${BENCH_SV_VMEM:-32G}"
+export BENCH_SV_TRUTH_VER="${BENCH_SV_TRUTH_VER:-v5.0q}"   # release/*/*/v5.0q/<sample>_GRCh38_v5.0q_stvar.*
+export BENCH_SV_REFINE="${BENCH_SV_REFINE:-1}"             # GIAB v5.0q README 권장. 0으로 끌 수 있다
+export BENCH_SV_ALIGN="${BENCH_SV_ALIGN:-}"                # refine 정렬기. 비우면 truvari 기본값 poa
+export BENCH_SV_ARGS="${BENCH_SV_ARGS:-}"                  # truvari bench 추가 인자 (예: -d)
 
 # ---- SGE ----
 # 노드 실측(2026-08-21): shepherd-1-7/8/9 각 64코어 / 251.1 GB. h_vmem은 consumable=NO —

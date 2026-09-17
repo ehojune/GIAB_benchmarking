@@ -47,6 +47,9 @@ python phase2_ont/scripts/50_update_catalog.py             # 완료분 → 카�
 bash phase2_ont/scripts/60_benchmark.sh --list             # 정확도 평가 대상 확인 (truth set 유무)
 bash phase2_ont/scripts/60_benchmark.sh --ready            # hap.py 제출 (HG001~HG007 8런)
 bash phase2_ont/scripts/60_benchmark.sh --collect          # 결과를 한 TSV로 모음
+bash phase2_ont/scripts/61_benchmark_sv.sh --list          # SV 평가 대상 확인 (HG002만 truth가 있다)
+bash phase2_ont/scripts/61_benchmark_sv.sh --ready         # truvari 제출 (HG002 2런)
+bash phase2_ont/scripts/61_benchmark_sv.sh --collect       # refine 전/후를 한 TSV로 모음
 ```
 
 - **`nextflow` 를 직접 부르지 말 것.** 서버 기본은 26.x이고 strict config 파서가 `def` 선언을 거부한다.
@@ -153,8 +156,31 @@ germline truth가 생기면 코드 수정 없이 DV까지 평가된다.
 따라서 [열린 질문인 ts/tv](../docs/reference/2026-08-27-ont-qc-first-pass.md)는 이 단계로 **R9 8런까지만**
 답이 나온다. R10의 더 낮은 ts/tv(1.65~1.73)는 미해결로 남는다.
 
-**SV(Sniffles2)는 아직이다.** Truvari 이미지는 `env.sh`에 핀해 뒀고, HG002는 공식 SV benchmark가
-있으므로 그쪽부터 붙이면 된다.
+## SV 정확도 평가 ([61_benchmark_sv.sh](scripts/61_benchmark_sv.sh))
+
+Sniffles2 콜을 GIAB HG002 SV truth set 대비 Truvari로 채점한다.
+
+| | |
+|---|---|
+| 대상 | **HG002 2런뿐** — `guppy-V3.4.5`, `UCSC_Ultralong_..._Promethion`. 둘 다 R9.4.1 |
+| truth | `HG002_GRCh38_v5.0q_stvar` (T2T-Q100 유래, 전장) |
+| 입력 | `03_VCF/SV_sniffles/<id>.sniffles.vcf.gz` |
+| 산출 | `<dataset>/05_BENCH/truvari/{summary.json,refine.variant_summary.json}` → `--collect`가 `phase2_bench_sv_summary.tsv` |
+| 잡 크기 | `BENCH_SV_SLOTS=8` / `BENCH_SV_VMEM=32G` |
+
+**GRCh38 germline SV truth를 가진 GIAB 샘플은 HG002 하나다.** 자주 인용되는
+`HG002_SVs_Tier1_v0.6`은 **GRCh37 전용**이라 GRCh38로 정렬한 우리 런에는 쓸 수 없다.
+HG001·HG003~HG007에는 SV truth가 아예 없고, HG008의 draft benchmark는 `somatic-stvar`/`CNV`라
+소변이 때와 같은 이유로 못 쓴다. 그래서 **R10의 SV 성능은 이 단계로도 알 수 없다.**
+
+파라미터는 GIAB v5.0q README가 지정한 명령 그대로다 — `--pick ac --passonly -r 2000 -C 5000 --refine`.
+truvari 5.4.0 기본값과 다른 건 `-r`(500→2000)과 `-C`(1000→5000) 둘뿐이고, `-C`는 chunksize지
+sizemin이 아니다. README가 "ALT=\*는 오분류되니 미리 걸러라"고 해서 truth를 한 번 걸러 `$INFRA`에 캐시한다.
+
+`--refine`은 phab로 복잡영역의 표현을 정규화한다. 끄면 탠덤반복 구간의 Sniffles 콜이 표현 차이만으로
+FP가 되어 수치가 실제보다 나쁘게 나온다. 다만 **기본 정렬기 poa는 머신 간 비결정적이다**(truvari 문서) —
+재현이 필요하면 `BENCH_SV_ALIGN=mafft`. `--collect`는 refine 전/후를 `stage` 열로 둘 다 내보내므로
+refine이 수치를 얼마나 움직였는지 보고 판단하면 된다.
 
 ## 자원 실측은 아직 없다
 
