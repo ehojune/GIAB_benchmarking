@@ -91,7 +91,17 @@ list_all() {
 preflight() {
     p2_qstat_refresh
     [ -s "$REF_FASTA" ] || { echo "ERROR: 레퍼런스 없음 ($REF_FASTA) — 01_prepare_login_node.sh 먼저"; exit 1; }
-    [ -s "$REF_FASTA.fai" ] || { echo "ERROR: $REF_FASTA.fai 없음 — hap.py가 요구한다"; exit 1; }
+    # hap.py는 레퍼런스 옆의 .fai를 요구하는데 이걸 만드는 곳이 없다 — 파이프라인의 SAMTOOLS_FAIDX는
+    # publishDir 없이 Nextflow work 디렉토리 안에만 만들고, 01_prepare는 FASTA 압축만 푼다.
+    # 여기서 1회 생성한다 (로그인 노드에 samtools가 없어 컨테이너로 — 03_dup_evidence.sh와 같은 방식).
+    if [ ! -s "$REF_FASTA.fai" ]; then
+        local st refdir
+        st="$(p2_img_path "$(p2_container_uris | grep '/samtools:')")"
+        refdir="$(dirname "$REF_FASTA")"
+        [ -s "$st" ] || { echo "ERROR: $REF_FASTA.fai 없고 samtools 컨테이너도 없다 — 01_prepare_login_node.sh 먼저"; exit 1; }
+        echo "  $REF_FASTA.fai 생성 (hap.py 요구, 1회)"
+        singularity exec -B "$refdir:$refdir" "$st" samtools faidx "$REF_FASTA"             || { echo "ERROR: samtools faidx 실패 — $REF_FASTA 확인"; exit 1; }
+    fi
     local i; i=$(p2_img_path "$HAPPY_IMG")
     [ -s "$i" ] || { echo "ERROR: hap.py 이미지 없음 ($i) — 01_prepare_login_node.sh 재실행"; exit 1; }
     mkdir -p "$INFRA/jobs" "$INFRA/logs" "$INFRA/launch"
@@ -174,9 +184,14 @@ EOF
     if [ "${DRY:-0}" = 1 ]; then
         echo "DRY $dsid: $job 생성만 함 (callers:$todo)"; return 0
     fi
+    # submit_one 은 호출부에서 `|| true` 로 감싸여 errexit 가 꺼진다 — qsub 실패를 직접 봐야 한다.
+    # 안 그러면 빈 jobid 파일을 쓰고 OK 를 찍는다 (아무것도 큐에 안 들어갔는데).
     local out jid
-    out=$(qsub "$job" < /dev/null)
+    if ! out=$(qsub "$job" < /dev/null 2>&1); then   # stderr 까지 잡아야 FAIL 메시지가 쓸모 있다
+        echo "FAIL $dsid: qsub 거부 — $out"; return 1
+    fi
     jid=$(echo "$out" | grep -oE '[0-9]+' | head -1)
+    [ -n "$jid" ] || { echo "FAIL $dsid: qsub 출력에서 jobid를 못 읽었다 — $out"; return 1; }
     echo "$jid" > "$INFRA/jobs/bench.$dsid.jobid"
     echo "OK  $dsid: jobid=$jid callers:$todo truth=$(basename "$truth_vcf")"
 }
