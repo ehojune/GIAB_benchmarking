@@ -127,6 +127,10 @@ bench_sv_done() {
 # p2_job_alive는 preflight 때 뜬 qstat 스냅샷을 보므로 방금 넣은 잡을 못 본다 — 입력에서 잘라낸다.
 dedup_dsids() { awk 'NF && !seen[$0]++'; }
 
+# 잡 번호가 아직 큐에 있나 (preflight에서 뜬 스냅샷 기준). lib.sh의 p2_job_state 는 dsid로 찾지만
+# 여기서는 디렉토리 이름에 박힌 번호로 직접 봐야 한다.
+p2_sge_queued() { echo "${P2_QSTAT:-}" | awk -v j="$1" 'NR>2 && $1==j {f=1} END {exit !f}'; }
+
 list_all() {
     printf '%-46s %-5s %-7s %-7s %-8s %s\n' dsid chem sv_vcf truth truvari dup_of
     local dsid r sample dataset dup chem t v b
@@ -192,15 +196,6 @@ submit_one() {
 
     base="$RUN_BASE/$sample/ONT/$dataset"; out="$base/$BENCH_SV_SUB"
     mkdir -p "$base/05_BENCH" "$INFRA/launch/svbench.$dsid"
-    # 여기 왔다는 건 이 dsid로 살아 있는 잡이 없다는 뜻이다(위의 p2_job_alive 통과).
-    # 그러면 남아 있는 inprogress/prev 디렉토리는 전부 죽은 잡의 잔여물이다 — SIGKILL이면
-    # 잡 안의 trap이 못 돌기 때문에 생긴다. 쌓이면 결과 파일시스템을 갉아먹으므로 여기서 치운다.
-    local stale
-    for stale in "$out".inprogress.* "$out".prev.*; do
-        [ -d "$stale" ] || continue
-        echo "  치움: $(basename "$stale") (죽은 잡의 잔여물)"
-        rm -rf "$stale"
-    done
     job="$INFRA/jobs/svbench.$dsid.sh"
     simg=$(p2_img_path "$TRUVARI_IMG")
     # refine은 bench의 --refine 대신 별도 단계로 돌린다. bench의 --refine 은 내부에서
@@ -285,7 +280,7 @@ fi
 # 결과가 한 단계 중첩된 채 "ALL DONE"이 찍힌다. -T 는 그 경우 실패한다.
 if ! mv -T "\$WORK" "$out"; then
     echo "ERROR: 결과 공개 실패 — \$WORK 를 $out 로 못 옮겼다"
-    [ -n "\$PREV" ] && mv -T "\$PREV" "$out"   # 옛 결과를 되돌린다
+    if [ -n "\$PREV" ]; then mv -T "\$PREV" "$out"; fi   # 옛 결과를 되돌린다
     exit 1
 fi
 trap - EXIT
@@ -302,6 +297,22 @@ EOF
     if [ "${DRY:-0}" = 1 ]; then
         echo "DRY $dsid: $job 생성만 함 (refine:${BENCH_SV_REFINE:-1})"; return 0
     fi
+
+    # 죽은 잡이 남긴 작업 디렉토리를 치운다. SIGKILL이면 잡 안의 EXIT trap이 못 돌아 남는다.
+    # **DRY 반환 뒤에 둔다** — DRY는 미리보기인데 여기서 rm -rf 를 하면 미리보기가 파괴적이 된다.
+    # 판정은 dsid 단위 p2_job_alive 가 아니라 디렉토리 이름 끝의 잡 번호로 한다. jobid 파일
+    # 기록이 실패한 잡은 살아 있어도 alive 판정을 못 받아서, 그 잡이 지금 쓰는 디렉토리를 지운다.
+    local stale sj
+    for stale in "$out".inprogress.* "$out".prev.*; do
+        [ -d "$stale" ] || continue          # nullglob이 꺼져 있어 매치가 없으면 패턴이 그대로 온다
+        sj="${stale##*.}"
+        if [[ "$sj" =~ ^[0-9]+$ ]] && p2_sge_queued "$sj"; then
+            echo "  건너뜀: $(basename "$stale") — 잡 $sj 가 아직 큐에 있다"; continue
+        fi
+        echo "  치움: $(basename "$stale") (죽은 잡의 잔여물)"
+        rm -rf "$stale"
+    done
+
     # 호출부가 실패를 모아 처리하므로 errexit에 기대지 않고 qsub 결과를 직접 본다.
     local qout jid
     if ! qout=$(qsub "$job" < /dev/null 2>&1); then   # stderr 까지 잡아야 FAIL 메시지가 쓸모 있다
