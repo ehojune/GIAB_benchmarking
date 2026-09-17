@@ -35,7 +35,9 @@ nextflow -version | grep -m1 version || true
 echo "== [2/5] Singularity 이미지 ($NXF_SINGULARITY_CACHEDIR) =="
 command -v singularity >/dev/null || { echo "ERROR: singularity가 PATH에 없음"; exit 1; }
 fail=0
-for uri in $(p2_container_uris); do
+# 파이프라인 이미지 + 벤치마킹 이미지(BENCH_IMAGES, env.sh). 계산 노드는 외부망이 없어 여기서 다 받아둔다.
+for uri in $( { p2_container_uris; printf '%s
+' ${BENCH_IMAGES:-}; } | sed '/^$/d' | sort -u); do
     img="$(p2_img_path "$uri")"
     if [ -s "$img" ]; then echo "  cached: $(basename "$img")"; continue; fi
     if [ "${SKIP_PULL:-0}" = 1 ]; then echo "  MISSING (SKIP_PULL): $uri"; fail=1; continue; fi

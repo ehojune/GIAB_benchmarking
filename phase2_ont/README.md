@@ -44,6 +44,9 @@ bash phase2_ont/scripts/30_verify_outputs.sh               # 완료 검증 (파�
 python phase2_ont/scripts/35_review_qc.py                  # QC 지표 리뷰 (이상치 표시)
 bash phase2_ont/scripts/36_multiqc_all.sh                  # 전 런을 MultiQC 리포트 하나로
 python phase2_ont/scripts/50_update_catalog.py             # 완료분 → 카탈로그+README 표, git diff 보고 커밋
+bash phase2_ont/scripts/60_benchmark.sh --list             # 정확도 평가 대상 확인 (truth set 유무)
+bash phase2_ont/scripts/60_benchmark.sh --ready            # hap.py 제출 (HG001~HG007 8런)
+bash phase2_ont/scripts/60_benchmark.sh --collect          # 결과를 한 TSV로 모음
 ```
 
 - **`nextflow` 를 직접 부르지 말 것.** 서버 기본은 26.x이고 strict config 파서가 `def` 선언을 거부한다.
@@ -129,6 +132,29 @@ bash   phase2_ont/scripts/36_multiqc_all.sh                 # 전 런 → MultiQ
 **남은 열린 질문은 ts/tv다.** 전 런이 2.0~2.1보다 낮다(R9 1.86~1.97, R10 1.65~1.73) = FP 과다
 신호인데, 코호트 전체가 같이 낮아 개별 런 게이트로는 못 잡는다. truth set 대비 hap.py가 필요하고
 phase2에는 아직 그 단계가 없다 (phase1은 `60_benchmark.sh`).
+
+## 정확도 평가 ([60_benchmark.sh](scripts/60_benchmark.sh))
+
+GIAB truth set 대비 hap.py. phase1의 같은 스크립트와 구조가 같고 ONT 차이만 아래에 적었다.
+
+| | |
+|---|---|
+| 대상 | **HG001~HG007 8런**. HG008 6런은 germline truth가 없어 자동으로 빠진다 |
+| caller | 런마다 `dv_model` 열로 정한다 — R9는 Clair3 단독, R10은 Clair3+DeepVariant |
+| 입력 | `03_VCF/<caller>/*.vcf.gz` **원본**. hap.py가 FILTER를 자체 처리해 ALL/PASS 행을 둘 다 내므로 재실행이 필요 없다 |
+| 산출 | `<dataset>/05_BENCH/happy/<id>.<caller>.summary.csv` → `--collect`가 `phase2_bench_summary.tsv`로 모은다 |
+| 잡 크기 | `BENCH_SLOTS=8` / `BENCH_VMEM=32G` (hap.py는 병렬성이 낮다) |
+
+**phase2에서 DeepVariant는 벤치마크되지 않는다.** DV가 도는 건 R10 6런뿐인데 그게 전부 HG008이고,
+HG008에는 germline truth가 없다 — 매니페스트에 있는 HG008 draft benchmark는 `somatic-stvar`/`CNV`라
+단일 샘플 germline VCF 평가에 못 쓴다. 스크립트는 `dv_model`을 보고 자동 판정하므로 나중에 HG008
+germline truth가 생기면 코드 수정 없이 DV까지 평가된다.
+
+따라서 [열린 질문인 ts/tv](../docs/reference/2026-08-27-ont-qc-first-pass.md)는 이 단계로 **R9 8런까지만**
+답이 나온다. R10의 더 낮은 ts/tv(1.65~1.73)는 미해결로 남는다.
+
+**SV(Sniffles2)는 아직이다.** Truvari 이미지는 `env.sh`에 핀해 뒀고, HG002는 공식 SV benchmark가
+있으므로 그쪽부터 붙이면 된다.
 
 ## 자원 실측은 아직 없다
 
