@@ -2,8 +2,10 @@
 # phase3 외부 숏리드를 받는다 (nbb2 로그인 노드). 대상·크기·URL·md5는 ext_manifest.tsv가 전부.
 #
 # 왜 외부인가: (1) HG002/3/4 NovaSeq 6000 PCR-free 30x는 GIAB FTP에 없고 Google 공개 버킷(brain-genomics-public)에 있다.
-# 업체(gd001~004) 산출물과 장비·리드 길이·깊이·PCR-free가 맞는 유일한 공개 트리오다.
+# 업체(gd001~004, NovaSeq X/X Plus) 산출물과 Illumina·2x151·PCR-free·30x가 맞는 유일한 공개 트리오다(화학은 SBS vs XLEAP-SBS로 다름 —
+# 화학까지 맞춘 단일 샘플 대조군은 HG002 NovaSeq X 30x, 아래 세 번째 출처).
 # (2) HiSeq 30x 서브샘플은 GIAB FTP에 HG002만 있고, 그 README가 HG003/HG004 사본을 HPRC S3로 가리킨다.
+# (3) HG002 NovaSeq X 30x는 Weill Cornell PRJNA1427896을 Google이 재배포한 것이다(TruSeq PCR-free, 2x150).
 #
 #   bash scripts/02_fetch_external_reads.sh                 전부 받고 검증
 #   VERIFY_ONLY=1 bash scripts/02_fetch_external_reads.sh   받지 않고 상태만 점검
