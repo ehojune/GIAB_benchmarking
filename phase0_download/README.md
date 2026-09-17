@@ -182,7 +182,9 @@ FTP에만 있는 것은 `current.tree`(2025-02 정지) 에 없어 보이지 않�
 나머지는 그 전부터 FTP에 있었다.
 
 받기: `TOOL=s3 JOBS=8 bash phase0_download/scripts/run_priority.sh` 를 다시 돌리면 신규분만 받는다(기존은 크기 일치로 스킵).
-제외 결정 반영 후 실제 내려받을 양은 **8,954 files / 8.67 TiB** (release 1,577 files / 41.4 GiB + data 7,377 → 3,182 files / 8.63 TiB).
+제외 결정 반영 후 실제 내려받을 양은 **4,759 files / 8.67 TiB** (release 1,577 files / 41.4 GiB + data 3,182 files / 8.63 TiB).
+2026-08-30 완료 시점(커밋 `2fe9c2b`, 76,595 files / 105.11 TiB)과 현재 manifest(81,302 files / 113.78 TiB)를 파일 단위로 대조한 값이다.
+크기가 바뀌어 다시 받는 파일은 8건(문서류, 44 KB), manifest에서 빠졌지만 디스크에 남는 파일은 52건이다.
 
 **S3 미러에 신규 데이터가 없다** (2026-09-17 표본 96건 중 1건만 200, 용량 상위 25건은 0건).
 `TOOL=s3`이어도 거의 전부 `S3 miss → FTP fallback` 으로 wget을 타므로 실측 83 MB/s가 아니라 FTP 속도로 계산해야 한다.
