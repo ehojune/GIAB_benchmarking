@@ -55,12 +55,14 @@ check_md5() {
     echo "  md5 OK"
 }
 
-rc=0
+[ -s "$MAN" ] || { echo "ERROR: 매니페스트 없음 또는 비어 있음: $MAN"; exit 1; }
+rc=0; n_sel=0
 # 탭은 IFS 공백류라 빈 md5 칸(탭 두 개 연속)이 접혀 필드가 밀린다. 0x1f로 바꿔 읽는다.
 while IFS=$'\x1f' read -r dsid relpath bytes url md5 kind note; do
     [ -z "${dsid:-}" ] && continue
     [ -n "${DSID:-}" ] && [ "$dsid" != "$DSID" ] && continue
     [ "$kind" != reads ] && continue
+    n_sel=$((n_sel+1))
     out="$GIAB_ROOT/$relpath"
     mkdir -p "$(dirname "$out")"
     have=-1
@@ -85,8 +87,11 @@ while IFS=$'\x1f' read -r dsid relpath bytes url md5 kind note; do
 done < <(awk -F'\t' -v OFS=$'\x1f' 'NR>1 && NF {$1=$1; print}' "$MAN")
 
 echo
+if [ "$n_sel" = 0 ]; then
+    echo "ERROR: 검사한 파일이 0개 — DSID(${DSID:-all})가 매니페스트에 없거나 kind=reads 행이 없다"; exit 1
+fi
 if [ "$rc" = 0 ]; then
-    echo "완료. samplesheets/HG00?.NovaSeq_PCRfree_30x.csv, HG003|HG004.Illumina_PCRfree_30x.csv 의 경로가 이제 실존한다."
+    echo "완료 ($n_sel files). samplesheets/HG00?.NovaSeq_PCRfree_30x.csv, HG003|HG004.Illumina_PCRfree_30x.csv 의 경로가 이제 실존한다."
 else
     echo "일부 실패 (위 ERROR 확인). 재실행하면 이어받는다."
 fi
