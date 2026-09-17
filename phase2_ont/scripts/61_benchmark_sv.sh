@@ -70,34 +70,40 @@ sv_truth() {
 
 # ALT=* 를 걸러낸 truth 경로를 낸다. 없으면 만든다 (로그인 노드, bcftools 컨테이너).
 sv_truth_filtered() {
-    local src=$1 dst bt
-    # dst를 위의 local 줄에서 같이 잡으면 안 된다 — local은 빌트인이라 인자를 전부 먼저 확장한 뒤
-    # 대입한다. 그 시점엔 src가 아직 없어서 경로가 ".noast.vcf.gz"로 뭉개진다(set -u면 에러까지).
-    dst="$TRUTH_CACHE/$(basename "${src%.vcf.gz}").noast.vcf.gz"
-    if [ -s "$dst" ] && [ -s "$dst.tbi" ]; then echo "$dst"; return 0; fi
+    local src=$1 stem name dir tmp bt
+    # stem/name/dir 을 위의 local 줄에서 같이 잡으면 안 된다 — local은 빌트인이라 인자를 전부 먼저
+    # 확장한 뒤 대입한다. 그 시점엔 src가 아직 없어서 경로가 뭉개진다(set -u면 에러까지).
+    stem="$(basename "${src%.vcf.gz}").noast"
+    name="$stem.vcf.gz"
+    # VCF와 인덱스를 **디렉토리 하나에** 담고 그 디렉토리를 통째로 rename해 공개한다.
+    # 파일 둘을 따로 옮기면 두 세션이 엇갈렸을 때 A의 VCF에 B의 인덱스가 붙을 수 있다 —
+    # bcftools가 헤더에 실행 명령(임시 경로 포함)을 적으므로 같은 입력이어도 바이트가 다르고,
+    # 그러면 인덱스 오프셋이 어긋나 조용히 엉뚱한 레코드를 읽는다. 디렉토리 rename은 원자적이다.
+    dir="$TRUTH_CACHE/$stem.d"
+    if [ -s "$dir/$name" ] && [ -s "$dir/$name.tbi" ]; then echo "$dir/$name"; return 0; fi
     # DRY는 아무것도 만들지 않는다 — 잡 스크립트가 가리킬 경로만 알려준다.
     if [ "${DRY:-0}" = 1 ]; then
-        echo "  (DRY) truth 캐시 미생성 — 실제 실행 때 만든다: $dst" >&2
-        echo "$dst"; return 0
+        echo "  (DRY) truth 캐시 미생성 — 실제 실행 때 만든다: $dir/$name" >&2
+        echo "$dir/$name"; return 0
     fi
     bt="$(p2_img_path "$(p2_container_uris | grep '/bcftools:')")"
     [ -s "$bt" ] || { echo "ERROR: bcftools 컨테이너가 없다 ($bt) — 01_prepare_login_node.sh 먼저" >&2; return 1; }
     mkdir -p "$TRUTH_CACHE"
-    echo "  ALT=* 를 걸러 truth 캐시 생성 (1회): $(basename "$dst")" >&2
-    # 중간에 죽어도 반쪽짜리가 캐시로 남지 않게 임시 이름으로 만들고 마지막에 옮긴다.
-    # 임시 이름에 PID를 넣는 이유: 두 세션이 동시에 돌면 같은 .tmp 를 서로 자르고 덮어써
-    # 잘린 VCF에 남의 인덱스가 붙은 채로 공개될 수 있다.
-    local tmp="$dst.tmp.$$"
+    echo "  ALT=* 를 걸러 truth 캐시 생성 (1회): $stem.d/" >&2
+    tmp="$TRUTH_CACHE/.build.$stem.$$"
+    rm -rf "$tmp"; mkdir -p "$tmp" || { echo "ERROR: 작업 디렉토리 생성 실패 — $tmp" >&2; return 1; }
     singularity exec -B "$GIAB_ROOT:$GIAB_ROOT" -B "$INFRA:$INFRA" "$bt" \
-        bcftools view -e 'ALT="*"' -Oz -o "$tmp" "$src" >&2 \
-        || { rm -f "$tmp"; echo "ERROR: bcftools view 실패 — $src" >&2; return 1; }
-    singularity exec -B "$INFRA:$INFRA" "$bt" tabix -f -p vcf "$tmp" >&2 \
-        || { rm -f "$tmp" "$tmp.tbi"; echo "ERROR: tabix 실패 — $tmp" >&2; return 1; }
-    # .tbi 를 먼저 공개한다 — 위의 캐시 판정이 vcf.gz + .tbi 를 둘 다 보므로,
-    # 이 순서라야 "둘 다 있다"가 곧 "완성됐다"가 된다. mv 실패를 삼키면 안 된다.
-    mv "$tmp.tbi" "$dst.tbi" || { rm -f "$tmp" "$tmp.tbi"; echo "ERROR: 인덱스 공개 실패 — $dst.tbi" >&2; return 1; }
-    mv "$tmp" "$dst"         || { rm -f "$tmp"; echo "ERROR: truth 공개 실패 — $dst" >&2; return 1; }
-    echo "$dst"
+        bcftools view -e 'ALT="*"' -Oz -o "$tmp/$name" "$src" >&2 \
+        || { rm -rf "$tmp"; echo "ERROR: bcftools view 실패 — $src" >&2; return 1; }
+    singularity exec -B "$INFRA:$INFRA" "$bt" tabix -f -p vcf "$tmp/$name" >&2 \
+        || { rm -rf "$tmp"; echo "ERROR: tabix 실패 — $tmp/$name" >&2; return 1; }
+    if ! mv -T "$tmp" "$dir" 2>/dev/null; then
+        # 경쟁에서 졌다 — 상대가 이미 완성본을 놓았어야 한다. 아니면 진짜 실패다.
+        rm -rf "$tmp"
+        [ -s "$dir/$name" ] && [ -s "$dir/$name.tbi" ] \
+            || { echo "ERROR: truth 캐시 공개 실패 — $dir" >&2; return 1; }
+    fi
+    echo "$dir/$name"
 }
 
 sv_call_vcf() {  # sample dataset -> Sniffles VCF 경로 (존재 여부는 호출부에서)
@@ -186,6 +192,15 @@ submit_one() {
 
     base="$RUN_BASE/$sample/ONT/$dataset"; out="$base/$BENCH_SV_SUB"
     mkdir -p "$base/05_BENCH" "$INFRA/launch/svbench.$dsid"
+    # 여기 왔다는 건 이 dsid로 살아 있는 잡이 없다는 뜻이다(위의 p2_job_alive 통과).
+    # 그러면 남아 있는 inprogress/prev 디렉토리는 전부 죽은 잡의 잔여물이다 — SIGKILL이면
+    # 잡 안의 trap이 못 돌기 때문에 생긴다. 쌓이면 결과 파일시스템을 갉아먹으므로 여기서 치운다.
+    local stale
+    for stale in "$out".inprogress.* "$out".prev.*; do
+        [ -d "$stale" ] || continue
+        echo "  치움: $(basename "$stale") (죽은 잡의 잔여물)"
+        rm -rf "$stale"
+    done
     job="$INFRA/jobs/svbench.$dsid.sh"
     simg=$(p2_img_path "$TRUVARI_IMG")
     # refine은 bench의 --refine 대신 별도 단계로 돌린다. bench의 --refine 은 내부에서
@@ -222,6 +237,9 @@ mkdir -p "\$TMPDIR"
 # 이러면 중간에 죽은 실행이 반쪽 summary.json 을 남기지 않아 "완료"로 오판되지도 않는다.
 WORK="$out.inprogress.\$JOB_ID"
 rm -rf "\$WORK"
+# 실패하면 작업 디렉토리를 치운다. 안 그러면 재시도마다 JOB_ID가 바뀌어 쓰레기가 쌓인다.
+# SIGKILL이면 trap이 안 돌므로, 제출 쪽에서도 죽은 잡의 잔여물을 한 번 훑어 지운다.
+trap '[ -d "\$WORK" ] && rm -rf "\$WORK"' EXIT
 
 run_truvari() {
     singularity exec \\
@@ -255,8 +273,24 @@ if [ "$do_refine" = 1 ]; then
 fi
 
 # 여기까지 왔으면 전 단계가 성공했다 (set -e). 이제 공개한다.
-rm -rf "$out"
-mv "\$WORK" "$out"
+# 옛 결과를 먼저 지우지 않는다 — 새 것을 놓기 전에 지웠다가 mv가 실패하면 둘 다 잃는다.
+# 옆으로 치워 두고, 새 것이 자리를 잡은 뒤에 지운다.
+PREV=""
+if [ -e "$out" ]; then
+    PREV="$out.prev.\$JOB_ID"
+    rm -rf "\$PREV"
+    mv -T "$out" "\$PREV"
+fi
+# -T 가 중요하다. 목적지가 디렉토리로 존재하면 그냥 mv 는 **그 안으로** 옮겨 놓고 성공을 낸다 —
+# 결과가 한 단계 중첩된 채 "ALL DONE"이 찍힌다. -T 는 그 경우 실패한다.
+if ! mv -T "\$WORK" "$out"; then
+    echo "ERROR: 결과 공개 실패 — \$WORK 를 $out 로 못 옮겼다"
+    [ -n "\$PREV" ] && mv -T "\$PREV" "$out"   # 옛 결과를 되돌린다
+    exit 1
+fi
+trap - EXIT
+# test-and-rm 을 && 로 이어 마지막 명령으로 쓰면 PREV가 빌 때 test가 1을 내고 set -e 가 잡는다.
+if [ -n "\$PREV" ]; then rm -rf "\$PREV"; fi
 
 echo "ALL DONE $dsid"
 EOF
