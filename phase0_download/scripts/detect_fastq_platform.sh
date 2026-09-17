@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # 리드 헤더 형식으로 FASTQ 한 개의 시퀀싱 플랫폼(Illumina/PacBio/ONT/MGI)을 추정한다.
 # 헤더가 모호하면 리드 길이(<1000bp 숏리드, >=1000bp 롱리드)로 폴백한다.
+# 표본(첫 200리드) 이후의 gzip 손상은 못 잡는다 — 전체 파일 무결성 검증은 이 스크립트의
+# 몫이 아니다 (md5_verify_all.sh / verify.sh 또는 `gzip -t`를 쓸 것).
 #
 # Usage:
 #   ./scripts/detect_fastq_platform.sh <fastq[.gz]>
