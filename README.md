@@ -622,6 +622,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-18 — phase2 ONT 파이프라인 **14/14 완료**(HG008T-p2 종료). QC 경고는 `N50미산출` 2건뿐이고 둘 다 R10 std 런이다(위상 자체는 정상 — whatshap 출력 원문 확인이 남았다). HG008T-p2가 전 코호트 최고 성적: 염기 매핑률 99.5%, 오류율 .0237, 77x.
 - 2026-09-18 — phase2 ONT 정확도 평가 첫 실측(hap.py 8런 + Truvari 2런, 10잡 전부 exit 0). **SNV는 전 런 F1 .986~.997로 쓸 만하고, indel은 베이스콜러가 지배한다** — 2026-08-27에 개수로 본 3.5배 격차가 truth 대비로는 FP 42배였고 guppy 4.2.2조차 recall .68~.75다. SV는 HG002 2런에서 refine이 F1을 4.8~5.1점 올렸다. **2026-08-27의 ts/tv 열린 질문은 R9에서 닫혔다**(FP가 벤치마크 구간 밖에 몰려 있다). R10 6런과 DeepVariant는 germline truth가 없어 구조적으로 평가 불가. 기록: [docs/runs/2026-09-18-phase2-ont-benchmark.md](docs/runs/2026-09-18-phase2-ont-benchmark.md), [수치](docs/reference/2026-09-18-ont-benchmark-first-results.md).
 - 2026-09-18 — phase0 다운로드 전량 완료. 2026-09 크롤로 늘어난 신규 4,759 files / 8.67 TiB를 받아 `verify.sh` 12개 카테고리 전부 100.0%, 합계 81,302/81,302 files · 116,509.5 GiB. 28시간 49분, 평균 92 MB/s — "S3에 신규가 없으니 며칠 잡으라"던 예측은 틀렸다(S3 실측 83 MB/s보다 빨랐다). 기록: [docs/runs/2026-09-18-phase0-download-complete.md](docs/runs/2026-09-18-phase0-download-complete.md).
 - 2026-09-17 — phase3 외부 리드 12 files / 359 GiB 다운로드·검증 완료(`02_fetch_external_reads.sh` 12/12 OK, ERROR 0, NovaSeq X 쌍은 SRA 헤더로 플랫폼 미상 경고 2건 — 예상대로). 24 실행 단위 전부 nbb2에 있다. PR #10.
