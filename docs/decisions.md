@@ -161,6 +161,34 @@
   ③ `02_fetch_external_reads.sh`가 DSID 오타·빈 매니페스트에서 0건 검사 후 exit 0 → 매니페스트 없음/0건 선택 시 exit 1.
   4라운드 approve("No material findings"). 남은 한계(Codex도 인정): HPRC 4건은 md5가 없어 크기·리드 길이·플랫폼 검증까지만.
 
+## 2026-09-18 — phase3 파이프라인 입력 디렉토리 이름과 링크 구조
+
+- 사용자 지정 이름 8개(`GIAB_publicdata_<dataset>`; Novaseq6000-PCRfree_30x, NovaseqX_30x, Hiseq_subsampled_30x, Hiseq_300x, Illumina_250PE,
+  MGISEQ2000-PCRfree, BGISEQ500, Element_AVITI). 업체 디렉토리 `G000-gd?-*/outcome/<sample>/<sample>_1.fastq.gz`와 같은 모양으로
+  `<dir>/outcome/<dir>_<HG00?>/` 아래에 원본 FASTQ 링크를 둔다. `scripts/03_make_pipeline_dirs.py`가 samplesheets에서 만든다.
+- 접두 대소문자: 사용자가 첫 항목은 `GIAB_publicData`, 나머지는 `GIAB_publicdata`로 적었다. 처음엔 다수인 `GIAB_publicdata`를 기본으로 두었으나
+  같은 날 사용자가 **`GIAB_publicData`로 통일**하라고 해 기본값을 바꿨다(`--prefix`로 변경 가능).
+- HiSeq300x는 링크 대신 **cat 병합**(사용자 결정, 같은 날): 샘플당 935~1,024쌍을 R1/R2 각 하나로 이어붙여 `<sample>_1/2.fastq.gz`를 만든다.
+  gzip은 멀티멤버라 유효하고, R1/R2 리스트를 같은 순서(unit, 경로)로 써서 짝이 어긋나지 않게 했다. 출력 크기 = 입력 합으로 검증, 크기 맞으면 SKIP.
+  2.4 TiB 실사본이 생기고 플로우셀·레인 read group은 FASTQ 파일 단위에서는 사라진다(리드 이름에는 남음). 실행은 nohup/qsub으로 사용자가.
+- 첫 실제 실행(nbb2, 같은 날)에서 링크 3개 데이터셋만 만들고 멈췄다: 2x250의 samplesheet unit이 레인(`L001`)뿐이라 레인당 분할 파일(_001~_017)과
+  HG003/4의 라이브러리 2개(D2_S1/D2_S2, D3_S1/D3_S3)가 같은 링크 이름으로 겹쳤고, 스크립트가 "다른 대상을 가리킨다"로 정지했다.
+  고친 것: (1) `make_samplesheets.py`의 2x250 unit을 `D?_S?.L00?`로(run_table units HG002 2, HG003 4, HG004 4), (2) `03_make_pipeline_dirs.py`는 unit이
+  반복되면 원본 분할 번호를 덧붙이고, 만들기 전에 링크 이름 유일성을 검사해 겹치면 아무것도 만들지 않고 멈춘다, (3) `--prune`으로 계획에 없는 옛 심볼릭 링크를 지운다.
+  교훈: "unit = read group"과 "파일 쌍"은 다르다 — 분할 FASTQ가 있으면 read group 하나에 쌍이 여럿이다. 이름 유일성은 가정하지 말고 검사한다.
+- (같은 날, 확장) 사용자: "결국 병합을 해야 되는데 일일이 하기보다 한번에 각각 알아서". 파이프라인 입력은 업체와 같이 **샘플당 한 쌍**이어야 하므로
+  HiSeq300x뿐 아니라 쌍이 둘 이상인 모든 샘플(2x250 18~35쌍, MGISEQ 2~4, BGISEQ 2, AVITI Std+Lng 2)을 cat 병합한다. 1쌍짜리(NovaSeq 6000/X, HiSeq 30x)만 링크.
+  실행은 `--run-concat --jobs N`(로그인 노드, 병렬 N, 끝까지 기다림) 또는 `--qsub`(샘플별 SGE 잡, shepherd.q, phase2와 같은 호스트 제한). 완료된 샘플(크기 일치)은 건너뛴다.
+  AVITI는 인서트 ~400 bp와 ~1300 bp 라이브러리가 한 파일에 섞인다 — 파이프라인 해석에 남길 것. 앞 항목의 unit 기반 링크 이름 규칙은 이걸로 사실상 쓰이지 않게 됐지만
+  1쌍 판정·유일성 검사는 남겼다.
+- 첫 병합 실행(nbb2, 같은 날)에서 샘플마다 rc=141로 FAIL 집계. 원인은 concat.sh 끝의 `zcat | head -1`(첫 리드 확인) — head가 먼저 끝나 zcat이 SIGPIPE,
+  `set -eo pipefail`이 그 자리에서 스크립트를 죽였다. 병합(cat·크기 검증·mv)은 그 앞에서 이미 끝나 파일은 정상. `( zcat || true ) | head -1`로 고쳤고
+  러너는 마지막에 "완료 N/15(출력 크기 = 입력 합)"를 따로 센다. 같은 날 다른 에이전트가 HARVEST에 적어 둔 pipefail 함정과 같은 뿌리다.
+- 링크는 심볼릭 링크가 기본(원본이 어느 파일시스템에 있든 동작). `--hard`는 같은 파일시스템일 때만.
+- 샘플당 여러 쌍(HiSeq300x 최대 1,024쌍)은 `<sample>_<unit>_1/2.fastq.gz`로 이름을 유일하게 한다. 원본 파일명은 플로우셀이 다르면 겹친다
+  (`2A1_CGATGT_L001_R1_001.fastq.gz`가 12개 플로우셀에 있다). 파이프라인이 샘플 dir 안의 여러 쌍을 병합하는지는 사용자가 확인.
+- 링크는 데이터 복제가 아니라서 원본(`/BiO/scratch/ehojune/GIAB_benchmark/…`)을 옮기면 깨진다. 원본 위치를 바꾸면 스크립트를 다시 돌린다(멱등).
+
 ## 2026-09-17 — phase2(ONT)에 hap.py 정확도 평가 단계
 
 phase2(ONT)에 hap.py 정확도 평가 단계를 붙였다(`phase2_ont/scripts/60_benchmark.sh`). phase1의 60을 본떴고

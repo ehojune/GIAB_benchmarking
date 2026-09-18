@@ -31,8 +31,8 @@ def unit_of(dataset, path):
     if dataset == "HiSeq300x":            # .../HG002_HiSeq300x_fastq/<flowcell>/Project_*/Sample_2A1/2A1_CGATGT_L001_R1_001.fastq.gz
         fc = p[5].split("_")[-1]; lane = re.search(r"_(L\d{3})_", f).group(1); smp = p[7].replace("Sample_", "")
         return f"{fc}.{lane}.{smp}"
-    if dataset == "Illumina_2x250":       # reads/D1_S1_L001_R1_001.fastq.gz
-        return re.search(r"_(L\d{3})_", f).group(1)
+    if dataset == "Illumina_2x250":       # reads/D1_S1_L001_R1_001.fastq.gz — HG003/4는 라이브러리(S1/S2, S1/S3)가 둘이라 D?_S? 까지 unit에 넣는다
+        m = re.search(r"^(D\d+_S\d+)_(L\d{3})_", f); return f"{m.group(1)}.{m.group(2)}"
     if dataset in ("BGISEQ500", "MGISEQ2000_PCRfree"):   # ..._CL100076190_L01_read_1.fq.gz / ..._V100002807_L03_1.fq.gz
         m = re.search(r"_([A-Z]+\d+)_(L\d{2})_", f); lib = p[5] if dataset.startswith("MGISEQ") else ""
         return f"{m.group(1)}.{m.group(2)}" + (f".{lib}" if lib else "")
