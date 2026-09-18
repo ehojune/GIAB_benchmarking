@@ -22,7 +22,7 @@ concat_R1.list / concat_R2.list(같은 순서)와 concat.sh를 쓰고, `--run-co
 원본은 samplesheets/<dsid>.csv 의 절대경로 그대로다(DATA_ROOT=/BiO/scratch/ehojune/GIAB_benchmark). 재실행은 멱등이다 —
 같은 대상을 가리키는 링크는 건너뛰고, 다른 대상을 가리키면 에러로 멈춘다. concat.sh도 출력 크기가 맞으면 건너뛴다.
 """
-import argparse, csv, os, sys
+import argparse, csv, os, re, sys
 from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
@@ -66,6 +66,7 @@ ap.add_argument("--prefix", default="GIAB_publicData", help="디렉토리·샘�
 ap.add_argument("--only", action="append", default=[], help="이 데이터셋 디렉토리 이름(뒷부분)만. 반복 가능")
 ap.add_argument("--hard", action="store_true", help="심볼릭 링크 대신 하드링크(ln). 원본과 같은 파일시스템이어야 한다")
 ap.add_argument("--run-concat", action="store_true", help="HiSeq300x concat.sh를 여기서 순서대로 실행 (수 시간)")
+ap.add_argument("--prune", action="store_true", help="관리하는 샘플 dir 안에서 계획에 없는 심볼릭 링크를 지운다(일반 파일은 안 건드림) — 이름 규칙이 바뀐 뒤 재실행할 때")
 ap.add_argument("--dry-run", action="store_true", help="만들지 않고 계획만 출력")
 ap.add_argument("--sheets", default=SHEETS, help=argparse.SUPPRESS)   # 테스트용: samplesheet 디렉토리 바꿔치기
 a = ap.parse_args()
@@ -98,8 +99,18 @@ for fn in sorted(os.listdir(SHEETS)):
             missing += [f for pr in pairs for f in pr if not os.path.exists(f)]
         continue
     single = len(rows) == 1
+    # unit이 쌍마다 유일하지 않은 데이터셋(2x250: 레인당 분할 파일 _001/_002…)은 원본의 분할 번호를 덧붙여 이름을 가른다
+    unit_count = defaultdict(int)
     for r in rows:
-        unit = "" if single else "_" + r["unit"].replace(".", "-")
+        unit_count[r["unit"]] += 1
+    seen_unit = defaultdict(int)
+    for r in rows:
+        u = r["unit"].replace(".", "-")
+        if unit_count[r["unit"]] > 1:
+            m = re.search(r"_R1_(\d+)\.fastq\.gz$", os.path.basename(r["fastq_1"]))
+            seen_unit[r["unit"]] += 1
+            u += "-" + (m.group(1) if m else f"{seen_unit[r['unit']]:03d}")
+        unit = "" if single else "_" + u
         for mate in ("1", "2"):
             src = r[f"fastq_{mate}"]
             link = os.path.join(sdir, f"{dname}_{sample}{unit}_{mate}.fastq.gz")
@@ -107,12 +118,25 @@ for fn in sorted(os.listdir(SHEETS)):
             if not a.dry_run and not os.path.exists(src):
                 missing.append(src)
 
+from collections import Counter
+dups = [l for l, c in Counter(l for l, _ in plan).items() if c > 1]
+if dups:
+    print(f"ERROR: 링크 이름이 겹친다 {len(dups)}개 (unit 규칙 확인). 처음 5개:", *dups[:5], sep="\n  "); sys.exit(1)
 if missing:
     print(f"ERROR: 원본 FASTQ {len(missing)}개가 없다 (DATA_ROOT 확인). 처음 5개:", *missing[:5], sep="\n  ")
     sys.exit(1)
 
-made = skipped = 0
+made = skipped = pruned = 0
 by_dir = defaultdict(int)
+planned = {os.path.abspath(l) for l, _ in plan}
+if a.prune and not a.dry_run:
+    for d in {os.path.dirname(l) for l, _ in plan}:
+        if not os.path.isdir(d):
+            continue
+        for fn in os.listdir(d):
+            f = os.path.join(d, fn)
+            if os.path.islink(f) and os.path.abspath(f) not in planned:
+                os.remove(f); pruned += 1; print(f"PRUNE {os.path.relpath(f, a.dest)}")
 for link, src in plan:
     by_dir[os.path.dirname(link)] += 1
     if a.dry_run:
@@ -143,7 +167,7 @@ for sdir, name, pairs in concat:
     os.chmod(sh, 0o755)
 
 n_ds = len({os.path.dirname(os.path.dirname(d)) for d in list(by_dir) + [c[0] for c in concat]})
-print(f"{'DRY-RUN ' if a.dry_run else ''}{len(plan)} links planned, {made} made, {skipped} already present, "
+print(f"{'DRY-RUN ' if a.dry_run else ''}{len(plan)} links planned, {made} made, {skipped} already present, {pruned} pruned, "
       f"{len(by_dir)} link sample dirs + {len(concat)} concat sample dirs, {n_ds} dataset dirs under {os.path.abspath(a.dest)}")
 for d in sorted(by_dir):
     print(f"  {os.path.relpath(d, a.dest)}  ({by_dir[d]} files)")
