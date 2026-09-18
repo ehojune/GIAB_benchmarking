@@ -130,11 +130,16 @@ bash   phase2_ont/scripts/36_multiqc_all.sh                 # 전 런 → MultiQ
   안에서 일치한다. caller 일치 판정을 `--pass-counts`에 묶어 둔 게 맞았다.
 - **R9 indel은 베이스콜러 버전이 지배한다** — guppy 3.2.x 1,751~1,969k vs 4.2.2 544~551k(3.5배).
   R9 indel 분석은 HG005~007(Guppy 4.2.2)에서만 신뢰할 만하다. SNV는 전 런 사용 가능.
+  (2026-09-18 truth 대비로 확인: 그 여분이 거의 전부 FP였다. **FP 기준으로는 3.5배가 아니라 42배**이고,
+  guppy 4.2.2조차 indel recall은 0.68~0.75다 — precision은 고쳐지지만 R9이 못 부르는 건 남는다.)
 - uBAM 진입 5런의 메틸 태그(MM) 보존율 **100%** — `-y` 경로가 의도대로 동작한다.
 
-**남은 열린 질문은 ts/tv다.** 전 런이 2.0~2.1보다 낮다(R9 1.86~1.97, R10 1.65~1.73) = FP 과다
-신호인데, 코호트 전체가 같이 낮아 개별 런 게이트로는 못 잡는다. truth set 대비 hap.py가 필요하고
-phase2에는 아직 그 단계가 없다 (phase1은 `60_benchmark.sh`).
+**ts/tv 열린 질문은 R9에서 답이 나왔다** (2026-09-18, `60_benchmark.sh` 실측). 전 런이 2.0~2.1보다
+낮은 게(R9 1.86~1.97, R10 1.65~1.73) FP 과다 신호인 건 맞는데, **그 FP가 벤치마크 구간 밖에 몰려 있다.**
+구간 안의 SNP precision은 0.990~0.997이다. HG005 기준 genome-wide 4.27M 중 구간에서 평가된 건
+3.28M이고 나머지 약 0.99M이 구간 밖인데, 구간 안을 2.1로 두면 전체 1.88이 되려면 구간 밖이
+ts/tv ≈ 1.15여야 한다 — FP가 섞인 값으로 자연스럽다. 콜러나 파이프라인 문제가 아니다.
+**R10(HG008 6런)은 truth가 없어 같은 방법을 못 쓴다 — 미해결.**
 
 ## 정확도 평가 ([60_benchmark.sh](scripts/60_benchmark.sh))
 
@@ -155,6 +160,19 @@ germline truth가 생기면 코드 수정 없이 DV까지 평가된다.
 
 따라서 [열린 질문인 ts/tv](../docs/reference/2026-08-27-ont-qc-first-pass.md)는 이 단계로 **R9 8런까지만**
 답이 나온다. R10의 더 낮은 ts/tv(1.65~1.73)는 미해결로 남는다.
+
+### 실측 (2026-09-18, 8런 전부 완료)
+
+| 베이스콜러 | SNP F1 | INDEL F1 | INDEL precision | INDEL FP |
+|---|---|---|---|---|
+| guppy 3.2.x · rel6 (HG001~HG004) | .986~.989 | .217~.228 | .146~.159 | 1.08~1.27M |
+| guppy 3.4.5 (HG002) | .995 | .556 | .560 | 234k |
+| guppy 4.2.2 (HG005~007) | .997 | .771~.822 | .896~.915 | 29~35k |
+
+**SNV는 전 런 쓸 만하고(F1 .986~.997) indel은 베이스콜러가 지배한다.** 2026-08-27에 개수로 추정한
+3.5배 격차는 truth 대비 **FP 42배**였다. precision은 베이스콜러로 6.3배 좋아지지만 recall은 1.8배에
+그쳐 guppy 4.2.2조차 .68~.75다 — R9이 못 부르는 indel은 남는다.
+전체 수치·자원 실측: [docs/reference/2026-09-18-ont-benchmark-first-results.md](../docs/reference/2026-09-18-ont-benchmark-first-results.md).
 
 ## SV 정확도 평가 ([61_benchmark_sv.sh](scripts/61_benchmark_sv.sh))
 
@@ -181,6 +199,18 @@ sizemin이 아니다. README가 "ALT=\*는 오분류되니 미리 걸러라"고 
 FP가 되어 수치가 실제보다 나쁘게 나온다. 다만 **기본 정렬기 poa는 머신 간 비결정적이다**(truvari 문서) —
 재현이 필요하면 `BENCH_SV_ALIGN=mafft`. `--collect`는 refine 전/후를 `stage` 열로 둘 다 내보내므로
 refine이 수치를 얼마나 움직였는지 보고 판단하면 된다.
+
+### 실측 (2026-09-18, 2런 전부 완료)
+
+| 런 | stage | precision | recall | F1 |
+|---|---|---|---|---|
+| HG002.guppy-V3.4.5 | bench → **refine** | .917 → **.939** | .706 → **.774** | .798 → **.849** |
+| HG002.UCSC_..._Promethion | bench → **refine** | .891 → **.914** | .690 → **.752** | .778 → **.825** |
+
+**refine이 F1을 4.8~5.1점 올린다 — 기본으로 켠 판단이 실측으로 뒷받침됐다.** 비용은 5분이다
+(잡 전체가 5~6.6분, maxvmem 67~73 GB). 설계 시점의 유일한 미지수였던 poa 런타임 걱정은 기우였다.
+recall .75가 상한이고 truth 28,123건 중 6,363건을 못 부른다. `refine` 행의 `gt_concordance`는
+truvari가 그 키를 안 내서 `NA`다.
 
 ## 자원 실측은 아직 없다
 

@@ -42,13 +42,13 @@ export TRUVARI_IMG="${TRUVARI_IMG:-quay.io/biocontainers/truvari:5.4.0--pyhdfd78
 export BENCH_IMAGES="${BENCH_IMAGES:-$HAPPY_IMG $TRUVARI_IMG}"
 # hap.py는 병렬성이 낮아 파이프라인 잡보다 작게 잡는다
 export BENCH_SLOTS="${BENCH_SLOTS:-8}"
-export BENCH_VMEM="${BENCH_VMEM:-32G}"
+export BENCH_VMEM="${BENCH_VMEM:-32G}"      # 실측 maxvmem 23.7~24.5 GB (2026-09-18, R9 8런)
 export BENCH_TRUTH_VER="${BENCH_TRUTH_VER:-v4.2.1}"   # germline truth set 판 (release/*/NISTv4.2.1/)
 
 # ---- SV 정확도 평가 (61_benchmark_sv.sh) ----
 # truvari refine의 기본 스레드는 4다(truvari 5.4.0 refine.py) — 슬롯을 더 줘도 안 쓴다.
 export BENCH_SV_SLOTS="${BENCH_SV_SLOTS:-8}"
-export BENCH_SV_VMEM="${BENCH_SV_VMEM:-32G}"
+export BENCH_SV_VMEM="${BENCH_SV_VMEM:-80G}"   # 실측 maxvmem 67~73 GB (2026-09-18, refine 포함)
 export BENCH_SV_TRUTH_VER="${BENCH_SV_TRUTH_VER:-v5.0q}"   # release/*/*/v5.0q/<sample>_GRCh38_v5.0q_stvar.*
 export BENCH_SV_REFINE="${BENCH_SV_REFINE:-1}"             # GIAB v5.0q README 권장. 0으로 끌 수 있다
 export BENCH_SV_ALIGN="${BENCH_SV_ALIGN:-}"                # refine 정렬기. 비우면 truvari 기본값 poa
@@ -57,12 +57,15 @@ export BENCH_SV_ARGS="${BENCH_SV_ARGS:-}"                  # truvari bench 추�
 # ---- SGE ----
 # 노드 실측(2026-08-21): shepherd-1-7/8/9 각 64코어 / 251.1 GB. h_vmem은 consumable=NO —
 # 스케줄러가 메모리를 예약하지 않으므로 노드당 잡 수는 슬롯으로만 통제된다.
+# **h_vmem은 강제 종료 한도도 아니다**(2026-09-18 실측): 32G로 선언한 truvari 잡이 maxvmem 73 GB를
+# 쓰고도 exit 0으로 끝났다. 즉 이 값은 문서일 뿐이고, 넘겨도 아무 일도 일어나지 않는다.
+# 그래도 실측에 맞춰 둔다 — 안 맞으면 다음 사람이 노드 용량을 잘못 계산한다.
 # octopus.q는 2026-08-22 기준 사용 불가 — shepherd 3대가 전부다.
 # ONT 기본값은 노드당 2잡(30x2=60슬롯, 110x2=220 GB). 프리셋은 env.local.sh.example.
 export SGE_QUEUE="${SGE_QUEUE:-shepherd.q}"
 export SGE_PE="${SGE_PE:-pe_slots}"
 export SGE_SLOTS="${SGE_SLOTS:-30}"
-export SGE_VMEM="${SGE_VMEM:-115G}"                        # 잡별 상한(넘으면 kill). 예약 아님
+export SGE_VMEM="${SGE_VMEM:-115G}"                        # 표시용. 예약도 상한도 아니다 (위 주석)
 export SGE_HOSTS="${SGE_HOSTS:-(shepherd-1-7|shepherd-1-8|shepherd-1-9)}"
 
 # 잡 안에서 Nextflow local executor가 동시에 잡을 수 있는 자원 상한 (kobic.config가 읽음).
