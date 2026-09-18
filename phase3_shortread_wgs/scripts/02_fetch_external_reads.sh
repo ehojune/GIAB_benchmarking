@@ -2,8 +2,10 @@
 # phase3 외부 숏리드를 받는다 (nbb2 로그인 노드). 대상·크기·URL·md5는 ext_manifest.tsv가 전부.
 #
 # 왜 외부인가: (1) HG002/3/4 NovaSeq 6000 PCR-free 30x는 GIAB FTP에 없고 Google 공개 버킷(brain-genomics-public)에 있다.
-# 업체(gd001~004) 산출물과 장비·리드 길이·깊이·PCR-free가 맞는 유일한 공개 트리오다.
+# 업체(gd001~004, NovaSeq X/X Plus) 산출물과 Illumina·2x151·PCR-free·30x가 맞는 유일한 공개 트리오다(화학은 SBS vs XLEAP-SBS로 다름 —
+# 화학까지 맞춘 단일 샘플 대조군은 HG002 NovaSeq X 30x, 아래 세 번째 출처).
 # (2) HiSeq 30x 서브샘플은 GIAB FTP에 HG002만 있고, 그 README가 HG003/HG004 사본을 HPRC S3로 가리킨다.
+# (3) HG002 NovaSeq X 30x는 Weill Cornell PRJNA1427896을 Google이 재배포한 것이다(TruSeq PCR-free, 2x150).
 #
 #   bash scripts/02_fetch_external_reads.sh                 전부 받고 검증
 #   VERIFY_ONLY=1 bash scripts/02_fetch_external_reads.sh   받지 않고 상태만 점검
@@ -55,12 +57,14 @@ check_md5() {
     echo "  md5 OK"
 }
 
-rc=0
+[ -s "$MAN" ] || { echo "ERROR: 매니페스트 없음 또는 비어 있음: $MAN"; exit 1; }
+rc=0; n_sel=0
 # 탭은 IFS 공백류라 빈 md5 칸(탭 두 개 연속)이 접혀 필드가 밀린다. 0x1f로 바꿔 읽는다.
 while IFS=$'\x1f' read -r dsid relpath bytes url md5 kind note; do
     [ -z "${dsid:-}" ] && continue
     [ -n "${DSID:-}" ] && [ "$dsid" != "$DSID" ] && continue
     [ "$kind" != reads ] && continue
+    n_sel=$((n_sel+1))
     out="$GIAB_ROOT/$relpath"
     mkdir -p "$(dirname "$out")"
     have=-1
@@ -85,8 +89,11 @@ while IFS=$'\x1f' read -r dsid relpath bytes url md5 kind note; do
 done < <(awk -F'\t' -v OFS=$'\x1f' 'NR>1 && NF {$1=$1; print}' "$MAN")
 
 echo
+if [ "$n_sel" = 0 ]; then
+    echo "ERROR: 검사한 파일이 0개 — DSID(${DSID:-all})가 매니페스트에 없거나 kind=reads 행이 없다"; exit 1
+fi
 if [ "$rc" = 0 ]; then
-    echo "완료. samplesheets/HG00?.NovaSeq_PCRfree_30x.csv, HG003|HG004.Illumina_PCRfree_30x.csv 의 경로가 이제 실존한다."
+    echo "완료 ($n_sel files). samplesheets/HG00?.NovaSeq_PCRfree_30x.csv, HG003|HG004.Illumina_PCRfree_30x.csv 의 경로가 이제 실존한다."
 else
     echo "일부 실패 (위 ERROR 확인). 재실행하면 이어받는다."
 fi

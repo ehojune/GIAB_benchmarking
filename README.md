@@ -6,11 +6,11 @@ GIAB 9개 샘플(HG001–HG007 germline, HG008·HG009 tumor-normal)의 **전체 
 
 | | |
 |---|---|
-| 데이터 규모 | **435 datasets / 81,302 files / 125.1 TB** (2026-08-13 HEAD 검증 + 2026-09-16 FTP `release/`·`data/` 라이브 크롤: HG002 v5.0q·stratifications v3.6, HG008/HG009 신규 데이터셋 추가. 2026-09-17에 받지 않기로 한 3건 12,423 files / 10.7 TiB는 [manifests/declined_by_decision.tsv](phase0_download/manifests/declined_by_decision.tsv)에 목록만 남기고 제외) |
+| 데이터 규모 | **441 datasets / 81,314 files / 125.5 TB** (2026-08-13 HEAD 검증 + 2026-09-16 FTP `release/`·`data/` 라이브 크롤: HG002 v5.0q·stratifications v3.6, HG008/HG009 신규 데이터셋 추가. 2026-09-17 GIAB FTP 밖 숏리드 6행 359 GiB(`external/`, 아래 "외부 보충 리드") 포함. 2026-09-17에 받지 않기로 한 3건 12,423 files / 10.7 TiB는 [manifests/declined_by_decision.tsv](phase0_download/manifests/declined_by_decision.tsv)에 목록만 남기고 제외) |
 | 다운로드 | [phase0_download/](phase0_download/) — 스크립트, 매니페스트, 속도·용량 계획 |
 | PacBio HiFi 처리 | [phase1_pacbio_hifi/](phase1_pacbio_hifi/) — 38개 실행 단위, raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
 | ONT 처리 | [phase2_ont/](phase2_ont/) — 18개 실행 단위(기본 제출 14), raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
-| 외부 보충 리드 | GIAB FTP에 리드가 없는 데이터셋은 외부에서 받는다. PacBio: HG001·HG005 SequelII 11kb → ENA PRJNA540705/540706, 12 cell 135 GiB ([sra_manifest.tsv](phase1_pacbio_hifi/sra_manifest.tsv)). ONT: HG001 ultralong → nanopore-wgs-consortium rel6, 136 GiB ([ext_manifest.tsv](phase2_ont/ext_manifest.tsv)). 숏리드: HG002/3/4 NovaSeq 6000 PCR-free 30x → Google brain-genomics-public(GCS), 6 files 147 GiB; HG002 NovaSeq X 30x → 같은 버킷, 2 files 41 GiB; HG003/4 HiSeq 30x 서브샘플 → HPRC S3, 4 files 170 GiB ([ext_manifest.tsv](phase3_shortread_wgs/ext_manifest.tsv)). 위 규모 집계에는 미포함 |
+| 외부 보충 리드 | GIAB FTP에 리드가 없는 데이터셋은 외부에서 받는다. PacBio: HG001·HG005 SequelII 11kb → ENA PRJNA540705/540706, 12 cell 135 GiB ([sra_manifest.tsv](phase1_pacbio_hifi/sra_manifest.tsv)). ONT: HG001 ultralong → nanopore-wgs-consortium rel6, 136 GiB ([ext_manifest.tsv](phase2_ont/ext_manifest.tsv)). 위 PacBio·ONT 외부 리드는 위 규모 집계에 미포함. 숏리드는 다르다 — HG002/3/4 NovaSeq 6000 PCR-free 30x → Google brain-genomics-public(GCS), 6 files 147 GiB; HG002 NovaSeq X 30x → 같은 버킷, 2 files 41 GiB; HG003/4 HiSeq 30x 서브샘플 → HPRC S3, 4 files 170 GiB ([ext_manifest.tsv](phase3_shortread_wgs/ext_manifest.tsv))는 카탈로그 `external/` 6행으로 **위 규모 집계에 포함**(2026-09-17) |
 | 표 원본 | [catalog/master_catalog.tsv](catalog/master_catalog.tsv) — 51개 컬럼. 필드 정의는 [catalog/README.md](catalog/README.md) |
 | 정확 바이트 | [docs/SIZES.md](docs/SIZES.md) — 플랫폼 디렉토리 단위 (조회용) |
 | 분류 근거 | [docs/reference/catalog_evidence.md](docs/reference/catalog_evidence.md) |
@@ -38,14 +38,14 @@ python catalog/build_readme.py
 <!-- MASTER-TABLE:BEGIN -->
 ### 요약
 
-전체 **435개 데이터셋 / 81,302 files / 113.8 TiB**. 단계별 도달 데이터셋 수:
+전체 **441개 데이터셋 / 81,314 files / 114.1 TiB**. 단계별 도달 데이터셋 수:
 
 | category | 데이터셋 | GiB | 정렬 | 페이징 | 변이 | 메틸 | somatic | 어셈블리 | GIAB 처리물 보유 |
 |---|---|---|---|---|---|---|---|---|---|
 | PacBio HiFi | 37 | 9,614 | 37 | 37 | 28 | 14 | 4 | 0 | 9 |
 | PacBio CLR | 8 | 13,388 | 7 | 4 | 1 | 0 | 0 | 0 | 0 |
 | Oxford Nanopore | 19 | 11,872 | 17 | 16 | 13 | 5 | 4 | 2 | 17 |
-| Illumina WGS | 50 | 27,755 | 45 | 0 | 8 | 0 | 0 | 0 | 46 |
+| Illumina WGS | 56 | 28,114 | 45 | 0 | 8 | 0 | 0 | 0 | 46 |
 | BGI / MGI | 14 | 5,302 | 3 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Exome | 11 | 977 | 11 | 0 | 2 | 0 | 0 | 0 | 0 |
 | Linked reads (10X, stLFR) | 18 | 5,038 | 13 | 6 | 3 | 0 | 0 | 0 | 13 |
@@ -144,7 +144,7 @@ python catalog/build_readme.py
 </details>
 
 <details>
-<summary><b>Illumina WGS</b> — 50 datasets, 27,755 GiB</summary>
+<summary><b>Illumina WGS</b> — 56 datasets, 28,114 GiB</summary>
 
 | 데이터셋 | 샘플 | 플랫폼 | GiB | 리드 | index | 정렬 | 페이징 | 변이 | 메틸 | somatic | 어셈블리 | 출처 | 다음 할 일 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -153,15 +153,21 @@ python catalog/build_readme.py
 | HiSeq 300x Homogeneity | HG002 | Illumina HiSeq | 2,346 | ✓ FASTQ 1870개 (HG002_HiSeq300x_fastq 플로우셀별) | △ 5개 | ✓ novoalign 3.02.07 → samtools 0.1.18; BaseSpace BWA Whole Genome Sequencing workflow (플로우셀별 S1.bam) | ✗ | ✓ BaseSpace BWA Whole Genome Sequencing workflow (버전 미기재; SNV/gVCF/CNV/SV) | – | – | ✗ | 문서 | FASTQ 1870개로 자체 정렬+변이 검출 실행 후 novoalign 300x/60x BAM 및 HG002 v4.2.1 벤치마크와 비교 |
 | Illumina 2x250bp | HG002 | Illumina 2x250bp (기종 미표기) | 443 | ✓ FASTQ 68개 (reads/) | ✓ | ✓ novoalign 3.02.07 → samtools 0.1.18 | ✗ | ✗ | – | – | ✗ | 문서 | 2x250 오버랩 리드로 어셈블리(DISCOVAR 등) 또는 긴 리드 정렬 벤치마크 재현. novoalign BAM은 정렬 비교 기준 |
 | Moleculo 합성 롱리드 | HG002 | Illumina Moleculo (합성 롱리드), 125bp | 121 | ✓ FASTQ 6144개 (바코드 LTB-A-BC001~ 별) | ✓ | ✓ bwa-mem (기본 옵션, cloud end-marker 제거 후) | ✗ | ✗ | – | – | ✗ | 문서 | 웰별 BAM 병합 후 read-cloud 기반 haplotype/SV 분석. 또는 FASTQ 6144개로 바코드 인식 파이프라인 재실행 |
+| NovaSeq 6000 PCR-free 30x (Google) | HG002 | Illumina NovaSeq 6000 (A00744, S4 플로우셀 HV3C3DSXX 레인 2) PCR-free 2x151 | 49 | ✓ FASTQ 2개 (R1/R2). GIAB FTP에는 없고 Google GCS brain-genomics-public research/sequencing/fastq/novaseq/wgs_pcr_free/30x/ 에서 확보 — 로컬 /BiO/scratch/ehojune/GIAB_benchmark/external/google_novaseq_pcrfree_30x (md5 검증 2026-09-17) | – | ✗ | ✗ | ✗ | – | – | ✗ | N/A | phase3 업체 비교 트리오 arm. 업체(gd001~004, NovaSeq X/X Plus) 산출물과 Illumina·2x151·PCR-free·~30x는 맞지만 화학은 다르다(SBS vs XLEAP-SBS) — 화학까지 맞춘 대조군은 HG002 NovaSeq X 30x 행이다. samplesheets/HG002.NovaSeq_PCRfree_30x.csv로 자체 정렬·변이 호출 후 HG002 v4.2.1 벤치마크와 비교. |
+| NovaSeq X 30x (Google/Weill Cornell) | HG002 | Illumina NovaSeq X 25B (pi1-04, 플로우셀 22JTGYLT4) TruSeq DNA PCR-Free 2x150 — 리드 이름은 SRA 형식 | 42 | ✓ FASTQ 2개 (R1/R2). GIAB FTP에는 없고 Google GCS brain-genomics-public research/sequencing/fastq/novaseqx/ 에서 확보(원 데이터 ENA PRJNA1427896 SRR37356338) — 로컬 /BiO/scratch/ehojune/GIAB_benchmark/external/google_novaseqx_hg002_30x (md5 검증 2026-09-17) | – | ✗ | ✗ | ✗ | – | – | ✗ | N/A | phase3 업체 화학(NovaSeq X, XLEAP-SBS) 매칭 HG002 단일 대조군. samplesheets/HG002.NovaSeqX_30x.csv로 자체 정렬·변이 호출 후 v4.2.1·CMRG·v5.0q와 비교. |
 | PCR-free 30x 서브샘플 FASTQ | HG002 | Illumina HiSeq | 83 | ✓ FASTQ 2개 (R1/R2 subsampled) | – | ✗ | ✗ | ✗ | – | – | ✗ | 문서 | 30x FASTQ로 정렬~변이 검출 전 과정 실행. 1KG 30x 수준 저커버리지 벤치마크 기준선으로 사용 |
 | 6kb mate-pair | HG003 | Illumina 6kb mate-pair (기종 미표기) | 179 | ✓ FASTQ 4개 | △ 1개 | ✓ bwa mem → samblaster (중복 표시) | ✗ | ✗ | – | – | ✗ | 문서 | 대형 SV/전좌 검증용. FASTQ 4개로 어댑터 제거+재정렬해 중복 포함 BAM 확보 |
 | HiSeq 300x Homogeneity | HG003 | Illumina HiSeq | 2,348 | ✓ FASTQ 2010개 (HG003_HiSeq300x_fastq 플로우셀별) | △ 6개 | ✓ novoalign 3.02.07 → samtools 0.1.18; BaseSpace BWA Whole Genome Sequencing workflow (Run01/Run03 S1.bam) | ✗ | ✓ BaseSpace BWA Whole Genome Sequencing workflow (버전 미기재; SNV/gVCF/CNV/SV) | – | – | ✗ | 문서 | FASTQ 2010개로 자체 정렬+변이 검출 실행. AJ trio 삼자 일치성 검증에 HG002/HG004와 함께 사용 |
 | Illumina 2x250bp | HG003 | Illumina 2x250bp (기종 미표기) | 490 | ✓ FASTQ 36개 (reads/) | △ 3개 | ✓ novoalign 3.02.07 → samtools 0.1.18 (novoalign_bams/); HG003_250bp_All_good-29988042/S1.bam은 툴 미기재 | ✗ | ✓ N/A | – | – | ✗ | 문서 | 2x250 리드로 어셈블리 또는 긴 리드 정렬 벤치마크. novoalign BAM과 자체 정렬 결과 비교 |
 | Moleculo 합성 롱리드 | HG003 | Illumina Moleculo (합성 롱리드), 125bp | 123 | ✓ FASTQ 6144개 | ✓ | ✓ bwa-mem (기본 옵션, cloud end-marker 제거 후) | ✗ | ✗ | – | – | ✗ | 문서 | 웰별 BAM 1536개 병합 후 read-cloud 분석. FASTQ 6144개로 재처리도 가능 |
+| NovaSeq 6000 PCR-free 30x (Google) | HG003 | Illumina NovaSeq 6000 (A00744, S4 플로우셀 HV3C3DSXX 레인 2) PCR-free 2x151 | 49 | ✓ FASTQ 2개 (R1/R2). GIAB FTP에는 없고 Google GCS brain-genomics-public research/sequencing/fastq/novaseq/wgs_pcr_free/30x/ 에서 확보 — 로컬 /BiO/scratch/ehojune/GIAB_benchmark/external/google_novaseq_pcrfree_30x (md5 검증 2026-09-17) | – | ✗ | ✗ | ✗ | – | – | ✗ | N/A | phase3 업체 비교 트리오 arm. 업체(gd001~004, NovaSeq X/X Plus) 산출물과 Illumina·2x151·PCR-free·~30x는 맞지만 화학은 다르다(SBS vs XLEAP-SBS) — 화학까지 맞춘 대조군은 HG002 NovaSeq X 30x 행이다. samplesheets/HG003.NovaSeq_PCRfree_30x.csv로 자체 정렬·변이 호출 후 HG003 v4.2.1 벤치마크와 비교. |
+| PCR-free 30x 서브샘플 FASTQ (HPRC 사본) | HG003 | Illumina HiSeq 2500 Rapid v1 2x148 TruSeq PCR-free (300x Homogeneity 라이브러리의 ~30x 서브샘플) | 87 | ✓ FASTQ 2개 (R1/R2 subsampled). GIAB FTP에는 HG002 짝만 있고(Illumina_PCRfree_downsampled) 그 README가 이 사본을 가리킨다 — HPRC S3 human-pangenomics working/HPRC_PLUS/HG002/raw_data/Illumina/parents/HG003/ 에서 확보, 로컬 /BiO/scratch/ehojune/GIAB_benchmark/external/hprc_hiseq30x_subsampled/HG003 (md5 없음: S3 ETag 멀티파트. 크기·리드 길이·플랫폼으로 검증 2026-09-17) | – | ✗ | ✗ | ✗ | – | – | ✗ | 문서 | phase3 30x arm(HiSeq). samplesheets/HG003.Illumina_PCRfree_30x.csv로 자체 정렬·변이 호출 후 HG003 v4.2.1과 비교. 같은 라이브러리의 300x 결과와 깊이 효과 비교. |
 | 6kb mate-pair | HG004 | Illumina 6kb mate-pair (기종 미표기) | 188 | ✓ FASTQ 4개 | △ 1개 | ✓ bwa mem → samblaster (중복 표시) | ✗ | ✗ | – | – | ✗ | 문서 | 대형 SV 검증용. FASTQ로 어댑터 제거+재정렬해 중복 포함 BAM 확보 |
 | HiSeq 300x Homogeneity | HG004 | Illumina HiSeq | 2,686 | ✓ FASTQ 2048개 (HG004_HiSeq300x_fastq 플로우셀별) | △ 6개 | ✓ novoalign 3.02.07 → samtools 0.1.18; BaseSpace BWA Whole Genome Sequencing workflow (Run01/run02 S1.bam) | ✗ | ✓ BaseSpace BWA Whole Genome Sequencing workflow (버전 미기재; SNV/gVCF/CNV/SV) | – | – | ✗ | 문서 | FASTQ 2048개로 자체 정렬+변이 검출 실행. HG002/HG003과 묶어 AJ trio 멘델 일치성 검증 |
 | Illumina 2x250bp | HG004 | Illumina 2x250bp (기종 미표기) | 542 | ✓ FASTQ 70개 (reads/) | △ 3개 | ✓ novoalign 3.02.07 → samtools 0.1.18 (novoalign_bams/); HG004_250bp_All-29933060/S1.bam은 툴 미기재 | ✗ | ✓ N/A | – | – | ✗ | 문서 | 2x250 리드로 어셈블리 또는 긴 리드 정렬 벤치마크. novoalign BAM과 비교 |
 | Moleculo 합성 롱리드 | HG004 | Illumina Moleculo (합성 롱리드), 125bp | 72 | ✓ FASTQ 6144개 (바코드별) | – | ✗ | ✗ | ✗ | – | – | ✗ | N/A | 바코드별 FASTQ 6144개를 웰 단위로 정렬(bwa-mem 등)해야 함. GIAB BAM이 없으니 정렬 전 과정을 사용자가 수행 |
+| NovaSeq 6000 PCR-free 30x (Google) | HG004 | Illumina NovaSeq 6000 (A00744, S4 플로우셀 HV3C3DSXX 레인 2) PCR-free 2x151 | 49 | ✓ FASTQ 2개 (R1/R2). GIAB FTP에는 없고 Google GCS brain-genomics-public research/sequencing/fastq/novaseq/wgs_pcr_free/30x/ 에서 확보 — 로컬 /BiO/scratch/ehojune/GIAB_benchmark/external/google_novaseq_pcrfree_30x (md5 검증 2026-09-17) | – | ✗ | ✗ | ✗ | – | – | ✗ | N/A | phase3 업체 비교 트리오 arm. 업체(gd001~004, NovaSeq X/X Plus) 산출물과 Illumina·2x151·PCR-free·~30x는 맞지만 화학은 다르다(SBS vs XLEAP-SBS) — 화학까지 맞춘 대조군은 HG002 NovaSeq X 30x 행이다. samplesheets/HG004.NovaSeq_PCRfree_30x.csv로 자체 정렬·변이 호출 후 HG004 v4.2.1 벤치마크와 비교. |
+| PCR-free 30x 서브샘플 FASTQ (HPRC 사본) | HG004 | Illumina HiSeq 2500 Rapid v1 2x148 TruSeq PCR-free (300x Homogeneity 라이브러리의 ~30x 서브샘플) | 83 | ✓ FASTQ 2개 (R1/R2 subsampled). GIAB FTP에는 HG002 짝만 있고(Illumina_PCRfree_downsampled) 그 README가 이 사본을 가리킨다 — HPRC S3 human-pangenomics working/HPRC_PLUS/HG002/raw_data/Illumina/parents/HG004/ 에서 확보, 로컬 /BiO/scratch/ehojune/GIAB_benchmark/external/hprc_hiseq30x_subsampled/HG004 (md5 없음: S3 ETag 멀티파트. 크기·리드 길이·플랫폼으로 검증 2026-09-17) | – | ✗ | ✗ | ✗ | – | – | ✗ | 문서 | phase3 30x arm(HiSeq). samplesheets/HG004.Illumina_PCRfree_30x.csv로 자체 정렬·변이 호출 후 HG004 v4.2.1과 비교. 같은 라이브러리의 300x 결과와 깊이 효과 비교. |
 | 6kb mate-pair | HG005 | Illumina 6kb mate-pair (기종 미표기) | 185 | ✓ FASTQ 4개 | △ 1개 | ✓ bwa mem → samblaster (중복 표시) | ✗ | ✗ | – | – | ✗ | 문서 | 대형 SV 검증용. FASTQ로 어댑터 제거+재정렬해 중복 포함 BAM 확보 |
 | HiSeq 300x | HG005 | Illumina HiSeq, 2x250bp 리드 | 3,048 | ✓ FASTQ 336개 (basespace_250bps_fastqs) | △ 24개 | ✓ novoalign (버전 미기재) → samtools 0.1.18; Isaac Whole Genome Sequencing v3 (BaseSpace, 플로우셀별 S1.bam 8개) | ✗ | ✓ Isaac Whole Genome Sequencing v3 (BaseSpace) | – | – | ✗ | 문서 | FASTQ 336개로 자체 정렬+변이 검출 실행. novoalign 300x BAM과 Isaac 45x VCF 양쪽을 비교 기준으로 사용 |
 | Moleculo 합성 롱리드 | HG005 | Illumina Moleculo (합성 롱리드), 125bp | 67 | ✓ FASTQ 6144개 (LTB-A-BC001~ 바코드별) | – | ✗ | ✗ | ✗ | – | – | ✗ | N/A | 바코드별 FASTQ를 웰 단위로 정렬해야 함. GIAB 정렬 산출물이 없어 전 과정을 사용자가 수행 |
@@ -616,6 +622,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-17 — phase3 외부 리드 12 files / 359 GiB 다운로드·검증 완료(`02_fetch_external_reads.sh` 12/12 OK, ERROR 0, NovaSeq X 쌍은 SRA 헤더로 플랫폼 미상 경고 2건 — 예상대로). 24 실행 단위 전부 nbb2에 있다. PR #10.
 - 2026-09-17 — 업체 4곳이 NovaSeq X/X Plus로 확인돼 phase3에 HG002 NovaSeq X 30x(Google 재배포, Weill Cornell PRJNA1427896, TruSeq PCR-free, 41 GiB)를 화학 매칭 단일 대조군으로 추가. 실행 단위 24. 외부 리드 경로는 실제 다운로드 위치 `external/<출처>/`로 통일.
 - 2026-09-17 — phase3에 업체 비교용 30x 트리오 2종을 외부에서 추가: Google NovaSeq 6000 PCR-free 30x(HG002/3/4, 147 GiB)와 HPRC S3의 HiSeq 30x 서브샘플(HG003/4, 170 GiB; GIAB FTP에는 HG002만). 실행 단위 18→23, 300x 전량은 깊이 상한 실험으로 역할 변경. 검증은 HEAD·리드 헤더 표본만(사용자 결정). Codex·Gemini 독립 자문은 둘 다 NovaSeq 30x를 1순위로 꼽았다.
 - 2026-09-17 — 2026-09-16 크롤이 찾은 3건을 받지 않기로 확정: legacy trio 분석 8,228 files / 7.78 TiB, HG008 superseded-2022 raw 26 / 1.63 TiB(이미 받은 디렉토리와 동일 내용), Verkko 작업 디렉토리 4,169 / 1.28 TiB. 목록은 `manifests/declined_by_decision.tsv`에 남기고 `crawl_data.py`가 재추가하지 않도록 가드를 넣었다. 카탈로그 435 datasets / 81,302 files. 실제 내려받을 신규분은 4,759 files / 8.67 TiB (2026-08-30 완료 시점 76,595 files 대비).

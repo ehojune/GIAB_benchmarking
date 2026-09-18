@@ -6,12 +6,12 @@ GIAB FTP 밖의 30x 트리오 2종(NovaSeq PCR-free, HiSeq 30x 서브샘플)과 
 파이프라인은 사용자가 지정·실행한다.
 
 - [inputs_manifest.tsv](inputs_manifest.tsv) — GIAB FTP에서 받은 파이프라인 입력 FASTQ 전부. `dsid / relpath / bytes`. **6,178 files / 5.55 TiB**
-- [ext_manifest.tsv](ext_manifest.tsv) — GIAB FTP 밖에서 받는 입력 FASTQ. `dsid / relpath / bytes / url / md5 / kind / note`. **12 files / 359 GiB**. 받기: `bash scripts/02_fetch_external_reads.sh` (로그인 노드, `VERIFY_ONLY=1`로 점검만)
+- [ext_manifest.tsv](ext_manifest.tsv) — GIAB FTP 밖에서 받는 입력 FASTQ. `dsid / relpath / bytes / url / md5 / kind / note`. **12 files / 359 GiB**. 카탈로그(`catalog/master_catalog.tsv`)에도 `external/` 행 6개로 들어가 있다. 받기: `bash scripts/02_fetch_external_reads.sh` (로그인 노드, `VERIFY_ONLY=1`로 점검만). **2026-09-17 12/12 OK** (크기·md5·리드 길이·플랫폼; 로그 `external/phase3_ext_fetch.log`)
 - [all_files.tsv](all_files.tsv) — 같은 플랫폼 디렉토리의 모든 파일(GIAB BAM·VCF·md5 포함). `dsid / ftype / relpath / bytes`. 6,890 files
 - [run_table.tsv](run_table.tsv) — 실행 단위 24개 (GIAB 18 + 외부 6). `units` = read group 수 (플로우셀.레인.라이브러리)
 - [samplesheets/<dsid>.csv](samplesheets/) — R1/R2 짝 맞춘 범용 시트 `sample,dataset,unit,fastq_1,fastq_2,bytes`. 재생성: `python scripts/make_samplesheets.py` (`DATA_ROOT=` 로 경로 변경; ext_manifest도 함께 읽는다)
 - 로컬 절대경로 = `/BiO/scratch/ehojune/GIAB_benchmark/` + `relpath` (nbb2, phase0 DEST). 외부 리드는 그 아래 `external/<출처>/`
-- 출처: `phase0_download/manifests/` 실측. 다운로드는 2026-08-30 verify.sh all 100%로 확인됨.
+- 출처: `phase0_download/manifests/` 실측. GIAB분 다운로드는 2026-08-30 verify.sh all 100%, 외부분은 2026-09-17 `02_fetch_external_reads.sh` 12/12 OK로 확인됨. 24 실행 단위 전부 nbb2에 실존.
 
 ## 실행 단위 24개
 
@@ -23,7 +23,7 @@ NovaSeq 6000 30x를 트리오 기준으로 쓴다 — 같은 Illumina 2x151 PCR-
 
 | dsid | FASTQ | GiB | 비고 |
 |---|---|---|---|
-| **HG002/3/4.NovaSeq_PCRfree_30x** | 2 / 2 / 2 | 49 / 49 / 49 | **외부(Google GCS)**. NovaSeq 6000 PCR-free 2x151 ~30x, 세 샘플 같은 런(A00744:46 HV3C3DSXX L2). 업체 산출물과 장비·리드 길이·깊이가 맞는 유일한 공개 트리오. **업체 비교 기준 arm** |
+| **HG002/3/4.NovaSeq_PCRfree_30x** | 2 / 2 / 2 | 49 / 49 / 49 | **외부(Google GCS)**. NovaSeq 6000 PCR-free 2x151 ~30x, 세 샘플 같은 런(A00744:46 HV3C3DSXX L2). 업체 산출물과 Illumina·2x151·PCR-free·30x는 맞지만 **화학은 다르다**(SBS vs 업체 NovaSeq X의 XLEAP-SBS). 공개 데이터 중 조건이 가장 가까운 트리오라 **업체 비교 트리오 arm**; 화학 매칭은 아래 HG002.NovaSeqX_30x |
 | **HG002.NovaSeqX_30x** | 2 | 41 | **외부(Google GCS)**. NovaSeq X 25B, TruSeq PCR-free, 2x150, ~30x(원 런 SRR37356338 ≈42x의 서브샘플). 업체와 같은 화학(XLEAP-SBS)의 유일한 공개 데이터 — HG002만 |
 | **HG002/3/4.Illumina_PCRfree_30x** | 2 / 2 / 2 | 83 / 87 / 83 | HiSeq 2500 2x148 TruSeq PCR-free, 300x와 같은 라이브러리의 ~30x 서브샘플(GIAB 제작). HG002는 GIAB FTP, **HG003/4는 외부(HPRC S3)** — GIAB README가 가리키는 사본. 300x↔30x 깊이 효과를 같은 라이브러리에서 잰다 |
 | HG002/3/4.HiSeq300x | 1870 / 2010 / 2048 | 774 / 787 / 907 | 2x148, 플로우셀 12/13/12개 × 12 라이브러리(균질성 시험 바이알 ?A1~?L2) × 2레인 × R1/R2 × 분할. 합 300x, 플로우셀당 ~25x. **전량 사용** |
@@ -40,7 +40,7 @@ nbb2에서 실존 확인 (GIAB분은 아래, 외부분은 `VERIFY_ONLY=1 bash sc
 cd /BiO/scratch/ehojune/GIAB_benchmark && awk -F'\t' 'NR>1{print $2}' <repo>/phase3_shortread_wgs/inputs_manifest.tsv | xargs -I{} sh -c 'test -f "{}" || echo MISSING {}'
 ```
 
-## 외부 보충 리드 (2026-09-17 추가)
+## 외부 보충 리드 (2026-09-17 추가, 같은 날 다운로드·검증 완료)
 
 | dsid | 출처 | 파일 | 검증(다운로드 전, 2026-09-17) |
 |---|---|---|---|

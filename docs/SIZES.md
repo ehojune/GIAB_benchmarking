@@ -174,3 +174,14 @@ Source: S3 ListObjectsV2 on s3://giab, 2026-08-13. Sizes are exact byte sums.
 | HG008 | superseded-2022-data | other | 163 | 1895227684823 | 1,765.1 |
 
 release/ (truth sets + stratifications + references): 4110 files, 240.8 GiB
+
+## External (non-GIAB) short reads added 2026-09-17 — source: HTTP HEAD / GCS metadata, exact byte sums
+
+| sample | local dir under /BiO/scratch/ehojune/GIAB_benchmark | category | files | bytes | GiB | source |
+|---|---|---|---|---|---|---|
+| HG002 | external/google_novaseq_pcrfree_30x (HG002.*) | illumina_wgs | 2 | 52298379117 | 48.7 | gs://brain-genomics-public/research/sequencing/fastq/novaseq/wgs_pcr_free/30x/ |
+| HG003 | external/google_novaseq_pcrfree_30x (HG003.*) | illumina_wgs | 2 | 52988283623 | 49.3 | same |
+| HG004 | external/google_novaseq_pcrfree_30x (HG004.*) | illumina_wgs | 2 | 52849271785 | 49.2 | same |
+| HG002 | external/google_novaseqx_hg002_30x | illumina_wgs | 2 | 44513333177 | 41.5 | gs://brain-genomics-public/research/sequencing/fastq/novaseqx/ |
+| HG003 | external/hprc_hiseq30x_subsampled/HG003 | illumina_wgs | 2 | 93137242657 | 86.7 | s3://human-pangenomics/working/HPRC_PLUS/HG002/raw_data/Illumina/parents/HG003/ |
+| HG004 | external/hprc_hiseq30x_subsampled/HG004 | illumina_wgs | 2 | 89386939502 | 83.2 | s3://human-pangenomics/working/HPRC_PLUS/HG002/raw_data/Illumina/parents/HG004/ |

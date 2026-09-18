@@ -57,6 +57,18 @@ python catalog/build_readme.py      # master_catalog.tsv -> README.md 표 재생
 이후로는 이 TSV를 손으로 관리한다 — 내가 처리를 돌릴 때마다 해당 칸을 채우고
 `build_readme.py`를 다시 돌리면 된다.
 
+## 외부 유래 행 (GIAB FTP 밖에서 받은 데이터)
+
+`giab_path`가 `external/`로 시작하는 행은 GIAB 경로가 아니라 **로컬 relpath**(`/BiO/scratch/ehojune/GIAB_benchmark/` + giab_path)다.
+2026-09-17에 phase3 업체 비교용으로 받은 숏리드 6행(Google NovaSeq 6000/X, HPRC HiSeq 30x)이 여기 해당한다.
+
+- `files`/`size_gib`의 원본은 그 phase의 외부 매니페스트(`phase3_shortread_wgs/ext_manifest.tsv`)다. 바뀌면 여기도 손으로 맞춘다.
+- 크롤러는 이 행을 건드리지 않는다. `crawl_data.py`는 FTP 경로를 giab_path 접두로 라우팅하므로 `external/`은 매치되지 않고,
+  `catalog_new_dirs.py`는 phase0 manifest에 그 경로의 파일이 하나도 없는 행의 files/size를 재계산하지 않는다.
+- 같은 디렉토리에 여러 샘플이 섞여 있으면(Google 트리오) giab_path에 파일 접두까지 붙여 행을 유일하게 한다 — giab_path는 행의 키다.
+- `giab_processed`는 FALSE, `tool_source`는 GIAB 문서가 그 데이터를 설명할 때만 `giab_doc:`(HPRC 사본이 그 경우), 아니면 `N/A`.
+- phase1(HG001·HG005 SequelII 11kb, ENA)·phase2(HG001 rel6) 외부 리드는 GIAB 디렉토리가 따로 있어 기존 행의 `reads_format`에 출처를 적는 방식이다. 그 관례는 그대로다.
+
 ## 새 디렉토리가 FTP에 생기면
 
 `phase0_download/scripts/crawl_data.py`가 카탈로그 행이 없는 새 디렉토리의 파일을 `manifests/data_unrouted_new.tsv`에 모은다.
