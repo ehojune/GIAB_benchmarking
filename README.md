@@ -6,7 +6,7 @@ GIAB 9개 샘플(HG001–HG007 germline, HG008·HG009 tumor-normal)의 **전체 
 
 | | |
 |---|---|
-| 데이터 규모 | **441 datasets / 81,314 files / 125.5 TB** (2026-08-13 HEAD 검증 + 2026-09-16 FTP `release/`·`data/` 라이브 크롤: HG002 v5.0q·stratifications v3.6, HG008/HG009 신규 데이터셋 추가. 2026-09-17 GIAB FTP 밖 숏리드 6행 359 GiB(`external/`, 아래 "외부 보충 리드") 포함. 2026-09-17에 받지 않기로 한 3건 12,423 files / 10.7 TiB는 [manifests/declined_by_decision.tsv](phase0_download/manifests/declined_by_decision.tsv)에 목록만 남기고 제외) |
+| 데이터 규모 | **441 datasets / 81,314 files / 125.5 TB** · **다운로드 100% 완료(2026-09-18)** (2026-08-13 HEAD 검증 + 2026-09-16 FTP `release/`·`data/` 라이브 크롤: HG002 v5.0q·stratifications v3.6, HG008/HG009 신규 데이터셋 추가. 2026-09-17 GIAB FTP 밖 숏리드 6행 359 GiB(`external/`, 아래 "외부 보충 리드") 포함. 2026-09-17에 받지 않기로 한 3건 12,423 files / 10.7 TiB는 [manifests/declined_by_decision.tsv](phase0_download/manifests/declined_by_decision.tsv)에 목록만 남기고 제외) |
 | 다운로드 | [phase0_download/](phase0_download/) — 스크립트, 매니페스트, 속도·용량 계획 |
 | PacBio HiFi 처리 | [phase1_pacbio_hifi/](phase1_pacbio_hifi/) — 38개 실행 단위, raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
 | ONT 처리 | [phase2_ont/](phase2_ont/) — 18개 실행 단위(기본 제출 14), raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
@@ -622,6 +622,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-18 — phase0 다운로드 전량 완료. 2026-09 크롤로 늘어난 신규 4,759 files / 8.67 TiB를 받아 `verify.sh` 12개 카테고리 전부 100.0%, 합계 81,302/81,302 files · 116,509.5 GiB. 28시간 49분, 평균 92 MB/s — "S3에 신규가 없으니 며칠 잡으라"던 예측은 틀렸다(S3 실측 83 MB/s보다 빨랐다). 기록: [docs/runs/2026-09-18-phase0-download-complete.md](docs/runs/2026-09-18-phase0-download-complete.md).
 - 2026-09-17 — phase3 외부 리드 12 files / 359 GiB 다운로드·검증 완료(`02_fetch_external_reads.sh` 12/12 OK, ERROR 0, NovaSeq X 쌍은 SRA 헤더로 플랫폼 미상 경고 2건 — 예상대로). 24 실행 단위 전부 nbb2에 있다. PR #10.
 - 2026-09-17 — 업체 4곳이 NovaSeq X/X Plus로 확인돼 phase3에 HG002 NovaSeq X 30x(Google 재배포, Weill Cornell PRJNA1427896, TruSeq PCR-free, 41 GiB)를 화학 매칭 단일 대조군으로 추가. 실행 단위 24. 외부 리드 경로는 실제 다운로드 위치 `external/<출처>/`로 통일.
 - 2026-09-17 — phase3에 업체 비교용 30x 트리오 2종을 외부에서 추가: Google NovaSeq 6000 PCR-free 30x(HG002/3/4, 147 GiB)와 HPRC S3의 HiSeq 30x 서브샘플(HG003/4, 170 GiB; GIAB FTP에는 HG002만). 실행 단위 18→23, 300x 전량은 깊이 상한 실험으로 역할 변경. 검증은 HEAD·리드 헤더 표본만(사용자 결정). Codex·Gemini 독립 자문은 둘 다 NovaSeq 30x를 1순위로 꼽았다.
