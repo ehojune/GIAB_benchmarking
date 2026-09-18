@@ -54,12 +54,12 @@ cd /BiO/scratch/ehojune/GIAB_benchmark && awk -F'\t' 'NR>1{print $2}' <repo>/pha
 
 ## 파이프라인 입력 디렉토리 (2026-09-18)
 
-업체 디렉토리(`G000-gd?-*/outcome/<sample>/<sample>_1.fastq.gz`)와 같은 모양으로 공개 데이터 링크를 모은다. nbb2에서 파이프라인 작업 디렉토리로 가서:
+업체 디렉토리(`G000-gd?-*/outcome/<sample>/<sample>_1.fastq.gz`)와 같은 모양, **샘플당 FASTQ 한 쌍**으로 공개 데이터를 모은다. nbb2에서 파이프라인 작업 디렉토리로 가서:
 
 ```bash
-python <repo>/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py --dry-run   # 계획만
-python <repo>/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py             # 링크 생성 (--hard 로 하드링크) + HiSeq300x concat.sh 작성
-nohup bash GIAB_publicData_Hiseq_300x/outcome/GIAB_publicData_Hiseq_300x_HG002/concat.sh > .../concat.log 2>&1 &   # 샘플별 병합, 수 시간 (또는 --run-concat)
+python <repo>/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py --dry-run                      # 계획만
+nohup python <repo>/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py --prune --run-concat --jobs 4 > make_dirs.log 2>&1 &   # 링크 + 병합 전부, 4개씩 병렬
+python <repo>/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py --prune --qsub                 # 대신 병합을 샘플별 SGE 잡으로
 ```
 
 | 디렉토리 | dataset | 샘플 dir (`outcome/` 아래) | 파일 |
@@ -67,16 +67,16 @@ nohup bash GIAB_publicData_Hiseq_300x/outcome/GIAB_publicData_Hiseq_300x_HG002/c
 | `GIAB_publicData_Novaseq6000-PCRfree_30x` | NovaSeq_PCRfree_30x | `…_HG002` `…_HG003` `…_HG004` | 샘플당 `<sample>_1/2.fastq.gz` 1쌍 (링크) |
 | `GIAB_publicData_NovaseqX_30x` | NovaSeqX_30x | `…_HG002` | 1쌍 (링크) |
 | `GIAB_publicData_Hiseq_subsampled_30x` | Illumina_PCRfree_30x | HG002/3/4 | 1쌍 (링크) |
-| `GIAB_publicData_Hiseq_300x` | HiSeq300x | HG002/3/4 | **cat 병합** — 935/1005/1024쌍을 `<sample>_1/2.fastq.gz` 한 쌍으로 (774/787/907 GiB 실사본, concat.sh) |
-| `GIAB_publicData_Illumina_250PE` | Illumina_2x250 | HG002/3/4 | 34/18/35쌍 — `<sample>_D?_S?-L00?-<분할번호>_1/2` (링크; 레인당 분할 파일 4~17개, HG003/4는 라이브러리 2개) |
-| `GIAB_publicData_MGISEQ2000-PCRfree` | MGISEQ2000_PCRfree | HG002/3/4 | 2/2/4쌍 (링크) |
-| `GIAB_publicData_BGISEQ500` | BGISEQ500 | HG002/3/4 | 2쌍 (링크) |
-| `GIAB_publicData_Element_AVITI` | Element_AVITI_20240920 | HG002/3/4 | 2쌍 — `<sample>_StdInsert_1/2`, `<sample>_LngInsert_1/2` (링크) |
+| `GIAB_publicData_Hiseq_300x` | HiSeq300x | HG002/3/4 | **cat 병합** 935/1005/1024쌍 → 1쌍 (774/787/907 GiB 실사본) |
+| `GIAB_publicData_Illumina_250PE` | Illumina_2x250 | HG002/3/4 | **cat 병합** 34/18/35쌍 → 1쌍 (163/144/161 GiB; 레인당 분할 파일, HG003/4는 라이브러리 2개 포함) |
+| `GIAB_publicData_MGISEQ2000-PCRfree` | MGISEQ2000_PCRfree | HG002/3/4 | **cat 병합** 2/2/4쌍 → 1쌍 (HG004는 라이브러리 2개 포함) |
+| `GIAB_publicData_BGISEQ500` | BGISEQ500 | HG002/3/4 | **cat 병합** 2쌍(레인 2) → 1쌍 |
+| `GIAB_publicData_Element_AVITI` | Element_AVITI_20240920 | HG002/3/4 | **cat 병합** StdInsert + LngInsert → 1쌍 (인서트 ~400 bp와 ~1300 bp가 한 파일에 섞임 — 해석 주의) |
 
-이름·접두 `GIAB_publicData`는 2026-09-18 사용자 확정(`--prefix`로 변경 가능). 여러 쌍인 데이터셋은 samplesheet의 unit을 끼워 파일 이름을 유일하게 한다 —
-파이프라인이 샘플 dir 안의 여러 쌍을 어떻게 받는지는 사용자가 확인한다. HiSeq300x만 사용자 결정으로 cat 병합한다: 샘플 dir의 `concat_R1.list`/`concat_R2.list`(같은 순서)를
-`concat.sh`가 이어붙이고 출력 크기 = 입력 합을 확인한다(gzip 멀티멤버, 재실행 시 크기 맞으면 SKIP). 병합 파일은 링크가 아니라 2.4 TiB 실사본이다.
-NIST_BGIseq_2x150_100x·Element_AVITI_20231018은 목록에 없어 만들지 않는다. 재실행은 멱등이고, 같은 이름이 다른 원본을 가리키면 멈춘다. 이름 규칙이 바뀐 뒤에는 `--prune`으로 계획에 없는 옛 링크를 지운다(심볼릭 링크만, 일반 파일·병합 결과는 안 건드림). 원본은 samplesheets의 절대경로 그대로다.
+이름·접두 `GIAB_publicData`는 2026-09-18 사용자 확정(`--prefix`로 변경 가능). 샘플당 쌍이 하나면 링크, 둘 이상이면 cat 병합(사용자 결정 "각각 알아서"): 샘플 dir의
+`concat_R1.list`/`concat_R2.list`(같은 순서)를 `concat.sh`가 이어붙이고 출력 크기 = 입력 합을 확인한다(gzip 멀티멤버, 이미 맞으면 SKIP). 병합 파일은 실사본이라 약 3.6 TiB가 추가로 든다.
+`--run-concat --jobs N`은 로그인 노드에서 N개씩 병렬로 전부 돌리고 끝까지 기다린다(nohup 권장), `--qsub`은 샘플별 SGE 잡(shepherd.q, phase2와 같은 호스트 제한)으로 제출한다.
+NIST_BGIseq_2x150_100x·Element_AVITI_20231018은 목록에 없어 만들지 않는다. 재실행은 멱등이고, 같은 이름이 다른 원본을 가리키면 멈춘다. `--prune`은 계획에 없는 옛 심볼릭 링크만 지운다(일반 파일·병합 결과는 안 건드림). 원본은 samplesheets의 절대경로 그대로다.
 
 ## 정답셋 (small variant)
 
