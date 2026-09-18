@@ -161,6 +161,18 @@
   ③ `02_fetch_external_reads.sh`가 DSID 오타·빈 매니페스트에서 0건 검사 후 exit 0 → 매니페스트 없음/0건 선택 시 exit 1.
   4라운드 approve("No material findings"). 남은 한계(Codex도 인정): HPRC 4건은 md5가 없어 크기·리드 길이·플랫폼 검증까지만.
 
+## 2026-09-18 — phase3 파이프라인 입력 디렉토리 이름과 링크 구조
+
+- 사용자 지정 이름 8개(`GIAB_publicdata_<dataset>`; Novaseq6000-PCRfree_30x, NovaseqX_30x, Hiseq_subsampled_30x, Hiseq_300x, Illumina_250PE,
+  MGISEQ2000-PCRfree, BGISEQ500, Element_AVITI). 업체 디렉토리 `G000-gd?-*/outcome/<sample>/<sample>_1.fastq.gz`와 같은 모양으로
+  `<dir>/outcome/<dir>_<HG00?>/` 아래에 원본 FASTQ 링크를 둔다. `scripts/03_make_pipeline_dirs.py`가 samplesheets에서 만든다.
+- 접두 대소문자: 사용자가 첫 항목은 `GIAB_publicData`, 나머지는 `GIAB_publicdata`로 적었다. 한 트리에 두 표기를 섞지 않기 위해 다수인
+  `GIAB_publicdata`를 기본값으로 두고 `--prefix`로 바꿀 수 있게 했다.
+- 링크는 심볼릭 링크가 기본(원본이 어느 파일시스템에 있든 동작). `--hard`는 같은 파일시스템일 때만.
+- 샘플당 여러 쌍(HiSeq300x 최대 1,024쌍)은 `<sample>_<unit>_1/2.fastq.gz`로 이름을 유일하게 한다. 원본 파일명은 플로우셀이 다르면 겹친다
+  (`2A1_CGATGT_L001_R1_001.fastq.gz`가 12개 플로우셀에 있다). 파이프라인이 샘플 dir 안의 여러 쌍을 병합하는지는 사용자가 확인.
+- 링크는 데이터 복제가 아니라서 원본(`/BiO/scratch/ehojune/GIAB_benchmark/…`)을 옮기면 깨진다. 원본 위치를 바꾸면 스크립트를 다시 돌린다(멱등).
+
 ## 2026-09-17 — phase2(ONT)에 hap.py 정확도 평가 단계
 
 phase2(ONT)에 hap.py 정확도 평가 단계를 붙였다(`phase2_ont/scripts/60_benchmark.sh`). phase1의 60을 본떴고

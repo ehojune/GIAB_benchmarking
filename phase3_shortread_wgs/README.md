@@ -52,6 +52,30 @@ cd /BiO/scratch/ehojune/GIAB_benchmark && awk -F'\t' 'NR>1{print $2}' <repo>/pha
 같은 버킷에 NovaSeq 20x/40x/50x, HiSeq X PCR-free·PCR-plus 20~40x 트리오, HG002 NovaSeq X 10~40x·전체(≈42x) 시리즈도 있다 — 업체 라이브러리가 PCR-plus로 판명되거나
 깊이 적정(titration)이 필요해지면 그때 받는다. 전체 후보 목록·근거·자문 기록: [docs/reference/phase3_shortread_candidates_2026-09-17.md](../docs/reference/phase3_shortread_candidates_2026-09-17.md).
 
+## 파이프라인 입력 디렉토리 (2026-09-18)
+
+업체 디렉토리(`G000-gd?-*/outcome/<sample>/<sample>_1.fastq.gz`)와 같은 모양으로 공개 데이터 링크를 모은다. nbb2에서 파이프라인 작업 디렉토리로 가서:
+
+```bash
+python <repo>/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py --dry-run   # 계획만
+python <repo>/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py             # 심볼릭 링크 생성 (--hard 로 하드링크)
+```
+
+| 디렉토리 | dataset | 샘플 dir (`outcome/` 아래) | 파일 |
+|---|---|---|---|
+| `GIAB_publicdata_Novaseq6000-PCRfree_30x` | NovaSeq_PCRfree_30x | `…_HG002` `…_HG003` `…_HG004` | 샘플당 `<sample>_1/2.fastq.gz` 1쌍 |
+| `GIAB_publicdata_NovaseqX_30x` | NovaSeqX_30x | `…_HG002` | 1쌍 |
+| `GIAB_publicdata_Hiseq_subsampled_30x` | Illumina_PCRfree_30x | HG002/3/4 | 1쌍 |
+| `GIAB_publicdata_Hiseq_300x` | HiSeq300x | HG002/3/4 | 935/1005/1024쌍 — `<sample>_<플로우셀-레인-라이브러리>_1/2.fastq.gz` |
+| `GIAB_publicdata_Illumina_250PE` | Illumina_2x250 | HG002/3/4 | 34/18/35쌍 — `<sample>_L00?_1/2` |
+| `GIAB_publicdata_MGISEQ2000-PCRfree` | MGISEQ2000_PCRfree | HG002/3/4 | 2/2/4쌍 |
+| `GIAB_publicdata_BGISEQ500` | BGISEQ500 | HG002/3/4 | 2쌍 |
+| `GIAB_publicdata_Element_AVITI` | Element_AVITI_20240920 | HG002/3/4 | 2쌍 — `<sample>_StdInsert_1/2`, `<sample>_LngInsert_1/2` |
+
+이름은 2026-09-18 사용자 지정. 접두는 `--prefix`(기본 `GIAB_publicdata`). 여러 쌍인 데이터셋은 samplesheet의 unit을 끼워 파일 이름을 유일하게 한다 —
+파이프라인이 샘플 dir 안의 여러 쌍을 어떻게 받는지는 사용자가 확인한다. NIST_BGIseq_2x150_100x·Element_AVITI_20231018은 목록에 없어 만들지 않는다.
+재실행은 멱등이고, 같은 이름이 다른 원본을 가리키면 멈춘다. 원본은 samplesheets의 절대경로 그대로다.
+
 ## 정답셋 (small variant)
 
 | 샘플 | 벤치마크 | 경로 (`release/AshkenazimTrio/<sample>/`) |
