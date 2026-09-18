@@ -17,6 +17,7 @@ HEADER_ROW = 4  # row1 제목, row2 원본/집계, row3 빈줄, row4 헤더, row
 ap = argparse.ArgumentParser(); ap.add_argument('--version', required=True); ap.add_argument('--date', required=True)
 ap.add_argument('--note', default='', help='Overview 마지막 줄(※)에 덧붙일 한 문장'); ap.add_argument('--out', default=XLSX)
 ap.add_argument('--matrix-note', default='', help="'Platform Matrix' 비고에 추가할 한 줄('· '로 시작). 같은 문장이 이미 있으면 건너뜀")
+ap.add_argument('--crawl-date', default='2026-09-16', help='FTP 라이브 크롤을 돌린 날짜. 카탈로그 버전 날짜(--date)와 다르다')
 ap.add_argument('--link', nargs=2, metavar=('LABEL', 'URL'), action='append', default=[], help="'Access & Links' 끝에 추가할 행. 같은 URL이 있으면 건너뜀")
 a = ap.parse_args()
 
@@ -55,7 +56,8 @@ ov = wb['Overview']
 for row in ov.iter_rows(min_row=1, max_row=ov.max_row):
     c = row[0]; v = str(c.value or '')
     if v.startswith('카탈로그 버전'):
-        c.value = f'카탈로그 버전 {a.version} ({a.date}) · 기존 파일 목록 검증 2026-08-13 + release/ FTP 라이브 크롤 {a.date} · 출처: NIST GIAB / master_catalog.tsv'
+        c.value = (f'카탈로그 버전 {a.version} ({a.date}) · 기존 파일 목록 검증 2026-08-13 '
+                   f'+ FTP 라이브 크롤 {a.crawl_date} (release·data) · 출처: NIST GIAB / master_catalog.tsv')
     elif v.startswith("· 'Master Catalog'"):
         c.value = f"· 'Master Catalog' : 최신 {len(rows)}개 데이터셋의 {len(cols)}개 원본 필드와 처리 현황"
     elif v.startswith('※'):

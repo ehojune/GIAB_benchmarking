@@ -1,6 +1,7 @@
 # Phase 0 — 데이터 다운로드
 
 GIAB 원시 데이터 + truth set을 nbb2로 받는 단계. 대상 목록은 `manifests/`가 전부다.
+**2026-09-18 전량 완료** — 81,302/81,302 files, 116,509.5 GiB (100.0%). 기록: [docs/runs/2026-09-18-phase0-download-complete.md](../docs/runs/2026-09-18-phase0-download-complete.md).
 **총 81,302 files / 125.1 TB** (2026-08-13 S3 목록 + `current.tree` 기반 HEAD 검증 → 2026-09-16 FTP `release/`·`data/` 라이브 크롤로 재대조. 아래 [release/ 갱신](#release-갱신-2026-09-16), [data/ 갱신](#data-갱신-2026-09-16)). 2026-09-17에 받지 않기로 한 3건(12,423 files / 10.7 TiB)은 미포함 — [manifests/declined_by_decision.tsv](manifests/declined_by_decision.tsv).
 
 데이터셋별 처리 현황은 저장소 루트 [README.md](../README.md)의 master table 참고.
@@ -43,7 +44,8 @@ screen 나오기 `Ctrl-A d`, 다시 붙기 `screen -r giab`.
 
 ## 용량 및 예상 시간
 
-실측 **s3 83 MB/s ≈ 7.2 TB/일** (JOBS=12, 2026-08-13). wget 단일 스트림은 17 MB/s ≈ 1.4 TB/일.
+실측 **92 MB/s ≈ 8 TB/일** (JOBS=8, 2026-09-17~18, 신규 8.67 TiB를 28시간 49분에). 그 전 실측은 s3 83 MB/s (JOBS=12, 2026-08-13),
+wget 단일 스트림 17 MB/s ≈ 1.4 TB/일. 아래 표의 days는 옛 83 MB/s 기준이라 보수적이다.
 
 | category | TB | days @83MB/s |
 |---|---|---|
@@ -181,14 +183,13 @@ python phase0_download/scripts/crawl_data.py --route-all   # 캐시로 재실행
 FTP에만 있는 것은 `current.tree`(2025-02 정지) 에 없어 보이지 않았다. 신규 게시(2026-08-13 이후 수정)는 713 파일뿐이고
 나머지는 그 전부터 FTP에 있었다.
 
-받기: `TOOL=s3 JOBS=8 bash phase0_download/scripts/run_priority.sh` 를 다시 돌리면 신규분만 받는다(기존은 크기 일치로 스킵).
-제외 결정 반영 후 실제 내려받을 양은 **4,759 files / 8.67 TiB** (release 1,577 files / 41.4 GiB + data 3,182 files / 8.63 TiB).
-2026-08-30 완료 시점(커밋 `2fe9c2b`, 76,595 files / 105.11 TiB)과 현재 manifest(81,302 files / 113.78 TiB)를 파일 단위로 대조한 값이다.
-크기가 바뀌어 다시 받는 파일은 8건(문서류, 44 KB), manifest에서 빠졌지만 디스크에 남는 파일은 52건이다.
+**받았다 (2026-09-18 완료).** `TOOL=s3 JOBS=8 run_priority.sh`로 신규 **4,759 files / 8.67 TiB**
+(release 1,577 / 41.4 GiB + data 3,182 / 8.63 TiB)를 받아 12개 카테고리 전부 100.0%가 됐다.
+2026-09-17 09:18 → 2026-09-18 14:07, **28시간 49분, 평균 92 MB/s**. 상세는 [실행 기록](../docs/runs/2026-09-18-phase0-download-complete.md).
 
-**S3 미러에 신규 데이터가 없다** (2026-09-17 표본 96건 중 1건만 200, 용량 상위 25건은 0건).
-`TOOL=s3`이어도 거의 전부 `S3 miss → FTP fallback` 으로 wget을 타므로 실측 83 MB/s가 아니라 FTP 속도로 계산해야 한다.
-JOBS를 8~12로 두고 하루 단위가 아니라 며칠을 잡는 편이 맞다. 로그에서 `S3 miss` 줄 수로 확인할 수 있다.
+S3 미러에는 신규 데이터가 거의 없다(2026-09-17 표본 96건 중 1건만 200, 용량 상위 25건은 0건). 그래서 실행 전에는
+FTP fallback 속도로 며칠을 잡으라고 적었는데 **틀렸다** — 실측 92 MB/s로 S3 실측치(83 MB/s)보다 빨랐다.
+미러 가용성 표본은 경로를 알려줄 뿐 실효 대역폭을 알려주지 않는다. 앞으로도 JOBS=8이면 하루 남짓에 8 TiB대가 들어온다고 보면 된다.
 
 ## 받지 않기로 한 데이터 (2026-09-17)
 
