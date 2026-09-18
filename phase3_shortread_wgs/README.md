@@ -58,23 +58,25 @@ cd /BiO/scratch/ehojune/GIAB_benchmark && awk -F'\t' 'NR>1{print $2}' <repo>/pha
 
 ```bash
 python <repo>/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py --dry-run   # 계획만
-python <repo>/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py             # 심볼릭 링크 생성 (--hard 로 하드링크)
+python <repo>/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py             # 링크 생성 (--hard 로 하드링크) + HiSeq300x concat.sh 작성
+nohup bash GIAB_publicData_Hiseq_300x/outcome/GIAB_publicData_Hiseq_300x_HG002/concat.sh > .../concat.log 2>&1 &   # 샘플별 병합, 수 시간 (또는 --run-concat)
 ```
 
 | 디렉토리 | dataset | 샘플 dir (`outcome/` 아래) | 파일 |
 |---|---|---|---|
-| `GIAB_publicdata_Novaseq6000-PCRfree_30x` | NovaSeq_PCRfree_30x | `…_HG002` `…_HG003` `…_HG004` | 샘플당 `<sample>_1/2.fastq.gz` 1쌍 |
-| `GIAB_publicdata_NovaseqX_30x` | NovaSeqX_30x | `…_HG002` | 1쌍 |
-| `GIAB_publicdata_Hiseq_subsampled_30x` | Illumina_PCRfree_30x | HG002/3/4 | 1쌍 |
-| `GIAB_publicdata_Hiseq_300x` | HiSeq300x | HG002/3/4 | 935/1005/1024쌍 — `<sample>_<플로우셀-레인-라이브러리>_1/2.fastq.gz` |
-| `GIAB_publicdata_Illumina_250PE` | Illumina_2x250 | HG002/3/4 | 34/18/35쌍 — `<sample>_L00?_1/2` |
-| `GIAB_publicdata_MGISEQ2000-PCRfree` | MGISEQ2000_PCRfree | HG002/3/4 | 2/2/4쌍 |
-| `GIAB_publicdata_BGISEQ500` | BGISEQ500 | HG002/3/4 | 2쌍 |
-| `GIAB_publicdata_Element_AVITI` | Element_AVITI_20240920 | HG002/3/4 | 2쌍 — `<sample>_StdInsert_1/2`, `<sample>_LngInsert_1/2` |
+| `GIAB_publicData_Novaseq6000-PCRfree_30x` | NovaSeq_PCRfree_30x | `…_HG002` `…_HG003` `…_HG004` | 샘플당 `<sample>_1/2.fastq.gz` 1쌍 (링크) |
+| `GIAB_publicData_NovaseqX_30x` | NovaSeqX_30x | `…_HG002` | 1쌍 (링크) |
+| `GIAB_publicData_Hiseq_subsampled_30x` | Illumina_PCRfree_30x | HG002/3/4 | 1쌍 (링크) |
+| `GIAB_publicData_Hiseq_300x` | HiSeq300x | HG002/3/4 | **cat 병합** — 935/1005/1024쌍을 `<sample>_1/2.fastq.gz` 한 쌍으로 (774/787/907 GiB 실사본, concat.sh) |
+| `GIAB_publicData_Illumina_250PE` | Illumina_2x250 | HG002/3/4 | 34/18/35쌍 — `<sample>_L00?_1/2` (링크) |
+| `GIAB_publicData_MGISEQ2000-PCRfree` | MGISEQ2000_PCRfree | HG002/3/4 | 2/2/4쌍 (링크) |
+| `GIAB_publicData_BGISEQ500` | BGISEQ500 | HG002/3/4 | 2쌍 (링크) |
+| `GIAB_publicData_Element_AVITI` | Element_AVITI_20240920 | HG002/3/4 | 2쌍 — `<sample>_StdInsert_1/2`, `<sample>_LngInsert_1/2` (링크) |
 
-이름은 2026-09-18 사용자 지정. 접두는 `--prefix`(기본 `GIAB_publicdata`). 여러 쌍인 데이터셋은 samplesheet의 unit을 끼워 파일 이름을 유일하게 한다 —
-파이프라인이 샘플 dir 안의 여러 쌍을 어떻게 받는지는 사용자가 확인한다. NIST_BGIseq_2x150_100x·Element_AVITI_20231018은 목록에 없어 만들지 않는다.
-재실행은 멱등이고, 같은 이름이 다른 원본을 가리키면 멈춘다. 원본은 samplesheets의 절대경로 그대로다.
+이름·접두 `GIAB_publicData`는 2026-09-18 사용자 확정(`--prefix`로 변경 가능). 여러 쌍인 데이터셋은 samplesheet의 unit을 끼워 파일 이름을 유일하게 한다 —
+파이프라인이 샘플 dir 안의 여러 쌍을 어떻게 받는지는 사용자가 확인한다. HiSeq300x만 사용자 결정으로 cat 병합한다: 샘플 dir의 `concat_R1.list`/`concat_R2.list`(같은 순서)를
+`concat.sh`가 이어붙이고 출력 크기 = 입력 합을 확인한다(gzip 멀티멤버, 재실행 시 크기 맞으면 SKIP). 병합 파일은 링크가 아니라 2.4 TiB 실사본이다.
+NIST_BGIseq_2x150_100x·Element_AVITI_20231018은 목록에 없어 만들지 않는다. 재실행은 멱등이고, 같은 이름이 다른 원본을 가리키면 멈춘다. 원본은 samplesheets의 절대경로 그대로다.
 
 ## 정답셋 (small variant)
 

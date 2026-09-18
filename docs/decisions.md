@@ -166,8 +166,11 @@
 - 사용자 지정 이름 8개(`GIAB_publicdata_<dataset>`; Novaseq6000-PCRfree_30x, NovaseqX_30x, Hiseq_subsampled_30x, Hiseq_300x, Illumina_250PE,
   MGISEQ2000-PCRfree, BGISEQ500, Element_AVITI). 업체 디렉토리 `G000-gd?-*/outcome/<sample>/<sample>_1.fastq.gz`와 같은 모양으로
   `<dir>/outcome/<dir>_<HG00?>/` 아래에 원본 FASTQ 링크를 둔다. `scripts/03_make_pipeline_dirs.py`가 samplesheets에서 만든다.
-- 접두 대소문자: 사용자가 첫 항목은 `GIAB_publicData`, 나머지는 `GIAB_publicdata`로 적었다. 한 트리에 두 표기를 섞지 않기 위해 다수인
-  `GIAB_publicdata`를 기본값으로 두고 `--prefix`로 바꿀 수 있게 했다.
+- 접두 대소문자: 사용자가 첫 항목은 `GIAB_publicData`, 나머지는 `GIAB_publicdata`로 적었다. 처음엔 다수인 `GIAB_publicdata`를 기본으로 두었으나
+  같은 날 사용자가 **`GIAB_publicData`로 통일**하라고 해 기본값을 바꿨다(`--prefix`로 변경 가능).
+- HiSeq300x는 링크 대신 **cat 병합**(사용자 결정, 같은 날): 샘플당 935~1,024쌍을 R1/R2 각 하나로 이어붙여 `<sample>_1/2.fastq.gz`를 만든다.
+  gzip은 멀티멤버라 유효하고, R1/R2 리스트를 같은 순서(unit, 경로)로 써서 짝이 어긋나지 않게 했다. 출력 크기 = 입력 합으로 검증, 크기 맞으면 SKIP.
+  2.4 TiB 실사본이 생기고 플로우셀·레인 read group은 FASTQ 파일 단위에서는 사라진다(리드 이름에는 남음). 실행은 nohup/qsub으로 사용자가.
 - 링크는 심볼릭 링크가 기본(원본이 어느 파일시스템에 있든 동작). `--hard`는 같은 파일시스템일 때만.
 - 샘플당 여러 쌍(HiSeq300x 최대 1,024쌍)은 `<sample>_<unit>_1/2.fastq.gz`로 이름을 유일하게 한다. 원본 파일명은 플로우셀이 다르면 겹친다
   (`2A1_CGATGT_L001_R1_001.fastq.gz`가 12개 플로우셀에 있다). 파이프라인이 샘플 dir 안의 여러 쌍을 병합하는지는 사용자가 확인.
