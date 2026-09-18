@@ -57,7 +57,11 @@ for m in 1 2; do
     [ "$got" = "$want" ] || {{ echo "ERROR: 크기 불일치 $out (got=$got want=$want)"; exit 1; }}
     mv "$out.part" "$out"; echo "OK   $out $(date '+%F %T')"
 done
-echo "첫 리드 이름(짝이어야 함):"; zcat "{name}_1.fastq.gz" | head -1; zcat "{name}_2.fastq.gz" | head -1
+# zcat | head -1 은 head가 먼저 끝나 zcat이 SIGPIPE(141)로 죽는다 — pipefail+errexit 아래서는 스크립트가 여기서 죽는다(2026-09-18 실측, 병합은 이미 끝난 뒤).
+# (zcat || true) 로 감싸 SIGPIPE를 정상 종료로 만든다. HARVEST의 pipefail 교훈과 같은 함정.
+echo "첫 리드 이름(짝이어야 함):"
+( zcat "{name}_1.fastq.gz" || true ) | head -1
+( zcat "{name}_2.fastq.gz" || true ) | head -1
 echo "DONE {name} $(date '+%F %T')"
 """
 
@@ -236,7 +240,11 @@ elif a.run_concat:
             if pr.returncode != 0:
                 failed.append(name)
         time.sleep(5)
-    print(f"병합 끝: 실패 {len(failed)}개" + (f" — {', '.join(failed)} (concat.log 확인, 재실행하면 이어서 함)" if failed else ""))
-    sys.exit(1 if failed else 0)
+    done = sum(1 for sdir, name, pairs in concat if concat_done(sdir, name, pairs))
+    print(f"병합 끝: 완료 {done}/{len(concat)} 샘플(출력 크기 = 입력 합), 이번 실행 실패 {len(failed)}개"
+          + (f" — {', '.join(failed)} (concat.log 확인, 재실행하면 이어서 함)" if failed else ""))
+    sys.exit(1 if failed or done < len(concat) else 0)
 else:
+    done = len(concat) - len(todo)
+    print(f"병합 완료 {done}/{len(concat)} 샘플(출력 크기 = 입력 합).")
     print(f"병합 미실행 {len(todo)} 샘플. 한 번에 전부: --run-concat (--jobs N) 또는 --qsub. 개별: nohup bash <샘플 dir>/concat.sh > <샘플 dir>/concat.log 2>&1 &")
