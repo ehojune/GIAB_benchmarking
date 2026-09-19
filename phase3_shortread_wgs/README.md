@@ -64,16 +64,17 @@ python <repo>/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py --prune --qs
 
 | 디렉토리 | dataset | 샘플 dir (`outcome/` 아래) | 파일 |
 |---|---|---|---|
-| `GIAB_publicData_Novaseq6000-PCRfree_30x` | NovaSeq_PCRfree_30x | `…_HG002` `…_HG003` `…_HG004` | 샘플당 `<sample>_1/2.fastq.gz` 1쌍 (링크) |
-| `GIAB_publicData_NovaseqX_30x` | NovaSeqX_30x | `…_HG002` | 1쌍 (링크) |
-| `GIAB_publicData_Hiseq_subsampled_30x` | Illumina_PCRfree_30x | HG002/3/4 | 1쌍 (링크) |
-| `GIAB_publicData_Hiseq_300x` | HiSeq300x | HG002/3/4 | **cat 병합** 935/1005/1024쌍 → 1쌍 (774/787/907 GiB 실사본) |
-| `GIAB_publicData_Illumina_250PE` | Illumina_2x250 | HG002/3/4 | **cat 병합** 34/18/35쌍 → 1쌍 (163/144/161 GiB; 레인당 분할 파일, HG003/4는 라이브러리 2개 포함) |
-| `GIAB_publicData_MGISEQ2000-PCRfree` | MGISEQ2000_PCRfree | HG002/3/4 | **cat 병합** 2/2/4쌍 → 1쌍 (HG004는 라이브러리 2개 포함) |
-| `GIAB_publicData_BGISEQ500` | BGISEQ500 | HG002/3/4 | **cat 병합** 2쌍(레인 2) → 1쌍 |
-| `GIAB_publicData_Element_AVITI` | Element_AVITI_20240920 | HG002/3/4 | **cat 병합** StdInsert + LngInsert → 1쌍 (인서트 ~400 bp와 ~1300 bp가 한 파일에 섞임 — 해석 주의) |
+| `GIAB-publicData-Novaseq6000-PCRfree-30x` | NovaSeq_PCRfree_30x | `…-HG002` `…-HG003` `…-HG004` | 샘플당 `<sample>_1/2.fastq.gz` 1쌍 (링크) |
+| `GIAB-publicData-NovaseqX-30x` | NovaSeqX_30x | `…-HG002` | 1쌍 (링크) |
+| `GIAB-publicData-Hiseq-subsampled-30x` | Illumina_PCRfree_30x | HG002/3/4 | 1쌍 (링크) |
+| `GIAB-publicData-Hiseq-300x` | HiSeq300x | HG002/3/4 | **cat 병합** 935/1005/1024쌍 → 1쌍 (774/787/907 GiB 실사본) |
+| `GIAB-publicData-Illumina-250PE` | Illumina_2x250 | HG002/3/4 | **cat 병합** 34/18/35쌍 → 1쌍 (163/144/161 GiB; 레인당 분할 파일, HG003/4는 라이브러리 2개 포함) |
+| `GIAB-publicData-MGISEQ2000-PCRfree` | MGISEQ2000_PCRfree | HG002/3/4 | **cat 병합** 2/2/4쌍 → 1쌍 (HG004는 라이브러리 2개 포함) |
+| `GIAB-publicData-BGISEQ500` | BGISEQ500 | HG002/3/4 | **cat 병합** 2쌍(레인 2) → 1쌍 |
+| `GIAB-publicData-Element-AVITI` | Element_AVITI_20240920 | HG002/3/4 | **cat 병합** StdInsert + LngInsert → 1쌍 (인서트 ~400 bp와 ~1300 bp가 한 파일에 섞임 — 해석 주의) |
 
-이름·접두 `GIAB_publicData`는 2026-09-18 사용자 확정(`--prefix`로 변경 가능). 샘플당 쌍이 하나면 링크, 둘 이상이면 cat 병합(사용자 결정 "각각 알아서"): 샘플 dir의
+이름은 2026-09-18 사용자 지정, 구분자는 2026-09-19에 전부 `-`로(파이프라인이 `_`로 샘플명을 자른다; `_`는 mate 접미 `_1/_2.fastq.gz`에만). 접두 `GIAB-publicData`(`--prefix`로 변경 가능, `_` 금지).
+2026-09-18에 `_` 이름으로 만들어 둔 트리는 `scripts/04_rename_underscore_to_hyphen.sh <dest> [제외 dir]`로 바꾼다(기본 dry-run, `APPLY=1`로 적용, 이미 있는 이름은 SKIP). 샘플당 쌍이 하나면 링크, 둘 이상이면 cat 병합(사용자 결정 "각각 알아서"): 샘플 dir의
 `concat_R1.list`/`concat_R2.list`(같은 순서)를 `concat.sh`가 이어붙이고 출력 크기 = 입력 합을 확인한다(gzip 멀티멤버, 이미 맞으면 SKIP). 병합 파일은 실사본이라 약 3.6 TiB가 추가로 든다.
 `--run-concat --jobs N`은 로그인 노드에서 N개씩 병렬로 전부 돌리고 끝까지 기다린다(nohup 권장), `--qsub`은 샘플별 SGE 잡(shepherd.q, phase2와 같은 호스트 제한)으로 제출한다.
 NIST_BGIseq_2x150_100x·Element_AVITI_20231018은 목록에 없어 만들지 않는다. 재실행은 멱등이고, 같은 이름이 다른 원본을 가리키면 멈춘다. `--prune`은 계획에 없는 옛 심볼릭 링크만 지운다(일반 파일·병합 결과는 안 건드림). 원본은 samplesheets의 절대경로 그대로다.

@@ -7,12 +7,14 @@
     python .../03_make_pipeline_dirs.py --prune --run-concat --jobs 4                  # + 병합을 여기서 4개씩 병렬로 전부 실행하고 기다린다 (nohup 권장)
     python .../03_make_pipeline_dirs.py --prune --qsub                                 # + 병합을 샘플별 SGE 잡으로 제출 (shepherd.q)
     python .../03_make_pipeline_dirs.py --only Hiseq_300x --only Illumina_250PE        # 일부 데이터셋만
-    python .../03_make_pipeline_dirs.py --prefix GIAB_publicdata                       # 접두 변경 (기본 GIAB_publicData, 2026-09-18 사용자 확정)
+    python .../03_make_pipeline_dirs.py --prefix GIAB-publicdata                       # 접두 변경 (기본 GIAB-publicData)
 
-만드는 구조 (업체 디렉토리 G000-gd?-*/outcome/<sample>/<sample>_1.fastq.gz 와 같은 모양, **샘플당 R1/R2 한 쌍**):
+만드는 구조 (업체 디렉토리 G000-gd?-*/outcome/<sample>/<sample>_1.fastq.gz 와 같은 모양, **샘플당 R1/R2 한 쌍**).
+이름 안의 구분자는 전부 `-`이고 `_`는 mate 접미(`_1.fastq.gz`/`_2.fastq.gz`)에만 쓴다(2026-09-19 사용자 결정 — 파이프라인이 `_`로 샘플명을 자른다):
 
-    <dest>/<prefix>_<dataset>/outcome/<prefix>_<dataset>_<HG00?>/<prefix>_<dataset>_<HG00?>_1.fastq.gz
+    <dest>/<prefix>-<dataset>/outcome/<prefix>-<dataset>-<HG00?>/<prefix>-<dataset>-<HG00?>_1.fastq.gz
                                                                                   ..._2.fastq.gz
+    예: GIAB-publicData-Novaseq6000-PCRfree-30x/outcome/GIAB-publicData-Novaseq6000-PCRfree-30x-HG002/GIAB-publicData-Novaseq6000-PCRfree-30x-HG002_1.fastq.gz
 
 - 샘플에 쌍이 하나면(NovaSeq 6000/X, HiSeq 30x 서브샘플) 원본으로의 심볼릭 링크(`--hard`면 하드링크).
 - 쌍이 여럿이면(HiSeq300x 935~1,024쌍, 2x250 18~35쌍, MGISEQ·BGISEQ·AVITI 2~4쌍) **cat으로 한 쌍에 병합**한다(2026-09-18 사용자 결정 "각각 알아서").
@@ -29,17 +31,18 @@ from collections import Counter, defaultdict
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
 SHEETS = os.path.join(ROOT, "samplesheets")
 
-# samplesheet dataset -> 디렉토리 이름 뒷부분 (2026-09-18 사용자 지정). 여기 없는 dataset(NIST_BGIseq_2x150_100x, Element_AVITI_20231018)은 만들지 않는다.
+# samplesheet dataset -> 디렉토리 이름 뒷부분 (2026-09-18 사용자 지정, 2026-09-19 `_`→`-`). 여기 없는 dataset(NIST_BGIseq_2x150_100x, Element_AVITI_20231018)은 만들지 않는다.
 DIRNAME = {
-    "NovaSeq_PCRfree_30x":    "Novaseq6000-PCRfree_30x",
-    "NovaSeqX_30x":           "NovaseqX_30x",
-    "Illumina_PCRfree_30x":   "Hiseq_subsampled_30x",
-    "HiSeq300x":              "Hiseq_300x",
-    "Illumina_2x250":         "Illumina_250PE",
+    "NovaSeq_PCRfree_30x":    "Novaseq6000-PCRfree-30x",
+    "NovaSeqX_30x":           "NovaseqX-30x",
+    "Illumina_PCRfree_30x":   "Hiseq-subsampled-30x",
+    "HiSeq300x":              "Hiseq-300x",
+    "Illumina_2x250":         "Illumina-250PE",
     "MGISEQ2000_PCRfree":     "MGISEQ2000-PCRfree",
     "BGISEQ500":              "BGISEQ500",
-    "Element_AVITI_20240920": "Element_AVITI",
+    "Element_AVITI_20240920": "Element-AVITI",
 }
+SEP = "-"   # 이름 구분자. `_`는 mate 접미에만
 
 CONCAT_SH = r"""#!/bin/bash
 # {name}: FASTQ {n}쌍을 R1/R2 각각 하나로 cat 병합한다 (03_make_pipeline_dirs.py 생성, 2026-09-18 결정).
@@ -79,7 +82,7 @@ bash {sdir}/concat.sh
 
 ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
 ap.add_argument("--dest", default=".", help="디렉토리를 만들 위치 (기본: 현재 디렉토리)")
-ap.add_argument("--prefix", default="GIAB_publicData", help="디렉토리·샘플 이름 접두 (기본 GIAB_publicData)")
+ap.add_argument("--prefix", default="GIAB-publicData", help="디렉토리·샘플 이름 접두 (기본 GIAB-publicData; `_`는 mate 접미에만 쓰므로 접두에도 넣지 말 것)")
 ap.add_argument("--only", action="append", default=[], help="이 데이터셋 디렉토리 이름(뒷부분)만. 반복 가능")
 ap.add_argument("--hard", action="store_true", help="1쌍짜리를 심볼릭 링크 대신 하드링크로. 원본과 같은 파일시스템이어야 한다")
 ap.add_argument("--run-concat", action="store_true", help="concat.sh 전부를 여기서 실행하고 끝날 때까지 기다린다 (--jobs 병렬)")
@@ -92,6 +95,8 @@ ap.add_argument("--dry-run", action="store_true", help="만들지 않고 계획�
 ap.add_argument("--sheets", default=SHEETS, help=argparse.SUPPRESS)   # 테스트용: samplesheet 디렉토리 바꿔치기
 a = ap.parse_args()
 SHEETS = a.sheets
+if "_" in a.prefix:
+    sys.exit(f"ERROR: 접두에 '_'가 있다({a.prefix}). '_'는 mate 접미(_1/_2.fastq.gz)에만 쓴다 — 예: GIAB-publicData")
 BASH = os.environ.get("CONCAT_BASH", "bash")   # 테스트용: Windows에서 Git Bash 경로 지정
 if a.run_concat and a.qsub:
     sys.exit("--run-concat 과 --qsub 은 하나만")
@@ -126,12 +131,12 @@ for fn in sorted(os.listdir(SHEETS)):
     sample, dataset = fn[:-4].split(".", 1)
     if dataset not in DIRNAME:
         continue
-    dname = f"{a.prefix}_{DIRNAME[dataset]}"
+    dname = f"{a.prefix}{SEP}{DIRNAME[dataset]}"
     if a.only and DIRNAME[dataset] not in a.only and dname not in a.only:
         continue
     rows = read_sheet(os.path.join(SHEETS, fn))
-    sdir = os.path.join(a.dest, dname, "outcome", f"{dname}_{sample}")
-    name = f"{dname}_{sample}"
+    name = f"{dname}{SEP}{sample}"
+    sdir = os.path.join(a.dest, dname, "outcome", name)
     if len(rows) > 1:
         pairs = [(r["fastq_1"], r["fastq_2"]) for r in sorted(rows, key=lambda r: (r["unit"], r["fastq_1"]))]
         concat.append((sdir, name, pairs))
