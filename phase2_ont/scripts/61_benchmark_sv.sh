@@ -339,6 +339,8 @@ submit_many() {
 
 # summary.json(refine 전)과 refine.variant_summary.json(refine 후)을 한 TSV로 모은다.
 # 둘 다 내는 이유: refine이 수치를 얼마나 움직였는지 보여야 그 값을 믿을지 판단할 수 있다.
+# 실측(2026-09-18): refine이 F1을 4.8~5.1점 올린다 — 켜 두는 게 맞았다.
+# refine 행의 gt_concordance는 NA로 나온다. truvari가 refine.variant_summary.json에 그 키를 안 낸다.
 collect() {
     local out="${1:-$PHASE2/phase2_bench_sv_summary.tsv}" py
     py="${PYTHON:-$(command -v python3 || command -v python || true)}"
