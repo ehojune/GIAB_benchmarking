@@ -56,6 +56,22 @@ RUNS = [
               "rel6 전체 53 플로우셀 132.9 Gbp(~43x) 중 Ultra 킷은 12셀 19.3 Gbp뿐 — "
               "GIAB BAM이 실제로 무엇을 담았는지는 03_dup_evidence.sh가 헤더로 대조한다"),
 
+    # --- HG002 R10.4.1: GIAB FTP에 R10 ONT가 없다. ONT 공개 데이터에서 받는다 ---
+    dict(manifest="EXT", sample="HG002", dataset="ONT-R10_giab2025.01_PAW70337", entry="aligned_bam",
+         chemistry="R10.4.1 (PromethION FLO-PRO114M, SQK-LSK114)",
+         basecaller="dorado 0.8.2 sup (dna_r10.4.1_e8.2_400bps@v5.0.0)",
+         clair3=M_R10_500, dv=DV_R10, expect=1,
+         note="ONT 공개 데이터 giab_2025.01 (s3://ont-open-data, CC BY-NC 4.0 = 비상업 연구 한정). "
+              "**이 프로젝트에서 유일하게 truth가 있는 R10 런이다** — HG001~HG007은 전부 R9라 R10 정확도도 "
+              "DeepVariant도 지금껏 채점된 적이 없었다. HG002는 소변이(v4.2.1)와 SV(v5.0q) truth를 둘 다 가진 "
+              "유일한 샘플이라 셋을 한 번에 연다. "
+              "**진입이 aligned BAM인 유일한 런이다**: ONT는 POD5와 정렬 BAM만 배포하고(uBAM/fastq 없음) "
+              "POD5 재베이스콜은 정책상 제외다. 정책의 fastq>uBAM>aligned BAM 순서에서 쓸 수 있는 가장 raw한 "
+              "형태가 이것이다. 정렬이 우리 것이 아니므로(ONT도 minimap2) R9-R10 비교에 정렬이 교란으로 남는다. "
+              "플로우셀 2개 중 PAW70337만 받는다 — ONT 자체 hap.py 결과가 플로우셀 단위라 "
+              "(analysis/happy-benchmark/sup/HG002_PAW70337) 같은 입력에 대한 외부 대조군이 생긴다. "
+              "나머지 PAW71238(146 GiB)을 더하면 ~90x가 된다"),
+
     # --- HG002 ONT-UL: 같은 MinION 플로우셀의 베이스콜 릴리스 5종 ---
     dict(manifest="HG002", sample="HG002", dataset="guppy-V3.4.5", entry="fastq",
          chemistry="R9.4.1 (MinION FLO-MIN106, SQK-RAD003/004)", basecaller="guppy 3.4.5",
@@ -231,8 +247,12 @@ def main():
             # unit_from='parent': 파일이 수백 개인 데이터셋을 런 디렉토리 단위로 묶어
             # 정렬 전에 samtools cat으로 합친다 (파이프라인의 unit 열)
             unit = Path(p).parent.name if run.get("unit_from") == "parent" else ""
+            # aligned_bam 은 .bai 를 같이 넘긴다. 비워 두면 파이프라인이 160 GiB를 다시 인덱싱한다.
+            # (ext_manifest 에 kind=index 로 같이 받아 두므로 옆에 있다. 다른 진입 타입은 index 칸이
+            #  비어 있어야 하고, 안 그러면 파이프라인이 거부한다 — main.nf 의 VALID_TYPES 검사.)
+            idx = f"{args.data_root}/{p}.bai" if run["entry"] == "aligned_bam" else ""
             ss_rows.append((run["sample"], run["dataset"], run["entry"],
-                            f"{args.data_root}/{p}", "", unit))
+                            f"{args.data_root}/{p}", idx, unit))
             input_rows.append((dsid, p, paths[p]))
 
         with open(ss_dir / f"{dsid}.csv", "w", newline="\n", encoding="utf-8") as fh:

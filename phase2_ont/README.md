@@ -6,14 +6,41 @@ GIAB ONT 전 데이터셋을 **각자의 가장 raw한 형태부터** 정렬·�
 [pipeline/ont-wgs](pipeline/ont-wgs/)는 phase1의 pacbio-hifi-wgs를 본떠 새로 만들었다
 ([왜 nf-core/nanoseq가 아닌지](../docs/reference/ont_pipeline_choice.md)).
 
-- 실행 단위: **18개** ([run_table.tsv](run_table.tsv)) = 카탈로그 ONT 18행 중 17행을 분해
+- 실행 단위: **19개** ([run_table.tsv](run_table.tsv)) = 카탈로그 ONT 18행 중 17행을 분해
   (HG008 Northeastern_ONT-std는 N-D/N-P로 분리). 잡 1개 = 실행 단위 1개.
-- 진입점: fastq 12 / uBAM 6. **aligned BAM 진입은 없다.**
+- 진입점: fastq 12 / uBAM 6 / **aligned BAM 1** (HG002 R10 — 아래).
 - 이 중 4개는 `dup_of` 표시 — HG002 ONT-UL은 같은 MinION 플로우셀의 베이스콜 릴리스가 5종이다
   (rel1 6x, rel2 16x, guppy 2.3.4 / 3.2.4 / 3.4.5 각 52x). 기본 제출은 최신·최대인 **guppy-V3.4.5** 하나뿐이고
   나머지 4개는 `DUP_OK=1 scripts/10_submit.sh <dsid>` 로만 돈다.
 - 카탈로그 1행은 **제외**: HG002 Cornell 2D ([excluded.tsv](excluded.tsv), 이유 포함)
-- 입력 합계 2.92 TiB (중복 제외 **2.50 TiB**, 14 runs). 노드 3대 / 노드당 2잡 = 동시 6런.
+- 입력 합계 3.07 TiB (중복 제외 **2.66 TiB**, 15 runs). 노드 3대 / 노드당 2잡 = 동시 6런.
+
+## HG002 R10.4.1 — 벤치마크 공백을 메우려고 외부에서 들여온 런
+
+**2026-09-19 추가.** 그전까지 truth가 있는 샘플(HG001~HG007)은 전부 R9.4.1이고 R10은 전부
+HG008(germline truth 없음)이라, **R10 정확도도 DeepVariant도 한 번도 채점된 적이 없었다.**
+GIAB FTP에는 HG002의 R10 ONT가 없다(ONT 디렉토리 셋 전부 R9 시절). 그래서 밖에서 가져온다.
+
+| | |
+|---|---|
+| 출처 | ONT 공개 데이터 `s3://ont-open-data/giab_2025.01/` (익명 다운로드) |
+| 라이선스 | **CC BY-NC 4.0 — 비상업 연구 한정.** 이 제약은 데이터와 함께 따라다닌다 |
+| 케미스트리 | R10.4.1, PromethION FLO-PRO114M, SQK-LSK114 (kit14) |
+| 베이스콜러 | dorado 0.8.2 sup, `dna_r10.4.1_e8.2_400bps@v5.0.0` |
+| 받는 것 | 플로우셀 **PAW70337** 하나, 정렬 BAM 160 GiB (+`.bai`) |
+
+**진입이 aligned BAM인 유일한 런이다.** ONT는 POD5와 정렬 BAM만 배포하고 uBAM·fastq는 내지 않는다.
+POD5 재베이스콜은 정책상 제외라, `fastq > uBAM > aligned BAM` 순서에서 쓸 수 있는 가장 raw한 형태가
+정렬 BAM이다. 정렬이 우리 것이 아니므로(ONT도 minimap2) **R9↔R10 비교에 정렬이 교란으로 남는다** —
+결과를 적을 때 같이 적어야 한다.
+
+**플로우셀 하나만 받는 이유**: ONT가 같은 플로우셀에 자체 hap.py 결과를 공개해 뒀다
+(`analysis/happy-benchmark/sup/HG002_PAW70337`, SNP F1 .9983 / INDEL F1 .9147). 같은 입력에 대한
+외부 대조군이 생겨서, 우리 수치가 크게 벗어나면 우리 쪽 문제라는 신호가 된다. 나머지 PAW71238
+(146 GiB)을 더하면 ~90x가 되지만 그 대조는 사라진다.
+
+이 런 하나가 **R10 소변이 · R10 SV · DeepVariant** 셋을 동시에 연다 — HG002가 소변이(v4.2.1)와
+SV(v5.0q) truth를 둘 다 가진 유일한 샘플이기 때문이다.
 
 ## 중복 판정은 read_id로 한다
 
@@ -35,7 +62,7 @@ bash phase2_ont/scripts/03_dup_evidence.sh        # sequencing_summary에서 rea
 cd ~/GIAB_benchmarking && git pull
 cp phase2_ont/env.local.sh{.example,}                      # 잡 크기 프리셋 (안 하면 노드당 2잡 기본값)
 bash phase2_ont/scripts/01_prepare_login_node.sh           # 1회: SGE 점검 + 컨테이너 10개 + 레퍼런스 + TRF + Clair3 모델
-bash phase2_ont/scripts/02_fetch_external_reads.sh         # 1회: HG001 rel6 리드 (외부 AWS, 136 GiB)
+bash phase2_ont/scripts/02_fetch_external_reads.sh         # 1회: 외부 리드 (HG001 rel6 136 GiB + HG002 R10 BAM 160 GiB)
 bash phase2_ont/scripts/03_dup_evidence.sh                 # 중복 판정 근거 (읽기 전용, 오래 걸림)
 bash phase2_ont/scripts/04_stub_test.sh                    # 1회: 파이프라인 배선 스모크 테스트 (1분)
 bash phase2_ont/scripts/10_submit.sh --ready               # 준비된 것 전부 제출 (dup 제외; --list로 미리보기)

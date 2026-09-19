@@ -96,7 +96,8 @@ TH = {
     # 위상 — LongPhase. ONT 장리드는 블록이 길다
     "phased_min": 70.0,
     "phased_min_tumor": 55.0,   # 종양은 LOH·aneuploidy로 het 자체가 줄어 위상 대상이 줄어든다
-    "n50_min": 300_000,         # 실측 526kb~87Mb. HiFi(20kb)와 자릿수가 다르다
+    "n50_min": 300_000,         # 실측 526kb~87Mb. HiFi(20kb)와 자릿수가 다르다.
+                                # whatshap의 값은 NG50이라 0이 나올 수 있다 — 아래 판정 참고
     "meth_min_pct": 50.0,       # uBAM 진입 런의 표본 리드 중 MM 태그 보유 비율
 }
 # 케미스트리별로 갈리는 것: 리드 오류율과 그 파생 지표
@@ -435,8 +436,14 @@ def one(run, run_base, ref, want_pass=False, want_meth=False, img=None):
             F.append(f"위상{row['wh_phased_pct']:.0f}%")
         n50 = row.get("wh_n50")
         if n50 == 0:
+            # whatshap의 block_n50 열은 사실 **NG50**이다 (유전체 길이 기준, stats.py compute_ng50).
+            # 블록 span 합이 유전체 길이의 절반에 못 미치면 정의상 0이 나온다 — 미산출이 아니라
+            # "위상 블록이 유전체의 절반도 못 덮는다"는 진짜 측정값이다. 50% 지점에서 절벽처럼
+            # 떨어지므로 0과 정상값 사이에 중간이 없다. 콘티그 길이를 모를 때만 nan을 낸다.
+            # (2026-09-18 실측: HG008-N-D는 blocks 9048/NG50 526kb로 간신히 위, HG008T-p2는
+            #  blocks 10577/0으로 아래. 둘 다 위상 자체는 정상이다.)
             row["wh_n50"] = None
-            F.append("N50미산출")
+            F.append("위상블록 NG50=0 (블록 총합이 유전체 절반 미만)")
         elif n50 and n50 < TH["n50_min"]:
             F.append(f"blockN50 {n50/1e3:.0f}kb")
 
