@@ -1,4 +1,6 @@
 HG001.Ultralong_OxfordNanopore	ext/nanopore-wgs-consortium/rel6/rel_6.fastq.gz	146155473652
+HG002.ONT-R10_giab2025.01_PAW70337	ext/ont-open-data/giab_2025.01/HG002/PAW70337/calls.sorted.bam	171763325052
+HG002.ONT-R10_giab2025.01_PAW70337	ext/ont-open-data/giab_2025.01/HG002/PAW70337/calls.sorted.bam.bai	48778568
 HG002.guppy-V3.4.5	data/AshkenazimTrio/HG002_NA24385_son/Ultralong_OxfordNanopore/guppy-V3.4.5/HG002_ONT-UL_GIAB_20200204.fastq.gz	181883590056
 HG002.guppy-V3.2.4_2020-01-22	data/AshkenazimTrio/HG002_NA24385_son/Ultralong_OxfordNanopore/guppy-V3.2.4_2020-01-22/HG002_ONT-UL_GIAB_20200122.fastq.gz	179931949856
 HG002.guppy-V2.3.4_2019-06-26	data/AshkenazimTrio/HG002_NA24385_son/Ultralong_OxfordNanopore/guppy-V2.3.4_2019-06-26/ultra-long-ont.fastq.gz	206140031293
