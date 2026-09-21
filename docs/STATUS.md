@@ -1,6 +1,7 @@
 # 진행 현황 — 지금 돌고 있는 것과 다음 손
 
 읽고 지나가는 문서가 아니라 **매번 갱신하는 표**다. 잡이 끝나거나 결정이 바뀌면 여기부터 고친다. 근거·경위는 [decisions.md](decisions.md), 결과 수치는 `docs/reference/`.
+`docs/runs/`가 아니라 여기 두는 이유(한 번 쓰고 남기는 실행 기록이 아니라 계속 덮어쓰는 현황판)는 decisions.md 2026-09-21 항목에 있다.
 
 갱신: 2026-09-21 15:30 (nbb2 qstat 기준)
 
@@ -26,18 +27,26 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 
 - `/BiO/scratch/dyl/kbb/G000/GIAB_publicData_Hiseq_subsampled_30x` — 옛 이름, 손으로 바꾼 트리와 중복. 링크 2쌍뿐. 지워도 됨.
 - `sample_information_nbb2.filled.xlsx`(로컬) — GIAB 22행 채운 사본. 원본 반영은 사용자.
-- decisions.md에 "nbb2 GATK 4.6은 Java 17 필요, 잡 안에서 JAVA_HOME/PATH 지정" 한 줄 — #1 성공 확인 후.
+- Java 17 결정은 decisions.md 2026-09-21 항목에 적었다(검증 대기 표시). #1 성공 확인 후 "검증됨"으로 바꾼다.
 - 파이프라인이 bwa 실패를 삼키고 `Finished`로 넘긴 경로(Codex 확인) — 공용 파이프라인이라 우리가 안 고침. 재개 전 BAM 리드 수 대조가 방어책(아래 명령).
 
 ## 자주 쓰는 확인 명령
 
-BAM이 fastp 리드 수 이상인지 (정렬 누락 스크리닝, 즉시 끝남):
+정렬 BAM 완전성 검사는 두 단계다.
+
+**1단계 — 빠른 스크리닝** (인덱스만 읽어 즉시 끝남). `idxstats`는 secondary/supplementary까지 세므로 작은 누락(≲0.4%)은 가릴 수 있다. 잘린 파일(MGISEQ HG002처럼 수십 %)만 잡는 용도다. samtools 실패는 `NOBAM`으로 따로 표시한다.
 
 ```bash
-cd /BiO/scratch/dyl/kbb/G000 && for j in GIAB-publicData-*/tmp/02.trimmed/*_fastp.json; do s=$(basename "$j" _fastp.json); d=${j%%/tmp/*}; exp=$(python -c "import json;print(json.load(open('$j'))['summary']['after_filtering']['total_reads'])"); got=$(/home/ehojune/program/samtools-1.24/samtools idxstats "$d/tmp/04.sort/${s}_sort.bam" 2>/dev/null | awk '{s+=$3+$4} END{print s+0}'); printf '%-50s fastp=%s bam=%s %s\n' "$s" "$exp" "$got" "$([ "$got" -ge "$exp" ] && echo OK || echo SHORT)"; done
+cd /BiO/scratch/dyl/kbb/G000 && SAM=/home/ehojune/program/samtools-1.24/samtools; for j in GIAB-publicData-*/tmp/02.trimmed/*_fastp.json; do s=$(basename "$j" _fastp.json); d=${j%%/tmp/*}; exp=$(python -c "import json;print(json.load(open('$j'))['summary']['after_filtering']['total_reads'])"); if got=$($SAM idxstats "$d/tmp/04.sort/${s}_sort.bam" 2>/dev/null | awk '{s+=$3+$4} END{print s}'); then printf '%-50s fastp=%s idxstats=%s %s\n' "$s" "$exp" "$got" "$([ "${got:-0}" -ge "$exp" ] && echo OK || echo SHORT)"; else printf '%-50s fastp=%s NOBAM\n' "$s" "$exp"; fi; done
 ```
 
-(`bam=0`은 세트가 Success로 끝나 tmp가 정리된 경우다 — Hiseq-subsampled-30x가 그렇다.)
+**2단계 — 확정** (primary만 세므로 정확하지만 BAM 전체를 읽는다. 샘플당 수 분~수십 분, SGE 잡으로). `fastp after_filtering total_reads`와 정확히 같아야 한다.
+
+```bash
+cd /BiO/scratch/dyl/kbb/G000 && SAM=/home/ehojune/program/samtools-1.24/samtools; for j in GIAB-publicData-*/tmp/02.trimmed/*_fastp.json; do s=$(basename "$j" _fastp.json); d=${j%%/tmp/*}; exp=$(python -c "import json;print(json.load(open('$j'))['summary']['after_filtering']['total_reads'])"); got=$($SAM view -c -F 0x900 -@ 4 "$d/tmp/04.sort/${s}_sort.bam") || { printf '%-50s FAIL(samtools)\n' "$s"; continue; }; printf '%-50s fastp=%s primary=%s %s\n' "$s" "$exp" "$got" "$([ "$got" -eq "$exp" ] && echo OK || echo MISMATCH)"; done
+```
+
+(1단계에서 `NOBAM`은 세트가 Success로 끝나 tmp가 정리된 경우다 — Hiseq-subsampled-30x가 그렇다. 2026-09-21 1단계 결과: 20 OK, MGISEQ HG002 SHORT. 2단계는 아직 안 돌렸다.)
 
 ## 이력
 
