@@ -8,7 +8,7 @@ GIAB ONT 전 데이터셋을 **각자의 가장 raw한 형태부터** 정렬·�
 
 - 실행 단위: **19개** ([run_table.tsv](run_table.tsv)) = 카탈로그 ONT 18행 중 17행을 분해
   (HG008 Northeastern_ONT-std는 N-D/N-P로 분리). 잡 1개 = 실행 단위 1개.
-- 진입점: fastq 12 / uBAM 6 / **aligned BAM 1** (HG002 R10 — 아래).
+- 진입점: fastq 12 / uBAM 6 / **aligned_bam_realign 1** (HG002 R10 — 아래).
 - 이 중 4개는 `dup_of` 표시 — HG002 ONT-UL은 같은 MinION 플로우셀의 베이스콜 릴리스가 5종이다
   (rel1 6x, rel2 16x, guppy 2.3.4 / 3.2.4 / 3.4.5 각 52x). 기본 제출은 최신·최대인 **guppy-V3.4.5** 하나뿐이고
   나머지 4개는 `DUP_OK=1 scripts/10_submit.sh <dsid>` 로만 돈다.
@@ -29,10 +29,19 @@ GIAB FTP에는 HG002의 R10 ONT가 없다(ONT 디렉토리 셋 전부 R9 시절)
 | 베이스콜러 | dorado 0.8.2 sup, `dna_r10.4.1_e8.2_400bps@v5.0.0` |
 | 받는 것 | 플로우셀 **PAW70337** 하나, 정렬 BAM 160 GiB (+`.bai`) |
 
-**진입이 aligned BAM인 유일한 런이다.** ONT는 POD5와 정렬 BAM만 배포하고 uBAM·fastq는 내지 않는다.
-POD5 재베이스콜은 정책상 제외라, `fastq > uBAM > aligned BAM` 순서에서 쓸 수 있는 가장 raw한 형태가
-정렬 BAM이다. 정렬이 우리 것이 아니므로(ONT도 minimap2) **R9↔R10 비교에 정렬이 교란으로 남는다** —
-결과를 적을 때 같이 적어야 한다.
+**정렬 BAM으로 받지만 정렬은 우리가 다시 한다** (`aligned_bam_realign`). ONT는 POD5와 정렬 BAM만
+배포하고 uBAM·fastq는 내지 않으며 POD5 재베이스콜은 정책상 제외다. 그래서 정렬 BAM에서
+`samtools fastq`로 리드를 꺼내 우리 minimap2로 다시 정렬한다.
+
+**남의 정렬 결과를 그대로 믿지 않는다는 원칙 때문이고**, 이 런을 넣은 이유가 R9↔R10 비교인 만큼
+나머지 14런과 정렬이 달라지면 비교축에 교란이 박힌다. 파이프라인에 `aligned_bam`(정렬을 그대로 쓰는)
+진입도 있지만 **쓰는 런은 없다.**
+
+**메틸 태그(MM/ML)는 넘기지 않는다.** 역가닥으로 정렬된 리드는 SEQ가 역상보로 저장돼 있고
+`samtools fastq`가 그걸 되돌리는데, MM 오프셋이 그 저장 방향에 묶여 있어 그대로 옮기면 메틸 위치가
+조용히 어긋날 수 있다(samtools 문서가 이 경우를 다루지 않는다). 이 런의 목적은 변이 정확도이므로
+태그를 버려 그 위험을 없앴다 — `35_review_qc.py`의 `MM%`가 `.`로 나오는 게 정상이다.
+R10 메틸화가 필요해지면 ONT 원본 BAM(태그가 정상인 상태로 디스크에 있다)을 직접 쓰면 된다.
 
 **플로우셀 하나만 받는 이유**: ONT가 같은 플로우셀에 자체 hap.py 결과를 공개해 뒀다
 (`analysis/happy-benchmark/sup/HG002_PAW70337`, SNP F1 .9983 / INDEL F1 .9147). 같은 입력에 대한

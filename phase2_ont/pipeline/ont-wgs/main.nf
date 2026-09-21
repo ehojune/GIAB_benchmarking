@@ -5,7 +5,7 @@
  */
 nextflow.enable.dsl = 2
 
-VALID_TYPES = ['fastq', 'ubam', 'aligned_bam']
+VALID_TYPES = ['fastq', 'ubam', 'aligned_bam', 'aligned_bam_realign']
 // sample/dataset become path components of <outdir>/<sample>/<platform>/<dataset>, so '.' and
 // '..' must be excluded outright — '..' would publish outside --outdir
 NAME_RE     = ~/^(?!\.{1,2}$)[A-Za-z0-9._-]+$/
@@ -116,7 +116,7 @@ workflow {
 
     // ubam 행은 unit이 같으면 합치는 게 정상 동작이지만, fastq/aligned_bam은 unit이 겹치면
     // 산출 파일명이 충돌한다 (unit = 정렬 BAM 이름)
-    def dup_unit = rows.findAll { it.input_type != 'ubam' }
+    def dup_unit = rows.findAll { !(it.input_type in ['ubam', 'aligned_bam_realign']) }
                        .countBy { [it.sample, it.dataset, rowUnit(it)] }
                        .findAll { it.value > 1 }
     if (dup_unit)
@@ -157,8 +157,11 @@ workflow {
         tuple(meta, f, idx)
     }
 
+    // aligned_bam_realign 은 uBAM 과 같은 경로를 탄다 — samtools fastq 로 리드를 꺼내
+    // **우리 minimap2 로 다시 정렬한다**. 남이 만든 정렬을 믿지 않는다는 프로젝트 원칙 때문이다
+    // (aligned_bam 은 그 정렬을 그대로 쓴다 — 지금 쓰는 런은 없다).
     ch_in = ch_rows.branch {
-        ubam:     it[0].type == 'ubam'
+        ubam:     it[0].type in ['ubam', 'aligned_bam_realign']
         fastq:    it[0].type == 'fastq'
         aligned:  it[0].type == 'aligned_bam'
     }
@@ -172,14 +175,16 @@ workflow {
     // samtools cat은 블록을 그대로 이어 붙이므로 재압축이 없고, MM/ML 태그도 그대로다.
     ch_ubam_grouped = ch_in.ubam
         .map { m, f, i ->
-            def key = "${m.sample}\t${m.dataset}\t${m.unit}".toString()
+            // type 을 키에 넣어야 재그룹 후에도 살아남는다 — MINIMAP2_ALIGN 이 이 값으로
+            // 태그 전달 여부를 정한다. 한 unit 안 타입 혼합은 위 검사에서 이미 막았다.
+            def key = "${m.sample}\t${m.dataset}\t${m.unit}\t${m.type}".toString()
             tuple(groupKey(key, unit_sizes[[m.sample, m.dataset, m.unit]]), f)
         }
         .groupTuple()
         .map { key, files ->
-            def (s, d, u) = key.toString().split('\t')
+            def (s, d, u, t) = key.toString().split('\t')
             // 도착 순서는 실행마다 달라진다 — 정렬해서 task hash를 고정해야 -resume이 산다
-            tuple([sample: s, dataset: d, type: 'ubam', unit: u], files.sort { it.name })
+            tuple([sample: s, dataset: d, type: t, unit: u], files.sort { it.name })
         }
         .branch {
             multi:  it[1].size() > 1
@@ -397,9 +402,16 @@ process MINIMAP2_ALIGN {
     // -y를 fastq 진입에 주면 안 된다: Guppy/dorado가 뽑은 fastq의 헤더 코멘트는
     // 'runid=... ch=... start_time=...' 꼴이라 SAM aux(TAG:TYPE:VALUE) 형식이 아니다.
     // 그걸 그대로 옮기면 BAM이 깨진다. 그래서 uBAM 진입에서만 붙인다.
-    def tag_arg = is_bam ? '-y' : ''
+    // 정렬된 BAM에서 리드를 꺼내는 경우(aligned_bam_realign)에는 MM/ML을 넘기지 않는다.
+    // 역가닥 정렬 리드는 SEQ가 역상보로 저장돼 있고 samtools fastq 가 그걸 되돌리는데,
+    // MM 오프셋이 그 방향에 묶여 있어 그대로 옮기면 메틸 위치가 어긋날 수 있다(문서 미확인).
+    // 이 런의 목적은 변이 정확도이므로 **태그를 버려** 조용히 틀리는 쪽을 없앤다 —
+    // 메틸화가 필요하면 ONT 원본 BAM(태그 정상)을 직접 쓰면 된다.
+    def realign = meta.type == 'aligned_bam_realign'
+    def tag_arg = (is_bam && !realign) ? '-y' : ''
     def rg = "@RG\\tID:${meta.unit}\\tSM:${meta.sample}\\tPL:ONT\\tPU:${meta.unit}"
-    def src = is_bam ? "samtools fastq -@ 2 -T ${params.ubam_tags} ${reads} |" : ''
+    def fq_tags = realign ? '' : "-T ${params.ubam_tags} "
+    def src = is_bam ? "samtools fastq -@ 2 ${fq_tags}${reads} |" : ''
     def query = is_bam ? '-' : "${reads}"
     """
     ${src} minimap2 -ax ${params.minimap2_preset} -t ${mm_t} \\

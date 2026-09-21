@@ -1,0 +1,9 @@
+# -stub 스모크 테스트용 두 번째 시트: **aligned_bam 단독** 진입.
+# 이 갈래만 따로 도는 이유가 둘 있다.
+#  1. main.nf 는 모든 행이 aligned_bam 이면 MINIMAP2_INDEX 를 아예 건너뛴다. 섞인 시트로는
+#     그 분기가 안 탄다.
+#  2. unit 1개 + 인덱스 제공이면 FINALIZE_BAM 도 건너뛰는 passthrough 경로다 — 02_alignedBAM/
+#     아래에 BAM 이 재발행되지 않는 것이 정상이고, 그게 의도대로인지 여기서 본다.
+# 실제 대상: HG002.ONT-R10_giab2025.01_PAW70337 (ONT 공개 데이터의 정렬 BAM)
+sample,dataset,input_type,file,index,unit
+TEST,ont_prealigned,aligned_bam,tiny.aligned.bam,tiny.aligned.bam.bai,
