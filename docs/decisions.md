@@ -185,6 +185,19 @@
   `set -eo pipefail`이 그 자리에서 스크립트를 죽였다. 병합(cat·크기 검증·mv)은 그 앞에서 이미 끝나 파일은 정상. `( zcat || true ) | head -1`로 고쳤고
   러너는 마지막에 "완료 N/15(출력 크기 = 입력 합)"를 따로 센다. 같은 날 다른 에이전트가 HARVEST에 적어 둔 pipefail 함정과 같은 뿌리다.
 
+## 2026-09-21 — phase3 WGRS 첫 실행 실패: Java 17, MGISEQ HG002 BAM 재생성, 현황판
+
+- **GATK 4.6.1.0 MarkDuplicatesSpark는 Java 17이 필요한데 nbb2 잡은 Java 8을 잡았다**(class file 61 vs 52). 7세트 19건 `mark` 전부 이 원인.
+  공용 biko 파이프라인(`/BiO/scratch/dyl/kbb/zz.code/`)은 건드리지 않고, **qsub 잡 안에서 `JAVA_HOME=/BiO/scratch/dyl/apps/miniconda3/lib/jvm`(Java 17.0.18, 서버에 이미 있음)과 PATH를 지정한 뒤 `regermline.sh`를 부른다.**
+  GATK 실행기는 PATH의 `java`를 쓰므로 둘 다 필요. 근거·래퍼는 Codex 앱 세션 "Fix server Java version for GATK"(2026-09-21). phase1·2에서 nf-core에 JDK 17을 고정했던 것과 같은 환경 문제.
+  **검증 대기** — 잡 155519~155524가 Success로 끝나면 여기와 STATUS.md를 "검증됨"으로.
+- **MGISEQ2000 HG002는 정렬 BAM이 33% 잘려 있었다.** bwa-mem2 출력 SAM 948,868,188번째 줄에서 samtools가 `SEQ and QUAL are of different length`로 멈췄는데
+  파이프라인이 예외를 삼켜 `Finished`로 넘겼다(BAM 정렬 수 948,864,819 = 에러 줄 − 헤더 3,369줄). 끊긴 위치는 리드 기준 66%로 내 L03+L04 cat 병합 경계(50%)가 아니고,
+  같은 플로우셀의 HG003은 정상이라 병합은 원인이 아니다. 원본 레코드 결함인지 bwa-mem2 출력 문제인지는 미확정. Codex 스크립트(`repairs/mgi_hg002_recheck.sh --rebuild`: 원본 검사 → fastp → bwa → 리드 수 대조 → sort)로
+  별도 디렉토리에 재생성한 뒤 교체한다. 다른 20 샘플은 `idxstats`로 fastp 리드 수 이상임을 확인했다(primary만 세는 확정 검사는 STATUS.md).
+- **현황판 `docs/STATUS.md`를 `docs/`에 둔다** — 템플릿의 `docs/runs/`(한 번 쓰고 남기는 plan/cmd/handoff)와 성격이 다르다. 동시에 5갈래(phase3 재개, BAM 재생성, phase2 R10, phase1 hap.py, 평가 설계)가 돌아
+  사용자가 "같이 트래킹 잘 하자"고 해서 만든, 계속 덮어쓰는 문서다. 이력은 문서 끝 `## 이력`에 append. 템플릿 이탈 기록은 이 줄.
+
 ## 2026-09-19 — 파이프라인 입력 이름의 `_`를 `-`로
 
 - 사용자 결정: 디렉토리·샘플 dir·파일 이름의 `_`는 mate 접미(`_1.fastq.gz`/`_2.fastq.gz`)만 남기고 전부 `-`로. 파이프라인이 `_`로 샘플명을 자르기 때문
