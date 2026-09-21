@@ -25,8 +25,16 @@ cd "$LAUNCH"
 echo "== nextflow 버전 (24.10.x여야 한다) =="
 nextflow -version | grep -m1 version
 
-echo "== stub 실행 =="
+echo "== stub 실행 (1/2: fastq + uBAM 섞인 시트) =="
 nextflow run "$PIPE" -profile test -stub \
+    -work-dir "$WORK" -ansi-log false --outdir "$OUT"
+
+# 진입 타입이 셋인데 위 시트는 둘만 태운다. aligned_bam 단독은 분기가 아예 달라서
+# (전부 aligned_bam 이면 MINIMAP2_INDEX 생략 + unit 1개면 FINALIZE_BAM 생략 passthrough)
+# 따로 돌려야 덮인다.
+echo
+echo "== stub 실행 (2/2: aligned_bam 단독) =="
+nextflow run "$PIPE" -profile test_prealigned -stub \
     -work-dir "$WORK" -ansi-log false --outdir "$OUT"
 
 echo
@@ -52,13 +60,39 @@ bad=0
 for f in "${need[@]}"; do
     if [ -f "$B/$f" ]; then printf '  OK   %s\n' "$f"
     else printf '  누락 %s\n' "$f"; bad=1; fi
+
+# aligned_bam 단독 런: 정렬을 안 하므로 02_alignedBAM/<id>.bam 은 **없는 것이 정상**이다
+# (원본 BAM을 그대로 쓴다 — 30_verify_outputs.sh 도 같은 전제로 짜여 있다).
+# 대신 그 BAM 위에서 콜러·위상·QC가 다 돌아야 한다.
+echo
+echo "== aligned_bam 단독 진입 검증 =="
+BP="$OUT/TEST/ONT/ont_prealigned"
+IDP="TEST.ont_prealigned.test"
+need_pre=(
+    "03_VCF/clair3/$IDP.clair3.vcf.gz"
+    "03_VCF/deepvariant/$IDP.deepvariant.vcf.gz"
+    "03_VCF/SV_sniffles/$IDP.sniffles.vcf.gz"
+    "03_VCF/phased_longphase/$IDP.clair3.phased.vcf.gz"
+    "02_alignedBAM/haplotagged/$IDP.haplotagged.bam"
+    "04_QC/mosdepth/$IDP.mosdepth.summary.txt"
+    "04_QC/samtools/$IDP.stats.txt"
+)
+for f in "${need_pre[@]}"; do
+    if [ -f "$BP/$f" ]; then echo "  OK   $f"
+    else echo "  누락 $f"; bad=1; fi
+done
+if [ -e "$BP/02_alignedBAM/$IDP.bam" ]; then
+    echo "  예상밖 02_alignedBAM/$IDP.bam (aligned_bam 단독인데 BAM이 재발행됐다)"; bad=1
+else
+    echo "  OK   02_alignedBAM/$IDP.bam 없음 (passthrough — 정상)"
+fi
 done
 [ -f "$OUT/multiqc/run/multiqc_report.html" ] && echo "  OK   multiqc/run/multiqc_report.html" \
     || { echo "  누락 multiqc/run/multiqc_report.html"; bad=1; }
 
 echo
 if [ "$bad" = 0 ]; then
-    echo "배선 OK — 프로세스 22개가 다 돌고 파일명 규약도 맞다."
+    echo "배선 OK — 진입 타입 3종(fastq·uBAM·aligned_bam)이 다 돌고 파일명 규약도 맞다."
     echo "(stub이라 내용은 빈 파일이다. 실제 계산은 10_submit.sh 로.)"
 else
     echo "FAIL: 위 누락 항목을 확인할 것. $WORK 의 .command.err 에 이유가 있다."
