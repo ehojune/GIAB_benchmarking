@@ -61,6 +61,23 @@ for f in "${need[@]}"; do
     if [ -f "$B/$f" ]; then printf '  OK   %s\n' "$f"
     else printf '  누락 %s\n' "$f"; bad=1; fi
 
+
+# aligned_bam_realign: 정렬을 버리고 우리 minimap2로 다시 한다 — 이쪽은 02_alignedBAM/<id>.bam 이
+# **생겨야** 정상이다 (passthrough 와 반대). HG002 R10 런이 쓰는 경로.
+echo
+echo "== aligned_bam_realign 진입 검증 =="
+BR="$OUT/TEST/ONT/ont_realign"
+IDR="TEST.ont_realign.test"
+need_re=(
+    "02_alignedBAM/$IDR.bam"
+    "02_alignedBAM/$IDR.bam.bai"
+    "03_VCF/clair3/$IDR.clair3.vcf.gz"
+    "04_QC/samtools/$IDR.stats.txt"
+)
+for f in "${need_re[@]}"; do
+    if [ -f "$BR/$f" ]; then echo "  OK   $f"
+    else echo "  누락 $f"; bad=1; fi
+done
 # aligned_bam 단독 런: 정렬을 안 하므로 02_alignedBAM/<id>.bam 은 **없는 것이 정상**이다
 # (원본 BAM을 그대로 쓴다 — 30_verify_outputs.sh 도 같은 전제로 짜여 있다).
 # 대신 그 BAM 위에서 콜러·위상·QC가 다 돌아야 한다.

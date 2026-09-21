@@ -57,7 +57,7 @@ RUNS = [
               "GIAB BAM이 실제로 무엇을 담았는지는 03_dup_evidence.sh가 헤더로 대조한다"),
 
     # --- HG002 R10.4.1: GIAB FTP에 R10 ONT가 없다. ONT 공개 데이터에서 받는다 ---
-    dict(manifest="EXT", sample="HG002", dataset="ONT-R10_giab2025.01_PAW70337", entry="aligned_bam",
+    dict(manifest="EXT", sample="HG002", dataset="ONT-R10_giab2025.01_PAW70337", entry="aligned_bam_realign",
          chemistry="R10.4.1 (PromethION FLO-PRO114M, SQK-LSK114)",
          basecaller="dorado 0.8.2 sup (dna_r10.4.1_e8.2_400bps@v5.0.0)",
          clair3=M_R10_500, dv=DV_R10, expect=1,
@@ -65,9 +65,12 @@ RUNS = [
               "**이 프로젝트에서 유일하게 truth가 있는 R10 런이다** — HG001~HG007은 전부 R9라 R10 정확도도 "
               "DeepVariant도 지금껏 채점된 적이 없었다. HG002는 소변이(v4.2.1)와 SV(v5.0q) truth를 둘 다 가진 "
               "유일한 샘플이라 셋을 한 번에 연다. "
-              "**진입이 aligned BAM인 유일한 런이다**: ONT는 POD5와 정렬 BAM만 배포하고(uBAM/fastq 없음) "
-              "POD5 재베이스콜은 정책상 제외다. 정책의 fastq>uBAM>aligned BAM 순서에서 쓸 수 있는 가장 raw한 "
-              "형태가 이것이다. 정렬이 우리 것이 아니므로(ONT도 minimap2) R9-R10 비교에 정렬이 교란으로 남는다. "
+              "**진입이 aligned_bam_realign인 유일한 런이다**: ONT는 POD5와 정렬 BAM만 배포하고 "
+              "(uBAM/fastq 없음) POD5 재베이스콜은 정책상 제외다. 그래서 정렬 BAM에서 리드를 꺼내 "
+              "**우리 minimap2로 다시 정렬한다** — 남의 정렬 결과를 믿지 않는다는 원칙이고, 이 런을 넣은 "
+              "이유가 R9-R10 비교인 만큼 14런과 정렬이 달라지면 비교축에 교란이 박힌다. "
+              "메틸 태그(MM/ML)는 넘기지 않는다: 역가닥 정렬 리드의 MM 오프셋이 저장 방향에 묶여 있어 "
+              "그대로 옮기면 조용히 어긋날 수 있다. 메틸화가 필요하면 ONT 원본 BAM을 직접 쓰면 된다. "
               "플로우셀 2개 중 PAW70337만 받는다 — ONT 자체 hap.py 결과가 플로우셀 단위라 "
               "(analysis/happy-benchmark/sup/HG002_PAW70337) 같은 입력에 대한 외부 대조군이 생긴다. "
               "나머지 PAW71238(146 GiB)을 더하면 ~90x가 된다"),
