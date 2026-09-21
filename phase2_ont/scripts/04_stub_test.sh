@@ -60,6 +60,7 @@ bad=0
 for f in "${need[@]}"; do
     if [ -f "$B/$f" ]; then printf '  OK   %s\n' "$f"
     else printf '  누락 %s\n' "$f"; bad=1; fi
+done
 
 
 # aligned_bam_realign: 정렬을 버리고 우리 minimap2로 다시 한다 — 이쪽은 02_alignedBAM/<id>.bam 이
@@ -103,7 +104,6 @@ if [ -e "$BP/02_alignedBAM/$IDP.bam" ]; then
 else
     echo "  OK   02_alignedBAM/$IDP.bam 없음 (passthrough — 정상)"
 fi
-done
 [ -f "$OUT/multiqc/run/multiqc_report.html" ] && echo "  OK   multiqc/run/multiqc_report.html" \
     || { echo "  누락 multiqc/run/multiqc_report.html"; bad=1; }
 

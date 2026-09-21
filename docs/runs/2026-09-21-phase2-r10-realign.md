@@ -62,11 +62,23 @@ bash phase2_ont/scripts/10_submit.sh HG002.ONT-R10_giab2025.01_PAW70337
 | `bash -n` (04_stub_test.sh) | 통과 |
 | 생성기 재실행 → 샘플시트 `aligned_bam_realign`, index 비움 | 확인 |
 | main.nf 분기 검토 (VALID_TYPES·branch·재그룹·MINIMAP2_ALIGN) | 확인 |
+| 검증 로직 자체 (nextflow 목으로 대체) | 통과 — 세 섹션이 각 1회씩, 정상/실패 양쪽 |
 | **Nextflow stub 실행 (새 판)** | **미실행** — 로컬에 nextflow 24.10.5가 없고, 서버는 머지 전이라 옛 판이 돌았다 |
 | 실제 런 | 미실행 |
 
 **머지 후 서버에서 `04_stub_test.sh`를 다시 돌려야 확정된다.** 새 판이면 출력이 `5 row(s)`에
 stub 실행이 2회(`1/2`, `2/2`)로 나온다.
+
+## Codex PR 리뷰 (PR #18) — 3건
+
+| 지적 | 처리 |
+|---|---|
+| P1 `docs/runs/` 기록 누락 | **반영** — 이 문서 |
+| P2 `aligned_bam_realign` 이 안 쓰는 `.bai` 를 준비 상태로 요구 | **반영** — 인덱스는 `aligned_bam` 진입에서만 넣는다. 문서화된 `KIND=reads` 로 받으면 인덱스를 건너뛰는데, 그때 입력이 다 있는데도 미완으로 보여 제출이 거부되는 경로였다 |
+| P3 새 검증 블록이 기준 루프 **안**에 들어가 12번씩 실행 | **반영** — 기준 루프를 자기 검사 직후에 닫았다. 내가 삽입 위치를 잘못 잡아 만든 버그다 |
+
+P3는 nextflow를 목으로 바꿔 검증 로직만 돌려 확인했다 — 세 섹션이 각 1회씩 나오고, passthrough
+자리에 BAM이 생기면 실패로 떨어진다(음성 시험 포함).
 
 ## 다음
 
