@@ -7,6 +7,7 @@ GIAB 9개 샘플(HG001–HG007 germline, HG008·HG009 tumor-normal)의 **전체 
 | | |
 |---|---|
 | 데이터 규모 | **441 datasets / 81,314 files / 125.5 TB** · **다운로드 100% 완료(2026-09-18)** (2026-08-13 HEAD 검증 + 2026-09-16 FTP `release/`·`data/` 라이브 크롤: HG002 v5.0q·stratifications v3.6, HG008/HG009 신규 데이터셋 추가. 2026-09-17 GIAB FTP 밖 숏리드 6행 359 GiB(`external/`, 아래 "외부 보충 리드") 포함. 2026-09-17에 받지 않기로 한 3건 12,423 files / 10.7 TiB는 [manifests/declined_by_decision.tsv](phase0_download/manifests/declined_by_decision.tsv)에 목록만 남기고 제외) |
+| **지금 돌고 있는 것** | [docs/STATUS.md](docs/STATUS.md) — 잡 ID, 끝나면 할 일, 막힌 것. 매 세션 갱신 |
 | 다운로드 | [phase0_download/](phase0_download/) — 스크립트, 매니페스트, 속도·용량 계획 |
 | PacBio HiFi 처리 | [phase1_pacbio_hifi/](phase1_pacbio_hifi/) — 38개 실행 단위, raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
 | ONT 처리 | [phase2_ont/](phase2_ont/) — 18개 실행 단위(기본 제출 14), raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
