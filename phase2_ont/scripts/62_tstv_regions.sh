@@ -18,6 +18,10 @@
 #
 # ts/tv 는 파생값이라 직접 다루지 않고 bcftools 가 주는 ts·tv **카운트**를 쓴다. 비(比)를
 # 수로 가중평균하면 틀린다 — 2026-09-21 에 그렇게 1.15 를 적었다가 정정했다(decisions).
+#
+# **2026-09-22 첫 실행 결과**: 10건(9런 x caller) 전부 대조 통과. 구간 안 2.0972~2.1400 으로
+# 좁게 모여 "2.1 가정" 이 사실로 확인됐고, HG005 구간 밖은 추정 1.33 vs 실측 1.3064 였다.
+# 수치·해석: docs/reference/2026-09-22-ont-r10-benchmark.md
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$HERE/../env.sh"

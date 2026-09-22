@@ -39,6 +39,12 @@ bash phase2_ont/scripts/61_benchmark_sv.sh --ready
 #    OK ... jobid=156053 truth=HG002_GRCh38_v5.0q_stvar.vcf.gz refine=1
 #    exit 0, 272s(4.5분), maxvmem 133.490GB, 22슬롯, shepherd-1-8
 bash phase2_ont/scripts/61_benchmark_sv.sh --collect   # 6 rows
+
+# 7) ts/tv 구간 분할 직접 측정 (로그인 노드, 10건 x 3구간)
+TSV=tstv_regions.tsv bash phase2_ont/scripts/62_tstv_regions.sh
+#    9런 x caller = 10건 전부 `안 + 밖 = 전체` 대조 통과
+#    HG008 6런은 v4.2.1 benchmark BED 가 없어 SKIP (설계대로)
+#    구간 안 2.0972~2.1400 / 구간 밖 1.0916~1.4839
 ```
 
 ## 스모크 테스트가 무엇을 덮었나
@@ -81,6 +87,9 @@ truvari 가 **133.5 GB** 를 썼다. env.sh 에 적힌 "ONT 실측 67~73 GB" 는
 
 ## 남은 것
 
-- `62_tstv_regions.sh` 실행 — ts/tv 구간 안/밖을 가정 없이 직접 센다. R9 의 1.33 추정치도 같이 걸린다.
+- ~~`62_tstv_regions.sh` 실행~~ — **끝났다(위 7번).** 2026-09-18 의 "구간 안 = 2.1" 가정이
+  실측 2.0972~2.1400 으로 확인됐고, HG005 구간 밖 추정 1.33 은 실측 **1.3064**(오차 1.8%)였다.
+  R10 도 1.1454 로 닫혔다. 대신 열린 질문이 하나 생겼다 — 구간 밖에서 DeepVariant 와 Clair3 의
+  순 차이가 ts/tv 2.18 이라, DV 가 구간 밖에서 버리는 쪽이 FP 가 아닐 수 있다(reference §5).
 - HG001·HG003~HG007 의 R10 을 같은 버킷에서 편입 (보류 중)
 - HG008 6런은 germline truth 가 없어 구조적으로 hap.py·Truvari 대상이 아니다 — somatic 평가 설계가 따로 필요하다
