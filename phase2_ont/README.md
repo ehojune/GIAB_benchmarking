@@ -102,7 +102,7 @@ bash phase2_ont/scripts/61_benchmark_sv.sh --collect       # refine 전/후를 �
 
 | 항목 | 기본값 | 비고 |
 |---|---|---|
-| 큐/노드 | shepherd.q, shepherd-1-7/8/9 고정 | **octopus.q는 사용 불가**(2026-08-22). 계산 노드는 외부망 없음 → `NXF_OFFLINE`, 사전 캐시 |
+| 큐/노드 | `$SGE_QUEUE` x `$SGE_HOSTS` (env.sh) | **노드 집합은 고정이 아니다** — 2026-09-22 기준 octopus-2-8/2-9 + shepherd-1-8/1-9 네 대, 큐 둘. 계산 노드는 외부망 없음 → `NXF_OFFLINE`, 사전 캐시 |
 | 잡 크기 | 30슬롯 / h_vmem 115G / Nextflow 110G = **노드당 2잡** | 노드는 64코어·251 GB. `h_vmem`은 consumable=NO라 메모리가 예약되지 않는다 — (노드당 잡 수)×`NF_LOCAL_MEM_GB` < 251을 직접 지켜야 한다. 프리셋은 [env.local.sh.example](env.local.sh.example) |
 | Nextflow | 24.10.5 + conda `nfcore312` (JDK17) | 잡 안에서 local executor로 완주 (SGE 자식 잡 없음) |
 | 레퍼런스 | GRCh38_no_alt_analysis_set | phase1과 `$INFRA`를 공유하므로 이미 있으면 다시 안 받는다 |

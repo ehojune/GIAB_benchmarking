@@ -33,6 +33,10 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$HERE/../env.sh"
 source "$HERE/lib.sh"
+
+# 잡의 -q 에 들어갈 값. preflight 가 qstat 과 대조해 실재하는 큐만 남긴 값으로 덮는다.
+# preflight 를 거치지 않는 경로(--list 등)를 위한 기본값이 이것이다.
+SGE_Q_ARG="$SGE_QUEUE"
 PHASE2="$P2_DIR"
 BENCH_SUB="05_BENCH/happy"
 
@@ -90,6 +94,9 @@ list_all() {
 
 preflight() {
     p2_qstat_refresh
+    # 큐 x 노드가 안 겹치면 잡이 조용히 qw로 남는다 — 제출 전에 막는다 (lib.sh 설명).
+    p2_require_sge_targets || exit 1
+    SGE_Q_ARG="$(p2_sge_queue_arg)"
     [ -s "$REF_FASTA" ] || { echo "ERROR: 레퍼런스 없음 ($REF_FASTA) — 01_prepare_login_node.sh 먼저"; exit 1; }
     # hap.py는 레퍼런스 옆의 .fai를 요구하는데 이걸 만드는 곳이 없다 — 파이프라인의 SAMTOOLS_FAIDX는
     # publishDir 없이 Nextflow work 디렉토리 안에만 만들고, 01_prepare는 FASTA 압축만 푼다.
@@ -146,7 +153,7 @@ submit_one() {
     if ! cat > "$job" <<EOF
 #!/bin/bash
 #\$ -N b2.$dsid
-#\$ -q $SGE_QUEUE
+#\$ -q $SGE_Q_ARG
 #\$ -pe $SGE_PE $BENCH_SLOTS
 #\$ -S /bin/bash
 #\$ -V

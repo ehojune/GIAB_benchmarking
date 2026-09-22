@@ -88,8 +88,11 @@ ap.add_argument("--hard", action="store_true", help="1쌍짜리를 심볼릭 링
 ap.add_argument("--run-concat", action="store_true", help="concat.sh 전부를 여기서 실행하고 끝날 때까지 기다린다 (--jobs 병렬)")
 ap.add_argument("--jobs", type=int, default=3, help="--run-concat 동시 실행 수 (기본 3; 로그인 노드 I/O 고려)")
 ap.add_argument("--qsub", action="store_true", help="concat.sh 를 샘플별 SGE 잡으로 제출 (이미 완료된 샘플은 건너뜀)")
-ap.add_argument("--queue", default=os.environ.get("SGE_QUEUE", "shepherd.q"))
-ap.add_argument("--hosts", default=os.environ.get("SGE_HOSTS", "(shepherd-1-7|shepherd-1-8|shepherd-1-9)"))
+# 쓸 수 있는 노드 집합은 고정이 아니다 — 2026-09-22에 shepherd 3대에서 octopus 2 + shepherd 2로 바뀌었고
+# 큐도 둘로 갈렸다. phase1/2 의 env.sh 와 같은 값을 기본으로 두되, 환경변수로 덮는 쪽이 정상 경로다.
+# 큐 x 노드가 안 겹치면 잡은 에러 없이 qw 로 영원히 남는다 — 제출 뒤 qstat 로 상태를 확인할 것.
+ap.add_argument("--queue", default=os.environ.get("SGE_QUEUE", "shepherd.q,octopus.q"))
+ap.add_argument("--hosts", default=os.environ.get("SGE_HOSTS", "(octopus-2-8|octopus-2-9|shepherd-1-8|shepherd-1-9)"))
 ap.add_argument("--prune", action="store_true", help="관리하는 샘플 dir 안에서 계획에 없는 심볼릭 링크를 지운다(일반 파일·병합 결과는 안 건드림)")
 ap.add_argument("--dry-run", action="store_true", help="만들지 않고 계획만 출력")
 ap.add_argument("--sheets", default=SHEETS, help=argparse.SUPPRESS)   # 테스트용: samplesheet 디렉토리 바꿔치기

@@ -623,6 +623,8 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-22 — phase1 PacBio HiFi 정확도 평가 첫 실측(hap.py 19런 × 2 caller, 38건, 전부 exit 0). **SNP는 F1 0.9984~0.9994로 포화**돼 기기·caller 차이가 없고, **INDEL은 기기 세대가 가른다** — Sequel I 2런이 0.928·0.965로 나머지(0.975~0.997)와 갈린다. DeepVariant가 기기별 모델 없이 같은 격차를 내므로 caller 모델 탓이 아니라 데이터 쪽이다. **Revio에서만 Clair3가 INDEL −0.006~−0.017로 진다**(`hifi_revio` 모델을 제대로 받았는데도). → PacBio 기본 caller는 DeepVariant. [수치](docs/reference/2026-09-22-pacbio-hifi-benchmark-first-results.md).
+- 2026-09-22 — 쓸 수 있는 노드가 또 바뀌어(shepherd 3대 → octopus-2-8/2-9 + shepherd-1-8/1-9 넷, **큐 둘**) 이름을 박는 대신 `qstat -f`와 대조해 쓰도록 고쳤다 — 큐 x 노드가 안 겹치면 잡이 에러 없이 `qw`로 영원히 남는 실패를 제출 전에 막는다. 같은 커밋에서 phase1에 Truvari SV 평가(`61_benchmark_sv.sh`)를 phase2에서 이식했다. **phase1 쪽이 답이 많다** — HG002 5런이 Sequel I 2 + Sequel II 2 + Revio 1로 갈려 **세 세대** 비교가 된다(phase2는 둘 다 R9). 양쪽 `10_submit.sh`의 qsub 실패 무시(빈 jobid에 `OK` 출력)도 같이 고쳤다.
 - 2026-09-21 — phase3 WGRS 첫 실행이 markdup에서 전부 죽음(GATK 4.6.1.0 vs Java 8). Java 17 래퍼로 6세트 재제출(잡 155519~24), MGISEQ HG002는 정렬 BAM 33% 누락이라 재생성 잡(155525) 후 재개. 동시에 phase2 R10·phase1 hap.py가 돌아 현황판 `docs/STATUS.md`를 두고 매 세션 갱신하기로. PR #20.
 - 2026-09-19 — phase3 파이프라인 입력 22 샘플 dir 준비 완료(nbb2 `/BiO/scratch/dyl/kbb/G000/GIAB-publicData-*/outcome/`): 1쌍짜리 7개는 링크, 15개는 cat 병합(15/15 크기 검증). 이름은 `_`를 mate 접미에만 남기고 `-`로 통일(파이프라인이 `_`로 샘플명을 자름). 사용자가 자체 WGRS 파이프라인 실행 시작. PR #13·#16.
 - 2026-09-21 — HG002 R10 런의 진입을 `aligned_bam`(ONT 정렬 그대로)에서 **`aligned_bam_realign`(우리 minimap2로 재정렬)** 으로 정정. "남의 run 결과물보다 우리 결과물을 믿는다"는 설계 원칙과 어긋났고, 이 런의 목적이 R9↔R10 비교라 정렬이 다르면 비교축에 교란이 박힌다. 같이 발견: 스모크 테스트가 진입 타입 셋 중 둘만 덮고 있었고, 채널 재그룹에서 진입 타입이 유실되는 버그가 있었다. 기록: [docs/runs/2026-09-21-phase2-r10-realign.md](docs/runs/2026-09-21-phase2-r10-realign.md).

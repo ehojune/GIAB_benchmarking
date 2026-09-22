@@ -501,3 +501,107 @@ PR #17에서 이 런을 `aligned_bam` 진입으로 넣었다. **잘못된 선택
 넘어오지도 않는다. 지금은 `test` 시트에 `aligned_bam_realign` 행을, `test_prealigned` 프로파일에
 `aligned_bam` 단독 시트를 둬서 셋을 다 덮는다. 단독 시트가 따로 필요한 이유는 "모든 행이
 `aligned_bam`이면 `MINIMAP2_INDEX`를 건너뛴다" 같은 조건이 섞인 시트에서는 영영 거짓이기 때문이다.
+
+## 2026-09-22 — 큐/노드를 이름으로 박지 않고 qstat과 대조해서 쓴다
+
+쓸 수 있는 노드가 또 바뀌었다. 2026-08-22엔 `shepherd.q`의 shepherd-1-7/8/9 셋이었는데
+2026-09-22 기준으로 **octopus-2-8, octopus-2-9, shepherd-1-8, shepherd-1-9 넷**이고
+**큐가 둘로 갈렸다**(octopus.q가 다시 살아났다). 전 노드 64코어 / 251 GB로 스펙은 같다.
+
+한 달 사이 두 번 바뀐 값을 코드와 문서 열 곳에 박아 두고 있었다. 그래서 값을 고치는 대신
+**틀린 값이 조용히 통과하지 못하게** 만들었다.
+
+- 큐에 없는 노드를 `-l h=`로 지정하면 qsub은 받아들이고 **잡은 영원히 `qw`로 남는다.**
+  에러도, 로그도 없다. 반대로 `-q`에 없는 큐 이름을 넣으면 그 순간 잡 전체가 거부된다.
+  둘 다 한참 뒤에야 알게 되는 실패다.
+- `lib.sh`에 `*_sge_targets`(SGE_QUEUE x SGE_HOSTS ∩ `qstat -f`)를 두고,
+  `*_require_sge_targets`가 겹치는 인스턴스가 없으면 **제출 전에** 막으면서 실제 고를 수 있는
+  목록을 찍는다. `*_sge_queue_arg`는 실재하는 큐만 남겨 `-q`를 만든다 — SGE_QUEUE에 옛 이름이
+  섞여 있어도 그것 때문에 잡이 거부되지 않는다.
+- 이제 노드가 바뀌면 `env.local.sh`의 두 줄(`SGE_QUEUE`, `SGE_HOSTS`)만 고치면 되고,
+  안 고치면 제출이 막힌다. `01_prepare_login_node.sh`가 현재 대상 인스턴스를 찍어 준다.
+- `SGE_QUEUE`는 이제 콤마 목록을 받는다(`shepherd.q,octopus.q`).
+
+검증은 합성 픽스처로 네 가지를 돌려서 했다: 4노드 2큐 정상, shepherd만 지정 시 `-q`에서
+octopus.q 탈락, 없는 노드 지정 시 차단 + exit 1, 없는 큐 이름이 섞여도 유효한 것만 남음.
+
+## 2026-09-22 — phase1에 Truvari SV 평가 단계 (phase2 61_benchmark_sv.sh 이식)
+
+phase2의 `61_benchmark_sv.sh`를 phase1로 옮겼다. 파라미터·truth 캐시 전략·결과 공개 방식은
+그대로고(GIAB v5.0q README 지정 명령, ALT=* 선제거, 임시 디렉토리 → 원자적 rename),
+입력만 Sniffles → **pbsv**(`03_VCF/SV_pbsv/`)로 바뀐다. truth 캐시는 `$INFRA/reference/sv_truth`를
+phase2와 **공유**한다 — 같은 truth를 같은 필터로 거른 것이라 두 벌 만들 이유가 없다.
+
+**phase1 쪽이 phase2보다 답이 많이 나온다.** GRCh38 germline SV truth를 가진 GIAB 샘플은
+HG002 하나뿐인데, phase2의 HG002 런은 둘 다 R9.4.1이라 화학종 비교가 안 됐다. phase1의 HG002
+런은 다섯이고 dup_of가 전부 비어 있으며 **기기 세대가 셋으로 갈린다** —
+Sequel I 둘(m54) + Sequel II 둘(m64) + Revio 하나(m84). 같은 truth·같은 파라미터로
+**세 세대의 SV 성능을 직접 비교**할 수 있다. `--list`/`--collect`의 `instr` 열이 그 축이다.
+
+### 같이 통일한 것 (phase2 → phase1)
+
+- `60_benchmark.sh`: `.fai` 자동 생성(hap.py가 요구하는데 만드는 곳이 없었다 — 파이프라인의
+  SAMTOOLS_FAIDX는 Nextflow work 안에만 만든다), 잡 스크립트 쓰기 실패 감지,
+  qsub stderr 포착 + jobid 검증, `submit_many()`/`dedup_dsids()`.
+- `10_submit.sh`(**양쪽 phase 다**): 위와 같은 qsub 하드닝. 여기는 phase2에도 없었다 —
+  실패하면 빈 jobid 파일을 쓰고 `OK`를 찍는다(큐에는 아무것도 안 들어갔는데).
+- `env.sh`: `BENCH_SV_*` 6개 변수, h_vmem이 상한도 아니라는 2026-09-18 실측 주석.
+- `env.local.sh.example`(양쪽): 벤치마크 잡 크기 프리셋 절. 실측 maxvmem(hap.py 24.5 GB,
+  truvari 73 GB) 기준으로 파이프라인 잡과 노드를 나눠 쓸 때의 슬롯 계산을 적었다.
+
+### 같은 커밋 Codex 리뷰 — 3건 전부 반영
+
+초판(85a9fbb)을 밀고 나서 받은 리뷰다. 세 건 다 실제 결함이었고 셋 다 고쳤다.
+
+- **[P1] `10_submit.sh`에 리터럴 `
+`** (양쪽 phase). `echo "$jid" > ... 
+ || {...}` 가 줄
+  연속이 아니라 escaped `n` 이라 jobid 파일에 `900123 n` 이 들어간다(실증). `p1_job_state` 가
+  qstat 번호와 `==` 비교하므로 **중복 제출 가드가 그 dsid에 영영 무력**해진다 — 같은 work·출력
+  디렉토리에 파이프라인 둘이 붙을 수 있었다. `bash -n` 은 통과한다.
+  Codex는 "제대로 된 백슬래시+개행으로 바꾸라"고 했지만 **백슬래시를 아예 없앴다**(`if ! ...; then`).
+  같은 사고가 2026-08-27에도 있었고 원인이 같다 — Bash 툴 heredoc의 이스케이프 뭉갬. 재발 가능한
+  형태를 남기지 않는 쪽을 골랐다.
+- **[P1] `BENCH_SV_SLOTS=8` 이 노드를 터뜨린다.** phase2에서 그대로 가져온 값인데, truvari는
+  실측 maxvmem 67~73 GB다. 8슬롯이면 64코어 노드에 8잡이 올라가 최대 584 GB — 251 GB를 크게
+  넘는다. h_vmem은 예약도 상한도 아니라 아무도 안 막는다. phase2는 `--ready` 대상이 HG002 2런뿐이라
+  우연히 안전했고, phase1은 5런이라 실제로 터질 수 있었다. **22로 올렸다**(노드당 2잡 = 146 GB).
+  양쪽 phase 다 고쳤다 — phase2도 대상이 늘면 같은 문제다.
+- **[P2] 기기 세대 라벨이 틀렸다.** `instr_of()` 를 dataset 이름으로 때려잡았는데,
+  `HG002.PacBio_CCS_10kb`/`_15kb` 는 이름에 세대 표시가 없고 **실제로는 m54(Sequel I)** 다.
+  초판은 이 둘을 Sequel II로 묶어, **이 스크립트가 내세우는 비교축 자체를 조용히 망가뜨렸다.**
+  `lib.sh`의 `p1_instr_of` 로 옮겨 `inputs_manifest.tsv` 의 movie ID로 판정한다
+  (m84=Revio, m64=Sequel II, m54=Sequel I, m14/m15=RS II). 38런 분포: Revio 18 / Sequel II 15 /
+  Sequel I 2 / 판정불가 3. 판정불가 셋(HG003·6·7 chemistry2)은 파일명에 movie ID가 없어 `-`로
+  둔다 — 경로의 `PBmixSequel<NNN>` 은 세대 표시가 아니라 혼합 런 명명이라 근거가 못 된다
+  (HG001.HudsonAlpha_PacBio_CCS 는 PBmixSequel846 디렉토리 안에 m64 movie가 들어 있다).
+  **셋 다 HG002가 아니라 SV 평가 대상이 아니므로 추측하지 않는다.**
+
+## 2026-09-22 — phase1 hap.py 첫 실측으로 바뀐 것
+
+19런 × 2 caller = 38건, 전부 exit 0. 수치는
+[reference/2026-09-22-pacbio-hifi-benchmark-first-results.md](reference/2026-09-22-pacbio-hifi-benchmark-first-results.md).
+결정만 여기 적는다.
+
+- **PacBio HiFi 소변이의 기본 caller는 DeepVariant다.** Sequel II 12런에서 두 caller는 동률
+  (INDEL F1 차 −0.002~+0.001)인데 Revio 3런에서만 Clair3가 −0.006~−0.017로 진다. 모델 오배정이
+  아니다 — 세 런 다 `hifi_revio`를 제대로 받았다. Clair3는 버리지 않고 교차 확인용으로 둔다.
+- **Sequel I 런(HG002 CCS_10kb·CCS_15kb)은 INDEL 비교에서 세대를 명시하지 않으면 쓰지 않는다.**
+  INDEL F1 0.9282·0.9646으로 나머지(0.9747~0.9973)와 확연히 갈린다. caller 모델 탓이라는 의심은
+  DeepVariant가 배제한다 — 기기별 모델이 없어 19런을 같은 PACBIO 모델로 돌았는데도 같은 격차다.
+- **SNP는 더 파지 않는다.** 38건 전부 0.99844~0.99941(평균 0.99902)이라 기기·caller 어느 축으로도
+  신호가 없다. 앞으로 PacBio 비교는 INDEL과 SV로 한다.
+- `BENCH_SLOTS` 기본값을 8 → **16**으로. 실측 maxvmem이 16슬롯에서 48.4~48.8 GB였다(phase2가 8슬롯
+  24 GB). **메모리가 스레드 수에 비례**하는 것으로 보여 노드 총량은 어느 쪽이든 ~192 GB로 수렴한다.
+  실제로 완주한 조합을 기본값으로 둔다. `BENCH_VMEM`도 32G → 56G (표시용이지만 실측과 맞춘다).
+
+### 큐/노드 게이트의 한계 — 처음 주장은 과했다
+
+같은 날 `*_require_sge_targets`를 넣으면서 "노드가 바뀌면 스크립트가 막아 준다"고 적었는데,
+**허용 여부는 못 본다.** 실측하니 `qstat -f`에 octopus-2-1~2-11 + shepherd-1-1~1-14, 큐 인스턴스가
+**스물다섯 개** 다 뜬다. 그중 우리 몫이 넷이라는 건 SGE ACL이 아니라 사람끼리의 약속이라
+스크립트가 알 길이 없다.
+
+게이트가 실제로 막는 건 **존재하지 않는** 큐·노드다(오타, 폐기된 이름). 그것도 값어치는 있다 —
+그 경우 잡이 에러 없이 `qw`로 영원히 남기 때문이다. 하지만 허용 목록은 여전히 사용자에게 물어서
+`SGE_HOSTS`에 적는 수밖에 없다. 주석·문서를 그렇게 고쳤다.

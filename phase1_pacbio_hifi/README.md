@@ -140,7 +140,7 @@ HG008·HG009는 germline truth가 없어 자동으로 빠진다.
 
 | 항목 | 기본값 | 비고 |
 |---|---|---|
-| 큐/노드 | shepherd.q, shepherd-1-7/8/9 고정 | 계산 노드는 외부망 없음 → `NXF_OFFLINE`, 사전 캐시 |
+| 큐/노드 | `$SGE_QUEUE` x `$SGE_HOSTS` (env.sh) | **노드 집합은 고정이 아니다** — 2026-09-22 기준 octopus-2-8/2-9 + shepherd-1-8/1-9 네 대, 큐 둘. 계산 노드는 외부망 없음 → `NXF_OFFLINE`, 사전 캐시 |
 | 잡 크기 | 21슬롯 / h_vmem 78G / Nextflow 70G = **노드당 3잡** | 노드는 64코어·251 GB. `h_vmem`은 consumable=NO라 **메모리가 예약되지 않는다** — 노드당 잡 수를 통제하는 건 슬롯뿐이므로 (노드당 잡 수)×`NF_LOCAL_MEM_GB` < 251을 지켜야 한다. 프리셋은 [env.local.sh.example](env.local.sh.example) |
 | Nextflow | 24.10.5 + conda `nfcore312` (JDK17) | 잡 안에서 local executor로 완주 (SGE 자식 잡 없음) |
 | 레퍼런스 | GRCh38_no_alt_analysis_set (release에서 복사) | 산출 파일명 라벨 `REF_NAME=GRCh38` |

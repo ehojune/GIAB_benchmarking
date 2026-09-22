@@ -1,6 +1,7 @@
 #!/bin/bash
 # 구조변이(SV) 정확도 평가. GIAB HG002 SV truth set 대비 Truvari.
-# 소변이(SNV/INDEL)는 60_benchmark.sh(hap.py)가 한다. 이쪽은 03_VCF/SV_sniffles/ 를 본다.
+# phase2_ont/scripts/61_benchmark_sv.sh와 같은 구조이고, PacBio에서 달라지는 부분만 아래에 적었다.
+# 소변이(SNV/INDEL)는 60_benchmark.sh(hap.py)가 한다. 이쪽은 03_VCF/SV_pbsv/ 를 본다.
 #
 #   scripts/61_benchmark_sv.sh --list             대상/상태 훑기
 #   scripts/61_benchmark_sv.sh --ready            SV VCF 완료 + truth set 있는 것 전부 제출
@@ -13,17 +14,26 @@
 #            BENCH_SV_REFINE=0    truvari --refine 끄기 (기본 1)
 #            BENCH_SV_ALIGN=mafft refine 정렬기 고정 (기본은 truvari 기본값 poa)
 #
-# ── 대상이 HG002 두 런뿐인 이유 ───────────────────────────────────────────
+# ── 대상이 HG002 다섯 런인 이유 ───────────────────────────────────────────
 # GRCh38 germline SV truth를 가진 GIAB 샘플은 HG002 하나다 (release_truthsets.tsv 실측).
 #   HG002_GRCh38_v5.0q_stvar      전장. T2T-Q100 유래. **이걸 쓴다**
 #   HG002_GRCh38_CMRG_SV_v1.00    의학적 중요 유전자 한정(38 KB). 보조용, 여기선 안 쓴다
 #   HG002_SVs_Tier1_v0.6          **GRCh37 전용** — 우리 런은 전부 GRCh38라 못 쓴다
-# HG001·HG003~HG007에는 SV truth가 아예 없다. HG008 draft benchmark는 somatic-stvar/CNV라
+# HG001·HG003~HG007에는 SV truth가 아예 없다. HG008/HG009 draft benchmark는 somatic-stvar/CNV라
 # 단일 샘플 germline SV 평가에 못 쓴다 — 60_benchmark.sh가 소변이에서 부딪힌 것과 같은 벽이다.
-# 그래서 dup_of가 빈 HG002 런 둘(guppy-V3.4.5, UCSC_Ultralong_..._Promethion)이 전부다.
-# 둘 다 R9.4.1이라 이 단계로는 **R10 SV 성능을 알 수 없다.**
 #
-# ── Truvari 파라미터 근거 ─────────────────────────────────────────────────
+# **phase2와 갈리는 지점이 여기다.** phase2의 HG002 런은 둘 다 R9.4.1이라 한 화학종만 봤지만,
+# phase1의 HG002 런 다섯은 dup_of가 전부 비어 있고 **기기 세대가 셋으로 갈린다**
+# (inputs_manifest.tsv의 movie ID 실측):
+#   Sequel I  (m54) — PacBio_CCS_10kb, PacBio_CCS_15kb
+#   Sequel II (m64) — PacBio_SequelII_CCS_11kb, PacBio_CCS_15kb_20kb_chemistry2
+#   Revio     (m84) — PacBio_HiFi-Revio_20231031
+# 즉 **같은 truth·같은 파라미터로 세 세대의 SV 성능을 직접 비교**할 수 있다.
+# list/collect의 instr 열이 그 축이고, 값은 lib.sh의 p1_instr_of 가 movie ID로 정한다.
+# dataset 이름으로 판정하면 CCS_10kb/15kb(이름에 세대 표시가 없다)를 Sequel II로 잘못 묶어
+# 이 비교축이 조용히 망가진다 — 초판이 실제로 그랬고 2026-09-22 Codex 리뷰에서 잡혔다.
+#
+# ── Truvari 파라미터 근거 (phase2와 동일) ─────────────────────────────────
 # GIAB v5.0q README(NIST_HG002_v5.0q_variant-benchmarksets_README.md)가 지정한 명령 그대로다:
 #   truvari bench -b <truth> -c <call> -o <out> -f <ref> --includebed <bed> \
 #                 --pick ac --passonly -r 2000 -C 5000 --refine
@@ -31,17 +41,18 @@
 # **-C는 chunksize지 sizemin이 아니다.** 나머지는 기본값을 그대로 둔다:
 # sizemin 50 / sizefilt 30 / sizemax 50,000 / pctseq 0.70 / pctsize 0.70 / bnddist 100.
 # README가 -d(--dup-to-ins)를 지정하지 않는 이유는 --refine 이 그 표현 차이를 흡수하기 때문이다.
-# 끄고 돌릴 거면 BENCH_SV_ARGS="-d" 를 같이 주는 편이 낫다 (Sniffles는 <DUP>을 낸다).
+# 끄고 돌릴 거면 BENCH_SV_ARGS="-d" 를 같이 주는 편이 낫다 (pbsv도 Sniffles처럼 <DUP>을 낸다).
 #
-# --refine 은 phab로 복잡영역의 표현을 정규화한다. 끄면 탠덤반복 구간의 Sniffles 콜이
-# 표현 차이만으로 FP가 되어 수치가 실제보다 나쁘게 나온다. 대신 두 가지를 감수한다.
+# --refine 은 phab로 복잡영역의 표현을 정규화한다. 끄면 탠덤반복 구간의 콜이 표현 차이만으로
+# FP가 되어 수치가 실제보다 나쁘게 나온다. 대신 두 가지를 감수한다.
 #   (1) 기본 정렬기 poa는 **머신 간 비결정적**이다(truvari 문서). 재현이 필요하면 BENCH_SV_ALIGN=mafft.
 #   (2) refine이 변이 표현을 바꿔 어느 콜이 TP/FP였는지 되짚기 어려워진다(README 경고).
 # 그래서 --collect 는 refine 전(summary.json)과 후(refine.variant_summary.json)를 **둘 다** 낸다.
-# 얼마나 움직였는지가 보여야 수치를 믿을지 판단할 수 있다.
+# phase2 실측(2026-09-18)에서 refine이 F1을 4.8~5.1점 올렸다 — 켜 두는 게 맞았다.
 #
 # README가 "ALT=* 는 오분류되니 미리 걸러라"고 해서 truth를 한 번 걸러 $INFRA에 캐시한다.
 # 잡마다 만들면 동시 실행이 같은 파일을 덮어쓰므로 preflight(로그인 노드)에서 만든다.
+# 캐시 위치는 phase2와 같은 $INFRA/reference/sv_truth 다 — 같은 truth·같은 필터라 공유가 맞다.
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$HERE/../env.sh"
@@ -50,9 +61,12 @@ source "$HERE/lib.sh"
 # 잡의 -q 에 들어갈 값. preflight 가 qstat 과 대조해 실재하는 큐만 남긴 값으로 덮는다.
 # preflight 를 거치지 않는 경로(--list 등)를 위한 기본값이 이것이다.
 SGE_Q_ARG="$SGE_QUEUE"
-PHASE2="$P2_DIR"
+PHASE1="$P1_DIR"
 BENCH_SV_SUB="05_BENCH/truvari"
 TRUTH_CACHE="$INFRA/reference/sv_truth"
+
+# 기기 세대는 lib.sh의 p1_instr_of 가 inputs_manifest.tsv의 movie ID로 판정한다 (dsid 입력).
+# 표시용 라벨이고 제출 판정에는 안 쓰지만, 이 스크립트가 내세우는 비교축이라 정확해야 한다.
 
 # sample -> "truth_vcf<TAB>truth_bed". 없으면 1을 낸다.
 # 디렉토리 깊이가 샘플마다 다르므로 60_benchmark.sh의 bench_truth와 같은 2단 글롭을 쓴다.
@@ -90,7 +104,7 @@ sv_truth_filtered() {
         echo "  (DRY) truth 캐시 미생성 — 실제 실행 때 만든다: $dir/$name" >&2
         echo "$dir/$name"; return 0
     fi
-    bt="$(p2_img_path "$(p2_container_uris | grep '/bcftools:')")"
+    bt="$(p1_img_path "$(p1_container_uris | grep '/bcftools:')")"
     [ -s "$bt" ] || { echo "ERROR: bcftools 컨테이너가 없다 ($bt) — 01_prepare_login_node.sh 먼저" >&2; return 1; }
     mkdir -p "$TRUTH_CACHE"
     echo "  ALT=* 를 걸러 truth 캐시 생성 (1회): $stem.d/" >&2
@@ -110,8 +124,8 @@ sv_truth_filtered() {
     echo "$dir/$name"
 }
 
-sv_call_vcf() {  # sample dataset -> Sniffles VCF 경로 (존재 여부는 호출부에서)
-    echo "$RUN_BASE/$1/ONT/$2/03_VCF/SV_sniffles/$1.$2.$REF_NAME.sniffles.vcf.gz"
+sv_call_vcf() {  # sample dataset -> pbsv VCF 경로 (존재 여부는 호출부에서)
+    echo "$RUN_BASE/$1/PacBio/$2/03_VCF/SV_pbsv/$1.$2.$REF_NAME.pbsv.vcf.gz"
 }
 
 # sample dataset -> 0 if 평가가 "끝까지" 갔을 때.
@@ -119,7 +133,7 @@ sv_call_vcf() {  # sample dataset -> Sniffles VCF 경로 (존재 여부는 호�
 # 자체가 완주 신호다. refine을 켰으면 refine 산출까지 있어야 완료로 본다 — bench만 끝나고
 # refine에서 죽은 결과를 완료로 세면 다음 제출이 조용히 건너뛴다.
 bench_sv_done() {
-    local d="$RUN_BASE/$1/ONT/$2/$BENCH_SV_SUB"
+    local d="$RUN_BASE/$1/PacBio/$2/$BENCH_SV_SUB"
     [ -s "$d/summary.json" ] || return 1
     if [ "${BENCH_SV_REFINE:-1}" = 1 ]; then
         [ -s "$d/refine.variant_summary.json" ] || return 1
@@ -128,24 +142,23 @@ bench_sv_done() {
 }
 
 # 같은 dsid가 두 번 들어오면 같은 출력 경로에 잡 둘이 동시에 쓴다.
-# p2_job_alive는 preflight 때 뜬 qstat 스냅샷을 보므로 방금 넣은 잡을 못 본다 — 입력에서 잘라낸다.
+# p1_job_alive는 preflight 때 뜬 qstat 스냅샷을 보므로 방금 넣은 잡을 못 본다 — 입력에서 잘라낸다.
 dedup_dsids() { awk 'NF && !seen[$0]++'; }
 
-# 잡 번호가 아직 큐에 있나 (preflight에서 뜬 스냅샷 기준). lib.sh의 p2_job_state 는 dsid로 찾지만
+# 잡 번호가 아직 큐에 있나 (preflight에서 뜬 스냅샷 기준). lib.sh의 p1_job_state 는 dsid로 찾지만
 # 여기서는 디렉토리 이름에 박힌 번호로 직접 봐야 한다.
-p2_sge_queued() { echo "${P2_QSTAT:-}" | awk -v j="$1" 'NR>2 && $1==j {f=1} END {exit !f}'; }
+p1_sge_queued() { echo "${P1_QSTAT:-}" | awk -v j="$1" 'NR>2 && $1==j {f=1} END {exit !f}'; }
 
 list_all() {
-    printf '%-46s %-5s %-7s %-7s %-8s %s\n' dsid chem sv_vcf truth truvari dup_of
-    local dsid r sample dataset dup chem t v b
-    for dsid in $(p2_dsids); do
-        r=$(p2_row "$dsid"); sample=$(p2_col "$r" 2); dataset=$(p2_col "$r" 3)
-        dup=$(p2_col "$r" 12)
-        case "$(p2_col "$r" 7)" in *R10*) chem=R10 ;; *) chem=R9 ;; esac
+    printf '%-46s %-9s %-7s %-7s %-8s %s\n' dsid instr sv_vcf truth truvari dup_of
+    local dsid r sample dataset dup t v b
+    for dsid in $(p1_dsids); do
+        r=$(p1_row "$dsid"); sample=$(p1_col "$r" 2); dataset=$(p1_col "$r" 3)
+        dup=$(p1_col "$r" 8)
         v=-; [ -s "$(sv_call_vcf "$sample" "$dataset")" ] && v=OK
         t=none; sv_truth "$sample" >/dev/null 2>&1 && t="$BENCH_SV_TRUTH_VER"
         b=-; bench_sv_done "$sample" "$dataset" && b=done
-        printf '%-46s %-5s %-7s %-7s %-8s %s\n' "$dsid" "$chem" "$v" "$t" "$b" "$dup"
+        printf '%-46s %-9s %-7s %-7s %-8s %s\n' "$dsid" "$(p1_instr_of "$dsid")" "$v" "$t" "$b" "$dup"
     done
     echo
     echo "truth=none 은 그 샘플에 GRCh38 germline SV truth set이 없다는 뜻이다."
@@ -153,58 +166,58 @@ list_all() {
 }
 
 preflight() {
-    p2_qstat_refresh
+    p1_qstat_refresh
     # 큐 x 노드가 안 겹치면 잡이 조용히 qw로 남는다 — 제출 전에 막는다 (lib.sh 설명).
-    p2_require_sge_targets || exit 1
-    SGE_Q_ARG="$(p2_sge_queue_arg)"
+    p1_require_sge_targets || exit 1
+    SGE_Q_ARG="$(p1_sge_queue_arg)"
     [ -s "$REF_FASTA" ] || { echo "ERROR: 레퍼런스 없음 ($REF_FASTA) — 01_prepare_login_node.sh 먼저"; exit 1; }
     # truvari도 hap.py와 같이 레퍼런스 옆의 .fai를 요구한다(-f 로 심볼릭 ALT를 푼다).
     # 60_benchmark.sh가 이미 만들었으면 그대로 쓴다.
     if [ ! -s "$REF_FASTA.fai" ]; then
         local st refdir
-        st="$(p2_img_path "$(p2_container_uris | grep '/samtools:')")"
+        st="$(p1_img_path "$(p1_container_uris | grep '/samtools:')")"
         refdir="$(dirname "$REF_FASTA")"
         [ -s "$st" ] || { echo "ERROR: $REF_FASTA.fai 없고 samtools 컨테이너도 없다 — 01_prepare_login_node.sh 먼저"; exit 1; }
         echo "  $REF_FASTA.fai 생성 (1회)"
         singularity exec -B "$refdir:$refdir" "$st" samtools faidx "$REF_FASTA" \
             || { echo "ERROR: samtools faidx 실패 — $REF_FASTA 확인"; exit 1; }
     fi
-    local i; i=$(p2_img_path "$TRUVARI_IMG")
+    local i; i=$(p1_img_path "$TRUVARI_IMG")
     [ -s "$i" ] || { echo "ERROR: truvari 이미지 없음 ($i) — 01_prepare_login_node.sh 재실행"; exit 1; }
     mkdir -p "$INFRA/jobs" "$INFRA/logs" "$INFRA/launch"
 }
 
 submit_one() {
-    local dsid=$1 r sample dataset dup tv truth_vcf truth_bed call base out job simg refine_arg
-    r=$(p2_row "$dsid")
+    local dsid=$1 r sample dataset dup tv truth_vcf truth_bed call base out job simg
+    r=$(p1_row "$dsid")
     [ -n "$r" ] || { echo "SKIP $dsid: run_table.tsv에 없음"; return 1; }
-    sample=$(p2_col "$r" 2); dataset=$(p2_col "$r" 3); dup=$(p2_col "$r" 12)
+    sample=$(p1_col "$r" 2); dataset=$(p1_col "$r" 3); dup=$(p1_col "$r" 8)
 
     if [ -n "$dup" ] && [ "${DUP_OK:-0}" != 1 ]; then
-        echo "SKIP $dsid: $dup 와 같은 플로우셀의 재베이스콜. 그래도 돌리려면 DUP_OK=1"; return 0
+        echo "SKIP $dsid: $dup 와 동일 movie 세트. 그래도 돌리려면 DUP_OK=1"; return 0
     fi
     if ! tv=$(sv_truth "$sample"); then
         echo "SKIP $dsid: $sample 의 $BENCH_SV_TRUTH_VER SV truth set 없음"; return 0
     fi
     truth_vcf=${tv%%$'\t'*}; truth_bed=${tv#*$'\t'}
     call=$(sv_call_vcf "$sample" "$dataset")
-    [ -s "$call" ] || { echo "SKIP $dsid: Sniffles VCF 없음 — 30_verify_outputs.sh 확인"; return 0; }
+    [ -s "$call" ] || { echo "SKIP $dsid: pbsv VCF 없음 — 30_verify_outputs.sh 확인"; return 0; }
     # truvari는 comp VCF의 tabix 인덱스를 요구한다. 파이프라인이 같이 내지만 확인하고 넘어간다.
     [ -s "$call.tbi" ] || { echo "SKIP $dsid: $call.tbi 없음"; return 0; }
     if bench_sv_done "$sample" "$dataset" && [ "${FORCE:-0}" != 1 ]; then
         echo "SKIP $dsid: 평가 완료 (재실행은 FORCE=1)"; return 0
     fi
-    if p2_job_alive "svbench.$dsid"; then
+    if p1_job_alive "svbench.$dsid"; then
         echo "SKIP $dsid: 이미 큐/실행 중"; return 0
     fi
     # ALT=* 를 걸러낸 판을 만든다(캐시). 로그인 노드에서 하므로 잡끼리 경합하지 않는다.
     local truth_use
     truth_use=$(sv_truth_filtered "$truth_vcf") || { echo "FAIL $dsid: truth 전처리 실패"; return 1; }
 
-    base="$RUN_BASE/$sample/ONT/$dataset"; out="$base/$BENCH_SV_SUB"
+    base="$RUN_BASE/$sample/PacBio/$dataset"; out="$base/$BENCH_SV_SUB"
     mkdir -p "$base/05_BENCH" "$INFRA/launch/svbench.$dsid"
     job="$INFRA/jobs/svbench.$dsid.sh"
-    simg=$(p2_img_path "$TRUVARI_IMG")
+    simg=$(p1_img_path "$TRUVARI_IMG")
     # refine은 bench의 --refine 대신 별도 단계로 돌린다. bench의 --refine 은 내부에서
     # refine_main([outdir]) 을 **인자 없이** 부르므로(truvari 5.4.0 bench.py:803) --align·--threads 를
     # 넘길 방법이 없고, bench 파서에는 --align 자체가 없어서 붙이면 argparse 에러로 죽는다.
@@ -217,7 +230,7 @@ submit_one() {
     # 호출부의 `|| rc=1` 때문에 이 함수 안에서는 errexit가 꺼져 있으니 직접 본다.
     if ! cat > "$job" <<EOF
 #!/bin/bash
-#\$ -N s2.$dsid
+#\$ -N s1.$dsid
 #\$ -q $SGE_Q_ARG
 #\$ -pe $SGE_PE $BENCH_SV_SLOTS
 #\$ -S /bin/bash
@@ -228,7 +241,7 @@ submit_one() {
 #\$ -l h='$SGE_HOSTS'
 #\$ -wd $INFRA/launch/svbench.$dsid
 set -euo pipefail
-source "$PHASE2/env.sh"
+source "$PHASE1/env.sh"
 
 export TMPDIR="$INFRA/launch/svbench.$dsid/tmp"
 mkdir -p "\$TMPDIR"
@@ -309,13 +322,13 @@ EOF
 
     # 죽은 잡이 남긴 작업 디렉토리를 치운다. SIGKILL이면 잡 안의 EXIT trap이 못 돌아 남는다.
     # **DRY 반환 뒤에 둔다** — DRY는 미리보기인데 여기서 rm -rf 를 하면 미리보기가 파괴적이 된다.
-    # 판정은 dsid 단위 p2_job_alive 가 아니라 디렉토리 이름 끝의 잡 번호로 한다. jobid 파일
+    # 판정은 dsid 단위 p1_job_alive 가 아니라 디렉토리 이름 끝의 잡 번호로 한다. jobid 파일
     # 기록이 실패한 잡은 살아 있어도 alive 판정을 못 받아서, 그 잡이 지금 쓰는 디렉토리를 지운다.
     local stale sj
     for stale in "$out".inprogress.* "$out".prev.*; do
         [ -d "$stale" ] || continue          # nullglob이 꺼져 있어 매치가 없으면 패턴이 그대로 온다
         sj="${stale##*.}"
-        if [[ "$sj" =~ ^[0-9]+$ ]] && p2_sge_queued "$sj"; then
+        if [[ "$sj" =~ ^[0-9]+$ ]] && p1_sge_queued "$sj"; then
             echo "  건너뜀: $(basename "$stale") — 잡 $sj 가 아직 큐에 있다"; continue
         fi
         echo "  치움: $(basename "$stale") (죽은 잡의 잔여물)"
@@ -348,29 +361,27 @@ submit_many() {
 
 # summary.json(refine 전)과 refine.variant_summary.json(refine 후)을 한 TSV로 모은다.
 # 둘 다 내는 이유: refine이 수치를 얼마나 움직였는지 보여야 그 값을 믿을지 판단할 수 있다.
-# 실측(2026-09-18): refine이 F1을 4.8~5.1점 올린다 — 켜 두는 게 맞았다.
+# phase2 실측(2026-09-18): refine이 F1을 4.8~5.1점 올린다.
 # refine 행의 gt_concordance는 NA로 나온다. truvari가 refine.variant_summary.json에 그 키를 안 낸다.
 collect() {
-    local out="${1:-$PHASE2/phase2_bench_sv_summary.tsv}" py
+    local out="${1:-$PHASE1/phase1_bench_sv_summary.tsv}" py
     py="${PYTHON:-$(command -v python3 || command -v python || true)}"
     [ -n "$py" ] || { echo "ERROR: python이 없다. PYTHON=<경로> 로 지정할 것"; exit 1; }
 
     local rows=""
-    local dsid r sample dataset chem bc base
-    for dsid in $(p2_dsids); do
-        r=$(p2_row "$dsid"); sample=$(p2_col "$r" 2); dataset=$(p2_col "$r" 3)
-        case "$(p2_col "$r" 7)" in *R10*) chem=R10 ;; *) chem=R9 ;; esac
-        bc=$(p2_col "$r" 8)
-        base="$RUN_BASE/$sample/ONT/$dataset/$BENCH_SV_SUB"
+    local dsid r sample dataset base
+    for dsid in $(p1_dsids); do
+        r=$(p1_row "$dsid"); sample=$(p1_col "$r" 2); dataset=$(p1_col "$r" 3)
+        base="$RUN_BASE/$sample/PacBio/$dataset/$BENCH_SV_SUB"
         [ -d "$base" ] || continue
-        rows="$rows$dsid\t$sample\t$dataset\t$chem\t$bc\t$base\n"
+        rows="$rows$dsid\t$sample\t$dataset\t$(p1_instr_of "$dsid")\t$base\n"
     done
 
-    # %b 로 넘겨야 데이터 안의 % 가 포맷으로 해석되지 않는다 (basecaller 열은 자유 텍스트다).
+    # %b 로 넘겨야 데이터 안의 % 가 포맷으로 해석되지 않는다.
     printf '%b' "$rows" | "$py" -c '
 import json, os, sys
 
-cols = ["dsid","sample","dataset","chem","basecaller","stage",
+cols = ["dsid","sample","dataset","instr","stage",
         "base_cnt","comp_cnt","tp_base","fp","fn","precision","recall","f1","gt_concordance"]
 out = [ "\t".join(cols) ]
 
@@ -382,7 +393,7 @@ def num(v):
 for line in sys.stdin:
     line = line.rstrip("\n")
     if not line: continue
-    dsid, sample, dataset, chem, bc, base = line.split("\t")
+    dsid, sample, dataset, instr, base = line.split("\t")
     for stage, fname in (("bench", "summary.json"),
                          ("refine", "refine.variant_summary.json")):
         p = os.path.join(base, fname)
@@ -392,7 +403,7 @@ for line in sys.stdin:
         except (ValueError, OSError) as e:
             sys.stderr.write("!! %s %s: %s\n" % (dsid, fname, e))
             continue
-        out.append("\t".join([dsid, sample, dataset, chem, bc, stage] +
+        out.append("\t".join([dsid, sample, dataset, instr, stage] +
             [num(d.get(k)) for k in ("base cnt","comp cnt","TP-base","FP","FN",
                                      "precision","recall","f1","gt_concordance")]))
 
@@ -406,6 +417,7 @@ sys.stderr.write("rows: %d\n" % (len(out) - 1))
     echo
     echo "stage 열: bench = refine 전, refine = refine 후. 둘의 차이가 크면 복잡영역 표현 차이가"
     echo "그만큼 컸다는 뜻이다. 판정은 refine 행으로 하고 bench 행은 그 폭을 보는 용도다."
+    echo "instr 열로 Sequel II ↔ Revio 를 비교한다 (truth·파라미터가 같으므로 직접 비교가 된다)."
 }
 
 case "${1:-}" in
@@ -414,7 +426,7 @@ case "${1:-}" in
     --ready)
         preflight
         # shellcheck disable=SC2046
-        submit_many $(p2_dsids_primary) ;;
+        submit_many $(p1_dsids_primary) ;;
     "") echo "사용법: $0 --list | --ready | --collect [out.tsv] | <dsid> [dsid ...]"; exit 1 ;;
     *)  preflight
         submit_many "$@" ;;
