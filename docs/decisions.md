@@ -485,3 +485,50 @@ PR #17에서 이 런을 `aligned_bam` 진입으로 넣었다. **잘못된 선택
 넘어오지도 않는다. 지금은 `test` 시트에 `aligned_bam_realign` 행을, `test_prealigned` 프로파일에
 `aligned_bam` 단독 시트를 둬서 셋을 다 덮는다. 단독 시트가 따로 필요한 이유는 "모든 행이
 `aligned_bam`이면 `MINIMAP2_INDEX`를 건너뛴다" 같은 조건이 섞인 시트에서는 영영 거짓이기 때문이다.
+
+## 2026-09-22 — 큐/노드를 이름으로 박지 않고 qstat과 대조해서 쓴다
+
+쓸 수 있는 노드가 또 바뀌었다. 2026-08-22엔 `shepherd.q`의 shepherd-1-7/8/9 셋이었는데
+2026-09-22 기준으로 **octopus-2-8, octopus-2-9, shepherd-1-8, shepherd-1-9 넷**이고
+**큐가 둘로 갈렸다**(octopus.q가 다시 살아났다). 전 노드 64코어 / 251 GB로 스펙은 같다.
+
+한 달 사이 두 번 바뀐 값을 코드와 문서 열 곳에 박아 두고 있었다. 그래서 값을 고치는 대신
+**틀린 값이 조용히 통과하지 못하게** 만들었다.
+
+- 큐에 없는 노드를 `-l h=`로 지정하면 qsub은 받아들이고 **잡은 영원히 `qw`로 남는다.**
+  에러도, 로그도 없다. 반대로 `-q`에 없는 큐 이름을 넣으면 그 순간 잡 전체가 거부된다.
+  둘 다 한참 뒤에야 알게 되는 실패다.
+- `lib.sh`에 `*_sge_targets`(SGE_QUEUE x SGE_HOSTS ∩ `qstat -f`)를 두고,
+  `*_require_sge_targets`가 겹치는 인스턴스가 없으면 **제출 전에** 막으면서 실제 고를 수 있는
+  목록을 찍는다. `*_sge_queue_arg`는 실재하는 큐만 남겨 `-q`를 만든다 — SGE_QUEUE에 옛 이름이
+  섞여 있어도 그것 때문에 잡이 거부되지 않는다.
+- 이제 노드가 바뀌면 `env.local.sh`의 두 줄(`SGE_QUEUE`, `SGE_HOSTS`)만 고치면 되고,
+  안 고치면 제출이 막힌다. `01_prepare_login_node.sh`가 현재 대상 인스턴스를 찍어 준다.
+- `SGE_QUEUE`는 이제 콤마 목록을 받는다(`shepherd.q,octopus.q`).
+
+검증은 합성 픽스처로 네 가지를 돌려서 했다: 4노드 2큐 정상, shepherd만 지정 시 `-q`에서
+octopus.q 탈락, 없는 노드 지정 시 차단 + exit 1, 없는 큐 이름이 섞여도 유효한 것만 남음.
+
+## 2026-09-22 — phase1에 Truvari SV 평가 단계 (phase2 61_benchmark_sv.sh 이식)
+
+phase2의 `61_benchmark_sv.sh`를 phase1로 옮겼다. 파라미터·truth 캐시 전략·결과 공개 방식은
+그대로고(GIAB v5.0q README 지정 명령, ALT=* 선제거, 임시 디렉토리 → 원자적 rename),
+입력만 Sniffles → **pbsv**(`03_VCF/SV_pbsv/`)로 바뀐다. truth 캐시는 `$INFRA/reference/sv_truth`를
+phase2와 **공유**한다 — 같은 truth를 같은 필터로 거른 것이라 두 벌 만들 이유가 없다.
+
+**phase1 쪽이 phase2보다 답이 많이 나온다.** GRCh38 germline SV truth를 가진 GIAB 샘플은
+HG002 하나뿐인데, phase2의 HG002 런은 둘 다 R9.4.1이라 화학종 비교가 안 됐다. phase1의 HG002
+런은 다섯이고 dup_of가 전부 비어 있으며 **기기 세대가 갈린다** — Sequel II 넷 + Revio 하나.
+같은 truth·같은 파라미터로 **Sequel II ↔ Revio SV 성능을 직접 비교**할 수 있다.
+`--list`/`--collect`의 `instr` 열이 그 축이다(dataset 이름 기반 표시용 라벨이고 판정에는 안 쓴다).
+
+### 같이 통일한 것 (phase2 → phase1)
+
+- `60_benchmark.sh`: `.fai` 자동 생성(hap.py가 요구하는데 만드는 곳이 없었다 — 파이프라인의
+  SAMTOOLS_FAIDX는 Nextflow work 안에만 만든다), 잡 스크립트 쓰기 실패 감지,
+  qsub stderr 포착 + jobid 검증, `submit_many()`/`dedup_dsids()`.
+- `10_submit.sh`(**양쪽 phase 다**): 위와 같은 qsub 하드닝. 여기는 phase2에도 없었다 —
+  실패하면 빈 jobid 파일을 쓰고 `OK`를 찍는다(큐에는 아무것도 안 들어갔는데).
+- `env.sh`: `BENCH_SV_*` 6개 변수, h_vmem이 상한도 아니라는 2026-09-18 실측 주석.
+- `env.local.sh.example`(양쪽): 벤치마크 잡 크기 프리셋 절. 실측 maxvmem(hap.py 24.5 GB,
+  truvari 73 GB) 기준으로 파이프라인 잡과 노드를 나눠 쓸 때의 슬롯 계산을 적었다.

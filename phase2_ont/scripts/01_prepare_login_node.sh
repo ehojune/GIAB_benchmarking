@@ -24,9 +24,14 @@ case "$rule" in
 esac
 cons=$(qconf -sc 2>/dev/null | awk '$1=="h_vmem" {print $6}')
 [ "$cons" = NO ] && echo "  h_vmem consumable=NO → 메모리는 예약되지 않음. 노드당 잡 수는 슬롯으로 통제"
-echo "  큐/노드: $SGE_QUEUE $SGE_HOSTS  (octopus.q는 사용 불가)"
 echo "  현재 잡 크기: ${SGE_SLOTS}슬롯 / h_vmem ${SGE_VMEM} / Nextflow 메모리 상한 ${NF_LOCAL_MEM_GB}G"
-qhost 2>/dev/null | awk 'NR<=2 || /shepherd-1-[789]/' || true
+# 쓸 수 있는 노드 집합은 그때그때 바뀐다 (2026-09-22에 shepherd 3대 -> octopus 2 + shepherd 2, 큐도 둘).
+# 그래서 이름을 박아 두지 않고 SGE_QUEUE x SGE_HOSTS 로 실제 큐 인스턴스를 뽑아 보여준다.
+echo "  설정: SGE_QUEUE='$SGE_QUEUE'  SGE_HOSTS='$SGE_HOSTS'"
+if ! p2_require_sge_targets; then
+    echo "  ^^ 이 상태로는 제출해도 잡이 qw 로 남는다. env.local.sh 에서 위 목록에 맞게 고칠 것."
+fi
+qhost 2>/dev/null | awk -v h="$SGE_HOSTS" 'NR<=2 || $1 ~ h' || true
 
 echo "== [1/5] Nextflow $NXF_VER =="
 command -v nextflow >/dev/null || { echo "ERROR: nextflow가 PATH에 없음 — $CONDA_ENV/bin 확인"; exit 1; }

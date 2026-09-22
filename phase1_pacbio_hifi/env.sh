@@ -32,12 +32,23 @@ export GIAB_HTTP_BASE="https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab"
 # ---- SGE (노드 3개 고정은 불변) ----
 # 노드 실측(2026-08-21): 64코어 / 251.1 GB. h_vmem은 consumable=NO —
 # 스케줄러가 메모리를 예약하지 않으므로 노드당 잡 수는 슬롯으로만 통제된다.
+# **h_vmem은 강제 종료 한도도 아니다**(2026-09-18 phase2 실측): 32G로 선언한 truvari 잡이
+# maxvmem 73 GB를 쓰고도 exit 0으로 끝났다. 즉 이 값은 문서일 뿐이고, 넘겨도 아무 일도 없다.
+# 그래도 실측에 맞춰 둔다 — 안 맞으면 다음 사람이 노드 용량을 잘못 계산한다.
 # 기본값은 노드당 3잡(21x3=63슬롯, 70x3=210 GB) 기준. 프리셋 변경은 env.local.sh.example.
-export SGE_QUEUE="${SGE_QUEUE:-shepherd.q}"
+#
+# **쓸 수 있는 노드 집합은 고정이 아니다.** 다른 연구자와 나눠 쓰는 자원이라 그때그때 바뀐다.
+#   2026-08-22: shepherd-1-7/8/9 (shepherd.q) 셋. octopus.q 사용 불가
+#   2026-09-22: octopus-2-8, octopus-2-9, shepherd-1-8, shepherd-1-9 넷 — **큐가 둘로 갈렸다**
+# 그래서 SGE_QUEUE는 콤마 목록을 받고, 실제 제출에는 lib.sh의 p1_sge_queue_arg 가
+# qstat -f 와 대조해 **실재하는 큐만** 골라 쓴다. 겹치는 인스턴스가 없으면 제출 자체를 막는다
+# (p1_require_sge_targets) — 안 그러면 잡이 조용히 qw로 영원히 남는다.
+# 지금 쓸 수 있는 집합을 보려면: qstat -f | awk '$1 ~ /@/ {print $1}' | sort -u
+export SGE_QUEUE="${SGE_QUEUE:-shepherd.q,octopus.q}"
 export SGE_PE="${SGE_PE:-pe_slots}"
 export SGE_SLOTS="${SGE_SLOTS:-21}"
-export SGE_VMEM="${SGE_VMEM:-78G}"                         # 잡별 상한(넘으면 kill). 예약 아님
-export SGE_HOSTS="${SGE_HOSTS:-(shepherd-1-7|shepherd-1-8|shepherd-1-9)}"
+export SGE_VMEM="${SGE_VMEM:-78G}"                         # 표시용. 예약도 상한도 아니다 (위 주석)
+export SGE_HOSTS="${SGE_HOSTS:-(octopus-2-8|octopus-2-9|shepherd-1-8|shepherd-1-9)}"
 
 # 잡 안에서 Nextflow local executor가 동시에 잡을 수 있는 자원 상한 (kobic.config가 읽음).
 # NF_LOCAL_CPUS는 잡 스크립트가 NSLOTS로 덮는다. SGE_VMEM보다 작게 둬서 오버헤드를 남긴다.
@@ -48,9 +59,18 @@ export NF_LOCAL_MEM_GB="${NF_LOCAL_MEM_GB:-70}"
 # 01_prepare_login_node.sh 가 이 목록도 함께 미리 받는다 (계산 노드는 외부망이 없다).
 # hap.py 는 GIAB/NIST 문서가 쓰는 이미지를 그대로 쓴다 (biocontainers 에는 없다).
 export HAPPY_IMG="${HAPPY_IMG:-jmcdani20/hap.py:v0.3.12}"
-export TRUVARI_IMG="${TRUVARI_IMG:-quay.io/biocontainers/truvari:5.4.0--pyhdfd78af_0}"
+export TRUVARI_IMG="${TRUVARI_IMG:-quay.io/biocontainers/truvari:5.4.0--pyhdfd78af_0}"  # SV용 (61_benchmark_sv.sh)
 export BENCH_IMAGES="${BENCH_IMAGES:-$HAPPY_IMG $TRUVARI_IMG}"
 # hap.py 는 병렬성이 낮아 파이프라인 잡보다 작게 잡는다
 export BENCH_SLOTS="${BENCH_SLOTS:-8}"
-export BENCH_VMEM="${BENCH_VMEM:-32G}"
+export BENCH_VMEM="${BENCH_VMEM:-32G}"      # phase2 실측 maxvmem 23.7~24.5 GB (2026-09-18, R9 8런)
 export BENCH_TRUTH_VER="${BENCH_TRUTH_VER:-v4.2.1}"   # germline truth set 판 (release/*/NISTv4.2.1/)
+
+# ── SV 정확도 평가 (61_benchmark_sv.sh) ───────────────────────────────────────
+# truvari refine의 기본 스레드는 4다(truvari 5.4.0 refine.py) — 슬롯을 더 줘도 안 쓴다.
+export BENCH_SV_SLOTS="${BENCH_SV_SLOTS:-8}"
+export BENCH_SV_VMEM="${BENCH_SV_VMEM:-80G}"   # phase2 실측 maxvmem 67~73 GB (2026-09-18, refine 포함)
+export BENCH_SV_TRUTH_VER="${BENCH_SV_TRUTH_VER:-v5.0q}"   # release/*/*/v5.0q/<sample>_GRCh38_v5.0q_stvar.*
+export BENCH_SV_REFINE="${BENCH_SV_REFINE:-1}"             # GIAB v5.0q README 권장. 0으로 끌 수 있다
+export BENCH_SV_ALIGN="${BENCH_SV_ALIGN:-}"                # refine 정렬기. 비우면 truvari 기본값 poa
+export BENCH_SV_ARGS="${BENCH_SV_ARGS:-}"                  # truvari bench 추가 인자 (예: -d)

@@ -60,3 +60,50 @@ p1_job_state() {
 }
 
 p1_job_alive() { [ "$(p1_job_state "$1")" != - ]; }
+
+# 컨테이너 이미지 캐시 경로 (Nextflow 규약: 프로토콜 제거 후 [/:] -> '-' + .img)
+p1_img_path() { echo "$NXF_SINGULARITY_CACHEDIR/$(echo "$1" | sed 's#[/:]#-#g').img"; }
+
+# 파이프라인이 쓰는 컨테이너 URI 목록. BENCH_IMAGES(env.sh)는 파이프라인이 안 쓰므로 여기 없다 —
+# 미리 받아야 하는 쪽(01_prepare)에서 따로 합친다.
+# 2026-09-21까지 이 파싱이 4개 스크립트에 각자 인라인으로 박혀 있었고, 그중 하나가 편집 잔재로
+# 깨져서 BENCH_IMAGES를 통째로 놓쳤다. 한 곳에서만 고칠 수 있게 함수로 뺀다.
+p1_container_uris() {
+    grep -oE "container_[a-z0-9_]+ *= *'[^']+'" "$P1_DIR/pipeline/pacbio-hifi-wgs/nextflow.config" \
+        | cut -d"'" -f2 | sort -u
+}
+
+# ── 큐/노드 해석 ──────────────────────────────────────────────────────────────
+# 쓸 수 있는 노드 집합은 **고정이 아니다.** 다른 연구자와 나눠 쓰는 자원이라 그때그때 바뀌고,
+# 2026-09-22에는 큐가 둘로 갈렸다 (shepherd.q + octopus.q). 그래서 이름을 박아 두지 않고
+# SGE_QUEUE(콤마 목록) x SGE_HOSTS(정규식)를 **실제 큐 인스턴스와 대조해서** 쓴다.
+#
+# 왜 대조가 필요한가: 큐에 없는 노드를 -l h= 로 지정하면 qsub은 받아들이고 잡은 qw로 남는다.
+# 영원히. 에러도 안 난다. 반대로 -q 에 없는 큐 이름을 넣으면 그 순간 잡 전체가 거부된다.
+# 둘 다 제출하고 한참 뒤에야 알게 되는 실패라, 로그인 노드에서 미리 걸러낸다.
+
+# SGE_QUEUE x SGE_HOSTS 와 실제로 겹치는 큐 인스턴스(queue@host) 목록.
+p1_sge_targets() {
+    local qre="^(${SGE_QUEUE//,/|})@"
+    qstat -f 2>/dev/null | awk -v q="$qre" -v h="$SGE_HOSTS" '
+        $1 ~ /@/ && $1 ~ q { split($1, a, "@"); if (a[2] ~ h) print $1 }' | sort -u
+}
+
+# 잡 스크립트의 -q 에 넣을 값. 실재하는 큐만 남긴다 — SGE_QUEUE에 옛 이름이 섞여 있어도
+# 그 때문에 잡 전체가 거부되지 않는다. qstat을 못 읽으면 SGE_QUEUE를 그대로 쓴다.
+p1_sge_queue_arg() {
+    local q; q=$(p1_sge_targets | cut -d@ -f1 | sort -u | paste -sd, -)
+    echo "${q:-$SGE_QUEUE}"
+}
+
+# 제출 전 게이트. 겹치는 인스턴스가 없으면 무엇을 고를 수 있는지 보여주고 실패한다.
+p1_require_sge_targets() {
+    local t; t=$(p1_sge_targets)
+    if [ -z "$t" ]; then
+        echo "ERROR: SGE_QUEUE='$SGE_QUEUE' 와 SGE_HOSTS='$SGE_HOSTS' 에 겹치는 큐 인스턴스가 없다."
+        echo "       이대로 제출하면 잡이 영원히 qw 로 남는다. 아래에서 골라 env.local.sh 에 적을 것:"
+        qstat -f 2>/dev/null | awk '$1 ~ /@/ {print "         " $1}' | sort -u
+        return 1
+    fi
+    echo "  대상: $(echo "$t" | tr '\n' ' ')"
+}

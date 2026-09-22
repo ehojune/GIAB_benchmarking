@@ -22,13 +22,15 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$HERE/../env.sh"
 source "$HERE/lib.sh"
+
+# 잡의 -q 에 들어갈 값. preflight 가 qstat 과 대조해 실재하는 큐만 남긴 값으로 덮는다.
+# preflight 를 거치지 않는 경로(--list 등)를 위한 기본값이 이것이다.
+SGE_Q_ARG="$SGE_QUEUE"
 PHASE1="$P1_DIR"
-REPO="$(cd "$PHASE1/.." && pwd)"
 CALLERS="${CALLERS:-deepvariant clair3}"
 BENCH_SUB="05_BENCH/happy"
 
-# 캐시된 singularity 이미지 경로. 01_prepare_login_node.sh 와 같은 파일명 규약.
-img_path() { echo "$NXF_SINGULARITY_CACHEDIR/$(echo "$1" | sed 's#[/:]#-#g').img"; }
+# 이미지 경로는 lib.sh의 p1_img_path를 쓴다 (01_prepare_login_node.sh와 같은 규약).
 
 # sample -> "truth_vcf<TAB>truth_bed". 없으면 비어 있음.
 # 디렉토리 깊이가 샘플마다 다르다: HG001 은 release/NA12878_HG001/NISTv4.2.1/,
@@ -75,9 +77,23 @@ list_all() {
 
 preflight() {
     p1_qstat_refresh
+    # 큐 x 노드가 안 겹치면 잡이 조용히 qw로 남는다 — 제출 전에 막는다 (lib.sh 설명).
+    p1_require_sge_targets || exit 1
+    SGE_Q_ARG="$(p1_sge_queue_arg)"
     [ -s "$REF_FASTA" ] || { echo "ERROR: 레퍼런스 없음 ($REF_FASTA) — 01_prepare_login_node.sh 먼저"; exit 1; }
-    [ -s "$REF_FASTA.fai" ] || { echo "ERROR: $REF_FASTA.fai 없음 — hap.py 가 요구한다"; exit 1; }
-    local i; i=$(img_path "$HAPPY_IMG")
+    # hap.py는 레퍼런스 옆의 .fai를 요구하는데 이걸 만드는 곳이 없다 — 파이프라인의 SAMTOOLS_FAIDX는
+    # publishDir 없이 Nextflow work 디렉토리 안에만 만들고, 01_prepare는 FASTA 압축만 푼다.
+    # 여기서 1회 생성한다 (로그인 노드에 samtools가 없어 컨테이너로 — 03_dup_evidence.sh와 같은 방식).
+    if [ ! -s "$REF_FASTA.fai" ]; then
+        local st refdir
+        st="$(p1_img_path "$(p1_container_uris | grep '/samtools:')")"
+        refdir="$(dirname "$REF_FASTA")"
+        [ -s "$st" ] || { echo "ERROR: $REF_FASTA.fai 없고 samtools 컨테이너도 없다 — 01_prepare_login_node.sh 먼저"; exit 1; }
+        echo "  $REF_FASTA.fai 생성 (hap.py 요구, 1회)"
+        singularity exec -B "$refdir:$refdir" "$st" samtools faidx "$REF_FASTA" \
+            || { echo "ERROR: samtools faidx 실패 — $REF_FASTA 확인"; exit 1; }
+    fi
+    local i; i=$(p1_img_path "$HAPPY_IMG")
     [ -s "$i" ] || { echo "ERROR: hap.py 이미지 없음 ($i) — 01_prepare_login_node.sh 재실행"; exit 1; }
     mkdir -p "$INFRA/jobs" "$INFRA/logs" "$INFRA/launch"
 }
@@ -113,12 +129,14 @@ submit_one() {
 
     mkdir -p "$base/$BENCH_SUB" "$INFRA/launch/bench.$dsid"
     local job="$INFRA/jobs/bench.$dsid.sh" simg
-    simg=$(img_path "$HAPPY_IMG")
+    simg=$(p1_img_path "$HAPPY_IMG")
 
-    cat > "$job" <<EOF
+    # 쓰기가 실패하면(디스크 참, 권한) 예전 잡 스크립트가 남아 엉뚱한 걸 제출하게 된다.
+    # 호출부의 `|| rc=1` 때문에 이 함수 안에서는 errexit가 꺼져 있으니 직접 본다.
+    if ! cat > "$job" <<EOF
 #!/bin/bash
 #\$ -N b1.$dsid
-#\$ -q $SGE_QUEUE
+#\$ -q $SGE_Q_ARG
 #\$ -pe $SGE_PE $BENCH_SLOTS
 #\$ -S /bin/bash
 #\$ -V
@@ -128,7 +146,7 @@ submit_one() {
 #\$ -l h='$SGE_HOSTS'
 #\$ -wd $INFRA/launch/bench.$dsid
 set -euo pipefail
-source "$REPO/phase1_pacbio_hifi/env.sh"
+source "$PHASE1/env.sh"
 
 THREADS="\${NSLOTS:-$BENCH_SLOTS}"
 TMP="$INFRA/launch/bench.$dsid/tmp"
@@ -153,22 +171,47 @@ for c in$todo; do
 done
 echo "ALL DONE $dsid"
 EOF
-    chmod +x "$job"
+    then
+        echo "FAIL $dsid: 잡 스크립트를 못 썼다 — $job"; return 1
+    fi
+    chmod +x "$job" || { echo "FAIL $dsid: chmod 실패 — $job"; return 1; }
 
     if [ "${DRY:-0}" = 1 ]; then
         echo "DRY $dsid: $job 생성만 함 (callers:$todo)"; return 0
     fi
+    # 호출부가 실패를 모아 처리하므로 errexit에 기대지 않고 qsub 결과를 직접 본다.
+    # 안 그러면 빈 jobid 파일을 쓰고 OK 를 찍는다 (아무것도 큐에 안 들어갔는데).
     local out jid
-    out=$(qsub "$job" < /dev/null)
+    if ! out=$(qsub "$job" < /dev/null 2>&1); then   # stderr 까지 잡아야 FAIL 메시지가 쓸모 있다
+        echo "FAIL $dsid: qsub 거부 — $out"; return 1
+    fi
     jid=$(echo "$out" | grep -oE '[0-9]+' | head -1)
-    echo "$jid" > "$INFRA/jobs/bench.$dsid.jobid"
+    [ -n "$jid" ] || { echo "FAIL $dsid: qsub 출력에서 jobid를 못 읽었다 — $out"; return 1; }
+    # jobid 기록이 실패하면 중복 제출 가드가 그 dsid에 대해 무력해진다 — 잡은 이미 들어갔으므로
+    # 실패로 보고하되 잡 번호를 반드시 보여준다(사람이 qdel 할 수 있어야 한다).
+    echo "$jid" > "$INFRA/jobs/bench.$dsid.jobid" \
+        || { echo "FAIL $dsid: jobid=$jid 로 제출됐으나 기록 실패 — $INFRA/jobs/bench.$dsid.jobid"; return 1; }
     echo "OK  $dsid: jobid=$jid callers:$todo truth=$(basename "$truth_vcf")"
+}
+
+# 같은 dsid가 두 번 들어오면 같은 출력 경로에 잡 둘이 동시에 쓴다.
+# p1_job_alive는 preflight 때 뜬 qstat 스냅샷을 보므로 방금 넣은 잡을 못 본다 — 입력에서 잘라낸다.
+dedup_dsids() { awk 'NF && !seen[$0]++'; }
+
+# 여러 dsid를 제출하고, 하나라도 실패하면 non-zero로 끝낸다.
+# 개별 실패로 루프를 멈추지는 않는다 — 나머지는 넣어 두는 편이 낫다.
+submit_many() {
+    local d rc=0
+    for d in $(printf '%s\n' "$@" | dedup_dsids); do
+        submit_one "$d" || rc=1
+    done
+    return $rc
 }
 
 # summary.csv 를 한 장으로 모은다. hap.py 는 Type(SNP/INDEL) x Filter(ALL/PASS) 로 행을 낸다.
 # PASS 행이 실제 성능이다 (RefCall 이 빠진 값).
 collect() {
-    local out="${1:-$REPO/phase1_bench_summary.tsv}" dsid r sample dataset id base c f
+    local out="${1:-$PHASE1/phase1_bench_summary.tsv}" dsid r sample dataset id base c f
     {
         printf 'dsid\tsample\tdataset\tcaller\ttype\tfilter\ttruth_total\ttp\tfn\tfp\trecall\tprecision\tf1\n'
         for dsid in $(p1_dsids); do
@@ -199,8 +242,9 @@ case "${1:-}" in
     --collect) shift; collect "${1:-}" ;;
     --ready)
         preflight
-        for d in $(p1_dsids_primary); do submit_one "$d" || true; done ;;
+        # shellcheck disable=SC2046
+        submit_many $(p1_dsids_primary) ;;
     "") echo "사용법: $0 --list | --ready | --collect [out.tsv] | <dsid> [dsid ...]"; exit 1 ;;
     *)  preflight
-        for d in "$@"; do submit_one "$d" || true; done ;;
+        submit_many "$@" ;;
 esac

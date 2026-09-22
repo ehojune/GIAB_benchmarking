@@ -79,3 +79,38 @@ p2_container_uris() {
 p2_clair3_models() { awk -F'\t' 'NR>1 {print $9}' "$P2_RT" | sort -u; }
 # 기본 제출(dup_of 없는) 런이 쓰는 모델만. 이게 빠지면 치명적이고, 나머지는 경고로 족하다.
 p2_clair3_models_primary() { awk -F'\t' 'NR>1 && $12=="" {print $9}' "$P2_RT" | sort -u; }
+
+# ── 큐/노드 해석 ──────────────────────────────────────────────────────────────
+# 쓸 수 있는 노드 집합은 **고정이 아니다.** 다른 연구자와 나눠 쓰는 자원이라 그때그때 바뀌고,
+# 2026-09-22에는 큐가 둘로 갈렸다 (shepherd.q + octopus.q). 그래서 이름을 박아 두지 않고
+# SGE_QUEUE(콤마 목록) x SGE_HOSTS(정규식)를 **실제 큐 인스턴스와 대조해서** 쓴다.
+#
+# 왜 대조가 필요한가: 큐에 없는 노드를 -l h= 로 지정하면 qsub은 받아들이고 잡은 qw로 남는다.
+# 영원히. 에러도 안 난다. 반대로 -q 에 없는 큐 이름을 넣으면 그 순간 잡 전체가 거부된다.
+# 둘 다 제출하고 한참 뒤에야 알게 되는 실패라, 로그인 노드에서 미리 걸러낸다.
+
+# SGE_QUEUE x SGE_HOSTS 와 실제로 겹치는 큐 인스턴스(queue@host) 목록.
+p2_sge_targets() {
+    local qre="^(${SGE_QUEUE//,/|})@"
+    qstat -f 2>/dev/null | awk -v q="$qre" -v h="$SGE_HOSTS" '
+        $1 ~ /@/ && $1 ~ q { split($1, a, "@"); if (a[2] ~ h) print $1 }' | sort -u
+}
+
+# 잡 스크립트의 -q 에 넣을 값. 실재하는 큐만 남긴다 — SGE_QUEUE에 옛 이름이 섞여 있어도
+# 그 때문에 잡 전체가 거부되지 않는다. qstat을 못 읽으면 SGE_QUEUE를 그대로 쓴다.
+p2_sge_queue_arg() {
+    local q; q=$(p2_sge_targets | cut -d@ -f1 | sort -u | paste -sd, -)
+    echo "${q:-$SGE_QUEUE}"
+}
+
+# 제출 전 게이트. 겹치는 인스턴스가 없으면 무엇을 고를 수 있는지 보여주고 실패한다.
+p2_require_sge_targets() {
+    local t; t=$(p2_sge_targets)
+    if [ -z "$t" ]; then
+        echo "ERROR: SGE_QUEUE='$SGE_QUEUE' 와 SGE_HOSTS='$SGE_HOSTS' 에 겹치는 큐 인스턴스가 없다."
+        echo "       이대로 제출하면 잡이 영원히 qw 로 남는다. 아래에서 골라 env.local.sh 에 적을 것:"
+        qstat -f 2>/dev/null | awk '$1 ~ /@/ {print "         " $1}' | sort -u
+        return 1
+    fi
+    echo "  대상: $(echo "$t" | tr '\n' ' ')"
+}

@@ -19,9 +19,7 @@ source "$HERE/../env.sh"
 source "$HERE/lib.sh"
 
 OUT="${OUT:-$RUN_BASE/multiqc/_all_hifi}"
-NF_CONFIG="$HERE/../pipeline/pacbio-hifi-wgs/nextflow.config"
-MQ_URI=$(grep -oE "container_multiqc *= *'[^']+'" "$NF_CONFIG" | cut -d"'" -f2)
-IMG="$NXF_SINGULARITY_CACHEDIR/$(echo "$MQ_URI" | sed 's#[/:]#-#g').img"
+IMG="$(p1_img_path "$(p1_container_uris | grep '/multiqc:')")"
 [ -s "$IMG" ] || { echo "ERROR: multiqc 컨테이너가 없다 ($IMG) — 01_prepare_login_node.sh 먼저"; exit 1; }
 
 if [ $# -gt 0 ]; then dsids=("$@"); else mapfile -t dsids < <(p1_dsids); fi

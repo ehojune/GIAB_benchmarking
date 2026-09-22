@@ -1,10 +1,15 @@
 #!/bin/bash
-# 로그인 노드 1회 준비 (재실행 안전): 디렉토리, Nextflow 배포판 캐시, 컨테이너 11개,
+# 로그인 노드 1회 준비 (재실행 안전): 디렉토리, Nextflow 배포판 캐시, 컨테이너,
 # 레퍼런스 FASTA, pbsv TRF bed. 계산 노드는 외부 네트워크가 없으므로 제출 전에 반드시 실행.
+#
+# 컨테이너는 파이프라인용(nextflow.config의 container_*)에 벤치마킹용(BENCH_IMAGES, env.sh)을 더한다.
+# 벤치마크 단계를 처음 쓰는 클론이면 이 스크립트를 먼저 다시 돌려야 한다 — 이미 있는 건 cached로 넘어간다.
+#
+# 환경 변수: SKIP_PULL=1  이미지를 받지 않고 없는 것만 보고한다 (레퍼런스 점검만 빠르게 돌릴 때)
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$HERE/../env.sh"
-PIPE="$HERE/../pipeline/pacbio-hifi-wgs"
+source "$HERE/lib.sh"
 
 mkdir -p "$INFRA"/{containers,reference,tmp,work,launch,jobs,logs} "$RUN_BASE"
 
@@ -22,6 +27,13 @@ esac
 cons=$(qconf -sc 2>/dev/null | awk '$1=="h_vmem" {print $6}')
 [ "$cons" = NO ] && echo "  h_vmem consumable=NO → 메모리는 예약되지 않음. 노드당 잡 수는 슬롯으로 통제 (env.local.sh.example 참고)"
 echo "  현재 잡 크기: ${SGE_SLOTS}슬롯 / h_vmem ${SGE_VMEM} / Nextflow 메모리 상한 ${NF_LOCAL_MEM_GB}G"
+# 쓸 수 있는 노드 집합은 그때그때 바뀐다 (2026-09-22에 shepherd 3대 -> octopus 2 + shepherd 2, 큐도 둘).
+# 그래서 이름을 박아 두지 않고 SGE_QUEUE x SGE_HOSTS 로 실제 큐 인스턴스를 뽑아 보여준다.
+echo "  설정: SGE_QUEUE='$SGE_QUEUE'  SGE_HOSTS='$SGE_HOSTS'"
+if ! p1_require_sge_targets; then
+    echo "  ^^ 이 상태로는 제출해도 잡이 qw 로 남는다. env.local.sh 에서 위 목록에 맞게 고칠 것."
+fi
+qhost 2>/dev/null | awk -v h="$SGE_HOSTS" 'NR<=2 || $1 ~ h' || true
 
 echo "== [1/4] Nextflow $NXF_VER 배포판 캐시 =="
 command -v nextflow >/dev/null || { echo "ERROR: nextflow가 PATH에 없음 — $CONDA_ENV/bin 확인"; exit 1; }
@@ -29,20 +41,17 @@ nextflow -version | grep -m1 version || true
 
 echo "== [2/4] Singularity 이미지 ($NXF_SINGULARITY_CACHEDIR) =="
 command -v singularity >/dev/null || { echo "ERROR: singularity가 PATH에 없음 — conda env의 apptainer에 singularity 심링크 필요"; exit 1; }
-# 캐시 파일명 규약: 프로토콜 없이 [/:] -> '-' 치환 + .img (Nextflow가 이 이름으로 찾음)
-# 파이프라인 이미지 + 벤치마킹 이미지(BENCH_IMAGES, env.sh). 계산 노드는 외부망이 없어 여기서 다 받아둔다.
-uris=$( { grep -oE "container_[a-z0-9_]+ *= *'[^']+'" "$PIPE/nextflow.config" | cut -d"'" -f2
-          for i in ${BENCH_IMAGES:-}; do echo "$i"; done
-        } | sed '/^$/d' | sort -u)
+# 이미지 목록은 lib.sh의 p1_container_uris(파이프라인) + BENCH_IMAGES(벤치마킹, env.sh).
+# 캐시 파일명 규약은 p1_img_path가 안다 (Nextflow가 그 이름으로 찾는다).
 fail=0
-cd "$NXF_SINGULARITY_CACHEDIR"
-for uri in $uris; do
-    img="$(echo "$uri" | sed 's#[/:]#-#g').img"
-    if [ -s "$img" ]; then echo "  cached: $img"; continue; fi
+for uri in $( { p1_container_uris; for i in ${BENCH_IMAGES:-}; do echo "$i"; done; } | sed '/^$/d' | sort -u); do
+    img="$(p1_img_path "$uri")"
+    if [ -s "$img" ]; then echo "  cached: $(basename "$img")"; continue; fi
+    if [ "${SKIP_PULL:-0}" = 1 ]; then echo "  MISSING (SKIP_PULL): $uri"; fail=1; continue; fi
     echo "  pull:   $uri"
     singularity pull --name "$img" "docker://$uri" || { echo "  FAIL:   $uri"; fail=1; }
 done
-[ "$fail" = 0 ] || { echo "ERROR: 일부 이미지 pull 실패 — 재실행하면 이어서 받는다"; exit 1; }
+[ "$fail" = 0 ] || { echo "ERROR: 일부 이미지 없음 — 재실행하면 이어서 받는다"; exit 1; }
 
 echo "== [3/4] 레퍼런스 FASTA ($REF_FASTA) =="
 src_gz="$GIAB_ROOT/release/references/GRCh38/GCA_000001405.15_GRCh38_no_alt_analysis_set.fasta.gz"

@@ -81,8 +81,9 @@ mosdepth/samtools/bcftools stats → MultiQC.
   (`$CONDA_PREFIX`를 쓰면 SGE 잡에서 base로 덮여 깨진다). `GODEBUG=netdns=cgo`가 있어야
   `singularity pull`이 된다. 전부 `phase1_pacbio_hifi/env.sh`에 정리돼 있으니 그대로 재사용해라.
 - **잡 1개 안에서 Nextflow local executor로 완주시킨다** (SGE executor로 자식 잡을 뿌리지 않는다).
-- 큐: `shepherd.q`의 shepherd-1-7/8/9(각 64코어·251 GB) **세 대가 전부다.**
-  octopus.q는 더 이상 쓸 수 없다 (2026-08-22).
+- 큐/노드는 `env.sh`의 `SGE_QUEUE` x `SGE_HOSTS`로 정한다. **집합이 고정이 아니다** —
+  2026-08-22엔 shepherd-1-7/8/9 셋(shepherd.q), 2026-09-22엔 octopus-2-8/2-9 + shepherd-1-8/1-9 넷(큐 둘).
+  전 노드 64코어·251 GB 동일 스펙. 지금 집합은 `qstat -f | awk '$1 ~ /@/ {print $1}' | sort -u`.
 - `h_vmem`은 **consumable=NO**다. SGE가 메모리를 예약하지 않으므로 노드당 잡 수는 슬롯으로만 통제된다.
   (노드당 잡 수) × (잡당 메모리) < 노드 RAM 을 직접 지켜야 한다.
 - phase1 실측 참고: 30슬롯 잡으로 ~30x HiFi WGS가 6~7시간, 피크 43~54 GB.
