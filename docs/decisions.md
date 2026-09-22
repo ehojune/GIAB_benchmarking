@@ -185,6 +185,19 @@
   `set -eo pipefail`이 그 자리에서 스크립트를 죽였다. 병합(cat·크기 검증·mv)은 그 앞에서 이미 끝나 파일은 정상. `( zcat || true ) | head -1`로 고쳤고
   러너는 마지막에 "완료 N/15(출력 크기 = 입력 합)"를 따로 센다. 같은 날 다른 에이전트가 HARVEST에 적어 둔 pipefail 함정과 같은 뿌리다.
 
+## 2026-09-21 — phase3 WGRS 첫 실행 실패: Java 17, MGISEQ HG002 BAM 재생성, 현황판
+
+- **GATK 4.6.1.0 MarkDuplicatesSpark는 Java 17이 필요한데 nbb2 잡은 Java 8을 잡았다**(class file 61 vs 52). 7세트 19건 `mark` 전부 이 원인.
+  공용 biko 파이프라인(`/BiO/scratch/dyl/kbb/zz.code/`)은 건드리지 않고, **qsub 잡 안에서 `JAVA_HOME=/BiO/scratch/dyl/apps/miniconda3/lib/jvm`(Java 17.0.18, 서버에 이미 있음)과 PATH를 지정한 뒤 `regermline.sh`를 부른다.**
+  GATK 실행기는 PATH의 `java`를 쓰므로 둘 다 필요. 근거·래퍼는 Codex 앱 세션 "Fix server Java version for GATK"(2026-09-21). phase1·2에서 nf-core에 JDK 17을 고정했던 것과 같은 환경 문제.
+  **검증 대기** — 잡 155519~155524가 Success로 끝나면 여기와 STATUS.md를 "검증됨"으로.
+- **MGISEQ2000 HG002는 정렬 BAM이 33% 잘려 있었다.** bwa-mem2 출력 SAM 948,868,188번째 줄에서 samtools가 `SEQ and QUAL are of different length`로 멈췄는데
+  파이프라인이 예외를 삼켜 `Finished`로 넘겼다(BAM 정렬 수 948,864,819 = 에러 줄 − 헤더 3,369줄). 끊긴 위치는 리드 기준 66%로 내 L03+L04 cat 병합 경계(50%)가 아니고,
+  같은 플로우셀의 HG003은 정상이라 병합은 원인이 아니다. 원본 레코드 결함인지 bwa-mem2 출력 문제인지는 미확정. Codex 스크립트(`repairs/mgi_hg002_recheck.sh --rebuild`: 원본 검사 → fastp → bwa → 리드 수 대조 → sort)로
+  별도 디렉토리에 재생성한 뒤 교체한다. 다른 20 샘플은 `idxstats`로 fastp 리드 수 이상임을 확인했다(primary만 세는 확정 검사는 STATUS.md).
+- **현황판 `docs/STATUS.md`를 `docs/`에 둔다** — 템플릿의 `docs/runs/`(한 번 쓰고 남기는 plan/cmd/handoff)와 성격이 다르다. 동시에 5갈래(phase3 재개, BAM 재생성, phase2 R10, phase1 hap.py, 평가 설계)가 돌아
+  사용자가 "같이 트래킹 잘 하자"고 해서 만든, 계속 덮어쓰는 문서다. 이력은 문서 끝 `## 이력`에 append. 템플릿 이탈 기록은 이 줄.
+
 ## 2026-09-19 — 파이프라인 입력 이름의 `_`를 `-`로
 
 - 사용자 결정: 디렉토리·샘플 dir·파일 이름의 `_`는 mate 접미(`_1.fastq.gz`/`_2.fastq.gz`)만 남기고 전부 `-`로. 파이프라인이 `_`로 샘플명을 자르기 때문
@@ -352,7 +365,10 @@ Codex가 물었던 나머지는 확인 결과 문제가 없었다. nullglob이 �
 
 - **2026-08-27의 ts/tv 열린 질문을 R9에서 닫았다.** 벤치마크 구간 안의 SNP precision이 0.990~0.997이라
   구간 안에는 FP가 거의 없다. 낮은 genome-wide ts/tv는 구간 밖(반복서열 등) 콜에서 온다 —
-  HG005 기준 구간 밖 약 0.99M이 ts/tv ≈ 1.15면 전체 1.88이 설명된다. 콜러·파이프라인 문제가 아니다.
+  HG005 기준 구간 밖 약 0.99M이 ts/tv ≈ 1.33이면 전체 1.88이 설명된다. 콜러·파이프라인 문제가 아니다.
+  (2026-09-21 정정: 처음 1.15로 적었는데 **가중치를 전체 SNV 수로 잡은 오류**였다. ts/tv의 분모는
+  Tv이므로 Tv로 가중하거나 카운트를 복원해 빼야 한다 — 전체 Ti 2.787M·Tv 1.483M에서 구간 안
+  Ti 2.220M·Tv 1.057M을 빼면 구간 밖이 Ti 0.567M·Tv 0.425M = 1.33이다. 결론 방향은 같다.)
   R10(HG008 6런)은 truth가 없어 같은 방법을 못 쓴다.
 - **indel 격차 수치를 갱신했다.** 2026-08-27에 PASS indel 개수로 "guppy 3.2.x가 4.2.2보다 3.5배"라고
   적었는데, truth 대비로 보니 그 여분이 거의 전부 FP였다 — **FP 기준 42배**다. 그리고 precision(6.3배

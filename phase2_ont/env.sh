@@ -42,7 +42,9 @@ export TRUVARI_IMG="${TRUVARI_IMG:-quay.io/biocontainers/truvari:5.4.0--pyhdfd78
 export BENCH_IMAGES="${BENCH_IMAGES:-$HAPPY_IMG $TRUVARI_IMG}"
 # hap.py는 병렬성이 낮아 파이프라인 잡보다 작게 잡는다
 export BENCH_SLOTS="${BENCH_SLOTS:-8}"
-export BENCH_VMEM="${BENCH_VMEM:-32G}"      # 실측 maxvmem 23.7~24.5 GB (2026-09-18, R9 8런)
+export BENCH_VMEM="${BENCH_VMEM:-32G}"      # 실측 maxvmem 23.7~24.5 GB (2026-09-18, R9 8런, 8슬롯)
+# 메모리는 스레드 수에 비례하는 것으로 보인다 — phase1이 16슬롯에서 48.4~48.8 GB를 썼다
+# (2026-09-22, 19런). 슬롯을 올리면 잡당 메모리도 같이 오르니 동시 실행 수를 함께 줄일 것.
 export BENCH_TRUTH_VER="${BENCH_TRUTH_VER:-v4.2.1}"   # germline truth set 판 (release/*/NISTv4.2.1/)
 
 # ---- SV 정확도 평가 (61_benchmark_sv.sh) ----

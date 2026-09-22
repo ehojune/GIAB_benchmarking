@@ -61,9 +61,16 @@ export NF_LOCAL_MEM_GB="${NF_LOCAL_MEM_GB:-70}"
 export HAPPY_IMG="${HAPPY_IMG:-jmcdani20/hap.py:v0.3.12}"
 export TRUVARI_IMG="${TRUVARI_IMG:-quay.io/biocontainers/truvari:5.4.0--pyhdfd78af_0}"  # SV용 (61_benchmark_sv.sh)
 export BENCH_IMAGES="${BENCH_IMAGES:-$HAPPY_IMG $TRUVARI_IMG}"
-# hap.py 는 병렬성이 낮아 파이프라인 잡보다 작게 잡는다
-export BENCH_SLOTS="${BENCH_SLOTS:-8}"
-export BENCH_VMEM="${BENCH_VMEM:-32G}"      # phase2 실측 maxvmem 23.7~24.5 GB (2026-09-18, R9 8런)
+# **실측 (2026-09-22, phase1 19런 전부 exit 0)**: BENCH_SLOTS=16 에서 maxvmem 48.40~48.82 GB,
+# wall 3371~5008초(56~83분). 16슬롯이면 64코어 노드에 동시 4잡 = 194/251 GB — 이 조합이
+# 실제로 완주한 값이라 그대로 기본값으로 둔다.
+#
+# 슬롯을 바꿀 때 주의: hap.py 메모리는 **스레드 수에 비례**하는 것으로 보인다.
+# phase2가 8슬롯에서 23.7~24.5 GB, phase1이 16슬롯에서 48.4~48.8 GB — 슬롯 2배에 메모리 2배다.
+# 그래서 노드 총 사용량은 슬롯 선택과 무관하게 ~192 GB로 비슷하게 수렴한다(측정점 둘뿐이라
+# 가설이다). 슬롯을 올리면 잡당 빨라지는 대신 동시 실행 수가 줄고, 총량은 그대로다.
+export BENCH_SLOTS="${BENCH_SLOTS:-16}"
+export BENCH_VMEM="${BENCH_VMEM:-56G}"      # 실측 48.8 GB 위. 표시용이고 강제되지 않는다
 export BENCH_TRUTH_VER="${BENCH_TRUTH_VER:-v4.2.1}"   # germline truth set 판 (release/*/NISTv4.2.1/)
 
 # ── SV 정확도 평가 (61_benchmark_sv.sh) ───────────────────────────────────────
