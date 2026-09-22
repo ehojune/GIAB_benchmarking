@@ -12,6 +12,35 @@
 qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo; cd /BiO/scratch/dyl/kbb/G000 && for d in GIAB-publicData-*/; do printf '%-45s DONE=%-8s err=%s\n' "${d%/}" "$(grep -o 'Success\|Error' $d/__DONE__ 2>/dev/null | head -1)" "$(cat $d/error_list.txt 2>/dev/null | tr '\n' ' ' | cut -c1-60)"; done; echo; ls /BiO/scratch/ehojune/GIAB_benchmark/repairs/mgi-hg002.*/VALIDATED.txt 2>/dev/null || echo "MGISEQ HG002 rebuild: 아직"
 ```
 
+## 지금 다른 세션이 하는 일 (2026-09-22 17:30)
+
+세 세션이 같은 repo 를 동시에 고치고 있다. 규칙은 [AGENTS.md](../AGENTS.md) 의
+"여러 에이전트가 동시에 붙을 때". **이 절은 상태이므로 낡으면 지운다.**
+
+| | 세션 | 상태 |
+|---|---|---|
+| PR #29 | ONT — HG002 R10.4.1 채점 결과 | 열림. **phase1 파일도 고친다** (`35_review_qc.py`, `env.local.sh.example`) — 의도된 것이다(두 phase 가 같은 모양) |
+| PR #27 | 다운로드 — `fetch_all.sh` 진입점 통합 + HG002 R10 카탈로그 편입 | 열림 |
+| `claude/bcftools-resolution` | PR 없음. 내용이 #29 에 포함된 것으로 보인다 | 확인 필요 |
+
+**#29 는 `docs/STATUS.md` 에서 main 과 충돌한다**(양쪽이 이력·표를 고쳤다). 머지 전에
+`git merge origin/main` 으로 풀어야 한다.
+
+**#29 가 정정하는 것**: main 의 `env.local.sh.example` 에 "truvari 는 ONT 67~73 GB / HiFi
+91.6~136.2 GB — 데이터셋이 두 배를 가른다" 고 적혀 있는데, 그 ONT 값은 **R9** 다.
+R10 실측이 133.5 GB 로 HiFi 와 같은 대역이라 "두 배" 는 틀렸다. #29 가 고치고
+`BENCH_SV_SLOTS` 를 양쪽 33(노드당 1잡)으로 맞춘다. **PacBio 세션은 이 정정에 동의한다.**
+
+## 클러스터 사실 (2026-09-22 직접 확인)
+
+세 세션이 다 알아야 하는 것이라 여기 둔다.
+
+| | |
+|---|---|
+| **GPU 없음** | `qhost -F gpu` 가 리소스 행을 하나도 안 낸다. 어느 노드도 `gpu` complex 를 광고하지 않는다. DeepSomatic 등은 CPU 경로로 설계해야 한다 |
+| **octopus 노드는 1 TB RAM** | `octopus-2-*` 1007.1 GB / `shepherd-1-*` 251.1 GB. 지금까지의 슬롯 계산은 전부 251 GB 기준이라 **octopus 에서는 과하게 보수적**이다. 노드별로 다르게 잡을 여지가 있다 |
+| 전 노드 64코어 | octopus-2-1~2-11, shepherd-1-1~1-14 (큐 인스턴스 25개). **그중 우리에게 허용된 집합은 따로 물어야 한다** — SGE ACL 이 아니라 사람끼리의 약속이다 |
+
 ## 작업 흐름
 
 | # | 작업 | 상태 (2026-09-22) | 잡 | 끝나면 | 막힌 것 / 의존 |
@@ -24,7 +53,7 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 | 5b | **phase1 PacBio SV 평가** (`s1.*`, Truvari vs v5.0q, HG002 5런) | **완료** — refine F1 .8208~.8418. **세대 단조성 없음**(SeqI 이 SeqII 를 가른다), recall 이 약점(.757~.788) | 156048~156052, `-t 8`, exit 0 | 수치·판정: [2026-09-22-pacbio-hifi-benchmark-first-results.md](reference/2026-09-22-pacbio-hifi-benchmark-first-results.md) | — |
 | 6 | phase3 Hiseq-subsampled-30x | **완료** (Success) | — | #7에 포함 | — |
 | 7 | **phase3 평가 설계** — 업체 4곳(gd1~4) + 공개 raw 22 샘플의 VCF를 v4.2.1(+HG002 CMRG·v5.0q)로 hap.py | 미착수 | — | 결과 디렉토리 구조 받으면 phase1·2 `60_benchmark.sh` 모양으로 스크립트 | #1·#3 완료 |
-| 8 | **phase1 HG008 9런 등록** — uBAM → BAM → VCF | **등록 완료** (2026-09-22) — run_table 38 → 47, samplesheet 9개 생성 | 미제출 | `10_submit.sh --list` 로 입력 확인 → `--ready` | 노드 여유. 런당 10~15시간 예상 |
+| 8 | **phase1 HG008-T 9 실행단위** — uBAM → BAM → VCF | **제출됨** 2026-09-22 17:23 — 2건 r / 7건 qw | 156064~156072, 30 slots. 허용 4노드 중 셋이 `regermline` 60슬롯에 잡혀 shepherd-1-8 만 빈다 | `30_verify_outputs.sh` → `35_review_qc.py`. 채점은 #9 가 서야 가능 | 런당 10~15시간 예상, 9건이면 2~3일 |
 | 9 | **HG008-T somatic 평가 설계** — germline truth가 없는 HG008/HG009를 채점할 유일한 길 | **미착수** | — | smvar V0.3-20260425 / stvar-CNV V0.5-20260318 기준 `62_benchmark_somatic.sh` (가칭) | #8 (평가할 VCF가 먼저 있어야) |
 | 10 | **phase1↔phase2 표준화 잔여** — 아래 "표준화 백로그" | 부분 완료 | — | phase3까지 같은 모양으로 | 급하지 않음 |
 
@@ -119,6 +148,7 @@ cd /BiO/scratch/dyl/kbb/G000 && SAM=/home/ehojune/program/samtools-1.24/samtools
 
 ## 이력
 
+- 2026-09-22 17:30 — #8 제출(156064~156072). **GPU 는 없다**(`qhost -F gpu` 무응답) — somatic 은 CPU 경로로 설계해야 한다. **octopus 노드가 1 TB RAM** 인 것을 처음 확인했다(shepherd 251 GB) — 지금까지의 슬롯 계산이 전부 251 GB 기준이라 octopus 에서는 과하게 보수적이다. 세 세션이 동시에 repo 를 고치고 있어 AGENTS.md 에 조율 규칙을 넣었다(소유 구분, 충돌 잦은 파일, PR 전 merge-tree 확인, 남의 실측을 덮어쓰지 않기).
 - 2026-09-22 밤 — SV 5런 최종 수치 확정. **"세대 순서가 소변이와 같다"는 앞선 보고를 정정한다** — `CCS_15kb`(Sequel I)가 F1 .8333 으로 `SequelII_CCS_11kb`(.8275)보다 위라 Sequel I 두 런이 Sequel II 를 사이에 두고 갈라진다. **소변이 순위와도 뒤집힌다**: `CCS_15kb` 는 INDEL 19런 중 최하위(F1 .9282)인데 SV 는 5런 중 3위다. 런을 하나의 품질 축으로 줄 세우면 안 된다. refine 이득은 +4.9~5.4점으로 phase2 ONT(+4.8~5.1)와 거의 같다 — 표현 정규화라는 설명과 맞는다. phase1 벤치마킹은 **채점 가능한 전량 완료**(소변이 19런, SV 5런). 남은 것은 #8·#9.
 - 2026-09-22 저녁 — SV 5런 `-t 8` 로 전량 완주(maxvmem 91.6~136.2 GB). **"메모리가 스레드에 비례한다"는 앞선 판단을 정정한다** — 같은 데이터로 `-t 22 -> 8` 하니 스레드 64% 감소에 메모리는 29~46%만 줄었다. 가장 큰 영역 하나의 작업 공간이 고정분으로 남는 것으로 보인다. 초판의 비례 주장은 ONT(-t 8)와 HiFi(-t 22)를 비교한 것이라 데이터셋 차이가 섞여 있었다. **제어 수단은 스레드가 아니라 동시 실행 수** — `BENCH_SV_SLOTS` 를 33(노드당 1잡)으로 올렸다. 22슬롯이면 최악 257 GB 로 251 GB 초과다.
 - 2026-09-22 14:50 — phase1 SV 5런을 `-t 8` 로 전량 재제출(156037~156041). 앞선 `-t 22` 4런 결과는 유효하지만 죽은 1런과 조건을 맞추려 통일했다. **SV 수치 서술 정정**: "truth 28,123 중 ~20,600개를 찾는다"는 `comp cnt`(우리가 부른 수)를 recall 분자로 잘못 쓴 것이었다 — 실제로 찾은 건 `TP-base` 21,282~22,147개다(PR #22 Codex 지적). 추적 안 되던 항목 #8(HG008 9런 등록)·#9(somatic 평가 설계)·#10(표준화 백로그)을 표에 올렸다.
