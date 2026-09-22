@@ -6,12 +6,12 @@ GIAB 9개 샘플(HG001–HG007 germline, HG008·HG009 tumor-normal)의 **전체 
 
 | | |
 |---|---|
-| 데이터 규모 | **441 datasets / 81,314 files / 125.5 TB** · **다운로드 100% 완료(2026-09-18)** (2026-08-13 HEAD 검증 + 2026-09-16 FTP `release/`·`data/` 라이브 크롤: HG002 v5.0q·stratifications v3.6, HG008/HG009 신규 데이터셋 추가. 2026-09-17 GIAB FTP 밖 숏리드 6행 359 GiB(`external/`, 아래 "외부 보충 리드") 포함. 2026-09-17에 받지 않기로 한 3건 12,423 files / 10.7 TiB는 [manifests/declined_by_decision.tsv](phase0_download/manifests/declined_by_decision.tsv)에 목록만 남기고 제외) |
+| 데이터 규모 | **442 datasets / 81,316 files / 125.7 TB** · **GIAB FTP 분 다운로드 100% 완료(2026-09-18)** (2026-08-13 HEAD 검증 + 2026-09-16 FTP `release/`·`data/` 라이브 크롤: HG002 v5.0q·stratifications v3.6, HG008/HG009 신규 데이터셋 추가. GIAB FTP 밖 데이터 중 숏리드 6행 359 GiB(`external/`, 2026-09-17)와 HG002 R10.4.1 ONT 1행 160 GiB(`ext/`, 2026-09-22) 포함 — 아래 "외부 보충 리드". 2026-09-17에 받지 않기로 한 3건 12,423 files / 10.7 TiB는 [manifests/declined_by_decision.tsv](phase0_download/manifests/declined_by_decision.tsv)에 목록만 남기고 제외) |
 | **지금 돌고 있는 것** | [docs/STATUS.md](docs/STATUS.md) — 잡 ID, 끝나면 할 일, 막힌 것. 매 세션 갱신 |
 | 다운로드 | [phase0_download/](phase0_download/) — 스크립트, 매니페스트, 속도·용량 계획 |
 | PacBio HiFi 처리 | [phase1_pacbio_hifi/](phase1_pacbio_hifi/) — 38개 실행 단위, raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
 | ONT 처리 | [phase2_ont/](phase2_ont/) — 18개 실행 단위(기본 제출 14), raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트 |
-| 외부 보충 리드 | GIAB FTP에 리드가 없는 데이터셋은 외부에서 받는다. PacBio: HG001·HG005 SequelII 11kb → ENA PRJNA540705/540706, 12 cell 135 GiB ([sra_manifest.tsv](phase1_pacbio_hifi/sra_manifest.tsv)). ONT: HG001 ultralong → nanopore-wgs-consortium rel6, 136 GiB ([ext_manifest.tsv](phase2_ont/ext_manifest.tsv)). 위 PacBio·ONT 외부 리드는 위 규모 집계에 미포함. 숏리드는 다르다 — HG002/3/4 NovaSeq 6000 PCR-free 30x → Google brain-genomics-public(GCS), 6 files 147 GiB; HG002 NovaSeq X 30x → 같은 버킷, 2 files 41 GiB; HG003/4 HiSeq 30x 서브샘플 → HPRC S3, 4 files 170 GiB ([ext_manifest.tsv](phase3_shortread_wgs/ext_manifest.tsv))는 카탈로그 `external/` 6행으로 **위 규모 집계에 포함**(2026-09-17) |
+| 외부 보충 리드 | GIAB FTP에 없는 데이터는 외부에서 받는다. **집계 미포함** (대응 GIAB 행의 `reads_format`에 출처만 적는 관례) — PacBio: HG001·HG005 SequelII 11kb → ENA PRJNA540705/540706, 12 cell 135 GiB ([sra_manifest.tsv](phase1_pacbio_hifi/sra_manifest.tsv)); ONT: HG001 ultralong → nanopore-wgs-consortium rel6, 136 GiB ([ext_manifest.tsv](phase2_ont/ext_manifest.tsv)). **집계 포함** (대응 GIAB 디렉토리가 아예 없어 자체 행을 갖는다) — 숏리드: HG002/3/4 NovaSeq 6000 PCR-free 30x → Google brain-genomics-public(GCS), 6 files 147 GiB; HG002 NovaSeq X 30x → 같은 버킷, 2 files 41 GiB; HG003/4 HiSeq 30x 서브샘플 → HPRC S3, 4 files 170 GiB ([ext_manifest.tsv](phase3_shortread_wgs/ext_manifest.tsv), `external/` 6행, 2026-09-17); ONT: HG002 R10.4.1 → ONT 공개 데이터 `s3://ont-open-data/giab_2025.01/` 플로우셀 PAW70337, 2 files 160 GiB (`ext/` 1행, 2026-09-22. **CC BY-NC 4.0 — 비상업 연구 한정**). 넷을 한 번에 받는 진입점: [`fetch_all.sh`](phase0_download/scripts/fetch_all.sh) |
 | 표 원본 | [catalog/master_catalog.tsv](catalog/master_catalog.tsv) — 51개 컬럼. 필드 정의는 [catalog/README.md](catalog/README.md) |
 | 정확 바이트 | [docs/SIZES.md](docs/SIZES.md) — 플랫폼 디렉토리 단위 (조회용) |
 | 분류 근거 | [docs/reference/catalog_evidence.md](docs/reference/catalog_evidence.md) |
@@ -39,13 +39,13 @@ python catalog/build_readme.py
 <!-- MASTER-TABLE:BEGIN -->
 ### 요약
 
-전체 **441개 데이터셋 / 81,314 files / 114.1 TiB**. 단계별 도달 데이터셋 수:
+전체 **442개 데이터셋 / 81,316 files / 114.3 TiB**. 단계별 도달 데이터셋 수:
 
 | category | 데이터셋 | GiB | 정렬 | 페이징 | 변이 | 메틸 | somatic | 어셈블리 | GIAB 처리물 보유 |
 |---|---|---|---|---|---|---|---|---|---|
 | PacBio HiFi | 37 | 9,614 | 37 | 37 | 28 | 14 | 4 | 0 | 9 |
 | PacBio CLR | 8 | 13,388 | 7 | 4 | 1 | 0 | 0 | 0 | 0 |
-| Oxford Nanopore | 19 | 11,872 | 17 | 16 | 13 | 5 | 4 | 2 | 17 |
+| Oxford Nanopore | 20 | 12,032 | 18 | 16 | 13 | 5 | 4 | 2 | 17 |
 | Illumina WGS | 56 | 28,114 | 45 | 0 | 8 | 0 | 0 | 0 | 46 |
 | BGI / MGI | 14 | 5,302 | 3 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Exome | 11 | 977 | 11 | 0 | 2 | 0 | 0 | 0 | 0 |
@@ -118,12 +118,13 @@ python catalog/build_readme.py
 </details>
 
 <details>
-<summary><b>Oxford Nanopore</b> — 19 datasets, 11,872 GiB</summary>
+<summary><b>Oxford Nanopore</b> — 20 datasets, 12,032 GiB</summary>
 
 | 데이터셋 | 샘플 | 플랫폼 | GiB | 리드 | index | 정렬 | 페이징 | 변이 | 메틸 | somatic | 어셈블리 | 출처 | 다음 할 일 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | ONT ultralong (MinION UL, GRCh37/38 BAM) | HG001 | MinION ultralong (파일명 minion-ul) | 329 | ✗ | ✓ | ✓ minimap2 vb09096fc890429ce (-x map-ont) *(나)* | ✓ LongPhase v2.0.2 (Clair3 VCF phase+haplotag, SV 동시 위상) *(나)* | ✓ Clair3 v1.2.0 + Sniffles2 v2.8.0 [clair3 model: r941_prom_hac_g360+g422] *(나)* | – | – | ✗ | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + LongPhase 위상) (R9.4.1이라 DeepVariant는 해당 모델이 없어 생략). 산출물 경로는 variant_local_path. 다음: 해당 샘플의 NIST v4.2.1 VCF+BED로 Clair3/DeepVariant 소형변이를 hap.py 또는 rtg vcfeval로 평가. 공식 샘플별 SV benchmark는 없으므로 Sniffles2는 교차 콜러 일치도와 수동 검토로 평가. |
 | Cornell ONT 2D (fast5 원시 2912개 + 2D 리드) | HG002 | ONT 2D 케미스트리 (기기명 미표기; 파일명 토큰은 2D뿐, fast5 채널 ch1~ch510) | 6 | ✓ fast5 2912개(채널별) + 2D fastq 1 / fasta 1 | – | ✗ | – | ✗ | – | – | ✗ | 문서 | phase2에서 제외: 2D 리드가 fastq 96 MB(+fasta 43 MB) = 0.03x 수준이고, 원시 데이터는 fast5 2912개다. R7 2D 케미스트리는 Clair3/DeepVariant 모델이 아예 없고 fast5 재베이스콜은 정책상 제외. 커버리지만으로도 변이 호출이 불가능하다 (2026-08-22 사용자 확인) |
+| ONT R10.4.1 giab_2025.01 PAW70337 (ONT 공개 데이터) | HG002 | ONT PromethION R10.4.1 (FLO-PRO114M, SQK-LSK114 kit14) 1 플로우셀 — dorado 0.8.2 sup, dna_r10.4.1_e8.2_400bps@v5.0.0 | 160 | ✓ 정렬 BAM 1개(calls.sorted.bam) + .bai. ONT는 POD5와 정렬 BAM만 배포하고 uBAM·fastq는 내지 않는다(POD5 재베이스콜은 정책상 제외) — samtools fastq로 리드를 꺼내 재정렬한다. GIAB FTP에는 HG002 R10 ONT가 없고 s3://ont-open-data/giab_2025.01/ 에서 확보 — 로컬 /BiO/scratch/ehojune/GIAB_benchmark/ext/ont-open-data/giab_2025.01/HG002/PAW70337 | ✓ | ✓ N/A | ✗ | ✗ | ✗ | – | ✗ | N/A | phase2 실행 단위 HG002.ONT-R10_giab2025.01_PAW70337 (진입 aligned_bam_realign: samtools fastq → minimap2 재정렬). R10 소변이(v4.2.1) · SV(v5.0q) · DeepVariant 첫 채점. 진행 상황은 docs/STATUS.md |
 | ONT-UL Guppy 2.3.4 (2019-06-26) | HG002 | ONT ultralong (기기/케미스트리 미표기) | 627 | ✓ combined fastq.gz 1개 + sequencing_summary.txt.gz | ✓ | ✓ minimap2 (-a -z 600,200 -x map-ont) | ✓ whatshap haplotag | ✗ | – | – | ✗ | 문서 | 오라벨 3개 플로우셀 리드를 먼저 제외할 것. hs37d5 phased BAM은 그대로 사용 가능하고, GRCh38 BAM은 비페이즈라 whatshap haplotag가 사용자 몫 |
 | ONT-UL Guppy 3.2.4 (2020-01-22, phased) | HG002 | ONT ultralong (기기/케미스트리 미표기) | 571 | ✓ combined fastq.gz 1개 + sequencing_summary.txt.gz | ✓ | ✓ minimap2 (-a -z 600,200 -x map-ont) | ✓ whatshap haplotag (giab-ont-ul-pipeline ul-HG002, commit 416c5be) | ✗ | – | – | ✗ | 문서 | GRCh37/38 phased BAM 그대로 사용. 정렬을 다시 하려면 같은 디렉토리의 guppy 3.2.4 fastq.gz로 minimap2 재실행 |
 | ONT-UL Guppy 3.4.5 (align only) | HG002 | ONT ultralong (기기/케미스트리 미표기) | 545 | ✓ combined fastq.gz 1개 + sequencing_summary.txt.gz | ✓ | ✓ minimap2 vb09096fc890429ce (-x map-ont) *(나)* | ✓ LongPhase v2.0.2 (Clair3 VCF phase+haplotag, SV 동시 위상) *(나)* | ✓ Clair3 v1.2.0 + Sniffles2 v2.8.0 [clair3 model: r941_prom_hac_g360+g422] *(나)* | – | – | ✗ | 문서 | phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + LongPhase 위상) (R9.4.1이라 DeepVariant는 해당 모델이 없어 생략). 산출물 경로는 variant_local_path. 다음: NIST v4.2.1 VCF+BED로 Clair3/DeepVariant 소형변이를 hap.py 또는 rtg vcfeval로 평가하고, SV benchmark v0.6으로 Sniffles2를 Truvari 평가. |
@@ -623,6 +624,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-22 — 다운로드 진입점을 `phase0_download/scripts/fetch_all.sh` 하나로 모았다(FTP·ENA·ONT공개·GCS/S3 4경로). 반영이 빠져 있던 HG002 R10.4.1 ONT(160 GiB, CC BY-NC 4.0)를 `ext/` 행으로 카탈로그·README·Excel(v0922)에 넣어 442 datasets / 81,316 files / 114.3 TiB. `download.sh`가 declined/stale 목록을 이름만으로 받던 구멍도 막았다. 근거: [docs/decisions.md](docs/decisions.md) 2026-09-22.
 - 2026-09-22 — **ts/tv 열린 질문이 닫혔다.** 2026-08-27 에 "전 런 ts/tv 가 germline 기대치보다 낮다"로 남긴 뒤 2026-09-18 에 가정을 깔고 추정했던 것을, `62_tstv_regions.sh` 로 benchmark BED 에 갈라 **직접 셌다**(10건, 전부 `안+밖=전체` 대조 통과). **구간 안이 2.0972~2.1400 으로 열 건 전부 germline 기대치 그대로고 구간 밖만 1.09~1.48** — 낮은 genome-wide ts/tv 는 콜러나 파이프라인이 아니라 신뢰구간 밖 콜 때문이다. 추정치도 맞았다(HG005 1.33 → 실측 1.3064, 오차 1.8%). 실측이 새로 알려준 것: **베이스콜러가 좋을수록 구간 밖 ts/tv 가 오히려 낮다**(R10 1.15 < guppy 4.2.2 1.30 < 3.2.x 1.48) — 좋은 베이스콜러가 어려운 영역까지 더 부르고 그 한계 콜이 FP 비중이 높다. 그리고 구간 안에서 두 caller 가 사실상 같은데(2.0974 vs 2.0972) 구간 밖 순 차이의 ts/tv 가 2.18 이라, **DeepVariant 가 구간 밖에서 버리는 쪽이 진짜 변이일 가능성**이 열린 질문으로 남았다 — "DV 가 이긴다"는 결론은 벤치마크 구간 안에서만 검증된 것이다. [수치](docs/reference/2026-09-22-ont-r10-benchmark.md).
 - 2026-09-22 — **phase2 HG002 R10.4.1 채점 전량 완료.** 이 런 하나가 R10 소변이·R10 SV·DeepVariant 셋을 동시에 열었다(HG002 가 소변이 v4.2.1 과 SV v5.0q truth 를 둘 다 가진 유일한 샘플). **ONT 가 같은 플로우셀 PAW70337 에 공개한 hap.py 결과와 SNP F1 −0.0001 / INDEL F1 −0.0013 로 일치** — ONT 정렬을 버리고 우리 minimap2 로 재정렬한 결과다. **DeepVariant 가 Clair3 를 네 칸 전부에서 이긴다**(INDEL F1 .9378 vs .9134, FP −33%) — phase1 PacBio 와 같은 방향이라 ONT R10 기본 caller 도 DV 로 둔다. INDEL 은 베이스콜러가 지배한다는 결론이 R10 에서도 유지되고, 이제 네 세대가 한 줄에 선다(guppy 3.2.x F1 .22 → 3.4.5 .56 → 4.2.2 .77~.82 → dorado R10 .91~.94; FP 비율 17배 감소). SV 는 R10 이 F1 +0.031 인데 **이득이 거의 전부 recall**(+0.048, precision 은 +0.006) — R9 도 헛부르진 않았고 놓쳤던 것이다. refine 이득은 케미스트리와 무관하게 +4.8~5.3점. 자원: 파이프라인 16h20m/66.2 GB, hap.py 50.7분/24.6 GB, truvari 4.5분/**133.5 GB**(→ SV 슬롯 22→33). 기록: [docs/runs/2026-09-22-phase2-r10-benchmark.md](docs/runs/2026-09-22-phase2-r10-benchmark.md), [수치](docs/reference/2026-09-22-ont-r10-benchmark.md).
 - 2026-09-22 — **phase2 HG002 R10.4.1 완주**(잡 155279, exit 0, 16시간 20분, maxvmem 66.2 GB / 30슬롯, shepherd-1-8). `30_verify_outputs.sh` OK 1/1. `aligned_bam_realign` 진입이 실전에서 처음 증명됐고, **이 런 하나가 R10 소변이·R10 SV·DeepVariant 채점 셋을 동시에 연다** — HG002가 v4.2.1(소변이)과 v5.0q(SV) truth 를 둘 다 가진 유일한 샘플이기 때문이다. 같은 플로우셀에 대한 ONT 자체 hap.py 결과(SNP F1 .9983 / INDEL F1 .9147)가 외부 대조군이 된다. QC·채점은 다음 차례. 곁가지로 `35_review_qc.py --pass-counts` 가 `PermissionError: 'bcftools'` 로 죽던 것을 고쳤다 — 도구를 `$BCFTOOLS` → 컨테이너 → PATH 순으로 찾게 하고, 핸들러를 `except OSError` 로 넓혔다.

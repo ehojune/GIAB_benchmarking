@@ -1,5 +1,22 @@
 # 결정 기록
 
+## 2026-09-22 — 다운로드 진입점을 하나로, 외부 데이터는 "대응 GIAB 디렉토리 유무"로 가른다
+
+- **취득 경로 4개를 `phase0_download/scripts/fetch_all.sh` 하나로 묶는다.** GIAB FTP/S3(phase0) · ENA(phase1) ·
+  ONT 공개 데이터(phase2) · Google/HPRC(phase3)가 각각 다른 스크립트였고, 실제로 PR #17이 데이터를 들여왔는데
+  카탈로그·README·Excel 반영이 빠지는 일이 일어났다. 진입점이 하나면 "무엇을 받는지"의 목록도 한 곳에 남는다.
+  기존 스크립트는 그대로 두고 부르기만 한다 — 각 phase의 검증 규약(`VERIFY_ONLY=1`)이 이미 통일돼 있어 가능했다.
+- **HG002 R10.4.1은 기존 행의 `reads_format`이 아니라 `ext/` 외부 유래 행으로 넣는다.** 가르는 기준은
+  "대응하는 GIAB 디렉토리가 있는가" 하나다. HG001 rel6·HG001/HG005 SequelII는 GIAB 디렉토리가 있어 기존 행에 출처만
+  적었지만(집계 미포함), HG002 R10은 GIAB FTP에 아예 없다(ONT 디렉토리 셋 전부 R9 시절). 자체 행이 없으면
+  어느 표에도 나타나지 않아 "받았는데 목록에 없는" 데이터가 된다. 이 기준을 [catalog/README.md](../catalog/README.md)에 표로 적었다.
+  결과: 441 → 442 datasets / 81,314 → 81,316 files / 114.1 → 114.3 TiB.
+- **CC BY-NC 4.0 데이터가 카탈로그에 처음 섞였다.** 비상업 연구 한정이라는 제약은 데이터와 함께 따라다니므로
+  해당 행 `notes`와 README 외부 리드 항목 양쪽에 적었다. 앞으로 라이선스가 다른 데이터를 들일 때도 같게 한다.
+- **`download.sh`가 '대상 아님' 목록을 이름만으로 받는 구멍을 막았다.** `declined_by_decision`(받지 않기로 한 10.7 TiB)과
+  `release_stale_ftp_removed`(FTP에서 삭제됨)는 파일명 분기에 걸려 `./download.sh declined_by_decision`이 성립했고,
+  둘 다 3열이라 크기 비교가 전건 실패해 10.7 TiB를 받고도 전부 MISMATCH로 찍힐 수 있었다. 이름을 거부하도록 했다.
+
 ## 2026-08-26 — 처리표 원문 전체 표시와 현재 평가 기준
 
 - 이전의 “tool만 전체 표시, 다른 축약 유지” 결정을 폐기했다.

@@ -69,6 +69,18 @@ python catalog/build_readme.py      # master_catalog.tsv -> README.md 표 재생
 - `giab_processed`는 FALSE, `tool_source`는 GIAB 문서가 그 데이터를 설명할 때만 `giab_doc:`(HPRC 사본이 그 경우), 아니면 `N/A`.
 - phase1(HG001·HG005 SequelII 11kb, ENA)·phase2(HG001 rel6) 외부 리드는 GIAB 디렉토리가 따로 있어 기존 행의 `reads_format`에 출처를 적는 방식이다. 그 관례는 그대로다.
 
+**가르는 기준은 "대응하는 GIAB 디렉토리가 있는가"** 하나다 (2026-09-22 정리).
+
+| 상황 | 방식 | 집계 | 예 |
+|---|---|---|---|
+| GIAB 디렉토리가 있고 리드만 밖에 있다 | 기존 행의 `reads_format`에 출처·로컬 경로 | 미포함 | HG001·HG005 SequelII 11kb(ENA), HG001 ONT-UL rel6 |
+| GIAB에 그 데이터가 아예 없다 | 자체 행 (`external/` 또는 `ext/` prefix) | 포함 | phase3 숏리드 6행, HG002 R10.4.1 ONT 1행 |
+
+`ext/` 행도 `external/` 행과 똑같이 크롤러·재계산 대상이 아니다 — `crawl_data.py`는 FTP 경로만 라우팅하므로 매치되지 않고,
+`catalog_new_dirs.py`는 phase0 manifest에 파일이 하나도 없는 행의 files/size를 재계산하지 않는다. 원본은 그 phase의 `ext_manifest.tsv`다.
+HG002 R10.4.1(`ext/ont-open-data/giab_2025.01/HG002/PAW70337`)이 두 번째 칸의 사례다: GIAB FTP의 HG002 ONT는 셋 다 R9 시절이라 대응 디렉토리가 없다.
+**라이선스가 다른 데이터가 섞이는 첫 사례이기도 하다** — CC BY-NC 4.0(비상업 연구 한정)이라 `notes`에 그 제약을 적었다.
+
 ## 새 디렉토리가 FTP에 생기면
 
 `phase0_download/scripts/crawl_data.py`가 카탈로그 행이 없는 새 디렉토리의 파일을 `manifests/data_unrouted_new.tsv`에 모은다.
