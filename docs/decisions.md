@@ -576,3 +576,32 @@ Sequel I 둘(m54) + Sequel II 둘(m64) + Revio 하나(m84). 같은 truth·같은
   둔다 — 경로의 `PBmixSequel<NNN>` 은 세대 표시가 아니라 혼합 런 명명이라 근거가 못 된다
   (HG001.HudsonAlpha_PacBio_CCS 는 PBmixSequel846 디렉토리 안에 m64 movie가 들어 있다).
   **셋 다 HG002가 아니라 SV 평가 대상이 아니므로 추측하지 않는다.**
+
+## 2026-09-22 — phase1 hap.py 첫 실측으로 바뀐 것
+
+19런 × 2 caller = 38건, 전부 exit 0. 수치는
+[reference/2026-09-22-pacbio-hifi-benchmark-first-results.md](reference/2026-09-22-pacbio-hifi-benchmark-first-results.md).
+결정만 여기 적는다.
+
+- **PacBio HiFi 소변이의 기본 caller는 DeepVariant다.** Sequel II 12런에서 두 caller는 동률
+  (INDEL F1 차 −0.002~+0.001)인데 Revio 3런에서만 Clair3가 −0.006~−0.017로 진다. 모델 오배정이
+  아니다 — 세 런 다 `hifi_revio`를 제대로 받았다. Clair3는 버리지 않고 교차 확인용으로 둔다.
+- **Sequel I 런(HG002 CCS_10kb·CCS_15kb)은 INDEL 비교에서 세대를 명시하지 않으면 쓰지 않는다.**
+  INDEL F1 0.9282·0.9646으로 나머지(0.9747~0.9973)와 확연히 갈린다. caller 모델 탓이라는 의심은
+  DeepVariant가 배제한다 — 기기별 모델이 없어 19런을 같은 PACBIO 모델로 돌았는데도 같은 격차다.
+- **SNP는 더 파지 않는다.** 38건 전부 0.99844~0.99941(평균 0.99902)이라 기기·caller 어느 축으로도
+  신호가 없다. 앞으로 PacBio 비교는 INDEL과 SV로 한다.
+- `BENCH_SLOTS` 기본값을 8 → **16**으로. 실측 maxvmem이 16슬롯에서 48.4~48.8 GB였다(phase2가 8슬롯
+  24 GB). **메모리가 스레드 수에 비례**하는 것으로 보여 노드 총량은 어느 쪽이든 ~192 GB로 수렴한다.
+  실제로 완주한 조합을 기본값으로 둔다. `BENCH_VMEM`도 32G → 56G (표시용이지만 실측과 맞춘다).
+
+### 큐/노드 게이트의 한계 — 처음 주장은 과했다
+
+같은 날 `*_require_sge_targets`를 넣으면서 "노드가 바뀌면 스크립트가 막아 준다"고 적었는데,
+**허용 여부는 못 본다.** 실측하니 `qstat -f`에 octopus-2-1~2-11 + shepherd-1-1~1-14, 큐 인스턴스가
+**스물다섯 개** 다 뜬다. 그중 우리 몫이 넷이라는 건 SGE ACL이 아니라 사람끼리의 약속이라
+스크립트가 알 길이 없다.
+
+게이트가 실제로 막는 건 **존재하지 않는** 큐·노드다(오타, 폐기된 이름). 그것도 값어치는 있다 —
+그 경우 잡이 에러 없이 `qw`로 영원히 남기 때문이다. 하지만 허용 목록은 여전히 사용자에게 물어서
+`SGE_HOSTS`에 적는 수밖에 없다. 주석·문서를 그렇게 고쳤다.
