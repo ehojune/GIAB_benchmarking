@@ -256,12 +256,23 @@ rm -rf "\$WORK"
 # SIGKILL이면 trap이 안 돌므로, 제출 쪽에서도 죽은 잡의 잔여물을 한 번 훑어 지운다.
 trap '[ -d "\$WORK" ] && rm -rf "\$WORK"' EXIT
 
+# 워치독. abPOA 가 malloc 실패를 찍고도 abort 하지 않아 부모가 pool join 에서 멎는 일이
+# 2026-09-22 에 두 번 있었다(잡 156033·156038, 둘 다 HG002.PacBio_CCS_15kb). SGE 는 그걸 정상
+# 실행으로 보기 때문에 **잡이 슬롯을 영원히 붙잡는다** — 사람이 qstat 을 떠서 cpu 가 안 도는 걸
+# 눈치채야 끝난다. timeout 으로 끊으면 exit 124 가 나고 set -e 가 받아 trap 이 작업 디렉토리까지
+# 치운다. 실측 wall 이 4분대라 기본 4시간은 60배 여유다 — 정상 실행을 자를 걱정은 없다.
 run_truvari() {
-    singularity exec \\
+    local rc=0
+    timeout -k 60 "$BENCH_SV_TIMEOUT" singularity exec \\
         -B "$GIAB_ROOT:$GIAB_ROOT" \\
         -B "$RUN_BASE:$RUN_BASE" \\
         -B "$INFRA:$INFRA" \\
-        "$simg" "\$@"
+        "$simg" "\$@" || rc=\$?
+    if [ "\$rc" = 124 ] || [ "\$rc" = 137 ]; then
+        echo "ERROR: $BENCH_SV_TIMEOUT 를 넘겨 중단했다 (rc=\$rc). 멎은 것으로 본다 —"
+        echo "       BENCH_SV_THREADS 를 낮추거나, 이 런만 BENCH_SV_REFINE=0 으로 돌릴 것."
+    fi
+    return \$rc
 }
 
 echo "== truvari bench : $sample.$dataset =="
