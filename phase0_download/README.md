@@ -15,8 +15,24 @@ GIAB 원시 데이터 + truth set을 nbb2로 받는 단계. 대상 목록은 `ma
 git clone https://github.com/ehojune/GIAB_benchmarking.git && cd GIAB_benchmarking
 mkdir -p logs
 screen -S giab
-JOBS=12 bash phase0_download/scripts/run_priority.sh 2>&1 | tee logs/run_priority.log
+JOBS=12 bash phase0_download/scripts/fetch_all.sh 2>&1 | tee logs/fetch_all.log
 ```
+
+**`fetch_all.sh`가 이 저장소의 다운로드 진입점이다.** 취득 경로가 네 군데로 갈라져 있어
+(GIAB FTP/S3 · ENA · ONT 공개 데이터 · Google/HPRC 버킷) 어느 하나를 빼먹기 쉬웠다. 이 스크립트가 순서대로 부른다.
+
+| 단계 | 무엇을 | 하위 스크립트 | 규모 |
+|---|---|---|---|
+| phase0 | GIAB FTP/S3 본체 | `run_priority.sh` | 81,302 files / 113.8 TiB |
+| phase1 | HG001·HG005 SequelII 11kb (ENA PRJNA540705/540706) | `phase1_pacbio_hifi/scripts/02_fetch_sra_reads.sh` | 12 files / 135 GiB |
+| phase2 | HG001 rel6 + HG002 R10.4.1 (ONT 공개) | `phase2_ont/scripts/02_fetch_external_reads.sh` | 4 files / 297 GiB |
+| phase3 | 숏리드 업체 비교군 (Google GCS, HPRC S3) | `phase3_shortread_wgs/scripts/02_fetch_external_reads.sh` | 12 files / 359 GiB |
+
+한 단계가 실패해도 다음으로 넘어가고 마지막에 결과표를 찍는다. 상태 점검만 하려면
+`VERIFY_ONLY=1 bash phase0_download/scripts/fetch_all.sh`, 일부만 받으려면 `STAGES="phase1 phase2"`.
+phase0만 옛 방식으로 돌리려면 `run_priority.sh`를 그대로 써도 된다.
+
+처리용 자산(레퍼런스·Clair3 모델·컨테이너)은 여기 없다 — 각 phase의 `01_prepare_login_node.sh` 담당이다.
 
 `run_priority.sh`는 release → pacbio_hifi → ont → pacbio_clr → 나머지 순으로 받는다.
 screen 나오기 `Ctrl-A d`, 다시 붙기 `screen -r giab`.
