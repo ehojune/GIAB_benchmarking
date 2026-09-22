@@ -267,10 +267,18 @@ run_truvari truvari bench \\
 
 if [ "$do_refine" = 1 ]; then
     echo "== truvari refine (align=$align) =="
+    # -t 를 NSLOTS 로 주면 안 된다. refine 의 정렬기(abPOA)는 스레드마다 정렬 행렬을 따로 잡아서
+    # **메모리가 스레드 수에 비례**한다 — 슬롯을 올려 동시 실행 수를 줄이려 하면 잡당 메모리가
+    # 같이 올라가 노드 총량이 안 줄어든다. 2026-09-22 phase1 실측이 그걸 그대로 보여줬다:
+    #   phase2 ONT  -t 8  -> maxvmem 67~73 GB   (2026-09-18, 이 값이 나온 조건)
+    #   phase1 HiFi -t 22 -> maxvmem 177~192 GB (2.75배 스레드에 2.6배 메모리)
+    # 그날 phase1에서 22슬롯 2잡이 한 노드에 겹치며 abPOA 가 64 GiB 한 방을 못 잡고 ENOMEM 으로 죽었다.
+    # phase2는 그때 8슬롯이라 안 겪었지만 코드는 같았다 — 슬롯을 올리는 순간 같은 일이 난다.
+    # 그래서 스레드는 BENCH_SV_THREADS 로 고정하고, 슬롯은 노드 패킹에만 쓴다.
     run_truvari truvari refine \\
         -f "$REF_FASTA" \\
         -a "$align" \\
-        -t "\${NSLOTS:-$BENCH_SV_SLOTS}" \\
+        -t "$BENCH_SV_THREADS" \\
         "\$WORK"
 fi
 
