@@ -67,6 +67,7 @@ export BENCH_SV_TRUTH_VER="${BENCH_SV_TRUTH_VER:-v5.0q}"   # release/*/*/v5.0q/<
 export BENCH_SV_REFINE="${BENCH_SV_REFINE:-1}"             # GIAB v5.0q README 권장. 0으로 끌 수 있다
 export BENCH_SV_ALIGN="${BENCH_SV_ALIGN:-}"                # refine 정렬기. 비우면 truvari 기본값 poa
 export BENCH_SV_ARGS="${BENCH_SV_ARGS:-}"                  # truvari bench 추가 인자 (예: -d)
+export BENCH_SV_TIMEOUT="${BENCH_SV_TIMEOUT:-4h}"         # 워치독 상한. 멎은 잡이 슬롯을 영원히 물지 않게 (실측 wall 4분대)
 
 # ---- SGE ----
 # 노드 실측(2026-08-21): 노드당 64코어 / 251.1 GB (전 노드 동일 스펙). h_vmem은 consumable=NO —
