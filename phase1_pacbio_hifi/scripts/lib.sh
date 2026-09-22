@@ -73,6 +73,28 @@ p1_container_uris() {
         | cut -d"'" -f2 | sort -u
 }
 
+# dsid -> 기기 세대 (Revio | SequelII | SequelI | RSII | mixed:... | -)
+# 근거는 inputs_manifest.tsv 파일명의 **movie ID**다: m84=Revio, m64=Sequel II, m54=Sequel I,
+# m14/m15=RS II. dataset 이름으로 때려잡으면 안 된다 — HG002.PacBio_CCS_10kb/15kb 는 이름에
+# 세대 표시가 없는데 실제로는 m54(Sequel I)라, 이름 기반 판정은 이 둘을 Sequel II로 잘못 묶는다
+# (2026-09-22 Codex 리뷰 지적). 61_benchmark_sv.sh 가 내세우는 세대 비교축이 바로 이 둘을 포함한다.
+# 경로에 PBmixSequel<NNN> 이 있어도 그건 PacBio의 혼합 런 명명일 뿐 세대 표시가 아니다
+# (HG001.HudsonAlpha_PacBio_CCS 는 PBmixSequel846 디렉토리 안에 m64 movie가 들어 있다).
+# movie ID가 아예 없는 런(HG003/6/7 chemistry2 셋)은 '-'로 둔다 — 추측하지 않는다.
+p1_instr_of() {
+    local p
+    p=$(awk -F'\t' -v d="$1" '$1==d {print $2}' "$P1_IM" \
+        | grep -oE 'm[0-9]{5}_[0-9]{6}' | cut -c1-3 | sort -u | paste -sd, -)
+    case "$p" in
+        m84)         echo Revio ;;
+        m64)         echo SequelII ;;
+        m54)         echo SequelI ;;
+        m14|m15|m14,m15) echo RSII ;;
+        '')          echo - ;;
+        *)           echo "mixed:$p" ;;
+    esac
+}
+
 # ── 큐/노드 해석 ──────────────────────────────────────────────────────────────
 # 쓸 수 있는 노드 집합은 **고정이 아니다.** 다른 연구자와 나눠 쓰는 자원이라 그때그때 바뀌고,
 # 2026-09-22에는 큐가 둘로 갈렸다 (shepherd.q + octopus.q). 그래서 이름을 박아 두지 않고

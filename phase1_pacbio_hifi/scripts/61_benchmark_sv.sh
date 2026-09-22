@@ -23,10 +23,15 @@
 # 단일 샘플 germline SV 평가에 못 쓴다 — 60_benchmark.sh가 소변이에서 부딪힌 것과 같은 벽이다.
 #
 # **phase2와 갈리는 지점이 여기다.** phase2의 HG002 런은 둘 다 R9.4.1이라 한 화학종만 봤지만,
-# phase1의 HG002 런 다섯은 dup_of가 전부 비어 있고 기기 세대가 갈린다 —
-# Sequel II 넷(CCS_10kb, CCS_15kb, SequelII_CCS_11kb, CCS_15kb_20kb_chemistry2) + Revio 하나
-# (HiFi-Revio_20231031). 즉 **같은 truth·같은 파라미터로 Sequel II ↔ Revio SV 성능을 직접 비교**할
-# 수 있다. list/collect의 instr 열이 그 축이다.
+# phase1의 HG002 런 다섯은 dup_of가 전부 비어 있고 **기기 세대가 셋으로 갈린다**
+# (inputs_manifest.tsv의 movie ID 실측):
+#   Sequel I  (m54) — PacBio_CCS_10kb, PacBio_CCS_15kb
+#   Sequel II (m64) — PacBio_SequelII_CCS_11kb, PacBio_CCS_15kb_20kb_chemistry2
+#   Revio     (m84) — PacBio_HiFi-Revio_20231031
+# 즉 **같은 truth·같은 파라미터로 세 세대의 SV 성능을 직접 비교**할 수 있다.
+# list/collect의 instr 열이 그 축이고, 값은 lib.sh의 p1_instr_of 가 movie ID로 정한다.
+# dataset 이름으로 판정하면 CCS_10kb/15kb(이름에 세대 표시가 없다)를 Sequel II로 잘못 묶어
+# 이 비교축이 조용히 망가진다 — 초판이 실제로 그랬고 2026-09-22 Codex 리뷰에서 잡혔다.
 #
 # ── Truvari 파라미터 근거 (phase2와 동일) ─────────────────────────────────
 # GIAB v5.0q README(NIST_HG002_v5.0q_variant-benchmarksets_README.md)가 지정한 명령 그대로다:
@@ -60,9 +65,8 @@ PHASE1="$P1_DIR"
 BENCH_SV_SUB="05_BENCH/truvari"
 TRUTH_CACHE="$INFRA/reference/sv_truth"
 
-# dataset 이름으로 기기 세대를 붙인다. **표시용 라벨일 뿐**이고 판정에는 안 쓴다 —
-# 정확한 근거는 movie prefix(m84=Revio, m64=Sequel II)이고 그건 inputs_manifest.tsv에 있다.
-instr_of() { case "$1" in *Revio*) echo Revio ;; *) echo SequelII ;; esac; }
+# 기기 세대는 lib.sh의 p1_instr_of 가 inputs_manifest.tsv의 movie ID로 판정한다 (dsid 입력).
+# 표시용 라벨이고 제출 판정에는 안 쓰지만, 이 스크립트가 내세우는 비교축이라 정확해야 한다.
 
 # sample -> "truth_vcf<TAB>truth_bed". 없으면 1을 낸다.
 # 디렉토리 깊이가 샘플마다 다르므로 60_benchmark.sh의 bench_truth와 같은 2단 글롭을 쓴다.
@@ -154,7 +158,7 @@ list_all() {
         v=-; [ -s "$(sv_call_vcf "$sample" "$dataset")" ] && v=OK
         t=none; sv_truth "$sample" >/dev/null 2>&1 && t="$BENCH_SV_TRUTH_VER"
         b=-; bench_sv_done "$sample" "$dataset" && b=done
-        printf '%-46s %-9s %-7s %-7s %-8s %s\n' "$dsid" "$(instr_of "$dataset")" "$v" "$t" "$b" "$dup"
+        printf '%-46s %-9s %-7s %-7s %-8s %s\n' "$dsid" "$(p1_instr_of "$dsid")" "$v" "$t" "$b" "$dup"
     done
     echo
     echo "truth=none 은 그 샘플에 GRCh38 germline SV truth set이 없다는 뜻이다."
@@ -368,7 +372,7 @@ collect() {
         r=$(p1_row "$dsid"); sample=$(p1_col "$r" 2); dataset=$(p1_col "$r" 3)
         base="$RUN_BASE/$sample/PacBio/$dataset/$BENCH_SV_SUB"
         [ -d "$base" ] || continue
-        rows="$rows$dsid\t$sample\t$dataset\t$(instr_of "$dataset")\t$base\n"
+        rows="$rows$dsid\t$sample\t$dataset\t$(p1_instr_of "$dsid")\t$base\n"
     done
 
     # %b 로 넘겨야 데이터 안의 % 가 포맷으로 해석되지 않는다.

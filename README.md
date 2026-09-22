@@ -622,7 +622,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
-- 2026-09-22 — 쓸 수 있는 노드가 또 바뀌어(shepherd 3대 → octopus-2-8/2-9 + shepherd-1-8/1-9 넷, **큐 둘**) 이름을 박는 대신 `qstat -f`와 대조해 쓰도록 고쳤다 — 큐 x 노드가 안 겹치면 잡이 에러 없이 `qw`로 영원히 남는 실패를 제출 전에 막는다. 같은 커밋에서 phase1에 Truvari SV 평가(`61_benchmark_sv.sh`)를 phase2에서 이식했다. **phase1 쪽이 답이 많다** — HG002 5런이 Sequel II 4 + Revio 1로 갈려 기기 세대 비교가 된다(phase2는 둘 다 R9). 양쪽 `10_submit.sh`의 qsub 실패 무시(빈 jobid에 `OK` 출력)도 같이 고쳤다.
+- 2026-09-22 — 쓸 수 있는 노드가 또 바뀌어(shepherd 3대 → octopus-2-8/2-9 + shepherd-1-8/1-9 넷, **큐 둘**) 이름을 박는 대신 `qstat -f`와 대조해 쓰도록 고쳤다 — 큐 x 노드가 안 겹치면 잡이 에러 없이 `qw`로 영원히 남는 실패를 제출 전에 막는다. 같은 커밋에서 phase1에 Truvari SV 평가(`61_benchmark_sv.sh`)를 phase2에서 이식했다. **phase1 쪽이 답이 많다** — HG002 5런이 Sequel I 2 + Sequel II 2 + Revio 1로 갈려 **세 세대** 비교가 된다(phase2는 둘 다 R9). 양쪽 `10_submit.sh`의 qsub 실패 무시(빈 jobid에 `OK` 출력)도 같이 고쳤다.
 - 2026-09-19 — phase3 파이프라인 입력 22 샘플 dir 준비 완료(nbb2 `/BiO/scratch/dyl/kbb/G000/GIAB-publicData-*/outcome/`): 1쌍짜리 7개는 링크, 15개는 cat 병합(15/15 크기 검증). 이름은 `_`를 mate 접미에만 남기고 `-`로 통일(파이프라인이 `_`로 샘플명을 자름). 사용자가 자체 WGRS 파이프라인 실행 시작. PR #13·#16.
 - 2026-09-21 — HG002 R10 런의 진입을 `aligned_bam`(ONT 정렬 그대로)에서 **`aligned_bam_realign`(우리 minimap2로 재정렬)** 으로 정정. "남의 run 결과물보다 우리 결과물을 믿는다"는 설계 원칙과 어긋났고, 이 런의 목적이 R9↔R10 비교라 정렬이 다르면 비교축에 교란이 박힌다. 같이 발견: 스모크 테스트가 진입 타입 셋 중 둘만 덮고 있었고, 채널 재그룹에서 진입 타입이 유실되는 버그가 있었다. 기록: [docs/runs/2026-09-21-phase2-r10-realign.md](docs/runs/2026-09-21-phase2-r10-realign.md).
 - 2026-09-18 — phase2 ONT 파이프라인 **14/14 완료**(HG008T-p2 종료). QC 경고는 `N50미산출` 2건뿐이고 둘 다 R10 std 런이다(위상 자체는 정상 — whatshap 출력 원문 확인이 남았다). HG008T-p2가 전 코호트 최고 성적: 염기 매핑률 99.5%, 오류율 .0237, 77x.

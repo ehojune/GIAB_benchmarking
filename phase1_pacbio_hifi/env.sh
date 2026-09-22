@@ -68,7 +68,13 @@ export BENCH_TRUTH_VER="${BENCH_TRUTH_VER:-v4.2.1}"   # germline truth set 판 (
 
 # ── SV 정확도 평가 (61_benchmark_sv.sh) ───────────────────────────────────────
 # truvari refine의 기본 스레드는 4다(truvari 5.4.0 refine.py) — 슬롯을 더 줘도 안 쓴다.
-export BENCH_SV_SLOTS="${BENCH_SV_SLOTS:-8}"
+# **그래도 슬롯을 크게 잡는다.** h_vmem이 예약도 상한도 아니므로 노드당 동시 실행 수를 통제하는
+# 수단이 슬롯밖에 없는데, truvari는 실측 maxvmem 67~73 GB로 무겁다. 8슬롯이면 64코어 노드에
+# 8잡(= 최대 584 GB)이 올라가 251 GB를 크게 넘는다 — phase1은 --ready 대상이 HG002 5런이라
+# 실제로 한 노드에 다섯이 몰릴 수 있다(2026-09-22 Codex 리뷰 지적).
+# 22슬롯 = 노드당 최대 2잡(44/64 슬롯, 146 GB). 노드를 통째로 쓸 수 있으면 21로 낮춰 3잡
+# (63/64 슬롯, 219 GB)까지 가능하지만, 다른 잡과 나눠 쓰는 것이 기본이라 2잡으로 둔다.
+export BENCH_SV_SLOTS="${BENCH_SV_SLOTS:-22}"
 export BENCH_SV_VMEM="${BENCH_SV_VMEM:-80G}"   # phase2 실측 maxvmem 67~73 GB (2026-09-18, refine 포함)
 export BENCH_SV_TRUTH_VER="${BENCH_SV_TRUTH_VER:-v5.0q}"   # release/*/*/v5.0q/<sample>_GRCh38_v5.0q_stvar.*
 export BENCH_SV_REFINE="${BENCH_SV_REFINE:-1}"             # GIAB v5.0q README 권장. 0으로 끌 수 있다

@@ -518,9 +518,9 @@ phase2와 **공유**한다 — 같은 truth를 같은 필터로 거른 것이라
 
 **phase1 쪽이 phase2보다 답이 많이 나온다.** GRCh38 germline SV truth를 가진 GIAB 샘플은
 HG002 하나뿐인데, phase2의 HG002 런은 둘 다 R9.4.1이라 화학종 비교가 안 됐다. phase1의 HG002
-런은 다섯이고 dup_of가 전부 비어 있으며 **기기 세대가 갈린다** — Sequel II 넷 + Revio 하나.
-같은 truth·같은 파라미터로 **Sequel II ↔ Revio SV 성능을 직접 비교**할 수 있다.
-`--list`/`--collect`의 `instr` 열이 그 축이다(dataset 이름 기반 표시용 라벨이고 판정에는 안 쓴다).
+런은 다섯이고 dup_of가 전부 비어 있으며 **기기 세대가 셋으로 갈린다** —
+Sequel I 둘(m54) + Sequel II 둘(m64) + Revio 하나(m84). 같은 truth·같은 파라미터로
+**세 세대의 SV 성능을 직접 비교**할 수 있다. `--list`/`--collect`의 `instr` 열이 그 축이다.
 
 ### 같이 통일한 것 (phase2 → phase1)
 
@@ -532,3 +532,31 @@ HG002 하나뿐인데, phase2의 HG002 런은 둘 다 R9.4.1이라 화학종 비
 - `env.sh`: `BENCH_SV_*` 6개 변수, h_vmem이 상한도 아니라는 2026-09-18 실측 주석.
 - `env.local.sh.example`(양쪽): 벤치마크 잡 크기 프리셋 절. 실측 maxvmem(hap.py 24.5 GB,
   truvari 73 GB) 기준으로 파이프라인 잡과 노드를 나눠 쓸 때의 슬롯 계산을 적었다.
+
+### 같은 커밋 Codex 리뷰 — 3건 전부 반영
+
+초판(85a9fbb)을 밀고 나서 받은 리뷰다. 세 건 다 실제 결함이었고 셋 다 고쳤다.
+
+- **[P1] `10_submit.sh`에 리터럴 `
+`** (양쪽 phase). `echo "$jid" > ... 
+ || {...}` 가 줄
+  연속이 아니라 escaped `n` 이라 jobid 파일에 `900123 n` 이 들어간다(실증). `p1_job_state` 가
+  qstat 번호와 `==` 비교하므로 **중복 제출 가드가 그 dsid에 영영 무력**해진다 — 같은 work·출력
+  디렉토리에 파이프라인 둘이 붙을 수 있었다. `bash -n` 은 통과한다.
+  Codex는 "제대로 된 백슬래시+개행으로 바꾸라"고 했지만 **백슬래시를 아예 없앴다**(`if ! ...; then`).
+  같은 사고가 2026-08-27에도 있었고 원인이 같다 — Bash 툴 heredoc의 이스케이프 뭉갬. 재발 가능한
+  형태를 남기지 않는 쪽을 골랐다.
+- **[P1] `BENCH_SV_SLOTS=8` 이 노드를 터뜨린다.** phase2에서 그대로 가져온 값인데, truvari는
+  실측 maxvmem 67~73 GB다. 8슬롯이면 64코어 노드에 8잡이 올라가 최대 584 GB — 251 GB를 크게
+  넘는다. h_vmem은 예약도 상한도 아니라 아무도 안 막는다. phase2는 `--ready` 대상이 HG002 2런뿐이라
+  우연히 안전했고, phase1은 5런이라 실제로 터질 수 있었다. **22로 올렸다**(노드당 2잡 = 146 GB).
+  양쪽 phase 다 고쳤다 — phase2도 대상이 늘면 같은 문제다.
+- **[P2] 기기 세대 라벨이 틀렸다.** `instr_of()` 를 dataset 이름으로 때려잡았는데,
+  `HG002.PacBio_CCS_10kb`/`_15kb` 는 이름에 세대 표시가 없고 **실제로는 m54(Sequel I)** 다.
+  초판은 이 둘을 Sequel II로 묶어, **이 스크립트가 내세우는 비교축 자체를 조용히 망가뜨렸다.**
+  `lib.sh`의 `p1_instr_of` 로 옮겨 `inputs_manifest.tsv` 의 movie ID로 판정한다
+  (m84=Revio, m64=Sequel II, m54=Sequel I, m14/m15=RS II). 38런 분포: Revio 18 / Sequel II 15 /
+  Sequel I 2 / 판정불가 3. 판정불가 셋(HG003·6·7 chemistry2)은 파일명에 movie ID가 없어 `-`로
+  둔다 — 경로의 `PBmixSequel<NNN>` 은 세대 표시가 아니라 혼합 런 명명이라 근거가 못 된다
+  (HG001.HudsonAlpha_PacBio_CCS 는 PBmixSequel846 디렉토리 안에 m64 movie가 들어 있다).
+  **셋 다 HG002가 아니라 SV 평가 대상이 아니므로 추측하지 않는다.**
