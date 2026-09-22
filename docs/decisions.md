@@ -17,6 +17,12 @@
   `release_stale_ftp_removed`(FTP에서 삭제됨)는 파일명 분기에 걸려 `./download.sh declined_by_decision`이 성립했고,
   둘 다 3열이라 크기 비교가 전건 실패해 10.7 TiB를 받고도 전부 MISMATCH로 찍힐 수 있었다. 이름을 거부하도록 했다.
 
+## 2026-09-22 — 다운로드 목록의 기준은 서버 디스크 실측이고, FTP에서 사라진 파일은 지우지 않는다
+
+- **"무엇을 받았나"의 정본은 매니페스트가 아니라 디스크다.** 세 세션이 각자 받은 것을 한 목록으로 맞출 때, 매니페스트를 서로 믿는 대신 nbb2 `/BiO/scratch/ehojune/GIAB_benchmark`를 전수 실측해 네 매니페스트 합집합과 파일·바이트 단위로 대조했다. 결과 81,330/81,330 일치, 매니페스트 밖 데이터 0 — 즉 지금은 매니페스트 = 디스크다. 앞으로 새 데이터를 들일 때는 그 phase의 매니페스트(`sra_manifest.tsv`/`ext_manifest.tsv`)에 먼저 넣고 받는다. 기록: [runs/2026-09-22-disk-vs-manifest-reconciliation.md](runs/2026-09-22-disk-vs-manifest-reconciliation.md).
+- **FTP에서 삭제된 release 구버전 52건(8.4 GiB)은 지우지 않고 `release_stale_ftp_removed.tsv`에 남긴다.** 다시 받을 수 없어 지우면 복구 불가이고, `latest/` 재구성 전 v4.2.1 파일이라 현재 경로와 중복일 가능성이 높지만 바이트 대조는 안 했다. 활성 매니페스트(`fetch_all.sh` 대상)에는 넣지 않는다 — 원격에 없는 것을 받으려 하면 전건 실패로 찍힌다. 지울지는 사용자 결정.
+- `processed_data_ehojune/`(135,061 files)와 `repairs/`(17)는 산출물·재생성물이라 다운로드 목록 대상이 아니다. 단 `_infra/`에 01_prepare가 받아둔 레퍼런스·모델·컨테이너가 있다 — 그 목록은 각 phase 세션이 안다.
+
 ## 2026-08-26 — 처리표 원문 전체 표시와 현재 평가 기준
 
 - 이전의 “tool만 전체 표시, 다른 축약 유지” 결정을 폐기했다.
