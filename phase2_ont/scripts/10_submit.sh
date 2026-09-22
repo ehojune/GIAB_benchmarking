@@ -136,7 +136,9 @@ EOF
     jid=$(echo "$out" | grep -oE '[0-9]+' | head -1)
     [ -n "$jid" ] || { echo "FAIL $dsid: qsub 출력에서 jobid를 못 읽었다 — $out"; return 1; }
     # jobid 기록이 실패하면 중복 제출 가드가 무력해진다 — 잡은 이미 들어갔으므로 번호를 반드시 보여준다.
-    echo "$jid" > "$INFRA/jobs/$dsid.jobid" \n        || { echo "FAIL $dsid: jobid=$jid 로 제출됐으나 기록 실패 — $INFRA/jobs/$dsid.jobid"; return 1; }
+    if ! echo "$jid" > "$INFRA/jobs/$dsid.jobid"; then
+        echo "FAIL $dsid: jobid=$jid 로 제출됐으나 기록 실패 — $INFRA/jobs/$dsid.jobid"; return 1
+    fi
     echo "OK  $dsid: jobid=$jid entry=$entry clair3=$model dv=$dv"
 }
 
@@ -148,8 +150,7 @@ dedup_dsids() { awk 'NF && !seen[$0]++'; }
 # 개별 실패로 루프를 멈추지는 않는다 — 나머지는 넣어 두는 편이 낫다.
 submit_many() {
     local d rc=0
-    for d in $(printf '%s
-' "$@" | dedup_dsids); do
+    for d in $(printf '%s\n' "$@" | dedup_dsids); do
         submit_one "$d" || rc=1
     done
     return $rc
