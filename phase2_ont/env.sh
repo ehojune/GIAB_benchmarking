@@ -57,10 +57,14 @@ export BENCH_TRUTH_VER="${BENCH_TRUTH_VER:-v4.2.1}"   # germline truth set 판 (
 # 스레드 64% 감소에 메모리는 29~46%만 줄었다 — 가장 큰 영역 하나의 정렬 행렬이 고정분으로
 # 남는 것으로 보인다. 즉 스레드를 낮춰도 최악값은 크게 안 내려가므로, 노드 과점유를 막는
 # 실질적 수단은 **동시 실행 수(슬롯)** 다.
-#   22슬롯 = 노드당 2잡. ONT 실측 73 GB 기준 146 GB / 251 GB — 안전.
-#   (데이터가 바뀌어 100 GB 를 넘기 시작하면 phase1 처럼 33슬롯으로 올릴 것.)
+#   위 "ONT 실측 67~73 GB" 는 BENCH_SV_THREADS 가 생기기 전, truvari **기본 4스레드** 값이다.
+#   2026-09-22 에 R10 런을 현재 기본값(-t 8)으로 돌려 **133.5 GB** 를 봤다 — phase1 이 같은 날
+#   -t 8 로 본 91.6~136.2 GB 범위 안이다. 두 phase 가 독립적으로 같은 값을 냈으니 데이터셋
+#   차이가 아니라 스레드 설정 차이다.
+#   그래서 33슬롯 = **노드당 1잡**. 22슬롯이면 2잡 x 133.5 = 267 GB 로 251 GB 를 넘는다
+#   (앞 주석이 "100 GB 를 넘기면 33으로 올릴 것" 이라 적어 둔 그 조건이 실제로 걸렸다).
 export BENCH_SV_THREADS="${BENCH_SV_THREADS:-8}"
-export BENCH_SV_SLOTS="${BENCH_SV_SLOTS:-22}"
+export BENCH_SV_SLOTS="${BENCH_SV_SLOTS:-33}"
 export BENCH_SV_VMEM="${BENCH_SV_VMEM:-80G}"   # ONT 실측 67~73 GB 위. 표시용이고 강제되지 않는다
 export BENCH_SV_TRUTH_VER="${BENCH_SV_TRUTH_VER:-v5.0q}"   # release/*/*/v5.0q/<sample>_GRCh38_v5.0q_stvar.*
 export BENCH_SV_REFINE="${BENCH_SV_REFINE:-1}"             # GIAB v5.0q README 권장. 0으로 끌 수 있다

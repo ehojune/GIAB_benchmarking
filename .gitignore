@@ -12,3 +12,7 @@ phase2_ont/env.local.sh
 .nextflow.log*
 results/
 work/
+
+# python 바이트코드 (스크립트를 py_compile 로 검사하면 생긴다)
+__pycache__/
+*.pyc

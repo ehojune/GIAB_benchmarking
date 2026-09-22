@@ -8,6 +8,10 @@
 | Clair3/DeepVariant 모델 가용성 확인 절차 | lesson | "컨테이너에 모델이 있다"를 가정하면 조용히 틀린 모델로 돈다. 이미지 `/opt/models` 목록 ↔ 필요 모델 대조 후 HKU/Rerio에서 받아 마운트. `phase2_ont/scripts/01_prepare_login_node.sh`, `docs/reference/ont_pipeline_choice.md` |
 | Nextflow 기본 셸에 pipefail 없음 | incident-note | `samtools fastq \| minimap2 \| samtools sort`는 앞단이 죽어도 성공으로 보인다. `process.shell = ['/bin/bash','-euo','pipefail']` |
 | minimap2 `-y` + Guppy fastq 코멘트 | incident-note | `-y`는 uBAM에서 옮긴 태그를 살리는 옵션인데, Guppy fastq의 `runid=... ch=...` 코멘트에 쓰면 SAM aux 형식이 아니라 BAM이 깨진다 |
+| `except FileNotFoundError` 는 "실행 파일 못 씀"을 다 못 잡는다 | incident-note | PATH 에 실행권한 없는 `bcftools` 가 있으면 exec 이 **PermissionError**(errno 13)를 낸다 — FileNotFoundError 의 형제일 뿐 하위 클래스가 아니라 핸들러를 그냥 지나쳐 스크립트가 통째로 죽었다. `except OSError` 로 잡아야 둘 다 덮인다 (errno 13/2/8/20 전부 OSError). 2026-09-22 실측 traceback |
+| 로그인 노드에 CLI 가 없는 클러스터: 도구 해석을 한 곳으로 모은다 | lesson | 계산은 컨테이너로 도는데 리뷰 스크립트만 맨 이름(`bcftools`)으로 불러 크래시했다. `$TOOL` -> 파이프라인 config 의 `container_<name>` -> PATH 순으로 찾는 헬퍼 하나를 두면 **파이프라인이 실제로 쓴 판과 같은 것**이 보장된다 — 판이 다르면 변이 수·ts/tv 가 미묘하게 갈린다. `phase{1,2}/scripts/35_review_qc.py` 의 `tool_img()`/`bcftools_cmd()` |
+| 실측값을 적을 때 **측정 조건**을 같이 적는다 | lesson | truvari maxvmem 을 "ONT 67~73 GB" 로 적었는데 그게 4스레드 값인 줄 몰라 8스레드 HiFi 값과 비교됐고, "데이터셋이 메모리를 두 배로 가른다"는 없는 결론이 섰다. 같은 스레드로 재니 같은 대역이었다. 조건 없는 실측값은 나중에 반드시 다른 조건의 값과 비교된다 (2026-09-22) |
+| 외부가 같은 입력으로 낸 수치를 대조군으로 확보한다 | lesson | ONT 가 같은 플로우셀에 자기 hap.py 결과를 공개해 둬서, 우리 재정렬 파이프라인이 그 값을 F1 0.001 이내로 재현하는지 볼 수 있었다. 대조군 하나가 나머지 14런의 신뢰도까지 받친다 — 데이터를 고를 때 "외부 결과가 같이 공개돼 있는가"를 선택 기준에 넣을 값어치가 있다 (2026-09-22) |
 | `ont-wgs` 파이프라인 (minimap2/Clair3/Sniffles2/LongPhase) | nextflow-pipeline | 첫 실행 검증 후 판단. 검증 전에는 올리지 않는다 |
 | SGE 잡 1개 + Nextflow local executor 패턴 | lesson | 노드 수 제한이 있고 계산 노드에 외부망이 없는 클러스터의 정석. phase1/phase2가 같은 형태를 두 번 썼다 |
 | ONT 매핑 건강도는 리드 개수가 아니라 염기 기준 | lesson | ONT 릴리스에 섞인 짧은 fail 리드가 reads-mapped%를 39%까지 끌어내리는데 정렬은 정상이다. 미매핑/매핑 리드 평균 길이비로 가른다 (실측 7~12배). 근거: `docs/reference/2026-08-27-ont-qc-first-pass.md` |

@@ -20,12 +20,16 @@
 주의: 파이프라인의 04_QC/bcftools_stats 는 PASS 필터 없이 돌아서 SNP/INDEL/ts-tv 가
 RefCall 포함 raw 카운트다. 기본 실행은 그 값을 ~표시로 보여주기만 하고 판정하지 않는다.
 변이 수로 판정하려면 --pass-counts (bcftools 필요, 런당 수십 초).
+bcftools 는 $BCFTOOLS -> 캐시된 컨테이너 -> PATH 순으로 찾는다 (bcftools_cmd 참고).
+로그인 노드 PATH 에는 없으므로 보통 컨테이너로 돈다 — env.sh 를 source 하지 않아도 된다.
 
 exit 1 = 완료된 런인데 QC 파일이 없음(파이프라인 QC 스테이지 실패). WARN만이면 exit 0.
 """
 import argparse
 import csv
 import os
+import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -39,6 +43,7 @@ except Exception:
 HERE = Path(__file__).resolve().parent
 PHASE1 = HERE.parent
 RUN_TABLE = PHASE1 / "run_table.tsv"
+NF_CONFIG = PHASE1 / "pipeline" / "pacbio-hifi-wgs" / "nextflow.config"
 
 # ── 파이프라인의 bcftools stats 는 PASS 필터 없이 돈다 ────────────────────────
 # BCFTOOLS_STATS 가 받는 것은 raw caller VCF (main.nf: ch_dv_vcf / ch_clair3_vcf / ch_pbsv_vcf).
@@ -182,6 +187,84 @@ def read_whatshap(p):
     return out
 
 
+def tool_img(name):
+    """캐시된 <name> 컨테이너 경로. 로그인 노드 PATH에는 samtools도 bcftools도 없다.
+    nextflow.config의 container_<name>을 그대로 읽으므로 파이프라인이 실제로 쓴 것과 같은 판이
+    보장된다 — 수치를 비교할 때 이게 중요하다.
+
+    env.sh를 source 하지 않고 python으로 바로 부르는 게 보통이라 env 변수에 기대지 않는다.
+    유도식은 env.sh의 INFRA=$RUN_BASE/_infra 와 같고, main()의 default_base와 같은 폴백이다."""
+    cachedir = os.environ.get("NXF_SINGULARITY_CACHEDIR")
+    if not cachedir:
+        infra = os.environ.get("INFRA")
+        if not infra:
+            run_base = os.environ.get("RUN_BASE") or (
+                (os.environ.get("GIAB_ROOT") or "/BiO/scratch/ehojune/GIAB_benchmark")
+                + "/processed_data_ehojune")
+            infra = f"{run_base}/_infra"
+        cachedir = f"{infra}/containers"
+    m = re.search(r"container_%s\s*=\s*'([^']+)'" % re.escape(name),
+                  NF_CONFIG.read_text(encoding="utf-8"))
+    if not m:
+        return None
+    img = Path(cachedir) / (re.sub(r"[/:]", "-", m.group(1)) + ".img")
+    return img if img.is_file() else None
+
+
+_BCFTOOLS = ()   # () = 아직 안 정함 / None = 못 찾음 / list = 실행 앞토막
+
+
+def bcftools_cmd():
+    """bcftools 실행 앞토막(argv 앞부분). 한 번만 정하고 재사용한다.
+
+    **로그인 노드 PATH에 bcftools가 없다.** 이 repo의 다른 자리(61_benchmark_sv.sh,
+    03_dup_evidence.sh)는 전부 컨테이너를 거치는데 --pass-counts만 맨 이름으로 부르고 있었다.
+    세 경로를 순서대로 본다:
+
+      1) $BCFTOOLS       직접 지정한 실행 파일. 예:
+                         BCFTOOLS=/home/ehojune/program/bcftools-1.24/bcftools
+      2) 캐시된 컨테이너  파이프라인이 실제로 쓴 것과 같은 판(현재 1.24)이라 수치가 흔들리지 않는다
+      3) PATH의 bcftools  마지막 수단
+
+    컨테이너 경로는 GIAB_ROOT/RUN_BASE/INFRA 중 실재하는 것만 bind 한다. VCF가 그 밖에 있으면
+    $BCFTOOLS를 쓸 것.
+    """
+    global _BCFTOOLS
+    if _BCFTOOLS != ():
+        return _BCFTOOLS
+
+    exe = os.environ.get("BCFTOOLS")
+    if exe:
+        _BCFTOOLS = [exe]
+        print(f"  bcftools: $BCFTOOLS={exe}", file=sys.stderr)
+        return _BCFTOOLS
+
+    img = tool_img("bcftools")
+    if img is not None:
+        cmd = ["singularity", "exec"]
+        seen = set()
+        for var, dflt in (("GIAB_ROOT", "/BiO/scratch/ehojune/GIAB_benchmark"),
+                          ("RUN_BASE", None), ("INFRA", None)):
+            d = os.environ.get(var) or dflt
+            if d and d not in seen and Path(d).is_dir():
+                seen.add(d)
+                cmd += ["--bind", d]
+        _BCFTOOLS = cmd + [str(img), "bcftools"]
+        print(f"  bcftools: 컨테이너 {img.name}", file=sys.stderr)
+        return _BCFTOOLS
+
+    if shutil.which("bcftools"):
+        _BCFTOOLS = ["bcftools"]
+        print("  bcftools: PATH", file=sys.stderr)
+        return _BCFTOOLS
+
+    print("! bcftools를 못 찾았다 — 변이 수 판정을 건너뛴다.\n"
+          "  BCFTOOLS=/경로/bcftools 로 지정하거나 01_prepare_login_node.sh로 컨테이너를 받을 것.",
+          file=sys.stderr)
+    _BCFTOOLS = None
+    return None
+
+
 def pass_counts(vcf):
     """VCF 에서 PASS 레코드만 세어 SNV/INDEL/ts-tv 를 돌려준다.
 
@@ -191,10 +274,15 @@ def pass_counts(vcf):
     """
     if not vcf.is_file():
         return {}
-    cmd = ["bcftools", "stats", "-f", "PASS", str(vcf)]
+    pre = bcftools_cmd()
+    if pre is None:
+        return {}
+    cmd = pre + ["stats", "-f", "PASS", str(vcf)]
     try:
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
-    except (FileNotFoundError, subprocess.TimeoutExpired) as e:
+    # OSError 로 잡는다. FileNotFoundError 만 잡으면 PATH 에 실행권한 없는 bcftools 가 있을 때
+    # PermissionError 가 새어나가 스크립트 전체가 죽는다 (2026-09-22 phase2 실측).
+    except (OSError, subprocess.TimeoutExpired) as e:
         print(f"  ! bcftools 실행 실패 ({e.__class__.__name__}): {vcf.name}", file=sys.stderr)
         return {}
     if r.returncode != 0:

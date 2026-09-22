@@ -637,3 +637,91 @@ refine 의 정렬기 abPOA 는 스레드마다 정렬 행렬을 따로 잡는다
 abPOA 가 malloc 실패를 찍고도 abort 하지 않아, 잡이 SGE 에서 `r` 상태로 22슬롯을 계속 점유했다
 (`set -e` 가 볼 종료 코드가 안 나온 것이다). `qdel` 로 정리했다. 잡 스크립트에 워치독을 넣을지는
 보류한다 — 원인을 없앴고, 워치독은 정상 장기 실행과 구분이 어렵다.
+
+## 2026-09-22 — QC 리뷰 스크립트의 외부 도구 해석을 한 곳으로 모은다
+
+`35_review_qc.py --pass-counts` 가 `PermissionError: [Errno 13] ... 'bcftools'` 로 죽었다.
+두 가지가 겹쳐 있었다.
+
+**1. 도구를 찾는 방식이 이 자리만 달랐다.** 이 repo 의 다른 모든 자리 — `61_benchmark_sv.sh`,
+`03_dup_evidence.sh`, `60_benchmark.sh` 의 faidx, 같은 파일의 `--check-meth` — 는 전부
+컨테이너를 거친다. **로그인 노드 PATH 에 samtools 도 bcftools 도 없기 때문이다.**
+`--pass-counts` 만 `["bcftools", "stats", ...]` 로 맨 이름을 불렀다. 같은 파일 안에서
+`--check-meth` 는 제대로 하고 있었으니, 고칠 때 형제 자리를 안 훑은 전형적인 자국이다.
+
+**2. 예외 핸들러가 좁았다.** `except (FileNotFoundError, subprocess.TimeoutExpired)` 였는데
+실제로 온 것은 `PermissionError` 다. 둘은 형제이지 상속 관계가 아니라서 그대로 새어나가
+스크립트가 통째로 죽었다 — 런 하나 건너뛰고 끝날 일이었다. `except OSError` 로 바꿨다
+(errno 13 permission, 2 not-found, 8 exec-format, 20 not-a-directory 가 전부 OSError 다).
+
+**정한 것:** `tool_img(name)` 과 `bcftools_cmd()` 를 양쪽 phase 에 둔다. 찾는 순서는
+
+1. `$BCFTOOLS` — 직접 지정 (예: `/home/ehojune/program/bcftools-1.24/bcftools`)
+2. 캐시된 컨테이너 — `nextflow.config` 의 `container_bcftools` 를 그대로 읽는다
+3. PATH
+
+**2번이 기본인 이유가 편의가 아니다.** 파이프라인이 실제로 쓴 판과 같은 것이 보장된다.
+판이 다르면 `bcftools stats` 의 변이 수·ts/tv 가 미묘하게 갈리고, 그 차이는 데이터 차이로
+보이지 도구 차이로 안 보인다. 자기 빌드를 쓰고 싶으면 1번으로 명시하게 했다.
+
+`tool_img()` 는 **env.sh 를 source 하지 않아도** 동작한다. 유도식은 `main()` 의 `default_base`
+와 같다(`RUN_BASE` -> `GIAB_ROOT/processed_data_ehojune` -> `/_infra/containers`). python 스크립트는
+보통 `python scripts/35_review_qc.py` 로 바로 부르는데, 그때 `--check-meth` 가 "컨테이너를 못
+찾았다"로 조용히 건너뛰고 있었다 — 같은 사고의 다른 얼굴이다.
+
+검증: 양쪽 phase 에 3경로 + 캐싱 + PermissionError 흡수 6항목, 12/12 통과.
+
+양쪽 `env.local.sh.example` 에 `$BCFTOOLS` 예시를 적었고, `.gitignore` 에 `__pycache__/` 를
+추가했다 (`py_compile` 로 문법 검사하면 생긴다).
+
+## 2026-09-22 — ONT R10 의 기본 caller 를 DeepVariant 로 둔다
+
+HG002 R10 런에서 같은 BAM·같은 truth 로 두 caller 를 채점했다. **DeepVariant 가 SNP·INDEL 의
+recall·precision 네 칸 전부에서 이긴다** — INDEL F1 0.9378 vs 0.9134, FP 38,198 → 25,608(−33%),
+FN 52,697 → 39,652(−25%). SNP 는 둘 다 포화라 차이가 작다(+0.0009).
+
+phase1 PacBio 에서 같은 날 나온 결론과 방향이 같다(거기서는 Revio 에서만 Clair3 가 INDEL
+−0.006~−0.017 로 졌다). 플랫폼 둘이 독립적으로 같은 방향을 가리키므로 caller 선택을 바꾼다.
+
+**Clair3 를 빼지는 않는다.** 교차 확인용으로 유지한다 — 두 caller 의 변이 수 비(`caller_ratio_min`)
+가 QC 게이트 중 하나이고, R9 런은 DeepVariant ONT 모델 자체가 없어 Clair3 단독이라 비교축이 필요하다.
+
+이건 **판정 기준의 변경이지 파이프라인 변경이 아니다.** 파이프라인은 R10 런에서 이미 둘 다 돌고
+있다. 바뀌는 것은 "어느 쪽 수치를 대표값으로 보고하는가"다.
+
+## 2026-09-22 — truvari 메모리 서술 정정과 phase2 SV 슬롯 22 → 33
+
+R10 SV 잡(156053)이 `-t 8` 에서 **maxvmem 133.5 GB** 를 썼다. env.sh 에는 "ONT 실측 67~73 GB" 로
+적혀 있었다.
+
+**옛 값이 틀린 게 아니라 조건이 달랐다.** 67~73 GB 는 `BENCH_SV_THREADS` 가 생기기 전 측정이라
+truvari 기본 **4스레드** 였고, 지금 기본은 8이다. phase1 이 같은 날 `-t 8` 로 본 91.6~136.2 GB
+대역 안에 133.5 가 정확히 들어간다.
+
+→ **"truvari 메모리는 데이터셋이 두 배를 가른다"는 서술을 철회한다.** ONT(4스레드)와 HiFi(8스레드)를
+비교한 것이라 스레드 차이가 데이터셋 차이로 보였다. 같은 스레드에서는 두 데이터셋이 같은 대역이다.
+(스레드를 낮춰도 메모리가 비례해서 안 내려간다는 phase1 의 관찰은 그대로 유효하다 — 별개 사실이다.)
+
+→ `BENCH_SV_SLOTS` 22 → **33(노드당 1잡)**. 22 면 2잡 x 133.5 = 267 GB 로 251 GB 노드를 넘는다.
+같은 주석이 "100 GB 를 넘기 시작하면 phase1 처럼 33으로 올릴 것" 이라 조건을 미리 적어 뒀고 그게
+걸렸다. 이번엔 대상이 1런뿐이라 터지지 않았을 뿐이다.
+
+**교훈은 값이 아니라 형식이다.** 실측값을 적을 때 **측정 조건(여기서는 스레드 수)을 같이 적지
+않으면 나중에 다른 조건의 값과 비교돼 엉뚱한 결론이 선다.** 이번엔 그 결론이 "데이터셋이 메모리를
+가른다"였고, 노드 과점유 계산의 근거가 될 뻔했다.
+
+## 2026-09-22 — ts/tv 구간 분할을 가정 대신 직접 센다 (62_tstv_regions.sh)
+
+2026-09-18 에 구간 밖 ts/tv 를 **빼기로 추정**했다(R9/HG005 1.33). 그 추정은 "구간 안 ts/tv = 2.1"
+가정에 기대고, 가정을 2.0 으로 바꾸면 R10 답이 1.13 → 1.28 로 움직인다. 결론("FP 가 구간 밖에
+몰려 있다")은 어느 가정에서도 서지만 **숫자를 문서에 적으려면 재야 한다.**
+
+`62_tstv_regions.sh` 를 만들었다. benchmark BED 로 갈라 `bcftools stats` 를 세 번(안 `-R`, 밖
+`-T ^`, 전체) 돌리고 ts·tv **카운트**를 그대로 쓴다.
+
+**전체를 따로 세는 것이 이 스크립트의 핵심이다.** `안 + 밖 = 전체` 가 안 맞으면 죽는다 —
+bcftools 가 `-T ^file` 의 여집합을 기대대로 다루지 않거나 BED 가 엉뚱하면 조용히 틀린 값이
+나오는데, 그게 정확히 2026-09-21 ts/tv 사고(틀린 값이 문서 5곳에 퍼진 뒤 외부 리뷰로 잡힘)의
+재발 경로다. 1/3 의 추가 비용은 그 보험값이다.
+
+비(比)는 절대 평균하지 않고 카운트만 더한다. 스크립트 주석과 출력 말미에 그렇게 적어 뒀다.
