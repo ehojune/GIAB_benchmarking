@@ -74,15 +74,21 @@ export BENCH_VMEM="${BENCH_VMEM:-56G}"      # 실측 48.8 GB 위. 표시용이�
 export BENCH_TRUTH_VER="${BENCH_TRUTH_VER:-v4.2.1}"   # germline truth set 판 (release/*/NISTv4.2.1/)
 
 # ── SV 정확도 평가 (61_benchmark_sv.sh) ───────────────────────────────────────
-# truvari refine의 기본 스레드는 4다(truvari 5.4.0 refine.py) — 슬롯을 더 줘도 안 쓴다.
-# **그래도 슬롯을 크게 잡는다.** h_vmem이 예약도 상한도 아니므로 노드당 동시 실행 수를 통제하는
-# 수단이 슬롯밖에 없는데, truvari는 실측 maxvmem 67~73 GB로 무겁다. 8슬롯이면 64코어 노드에
-# 8잡(= 최대 584 GB)이 올라가 251 GB를 크게 넘는다 — phase1은 --ready 대상이 HG002 5런이라
-# 실제로 한 노드에 다섯이 몰릴 수 있다(2026-09-22 Codex 리뷰 지적).
-# 22슬롯 = 노드당 최대 2잡(44/64 슬롯, 146 GB). 노드를 통째로 쓸 수 있으면 21로 낮춰 3잡
-# (63/64 슬롯, 219 GB)까지 가능하지만, 다른 잡과 나눠 쓰는 것이 기본이라 2잡으로 둔다.
+# **실측 (2026-09-22, phase1 HG002 5런)**: -t 22 에서 maxvmem 177~192 GB, wall 228~262초.
+# 2026-09-18 phase2 ONT 값(-t 8 에서 67~73 GB)의 2.6배다. 스레드가 2.75배였다.
+#
+# refine 의 정렬기 abPOA 는 **스레드마다 정렬 행렬을 따로 잡는다.** 그래서 -t 를 NSLOTS 에
+# 묶어 두면 "슬롯을 올려 동시 실행 수를 줄인다"가 통하지 않는다 — 잡당 메모리가 같이 올라
+# 노드 총량이 그대로다. 실제로 22슬롯 2잡이 한 노드에 겹쳐 abPOA 가 64 GiB 한 방을 못 잡고
+# ENOMEM 으로 죽었다(HG002.PacBio_CCS_15kb, 잡 156033). 나머지 4런은 시차를 두고 돌아 살았다.
+#
+# 그래서 **스레드와 슬롯을 분리한다**:
+#   BENCH_SV_THREADS = truvari refine -t. 메모리를 정하는 값. 8이면 ~73 GB.
+#   BENCH_SV_SLOTS   = 노드 패킹만. 22면 노드당 2잡 = ~146 GB.
+# truvari refine 의 기본 스레드는 4라(5.4.0 refine.py) 8이면 기본보다 빠르면서 메모리는 잡힌다.
+export BENCH_SV_THREADS="${BENCH_SV_THREADS:-8}"
 export BENCH_SV_SLOTS="${BENCH_SV_SLOTS:-22}"
-export BENCH_SV_VMEM="${BENCH_SV_VMEM:-80G}"   # phase2 실측 maxvmem 67~73 GB (2026-09-18, refine 포함)
+export BENCH_SV_VMEM="${BENCH_SV_VMEM:-80G}"   # -t 8 기준 실측 67~73 GB 위. 표시용이고 강제되지 않는다
 export BENCH_SV_TRUTH_VER="${BENCH_SV_TRUTH_VER:-v5.0q}"   # release/*/*/v5.0q/<sample>_GRCh38_v5.0q_stvar.*
 export BENCH_SV_REFINE="${BENCH_SV_REFINE:-1}"             # GIAB v5.0q README 권장. 0으로 끌 수 있다
 export BENCH_SV_ALIGN="${BENCH_SV_ALIGN:-}"                # refine 정렬기. 비우면 truvari 기본값 poa

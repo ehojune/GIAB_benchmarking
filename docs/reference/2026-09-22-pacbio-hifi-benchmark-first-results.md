@@ -83,10 +83,62 @@ HG008/HG009 Revio 런(germline truth 없음)이 많아 표본을 늘릴 방법�
 - **Sequel I 런(HG002 CCS_10kb·CCS_15kb)은 INDEL 비교에 넣지 않는다.** 넣으려면 세대를 명시해야 한다.
 - **SNP 비교에는 19런을 다 써도 된다.**
 
+## SV (Truvari 5.4.0 vs v5.0q, 같은 날 저녁)
+
+HG002 5런 제출, **4런 성공 / 1런 ENOMEM**(아래). `--pick ac --passonly -r 2000 -C 5000` + refine,
+refine 후 수치다. truth `base cnt`는 전 런 28,123으로 같다.
+
+| dsid | instr | comp cnt | TP-base | FP | FN | precision | recall | **F1** |
+|---|---|---|---|---|---|---|---|---|
+| HG002.PacBio_HiFi-Revio_20231031 | Revio | 20,636 | 22,147 | 1,980 | 5,976 | 0.9041 | 0.7875 | **0.8418** |
+| HG002.PacBio_CCS_15kb_20kb_chemistry2 | SequelII | 20,720 | 21,938 | 2,052 | 6,185 | 0.9010 | 0.7801 | **0.8362** |
+| HG002.PacBio_SequelII_CCS_11kb | SequelII | 20,608 | 21,558 | 2,084 | 6,565 | 0.8989 | 0.7666 | **0.8275** |
+| HG002.PacBio_CCS_10kb | SequelI | 20,500 | 21,282 | 2,117 | 6,841 | 0.8967 | 0.7567 | **0.8208** |
+| HG002.PacBio_CCS_15kb | SequelI | — | — | — | — | — | — | **ENOMEM** |
+
+**세대 순서가 소변이와 같은 방향이다** — Revio > Sequel II > Sequel I. 다만 폭이 2.1점으로 좁고
+셀당 n=1이라 세게 읽지 않는다. 소변이 INDEL에서는 chemistry2가 Revio를 앞섰으므로 순위까지
+일치하지는 않는다.
+
+**걸리는 건 recall이다.** 0.757~0.788 — pbsv가 truth 28,123개 중 약 20,600개만 찾는다.
+precision은 0.90 언저리로 고르다. 즉 잘못 부르는 게 아니라 **못 찾는 것**이 문제다.
+v5.0q가 T2T-Q100 유래라 분절중복·위성 영역 SV를 Tier1 v0.6보다 훨씬 많이 담고 있어서
+정렬 기반 caller의 recall이 구조적으로 낮게 나오는 것으로 **추정**한다 — 확인 안 했다.
+Tier1 시절 감각(F1 0.95+)과 직접 비교하면 안 된다.
+
+### ENOMEM 1건 — 스레드 설정 문제였다
+
+`HG002.PacBio_CCS_15kb`(잡 156033)가 refine 중에 죽었다:
+
+```
+[SIMDMalloc] posix_memalign fail!
+Size: 68719476736, Error: ENOMEM
+```
+
+68,719,476,736 = 정확히 64 GiB 한 방. `-t`를 `NSLOTS`(=22)로 넘기고 있었고, refine의 정렬기
+abPOA는 스레드마다 정렬 행렬을 따로 잡아 **메모리가 스레드 수에 비례**한다. 실측이 그대로다 —
+phase2가 `-t 8`에서 67~73 GB, phase1이 `-t 22`에서 177~192 GB.
+
+22슬롯이면 64코어 노드에 2잡이 올라가는데 잡당 ~190 GB라 합계 380 GB로 251 GB를 넘는다.
+로그 타임스탬프상 156032와 156033이 14:07:11~12에 둘 다 "Building haplotypes/Harmonizing"에
+있었다 — 그 겹침에서 두 번째가 64 GiB를 못 잡았다. 나머지 3런은 시차를 두고 돌아 살아남았다.
+
+**슬롯으로 동시 실행 수를 줄이려 한 것이 역효과였다.** 슬롯을 올리면 `-t`가 같이 올라
+잡당 메모리가 커져서 노드 총량이 안 줄어든다. `BENCH_SV_THREADS`(기본 8)로 스레드를 고정하고
+슬롯은 패킹에만 쓰도록 분리했다.
+
+죽은 잡은 `set -e`로 끝나지 않고 SGE에서 계속 `r` 상태로 22슬롯을 붙잡고 있었다(abPOA가
+malloc 실패를 찍고도 abort하지 않은 것으로 보인다). `qdel`로 정리했다.
+
+**`CCS_15kb`가 소변이에서도 최악이었다**(INDEL F1 0.9282, FP 49,962 — 다른 런의 10~20배).
+SV에서도 이 런만 죽은 것이 우연인지, 이 데이터에 abPOA를 터뜨리는 병적인 영역이 있는지는
+재실행으로 확인한다.
+
 ## 재현
 
 ```bash
 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --collect
 awk -F'\t' 'NR==1 || $6=="PASS"' phase1_pacbio_hifi/phase1_bench_summary.tsv | column -t -s$'\t'
-bash phase1_pacbio_hifi/scripts/61_benchmark_sv.sh --list   # 세대 라벨 확인
+bash phase1_pacbio_hifi/scripts/61_benchmark_sv.sh --list
+bash phase1_pacbio_hifi/scripts/61_benchmark_sv.sh --collect
 ```

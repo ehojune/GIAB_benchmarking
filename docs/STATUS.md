@@ -3,7 +3,7 @@
 읽고 지나가는 문서가 아니라 **매번 갱신하는 표**다. 잡이 끝나거나 결정이 바뀌면 여기부터 고친다. 근거·경위는 [decisions.md](decisions.md), 결과 수치는 `docs/reference/`.
 `docs/runs/`가 아니라 여기 두는 이유(한 번 쓰고 남기는 실행 기록이 아니라 계속 덮어쓰는 현황판)는 decisions.md 2026-09-21 항목에 있다.
 
-갱신: 2026-09-22 (phase1 hap.py 19잡 완료 반영)
+갱신: 2026-09-22 저녁 (phase1 SV 4/5 완료, 1건 ENOMEM 재실행 대기)
 
 ## 한눈에 보기 (nbb2 로그인 노드)
 
@@ -20,7 +20,7 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 | 3 | **MGISEQ 세트 재개** (HG002 새 BAM + HG003/4 markdup) | 대기 | — | #1과 같은 Java 17 래퍼로 재제출 | #2 |
 | 4 | **phase2 ONT HG002 R10.4.1** (PR #17, ONT open data 플로우셀 1개) | **running** 13:36~ | 155279 `p2.HG002.O…`, shepherd-1-8, 30 slots | `30_verify_outputs.sh` → `35_review_qc.py` → `60_benchmark.sh`/`61_benchmark_sv.sh` (R10·DeepVariant 첫 채점) | — |
 | 5 | **phase1 PacBio HiFi hap.py 평가** (`b1.*`, HG001~HG007) | **완료** — 19/19 exit 0 | 155355~155373, 16 slots, 56~83분, maxvmem 48.4~48.8 GB | 수치·판정: [2026-09-22-pacbio-hifi-benchmark-first-results.md](reference/2026-09-22-pacbio-hifi-benchmark-first-results.md) | — |
-| 5b | **phase1 PacBio SV 평가** (`s1.*`, Truvari, HG002 5런) | 미제출 | `61_benchmark_sv.sh --ready`, 22 slots | Sequel I / Sequel II / Revio 세 세대 SV 비교 | 브랜치 머지 후 |
+| 5b | **phase1 PacBio SV 평가** (`s1.*`, Truvari, HG002 5런) | **4/5 완료** — Revio .8418 > SeqII .8362/.8275 > SeqI .8208 (F1). `CCS_15kb` 1건 ENOMEM | 156032·156034~36 exit 0 / 156033 abPOA 64 GiB 실패 후 슬롯 붙잡고 hang → qdel | `BENCH_SV_THREADS` 분리 후 `CCS_15kb` 재실행 → `--collect` | 없음 |
 | 6 | phase3 Hiseq-subsampled-30x | **완료** (Success) | — | #7에 포함 | — |
 | 7 | **phase3 평가 설계** — 업체 4곳(gd1~4) + 공개 raw 22 샘플의 VCF를 v4.2.1(+HG002 CMRG·v5.0q)로 hap.py | 미착수 | — | 결과 디렉토리 구조 받으면 phase1·2 `60_benchmark.sh` 모양으로 스크립트 | #1·#3 완료 |
 
@@ -51,6 +51,7 @@ cd /BiO/scratch/dyl/kbb/G000 && SAM=/home/ehojune/program/samtools-1.24/samtools
 
 ## 이력
 
+- 2026-09-22 저녁 — phase1 SV 첫 실측. **recall이 문제다** — precision 0.90 고른데 recall 0.757~0.788, pbsv가 truth 28,123개 중 ~20,600개만 찾는다(v5.0q가 T2T-Q100 유래라 어려운 영역을 많이 담은 탓으로 추정, 미확인). 세대 순서는 소변이와 같은 방향(Revio > Sequel II > Sequel I). **`-t`를 NSLOTS에 묶어 둔 것이 ENOMEM을 만들었다** — abPOA 메모리가 스레드에 비례해서 22슬롯 2잡이 겹치자 380 GB를 요구했다. `BENCH_SV_THREADS`로 분리.
 - 2026-09-22 — phase1 hap.py 19잡 완료(전부 exit 0). **SNP는 전 런 0.9984~0.9994로 포화, INDEL은 기기 세대가 가른다** — Sequel I 2런이 0.928·0.965로 나머지(0.975~0.997)와 확연히 갈리고, DeepVariant가 기기별 모델 없이 같은 격차를 내므로 caller 모델 탓이 아니다. **Revio에서만 Clair3가 DeepVariant에 INDEL −0.006~−0.017로 진다**(모델은 `hifi_revio` 제대로 받았다). 같은 날 노드 집합이 octopus 2 + shepherd 2로 바뀌어 큐/노드 해석을 `qstat -f` 대조 방식으로 교체.
 
 - 2026-09-21 — 문서 생성. phase3 첫 실행이 markdup에서 전부 죽음(GATK 4.6.1.0 vs Java 8). Codex 앱 세션 "Fix server Java version for GATK"가 원인·래퍼·MGISEQ HG002 BAM 누락을 찾음. 20 샘플 BAM은 온전(idxstats 대조).
