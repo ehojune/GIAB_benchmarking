@@ -24,29 +24,56 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 | 5b | **phase1 PacBio SV 평가** (`s1.*`, Truvari vs v5.0q, HG002 5런) | **완료** — refine F1 .8208~.8418. **세대 단조성 없음**(SeqI 이 SeqII 를 가른다), recall 이 약점(.757~.788) | 156048~156052, `-t 8`, exit 0 | 수치·판정: [2026-09-22-pacbio-hifi-benchmark-first-results.md](reference/2026-09-22-pacbio-hifi-benchmark-first-results.md) | — |
 | 6 | phase3 Hiseq-subsampled-30x | **완료** (Success) | — | #7에 포함 | — |
 | 7 | **phase3 평가 설계** — 업체 4곳(gd1~4) + 공개 raw 22 샘플의 VCF를 v4.2.1(+HG002 CMRG·v5.0q)로 hap.py | 미착수 | — | 결과 디렉토리 구조 받으면 phase1·2 `60_benchmark.sh` 모양으로 스크립트 | #1·#3 완료 |
-| 8 | **phase1 HG008 9런 등록** — uBAM → BAM → VCF. 다운로드는 끝났는데 `run_table.tsv`에 없다 | **미착수** | — | `run_table.tsv` 38 → 47 실행단위, `make_samplesheets.py` → `10_submit.sh --ready` | 없음. 노드 여유가 나면 바로 |
+| 8 | **phase1 HG008 9런 등록** — uBAM → BAM → VCF | **등록 완료** (2026-09-22) — run_table 38 → 47, samplesheet 9개 생성 | 미제출 | `10_submit.sh --list` 로 입력 확인 → `--ready` | 노드 여유. 런당 10~15시간 예상 |
 | 9 | **HG008-T somatic 평가 설계** — germline truth가 없는 HG008/HG009를 채점할 유일한 길 | **미착수** | — | smvar V0.3-20260425 / stvar-CNV V0.5-20260318 기준 `62_benchmark_somatic.sh` (가칭) | #8 (평가할 VCF가 먼저 있어야) |
 | 10 | **phase1↔phase2 표준화 잔여** — 아래 "표준화 백로그" | 부분 완료 | — | phase3까지 같은 모양으로 | 급하지 않음 |
 
-## #8 상세 — phase1 HG008 9런 (미등록)
+## #8 상세 — phase1 HG008-T 9 실행단위 (2026-09-22 등록 완료)
 
-다운로드는 2026-08-30에 끝났고 디스크에 있다. **진입 타입은 fastq가 아니라 uBAM이다** (Revio가
-기기에서 CCS를 끝내 보낸다). 이미 돌린 HG009 클론과 디렉토리 구조·파일명 규약이 같다.
+`make_samplesheets.py` 의 RUNS 스펙에서 **HG008 의 NIST 트리가 통째로 빠져 있었다.** 다운로드는
+2026-08-30 에 끝나 있었다. HG008 은 Liss_lab 4건만, HG009 는 NIST 11건이 다 등록돼 있었는데
+HG008 NIST 만 없었다 — 의도적 제외가 아니라 누락이다. 생성기를 고쳐 재생성했다(손으로 넣으면
+다음 재생성 때 사라진다).
 
-| 실행 단위 | GiB | 비고 |
+**진입 타입은 fastq 가 아니라 uBAM 이다.** Revio 가 기기에서 CCS 를 끝내 보낸다.
+
+| 실행 단위 | uBAM | GiB |
 |---|---|---|
-| HG008T-p100 (bulk 20240508p100) | 95 | |
-| HG008T-2D6 / 2E6 / 3E4 (20240718p14 클론) | 86 / 109 / 134 | 2E6은 SMRT cell 2개 → uBAM 2개 |
-| HG008T-SC14 / SC24 / SC28 / SC6 / SC9 (20240805p19 클론) | 129 / 97 / 114 / 116 / 123 | |
+| HG008T-p100 (bulk, 20240508p100) | 1 | 49.9 |
+| HG008T-2D6 / 2E6 / 3E4 (20240718p14 클론) | 1 / **2** / 1 | 46.1 / 57.5 / 69.9 |
+| HG008T-SC6 / SC9 / SC14 / SC24 / SC28 (20240805p19 클론) | 1 each | 61.5 / 64.8 / 67.2 / 50.8 / 60.2 |
 
-합계 **1,001 GiB / 리드 파일 19개**. 각 디렉토리에 GIAB 정렬본(`*_GRCh38-GIABv3.bam`)이 같이
-들어 있는데 **그건 입력이 아니다** — 우리는 demux uBAM(`m84*.demux.bc*.bam`)만 쓴다.
+**합계 10 uBAM / 528.1 GiB.** 2E6 만 SMRT cell 이 2개다.
 
-커버리지가 48~60X라 런당 10~15시간 예상(phase1 30x 실측 6~7시간 기준). 파이프라인 잡은 30슬롯이라
-노드당 2런이다.
+> 이전에 "1,001 GiB" 로 적었던 것은 **디렉토리 총량**이다. 절반이 GIAB 이 만든 정렬본
+> (`*_PacBio-HiFi-Revio_<N>X_GRCh38-GIABv3.bam`)이고 **그건 입력이 아니다** — 우리는 uBAM 부터
+> 다시 정렬한다. 패턴이 demux uBAM 만 잡으므로 정렬본은 자동으로 빠진다.
 
-**germline truth가 없어 `60_benchmark.sh`·`61_benchmark_sv.sh`가 자동으로 건너뛴다.** 채점은 #9가
-만들어져야 가능하다 — 그전까지는 QC(`35_review_qc.py`)까지만 본다.
+커버리지가 48~60X 라 런당 10~15시간 예상(phase1 30x 실측 6~7시간 기준). 파이프라인 잡은
+30슬롯이라 노드당 2런이다.
+
+**germline truth 가 없어 `60_benchmark.sh`·`61_benchmark_sv.sh` 가 자동으로 건너뛴다.**
+채점은 #9 가 서야 가능하고, 그전까지는 QC(`35_review_qc.py`)까지만 본다.
+
+## #9 상세 — somatic 평가에서 먼저 정해야 할 것
+
+**germline caller 출력을 somatic truth 에 그냥 대면 안 된다.** 우리 파이프라인이 HG008-T 에서
+내는 것은 DeepVariant/Clair3 의 **전체 변이**(germline + somatic)인데, GIAB somatic 벤치마크는
+**종양 특이 변이만** 담는다. 그대로 비교하면 germline 변이가 전부 FP 가 되어 precision 이 무너진다.
+
+갈 수 있는 길 셋:
+
+| | 방법 | 문제 |
+|---|---|---|
+| A | tumor − normal 뺄셈 | 거칠다. somatic 은 subclonal(저 VAF)이 많은데 germline caller 가 그걸 잘 못 부른다 |
+| B | somatic caller 추가 (DeepSomatic 등, PacBio 지원) | 파이프라인 확장이 필요하다. 가장 정공법 |
+| C | 채점 포기, somatic 구간을 QC·커버리지 확인에만 사용 | 안전하지만 얻는 게 적다 |
+
+**매칭 정상(normal)이 또 하나의 걸림돌이다.** 매니페스트 실측으로 NIST 트리에는 tumor 만 있고
+정상은 Liss_lab 쪽뿐이다(HG008-N-D, HG008-N-P). 즉 NIST 클론 9건의 짝을 맞추려면 **다른 랩·다른
+준비의 정상**을 써야 해서, 랩 차이가 somatic 판정에 섞인다.
+
+이 셋 중 무엇으로 갈지는 사용자 결정이 필요하다 — #8 산출물이 나오기 전에도 정할 수 있다.
 
 ## 표준화 백로그 (#10)
 

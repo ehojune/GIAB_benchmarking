@@ -43,6 +43,20 @@ def hg009(name, ds_dir, n):
     )
 
 
+def hg008t(name, ds_dir, n):
+    """HG008-T NIST 트리의 demux uBAM 선택 규칙. HG009와 디렉토리 규약이 같다.
+
+    같은 디렉토리에 GIAB이 만든 정렬본(*_PacBio-HiFi-Revio_<N>X_GRCh38-GIABv3.bam)이 함께
+    있는데 그건 입력이 아니다 — 우리는 uBAM부터 다시 정렬한다(파일 선택 정책과 동일).
+    패턴이 demux uBAM만 잡으므로 정렬본은 자동으로 빠진다.
+    """
+    return dict(
+        manifest="HG008", sample=name, dataset=ds_dir, entry="hifi_bam",
+        clair3="hifi_revio", expect=n,
+        pattern=rf"^data_somatic/HG008/NIST/{ds_dir}/.*/BCM_Revio_{name}_\d+/m\d+_\d+_\d+_s\d\.demux\.bc\d+--bc\d+\.bam$",
+    )
+
+
 # 실행 단위(run) 정의. 한 run = 한 samplesheet = 한 SGE 잡 = (sample, dataset) 한 쌍.
 # pattern은 manifest 상대경로 전체에 대한 정규식. expect와 어긋나면 생성이 실패한다(안전장치).
 RUNS = [
@@ -147,6 +161,18 @@ RUNS = [
     dict(manifest="HG008", sample="HG008-N-P", dataset="PacBio_Revio_20240125", entry="hifi_bam",
          clair3="hifi_revio", expect=1,
          pattern=r"^data_somatic/HG008/Liss_lab/PacBio_Revio_20240125/HG008-N-P_PacBio-Revio_m\d+_\d+_\d+_s\d\.hifi_reads\.bc2006\.bam$"),
+    # HG008-T NIST 트리 (bulk 1 + clone 8). 2026-09-22 추가 — Liss_lab 4건만 있고 이쪽이
+    # 통째로 빠져 있었다. 다운로드는 2026-08-30에 끝나 있었는데 스펙 목록에 안 올라와
+    # run_table 에 안 잡혔다. HG009 클론과 디렉토리 규약·파일명 규약이 같다.
+    hg008t("HG008T-p100", "HG008-T_bulk", 1),
+    hg008t("HG008T-2D6", "HG008-T_clones", 1),
+    hg008t("HG008T-2E6", "HG008-T_clones", 2),   # SMRT cell 2개
+    hg008t("HG008T-3E4", "HG008-T_clones", 1),
+    hg008t("HG008T-SC6", "HG008-T_clones", 1),
+    hg008t("HG008T-SC9", "HG008-T_clones", 1),
+    hg008t("HG008T-SC14", "HG008-T_clones", 1),
+    hg008t("HG008T-SC24", "HG008-T_clones", 1),
+    hg008t("HG008T-SC28", "HG008-T_clones", 1),
     # --- HG009 (passage/clone 별도 sample) ---
     hg009("HG009N-WT-p25", "HG009-N_bulk", 1),
     hg009("HG009N-WT-p4", "HG009-N_bulk", 2),
