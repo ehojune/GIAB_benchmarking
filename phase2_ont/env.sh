@@ -48,21 +48,20 @@ export BENCH_VMEM="${BENCH_VMEM:-32G}"      # 실측 maxvmem 23.7~24.5 GB (2026-
 export BENCH_TRUTH_VER="${BENCH_TRUTH_VER:-v4.2.1}"   # germline truth set 판 (release/*/NISTv4.2.1/)
 
 # ── SV 정확도 평가 (61_benchmark_sv.sh) ───────────────────────────────────────
-# **실측**: 2026-09-18 ONT 2런이 -t 8 에서 maxvmem 67~73 GB. 2026-09-22 phase1 HiFi 5런이
-# -t 22 에서 177~192 GB — 스레드 2.75배에 메모리 2.6배다.
+# **실측 (2026-09-18, ONT HG002 2런, -t 8)**: maxvmem 67.1 / 73.2 GB, wall 299~395초.
 #
-# refine 의 정렬기 abPOA 는 **스레드마다 정렬 행렬을 따로 잡는다.** 그래서 -t 를 NSLOTS 에
-# 묶어 두면 "슬롯을 올려 동시 실행 수를 줄인다"가 통하지 않는다 — 잡당 메모리가 같이 올라
-# 노드 총량이 그대로다. 실제로 phase1에서 22슬롯 2잡이 한 노드에 겹쳐 abPOA 가 64 GiB 한 방을
-# 못 잡고 ENOMEM 으로 죽었다. phase2는 그때 8슬롯이라 안 겪었지만 코드는 같았다.
+# phase1 HiFi 는 같은 -t 8 에서 91.6~136.2 GB 를 썼다(2026-09-22, 5런). 데이터셋이 다르면
+# 두 배까지 벌어진다는 뜻이라, ONT 값을 HiFi 에 쓰거나 그 반대로 하면 안 된다.
 #
-# 그래서 **스레드와 슬롯을 분리한다**:
-#   BENCH_SV_THREADS = truvari refine -t. 메모리를 정하는 값. 8이면 ~73 GB.
-#   BENCH_SV_SLOTS   = 노드 패킹만. 22면 노드당 2잡 = ~146 GB.
-# truvari refine 의 기본 스레드는 4라(5.4.0 refine.py) 8이면 기본보다 빠르면서 메모리는 잡힌다.
+# **메모리는 스레드에 비례하지 않는다.** phase1 에서 같은 데이터셋을 -t 22 -> 8 로 바꿔 보니
+# 스레드 64% 감소에 메모리는 29~46%만 줄었다 — 가장 큰 영역 하나의 정렬 행렬이 고정분으로
+# 남는 것으로 보인다. 즉 스레드를 낮춰도 최악값은 크게 안 내려가므로, 노드 과점유를 막는
+# 실질적 수단은 **동시 실행 수(슬롯)** 다.
+#   22슬롯 = 노드당 2잡. ONT 실측 73 GB 기준 146 GB / 251 GB — 안전.
+#   (데이터가 바뀌어 100 GB 를 넘기 시작하면 phase1 처럼 33슬롯으로 올릴 것.)
 export BENCH_SV_THREADS="${BENCH_SV_THREADS:-8}"
 export BENCH_SV_SLOTS="${BENCH_SV_SLOTS:-22}"
-export BENCH_SV_VMEM="${BENCH_SV_VMEM:-80G}"   # -t 8 기준 실측 67~73 GB 위. 표시용이고 강제되지 않는다
+export BENCH_SV_VMEM="${BENCH_SV_VMEM:-80G}"   # ONT 실측 67~73 GB 위. 표시용이고 강제되지 않는다
 export BENCH_SV_TRUTH_VER="${BENCH_SV_TRUTH_VER:-v5.0q}"   # release/*/*/v5.0q/<sample>_GRCh38_v5.0q_stvar.*
 export BENCH_SV_REFINE="${BENCH_SV_REFINE:-1}"             # GIAB v5.0q README 권장. 0으로 끌 수 있다
 export BENCH_SV_ALIGN="${BENCH_SV_ALIGN:-}"                # refine 정렬기. 비우면 truvari 기본값 poa

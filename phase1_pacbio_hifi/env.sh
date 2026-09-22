@@ -74,21 +74,26 @@ export BENCH_VMEM="${BENCH_VMEM:-56G}"      # 실측 48.8 GB 위. 표시용이�
 export BENCH_TRUTH_VER="${BENCH_TRUTH_VER:-v4.2.1}"   # germline truth set 판 (release/*/NISTv4.2.1/)
 
 # ── SV 정확도 평가 (61_benchmark_sv.sh) ───────────────────────────────────────
-# **실측 (2026-09-22, phase1 HG002 5런)**: -t 22 에서 maxvmem 177~192 GB, wall 228~262초.
-# 2026-09-18 phase2 ONT 값(-t 8 에서 67~73 GB)의 2.6배다. 스레드가 2.75배였다.
+# **실측 (2026-09-22, phase1 HG002 5런, -t 8)**: maxvmem 91.6 / 96.5 / 99.5 / 121.0 / 136.2 GB,
+# wall 247~257초. 전 런 exit 0.
 #
-# refine 의 정렬기 abPOA 는 **스레드마다 정렬 행렬을 따로 잡는다.** 그래서 -t 를 NSLOTS 에
-# 묶어 두면 "슬롯을 올려 동시 실행 수를 줄인다"가 통하지 않는다 — 잡당 메모리가 같이 올라
-# 노드 총량이 그대로다. 실제로 22슬롯 2잡이 한 노드에 겹쳐 abPOA 가 64 GiB 한 방을 못 잡고
-# ENOMEM 으로 죽었다(HG002.PacBio_CCS_15kb, 잡 156033). 나머지 4런은 시차를 두고 돌아 살았다.
+# 같은 데이터셋을 -t 22 로 돌렸을 때와 짝지어 보면 **메모리는 스레드에 비례하지 않는다**:
+#   HiFi-Revio     192.6 -> 136.2 GB   (-29%)
+#   SequelII_11kb  177.3 ->  96.5 GB   (-46%)
+#   chemistry2     188.1 -> 121.0 GB   (-36%)
+# 스레드를 64% 줄였는데 메모리는 29~46%만 줄었다. base + k*threads 로 풀면 base 가 50~104 GB 로
+# 큰데, 이건 **가장 큰 영역 하나의 정렬 행렬**로 보인다 — 스레드를 줄여도 그 한 방은 그대로다
+# (ENOMEM 때 실패한 할당이 정확히 64 GiB 한 방이었던 것과 맞아떨어진다).
+# 2026-09-22 초판에서 "스레드에 비례한다"고 적었던 것은 phase2 ONT(-t 8)와 phase1 HiFi(-t 22)를
+# 비교한 것이라 데이터셋 차이가 섞여 있었다. 위가 같은 데이터로 스레드만 바꾼 대조다.
 #
-# 그래서 **스레드와 슬롯을 분리한다**:
-#   BENCH_SV_THREADS = truvari refine -t. 메모리를 정하는 값. 8이면 ~73 GB.
-#   BENCH_SV_SLOTS   = 노드 패킹만. 22면 노드당 2잡 = ~146 GB.
-# truvari refine 의 기본 스레드는 4라(5.4.0 refine.py) 8이면 기본보다 빠르면서 메모리는 잡힌다.
+# **그래서 실질적인 제어 수단은 스레드가 아니라 동시 실행 수(슬롯)다.**
+#   33슬롯 = 노드당 1잡. 최악 136 GB / 251 GB — 안전.
+#   22슬롯 = 노드당 2잡. 최악 136+121 = 257 GB — 251 GB 초과. 2026-09-22 실행은 피크가
+#            안 겹쳐 살아남았을 뿐이다. 5런 순차라도 20분이라 처리량을 아낄 이유가 없다.
 export BENCH_SV_THREADS="${BENCH_SV_THREADS:-8}"
-export BENCH_SV_SLOTS="${BENCH_SV_SLOTS:-22}"
-export BENCH_SV_VMEM="${BENCH_SV_VMEM:-80G}"   # -t 8 기준 실측 67~73 GB 위. 표시용이고 강제되지 않는다
+export BENCH_SV_SLOTS="${BENCH_SV_SLOTS:-33}"
+export BENCH_SV_VMEM="${BENCH_SV_VMEM:-150G}"  # 실측 최대 136.2 GB 위. 표시용이고 강제되지 않는다
 export BENCH_SV_TRUTH_VER="${BENCH_SV_TRUTH_VER:-v5.0q}"   # release/*/*/v5.0q/<sample>_GRCh38_v5.0q_stvar.*
 export BENCH_SV_REFINE="${BENCH_SV_REFINE:-1}"             # GIAB v5.0q README 권장. 0으로 끌 수 있다
 export BENCH_SV_ALIGN="${BENCH_SV_ALIGN:-}"                # refine 정렬기. 비우면 truvari 기본값 poa
