@@ -637,3 +637,39 @@ refine 의 정렬기 abPOA 는 스레드마다 정렬 행렬을 따로 잡는다
 abPOA 가 malloc 실패를 찍고도 abort 하지 않아, 잡이 SGE 에서 `r` 상태로 22슬롯을 계속 점유했다
 (`set -e` 가 볼 종료 코드가 안 나온 것이다). `qdel` 로 정리했다. 잡 스크립트에 워치독을 넣을지는
 보류한다 — 원인을 없앴고, 워치독은 정상 장기 실행과 구분이 어렵다.
+
+## 2026-09-22 — QC 리뷰 스크립트의 외부 도구 해석을 한 곳으로 모은다
+
+`35_review_qc.py --pass-counts` 가 `PermissionError: [Errno 13] ... 'bcftools'` 로 죽었다.
+두 가지가 겹쳐 있었다.
+
+**1. 도구를 찾는 방식이 이 자리만 달랐다.** 이 repo 의 다른 모든 자리 — `61_benchmark_sv.sh`,
+`03_dup_evidence.sh`, `60_benchmark.sh` 의 faidx, 같은 파일의 `--check-meth` — 는 전부
+컨테이너를 거친다. **로그인 노드 PATH 에 samtools 도 bcftools 도 없기 때문이다.**
+`--pass-counts` 만 `["bcftools", "stats", ...]` 로 맨 이름을 불렀다. 같은 파일 안에서
+`--check-meth` 는 제대로 하고 있었으니, 고칠 때 형제 자리를 안 훑은 전형적인 자국이다.
+
+**2. 예외 핸들러가 좁았다.** `except (FileNotFoundError, subprocess.TimeoutExpired)` 였는데
+실제로 온 것은 `PermissionError` 다. 둘은 형제이지 상속 관계가 아니라서 그대로 새어나가
+스크립트가 통째로 죽었다 — 런 하나 건너뛰고 끝날 일이었다. `except OSError` 로 바꿨다
+(errno 13 permission, 2 not-found, 8 exec-format, 20 not-a-directory 가 전부 OSError 다).
+
+**정한 것:** `tool_img(name)` 과 `bcftools_cmd()` 를 양쪽 phase 에 둔다. 찾는 순서는
+
+1. `$BCFTOOLS` — 직접 지정 (예: `/home/ehojune/program/bcftools-1.24/bcftools`)
+2. 캐시된 컨테이너 — `nextflow.config` 의 `container_bcftools` 를 그대로 읽는다
+3. PATH
+
+**2번이 기본인 이유가 편의가 아니다.** 파이프라인이 실제로 쓴 판과 같은 것이 보장된다.
+판이 다르면 `bcftools stats` 의 변이 수·ts/tv 가 미묘하게 갈리고, 그 차이는 데이터 차이로
+보이지 도구 차이로 안 보인다. 자기 빌드를 쓰고 싶으면 1번으로 명시하게 했다.
+
+`tool_img()` 는 **env.sh 를 source 하지 않아도** 동작한다. 유도식은 `main()` 의 `default_base`
+와 같다(`RUN_BASE` -> `GIAB_ROOT/processed_data_ehojune` -> `/_infra/containers`). python 스크립트는
+보통 `python scripts/35_review_qc.py` 로 바로 부르는데, 그때 `--check-meth` 가 "컨테이너를 못
+찾았다"로 조용히 건너뛰고 있었다 — 같은 사고의 다른 얼굴이다.
+
+검증: 양쪽 phase 에 3경로 + 캐싱 + PermissionError 흡수 6항목, 12/12 통과.
+
+양쪽 `env.local.sh.example` 에 `$BCFTOOLS` 예시를 적었고, `.gitignore` 에 `__pycache__/` 를
+추가했다 (`py_compile` 로 문법 검사하면 생긴다).
