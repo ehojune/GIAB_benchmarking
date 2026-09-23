@@ -92,6 +92,15 @@ python ~/GIAB_benchmarking/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py
     --hosts '(octopus-2-8|octopus-2-9|octopus-2-10|octopus-2-11|shepherd-1-8|shepherd-1-9)'           # 링크 + 병합 잡(큰 것부터 8줄, -hold_jid) + sampleinfo 행 추가(백업 후)
 ```
 
+**국통바빅을 돌려도 되는 set인지** (샘플마다 `_1`/`_2`가 링크이거나, 병합이 끝나 lock·`.part`가 없을 때 READY):
+
+```bash
+cd /BiO/scratch/dyl/kbb/G000 && for s in $(awk -F'\t' 'NR>1{print $2}' ~/GIAB_benchmarking/phase3_shortread_wgs/more_run_table.tsv | sort -u); do d=GIAB-publicData-$s; n=0; r=0; for sd in $d/outcome/*/; do n=$((n+1)); b=$(basename $sd); if [ -L $sd/${b}_1.fastq.gz ] || { [ -f $sd/${b}_2.fastq.gz ] && [ ! -d $sd/.concat.lock ] && [ ! -e $sd/${b}_2.fastq.gz.part ]; }; then r=$((r+1)); fi; done; printf '%-52s %2s/%-2s %s\n' $d $r $n "$([ $r = $n ] && echo READY || echo 병합중)"; done
+```
+
+병합 중에 03을 다시 돌려도 된다 — lock이 걸린 샘플의 concat.sh·list는 건드리지 않고, 내용이 같으면 다시 쓰지 않는다(도는 bash가 스크립트를 조금씩 읽기 때문).
+03의 로컬 테스트: `bash scripts/test_03_make_pipeline_dirs.sh`(리눅스/WSL, 25건).
+
 | tier | set dir | 샘플(label) | 쌍 | GiB | 처리 | 기종 |
 |---|---|---|---|---|---|---|
 | germline | `GIAB-publicData-NIST-BGIseq-100x` | HG002 · HG005 | 15/15 | 635 | cat | MGI DNBSEQ 2x150 |
