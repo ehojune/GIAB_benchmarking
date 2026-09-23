@@ -113,8 +113,12 @@ bash phase1_pacbio_hifi/scripts/60_benchmark.sh --collect  # 결과를 한 TSV�
 
 ## 정확도 평가 ([60_benchmark.sh](scripts/60_benchmark.sh))
 
-GIAB truth set 대비 hap.py. germline small variant만 — **HG001~HG007 23런**이 대상이고
+GIAB truth set 대비 hap.py. germline small variant만 — **HG001~HG007 19런**이 대상이고
 HG008·HG009는 germline truth가 없어 자동으로 빠진다.
+
+**2026-09-22 전량 완료** (19런 × 2 caller = 38건, 전부 exit 0). 결과와 판정은
+[중간 보고](../docs/reports/2026-09-22-phase1-pacbio-benchmark.md), 수치는
+[실측 기록](../docs/reference/2026-09-22-pacbio-hifi-benchmark-first-results.md).
 
 - 입력은 `03_VCF/<caller>/*.vcf.gz` **원본**이다. hap.py가 FILTER를 자체 처리해
   `summary.csv`에 ALL 행과 PASS 행을 둘 다 내므로, PASS 필터가 없는 파이프라인 산출물을
@@ -125,15 +129,36 @@ HG008·HG009는 germline truth가 없어 자동으로 빠진다.
   Ashkenazim 트리오(HG002~HG004)의 BED은 `_benchmark_noinconsistent.bed`다.
   truth VCF의 `.tbi`가 없으면 제출 단계에서 걸러낸다.
 - 산출: `<dataset>/05_BENCH/happy/<id>.<caller>.summary.csv` 등. `--collect`가 이를 모아
-  `phase1_bench_summary.tsv`(dsid × caller × SNP/INDEL × ALL/PASS)로 만든다.
-- 잡 크기는 파이프라인보다 작다 (`BENCH_SLOTS=8`, `BENCH_VMEM=32G`) — hap.py는 병렬성이 낮다.
+  `phase1_bench_summary.tsv`(dsid × caller × SNP/INDEL × ALL/PASS)로 만든다. 출력은 이 디렉토리 밑이다.
+- 잡 크기는 파이프라인보다 작다 (`BENCH_SLOTS=16`, `BENCH_VMEM=56G`). 실측 maxvmem
+  48.4~48.8 GB / wall 56~83분 — 16슬롯이면 64코어 노드에 동시 4잡 = 194/251 GB 다.
 - 컨테이너는 `env.sh`의 `HAPPY_IMG`(`jmcdani20/hap.py:v0.3.12`, GIAB/NIST 문서가 쓰는 이미지)와
   `TRUVARI_IMG`. `nextflow.config`가 아니라 `env.sh`에 둔 이유는 파이프라인이 쓰지 않기 때문이고,
   `01_prepare_login_node.sh`가 `BENCH_IMAGES`도 함께 미리 받는다.
 
-**SV와 somatic은 아직 못 한다.** SV는 Truvari v5.0+ (이미지는 핀해 뒀다). HG008-T somatic은
-현행 기준인 smvar V0.3(2026-04-25)·stvar-CNV V0.5(2026-03-18)가 **매니페스트에 없다** —
-받아둔 것은 stvar V0.1~V0.3(2025-02)뿐이다. 먼저 phase0 매니페스트에 추가해야 한다.
+## SV 정확도 평가 ([61_benchmark_sv.sh](scripts/61_benchmark_sv.sh))
+
+GIAB HG002 v5.0q stvar 대비 Truvari 5.4.0. **2026-09-22 완료** — HG002 5런, refine 후
+F1 .8208~.8418, 전부 exit 0.
+
+- **대상이 HG002 다섯 런뿐인 이유**: GRCh38 germline SV truth 를 가진 GIAB 샘플이 HG002 하나다.
+  널리 인용되는 `HG002_SVs_Tier1_v0.6` 은 **GRCh37 전용**이라 우리 GRCh38 결과에 못 쓴다.
+- 파라미터는 GIAB v5.0q README 가 지정한 명령 그대로 (`--pick ac --passonly -r 2000 -C 5000` + refine).
+  `-C 5000` 은 chunksize지 sizemin 이 아니다.
+- truth 는 `ALT="*"` 를 미리 걸러 `$INFRA/reference/sv_truth/` 에 캐시한다(README 지시). phase2 와 공유.
+- `--collect` 가 refine **전·후**를 둘 다 낸다. refine 이득이 +.049~.054 로 phase2 ONT(+.048~.051)와
+  거의 같다 — 콜 품질이 아니라 표현 정규화라는 설명과 맞는다.
+- 잡 크기: `BENCH_SV_SLOTS=33`(노드당 1잡), `BENCH_SV_THREADS=8`, `BENCH_SV_TIMEOUT=4h`.
+  **`-t` 를 NSLOTS 에 묶지 않는다** — abPOA 메모리가 스레드에 딸려 올라가 슬롯으로 동시 실행 수를
+  줄이려는 시도가 무력해진다(2026-09-22 에 이것 때문에 ENOMEM 으로 두 번 죽었다).
+
+## somatic (HG008-T) — 미착수
+
+정답셋은 받아 뒀다 (smvar V0.3-2026-04-25, stvar-CNV V0.5-2026-03-18).
+막힌 것은 데이터가 아니라 **설계**다 — 우리 파이프라인이 내는 것은 germline caller 의 전체 변이
+(germline + somatic)인데 GIAB somatic 벤치마크는 종양 특이 변이만 담는다. 그대로 대면 germline 이
+전부 FP 가 된다. somatic caller 가 필요하고, 매칭 정상도 NIST 트리에 없어 Liss_lab 것을 써야 한다
+(랩 차이가 섞인다). 선택지와 쟁점은 [docs/STATUS.md](../docs/STATUS.md) #9.
 기준 근거는 [docs/reference/2026-08-26-hg008-benchmark-refresh.md](../docs/reference/2026-08-26-hg008-benchmark-refresh.md).
 
 ## 설정 (전부 [env.sh](env.sh))
