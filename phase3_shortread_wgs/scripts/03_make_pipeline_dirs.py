@@ -233,7 +233,23 @@ if intrude:
 
 
 def update_sampleinfo(xlsx, samples, dry):
-    """xlsx의 SET_ID/DNA_ID 표에 없는 DNA_ID만 덧붙인다. 충돌(같은 DNA_ID, 다른 SET_ID·SEX)이면 쓰지 않고 멈춘다"""
+    """xlsx의 SET_ID/DNA_ID 표에 없는 DNA_ID만 덧붙인다. 충돌(같은 DNA_ID, 다른 SET_ID·SEX)이면 쓰지 않고 멈춘다.
+    두 실행이 동시에 읽고 각자 저장하면 나중 것이 앞 것의 행을 지운다 — `<xlsx>.lock` dir로 한 번에 하나만, 읽기부터 교체까지 잡는다.
+    저장은 옆 임시 파일에 한 뒤 os.replace로 바꿔, 중간에 끊겨도 파이프라인이 반쯤 쓴 xlsx를 읽지 않게 한다(Codex 리뷰)"""
+    if dry:
+        return _update_sampleinfo(xlsx, samples, True)
+    lock = xlsx + ".lock"
+    try:
+        os.mkdir(lock)
+    except FileExistsError:
+        sys.exit(f"ERROR: {lock} 가 있다 — 다른 03이 sampleinfo를 고치는 중. 죽은 실행의 흔적이면 rmdir 후 재실행")
+    try:
+        return _update_sampleinfo(xlsx, samples, False)
+    finally:
+        shutil.rmtree(lock, ignore_errors=True)
+
+
+def _update_sampleinfo(xlsx, samples, dry):
     import openpyxl
     wb = openpyxl.load_workbook(xlsx)
     for ws in wb.worksheets:   # 머리행 이름은 대소문자·앞뒤 공백 무시
@@ -264,13 +280,22 @@ def update_sampleinfo(xlsx, samples, dry):
         print(f"  + {r['SET_ID']}\t{r['DNA_ID']}\t{r['SEX']}\t{r['NOTE']}")
     if dry or not add:
         return
-    bak = f"{xlsx}.bak-{time.strftime('%Y%m%d-%H%M%S')}"
+    bak = f"{xlsx}.bak-{time.strftime('%Y%m%d-%H%M%S')}-{os.getpid()}"
     shutil.copy2(xlsx, bak)
     for n, r in enumerate(add, last + 1):
         for k, c in col.items():
             if k in r:
                 ws.cell(row=n, column=c + 1, value=r[k])
-    wb.save(xlsx)
+    root, ext = os.path.splitext(xlsx)
+    tmp = f"{root}.tmp-{os.getpid()}{ext}"   # openpyxl은 확장자로 형식을 가리므로 .xlsx를 유지한다
+    try:
+        wb.save(tmp)
+        openpyxl.load_workbook(tmp, read_only=True).close()   # 다시 열리는지 — 깨진 zip이면 여기서 예외, 원본은 그대로
+        shutil.copymode(xlsx, tmp)
+        os.replace(tmp, xlsx)
+    finally:
+        if os.path.exists(tmp):
+            os.remove(tmp)
     print(f"  저장함 (백업 {bak})")
 
 
@@ -289,10 +314,18 @@ if a.prune and not a.dry_run:
             f = os.path.join(d, fn)
             if os.path.islink(f) and os.path.abspath(f) not in planned:
                 os.remove(f); pruned += 1; print(f"PRUNE {os.path.relpath(f, a.dest)}")
+def ensure_sample_dir(sdir):
+    """새 샘플 dir을 만들기 직전에 set을 다시 본다 — 앞의 검사와 만드는 사이에 파이프라인이 그 set을 시작했을 수 있다(Codex 리뷰).
+    파이프라인과 lock을 나눌 방법이 없어 틈을 없애지는 못하고 샘플 하나 크기로 줄인다 — 파이프라인을 띄우는 동안 03을 돌리지 말 것"""
+    if not os.path.isdir(sdir) and is_touched(os.path.dirname(os.path.dirname(sdir))):
+        sys.exit(f"ERROR: {sdir} 를 만들려는 사이 그 set에 파이프라인 흔적이 생겼다 — 여기서 멈춘다(이미 만든 것은 그대로)")
+    os.makedirs(sdir, exist_ok=True)
+
+
 for link, src in plan:
     if a.dry_run:
         continue
-    os.makedirs(os.path.dirname(link), exist_ok=True)
+    ensure_sample_dir(os.path.dirname(link))
     if os.path.lexists(link):
         cur = os.readlink(link) if os.path.islink(link) else (link if a.hard and os.path.samefile(link, src) else None)
         if cur == src or (a.hard and cur == link):
@@ -321,15 +354,24 @@ held = 0
 for sdir, name, pairs in concat:
     if a.dry_run:
         continue
-    os.makedirs(sdir, exist_ok=True)
-    if os.path.isdir(os.path.join(sdir, ".concat.lock")):   # 병합이 도는 중 — concat.sh·list를 바꾸지 않는다
-        held += 1
+    ensure_sample_dir(sdir)
+    # 병합과 같은 lock을 잡고 쓴다 — 확인만 하고 쓰면 그 사이 병합 잡이 시작해 R1은 옛 list, R2는 새 list로 이어 붙일 수 있다(Codex 리뷰)
+    lock = os.path.join(sdir, ".concat.lock")
+    try:
+        os.mkdir(lock)
+    except FileExistsError:
+        held += 1   # 병합이 도는 중 — concat.sh·list를 바꾸지 않는다
         continue
-    write_if_changed(os.path.join(sdir, "concat_R1.list"), "".join(r1 + "\n" for r1, _ in pairs))
-    write_if_changed(os.path.join(sdir, "concat_R2.list"), "".join(r2 + "\n" for _, r2 in pairs))
-    sh = os.path.join(sdir, "concat.sh")
-    write_if_changed(sh, CONCAT_SH.format(name=name, n=len(pairs)))
-    os.chmod(sh, 0o755)
+    try:
+        with open(os.path.join(lock, "owner"), "w", encoding="utf-8") as f:
+            f.write(f"03_make_pipeline_dirs pid={os.getpid()} {time.strftime('%F %T')}\n")
+        write_if_changed(os.path.join(sdir, "concat_R1.list"), "".join(r1 + "\n" for r1, _ in pairs))
+        write_if_changed(os.path.join(sdir, "concat_R2.list"), "".join(r2 + "\n" for _, r2 in pairs))
+        sh = os.path.join(sdir, "concat.sh")
+        write_if_changed(sh, CONCAT_SH.format(name=name, n=len(pairs)))
+        os.chmod(sh, 0o755)
+    finally:
+        shutil.rmtree(lock, ignore_errors=True)
 if held:
     print(f"병합 중(.concat.lock)인 샘플 {held}개는 concat.sh·list를 그대로 뒀다")
 
@@ -368,22 +410,23 @@ if a.qsub:
     n_sub = 0
     lane_last = [None] * max(a.lanes, 1)   # 줄마다 마지막으로 낸 잡 번호
     slot = 0                               # 줄 배정 순번 — 재실행 때 살아 있는 잡도 한 줄을 차지해야 상한이 안 깨진다
+    try:   # 살아 있는 잡을 먼저 전부 줄에 앉힌다 — 목록 순서대로 보며 앉히면 앞쪽 재제출이 hold 없이 떠 상한을 넘는다(Codex 리뷰)
+        alive_of = {sdir: job_alive(sdir) for sdir, _ in todo}
+    except FileNotFoundError:
+        sys.exit("ERROR: qstat/qsub 을 찾을 수 없다 (로그인 노드에서 실행할 것)")
+    for sdir, _ in todo:
+        if alive_of[sdir]:
+            lane_last[slot % len(lane_last)] = alive_of[sdir]; slot += 1
     for sdir, name in todo:
-        try:
-            alive = job_alive(sdir)
-        except FileNotFoundError:
-            sys.exit("ERROR: qstat/qsub 을 찾을 수 없다 (로그인 노드에서 실행할 것)")
+        alive = alive_of[sdir]
         if os.path.isdir(os.path.join(sdir, ".concat.lock")):
             op = os.path.join(sdir, ".concat.lock", "owner")
             owner = open(op).read().strip() if os.path.exists(op) else "?"
             hint = "" if alive else f" — concat.jobid의 잡이 큐에 없다. 그 잡이 죽은 것이 확실하면 rm -r {os.path.abspath(sdir)}/.concat.lock 후 재실행"
             print(f"SKIP {name}: .concat.lock 있음 (owner: {owner}){hint}")
-            if alive:
-                lane_last[slot % len(lane_last)] = alive; slot += 1
             continue
         if alive:
             print(f"SKIP {name}: 잡 {alive} 가 아직 큐에 있다")
-            lane_last[slot % len(lane_last)] = alive; slot += 1
             continue
         job = os.path.join(sdir, "concat.qsub.sh")
         with open(job, "w", newline="\n", encoding="utf-8") as f:
