@@ -856,3 +856,23 @@ PacBio 세션이 phase1 에서 먼저 한 전환을 phase2 에도 적용했다. 
 **이력은 맨 아래에 전부 남긴다**(사용자 결정). 잡 ID·실측 같은 세밀한 것은 README Journal 에
 넣기엔 굵고, "지금 돌던 잡이 왜 끝났나" 를 현황판에서 바로 볼 수 있는 값어치가 있다.
 대신 맨 아래에 둬서 "지금" 을 보러 온 사람이 과거를 먼저 지나가지 않게 했다.
+
+## 2026-09-23 — [숏리드 세션] MGISEQ HG002 재생성 잡(155525)이 이미 실패해 있었다
+
+STATUS.md 는 "running (09-22 07:53~)" 으로 남아 있었지만 `qacct -j 155525` 로 보니 실제로는
+09-22 15:59:55 에 `exit_status=1` 로 끝나 있었다(약 8시간 6분 실행, `failed=0` — SGE 가 죽인 게
+아니라 스크립트 자신이 에러를 감지하고 종료했다). 아무도 23시간 넘게 들여다보지 않은 상태였다.
+
+`repairs/mgi-hg002.IMeaDNit/` 산출물로 원인을 좁혔다. `bwa.stderr` 는 끝까지 정상적으로 read를
+처리하고 있었고, `view.stderr` 에 `[W::sam_read1_sam] Parse error at line 948884480` /
+`samtools view: error reading file "-"` 가 있다 — bwa-mem2 가 samtools view 로 넘기는 SAM 스트림이
+특정 줄에서 깨졌다. 디스크는 `/BiO` 30% 사용(1.7P 여유)이라 공간 문제가 아니고, `qstat -j` 의
+`h_vmem=300G` 대비 job 자체가 `failed=0` 인 것도 OOM·walltime 킬이 아님을 가리킨다. 원본
+`rawcheck.log`/`trimmedcheck.log` 는 raw·trimmed FASTQ 양쪽 다 PASS 를 찍었으니 입력 FASTQ
+자체는 온전하다 — bwa-mem2 프로세스 쪽(우연한 스트림 손상 또는 특정 레코드 처리 버그)이 의심된다.
+`aligned.bam.partial` 149GB 가 남아 있다.
+
+**재시도 전에 파싱 에러가 재현되는지부터 봐야 한다** — 재현 안 되면 우연한 스트림 손상으로 보고
+그냥 재제출, 재현되면 bwa-mem2 버전/스레드 설정을 의심해야 한다. 국통바빅 파이프라인이든 이
+복구 스크립트든 실행·재제출은 사용자(또는 서버에서 직접 작업하는 Codex 세션) 몫이라 여기서
+qsub 는 하지 않았다 — 읽기 전용 진단만 하고 STATUS #2 행을 "실패"로 정정한다.
