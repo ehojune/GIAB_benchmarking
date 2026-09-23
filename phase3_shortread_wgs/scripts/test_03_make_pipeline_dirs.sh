@@ -103,4 +103,10 @@ echo "# edited" >> $C/concat.sh; mkdir $C/.concat.lock; run --dest $D --only His
 grep -q "# edited" $C/concat.sh && ok "T9 lock 중이면 그대로" || ng "T9 lock 중에 덮어씀"
 rm -r $C/.concat.lock; run --dest $D --only Hiseq-100x >/dev/null 2>&1
 grep -q "# edited" $C/concat.sh && ng "T9 lock 없고 내용 다른데 안 고침" || ok "T9 lock 없으면 새 내용으로"
+echo "== T10 가장 큰 잡 제출이 실패했고 다음 둘이 살아 있을 때 --lanes 2 재시도"; D=$T/d11; mkdir -p $D; : > $T/qsub.log; : > $T/alive
+run --dest $D --only Hiseq-100x --only BGISEQ500-NA12878 --qsub --lanes 2 >/dev/null 2>&1
+O=$D; big=$(ls -d $O/*/outcome/*/ | while read d; do echo "$(du -sb $d | cut -f1) $d"; done | sort -rn | head -1 | cut -d' ' -f2)
+rm -f $big/concat.jobid; for f in $(ls $O/*/outcome/*/concat.jobid); do cat $f >> $T/alive; done; : > $T/qsub.log
+run --dest $D --only Hiseq-100x --only BGISEQ500-NA12878 --qsub --lanes 2 >/dev/null 2>&1
+grep -q -- "-hold_jid" $T/qsub.log && ok "T10 재시도한 큰 잡도 hold를 받는다" || ng "T10 hold 없이 제출: $(cat $T/qsub.log)"
 echo; echo "결과: PASS $pass / FAIL $fail (T6의 재제출 검사 1건은 위에 따로 찍힌다)"; [ "$fail" = 0 ]

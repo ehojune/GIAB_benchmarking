@@ -55,14 +55,17 @@ try() {   # try <binary> <R1> <R2> -> rc (stdout 버림)
   # shellcheck disable=SC2086
   "$1" mem -Y -R "$RG" -v 1 -t "$THREADS" -K 100000000 ${BWA_EXTRA:-} "$REF" "$2" "$3" > /dev/null 2> "$OUT/last.stderr"; echo $?
 }
+kind() { case "$1" in 0) echo ok ;; 134|139) echo crash ;; *) echo other ;; esac; }   # 0=통과, 134/139=목표 충돌(abort/segfault)
+need() {   # need <rc> <무엇> — 통과·충돌이 아닌 종료(127 실행 파일 없음, 1 입력·인덱스 오류, 137/143 스케줄러 kill)는 증거로 안 쓰고 멈춘다(Codex 리뷰)
+  [ "$(kind "$1")" = other ] && { log "판정 불가: $2 rc=$1 — 마지막 stderr:"; tail -5 "$OUT/last.stderr" | while read -r l; do log "  $l"; done; exit 3; }; return 0; }
 BIN=$BWA_DIR/bwa-mem2
-rc=$(try "$BIN" "$OUT/chunk_R1.fq" "$OUT/chunk_R2.fq"); mode=$(grep -o "Executing in [A-Z0-9]* mode" "$OUT/last.stderr" | head -1)
+rc=$(try "$BIN" "$OUT/chunk_R1.fq" "$OUT/chunk_R2.fq"); mode=$(grep -o "Executing in [A-Z0-9]* mode" "$OUT/last.stderr" | head -1); need "$rc" "청크 재현"
 log "재현(디스패처, $mode): rc=$rc"
 for b in $([ "${SKIP_BUILDS:-0}" = 1 ] || echo avx2 sse42); do
   [ -x "$BWA_DIR/bwa-mem2.$b" ] || continue
   log "같은 청크, bwa-mem2.$b: rc=$(try "$BWA_DIR/bwa-mem2.$b" "$OUT/chunk_R1.fq" "$OUT/chunk_R2.fq")"
 done
-if [ "$rc" -le 128 ]; then log "청크만으로는 재현 안 됨(rc=$rc) — 앞 청크들과의 상호작용이거나 비결정적. 이분법 생략"; exit 0; fi
+if [ "$rc" = 0 ]; then log "청크만으로는 재현 안 됨(rc=$rc) — 앞 청크들과의 상호작용이거나 비결정적. 이분법 생략"; exit 0; fi
 
 # 4) 이분법: [lo,hi) 페어 구간 중 죽는 쪽을 남긴다. 양쪽 다 안 죽으면 그 크기에서 멈추고 창을 남긴다
 sub() {   # sub <lo> <hi> -> $OUT/sub_R{1,2}.fq
@@ -71,10 +74,10 @@ sub() {   # sub <lo> <hi> -> $OUT/sub_R{1,2}.fq
 lo=0; hi=$NP; step=0
 while [ $((hi - lo)) -gt 1 ]; do
   step=$((step + 1)); mid=$(((lo + hi) / 2))
-  sub $lo $mid; r=$(try "$BIN" "$OUT/sub_R1.fq" "$OUT/sub_R2.fq")
-  if [ "$r" -gt 128 ]; then hi=$mid; log "step $step: [$lo,$mid) rc=$r → 여기"; continue; fi
-  sub $mid $hi; r2=$(try "$BIN" "$OUT/sub_R1.fq" "$OUT/sub_R2.fq")
-  if [ "$r2" -gt 128 ]; then lo=$mid; log "step $step: [$lo,$hi) rc=$r2 → 여기(앞쪽 rc=$r)"; continue; fi
+  sub $lo $mid; r=$(try "$BIN" "$OUT/sub_R1.fq" "$OUT/sub_R2.fq"); need "$r" "이분법 앞쪽"
+  if [ "$(kind "$r")" = crash ]; then hi=$mid; log "step $step: [$lo,$mid) rc=$r → 여기"; continue; fi
+  sub $mid $hi; r2=$(try "$BIN" "$OUT/sub_R1.fq" "$OUT/sub_R2.fq"); need "$r2" "이분법 뒤쪽"
+  if [ "$(kind "$r2")" = crash ]; then lo=$mid; log "step $step: [$lo,$hi) rc=$r2 → 여기(앞쪽 rc=$r)"; continue; fi
   log "step $step: 두 반쪽 다 안 죽음(rc=$r/$r2) — 창 [$lo,$hi) ($((hi - lo)) 페어)에서 멈춘다. 리드 조합이 필요한 버그"; break
 done
 sub $lo $hi; cp "$OUT/sub_R1.fq" "$OUT/min_R1.fq"; cp "$OUT/sub_R2.fq" "$OUT/min_R2.fq"
@@ -92,9 +95,8 @@ W=$((hi - lo))
 for m in 1 2; do
   awk -v m=$m 'NR%4==1{n=$1} NR%4==2{L=length($0); x=$0; bad=gsub(/[^ACGTN]/,"",x); y=$0; nn=gsub(/N/,"",y);
      best=0; run=1; for(i=2;i<=L;i++){ if(substr($0,i,1)==substr($0,i-1,1)){run++; if(run>best)best=run}else run=1 }
-     if(bad>0 || nn>10 || best>=40 || L<70) printf "R%s %s len=%d nonACGTN=%d N=%d homopolymer=%d
-", m, n, L, bad, nn, best}' "$OUT/min_R$m.fq"
-done > "$OUT/anomalies.txt"
+     if(bad>0 || nn>10 || best>=40 || L<70) printf "R%s %s len=%d nonACGTN=%d N=%d homopolymer=%d\n", m, n, L, bad, nn, best}' "$OUT/min_R$m.fq"
+done > "$OUT/anomalies.txt" || { log "ERROR: 이상 리드 훑기(awk) 실패 — 결과를 쓰지 않는다"; exit 3; }
 log "이상 리드 후보 $(wc -l < "$OUT/anomalies.txt")건 (ACGTN 밖 문자·N>10·단일염기 반복≥40·길이<70) — anomalies.txt"
 head -5 "$OUT/anomalies.txt" | while read -r l; do log "  $l"; done
 
@@ -105,8 +107,8 @@ without() {
 B=$(((W + 19) / 20)); cand=""
 for ((b0 = 0; b0 < W; b0 += B)); do
   b1=$((b0 + B)); [ $b1 -gt $W ] && b1=$W
-  without $b0 $b1 "$OUT/min"; r=$(try "$BIN" "$OUT/sub_R1.fq" "$OUT/sub_R2.fq")
-  log "블록 [$b0,$b1) 빼면 rc=$r"; [ "$r" -le 128 ] && cand="$cand $b0:$b1"
+  without $b0 $b1 "$OUT/min"; r=$(try "$BIN" "$OUT/sub_R1.fq" "$OUT/sub_R2.fq"); need "$r" "블록 빼기"
+  log "블록 [$b0,$b1) 빼면 rc=$r"; [ "$r" = 0 ] && cand="$cand $b0:$b1"
 done
 [ -z "$cand" ] && { log "어느 블록을 빼도 죽는다 — 원인 리드가 여럿이거나 창 전체 배치 문제. 여기서 멈춤"; log "DONE"; exit 0; }
 nc=$(echo $cand | wc -w)
@@ -115,8 +117,8 @@ one=""
 for c in $cand; do
   b0=${c%:*}; b1=${c#*:}
   for ((i = b0; i < b1; i++)); do
-    without $i $((i + 1)) "$OUT/min"; r=$(try "$BIN" "$OUT/sub_R1.fq" "$OUT/sub_R2.fq")
-    [ "$r" -le 128 ] && { one="$one $i"; log "  페어 $i (전체 $((START + lo + i))) 하나만 빼면 rc=$r"; }
+    without $i $((i + 1)) "$OUT/min"; r=$(try "$BIN" "$OUT/sub_R1.fq" "$OUT/sub_R2.fq"); need "$r" "한 쌍 빼기"
+    [ "$r" = 0 ] && { one="$one $i"; log "  페어 $i (전체 $((START + lo + i))) 하나만 빼면 rc=$r"; }
   done
 done
 [ -z "$one" ] && { log "한 쌍만 빼서 안 죽는 쌍은 없다"; log "DONE"; exit 0; }
@@ -125,9 +127,9 @@ done
 FULL=${FULL_R1:+${FULL_R1%_R1.fq}}; FULL=${FULL:-$OUT/chunk}; FULL_START=${FULL_START:-$START}   # FULL 첫 페어의 전체 기준 번호
 for i in $one; do
   g=$((START + lo + i - FULL_START))   # FULL 안 위치
-  without $g $((g + 1)) "$FULL"; r=$(try "$BIN" "$OUT/sub_R1.fq" "$OUT/sub_R2.fq")
+  without $g $((g + 1)) "$FULL"; r=$(try "$BIN" "$OUT/sub_R1.fq" "$OUT/sub_R2.fq"); need "$r" "큰 청크 확인"
   n1=$(sed -n "$((i * 4 + 1))p" "$OUT/min_R1.fq"); s1=$(sed -n "$((i * 4 + 2))p" "$OUT/min_R1.fq"); s2=$(sed -n "$((i * 4 + 2))p" "$OUT/min_R2.fq")
-  log "확인: 큰 청크($(($(wc -l < "${FULL}_R1.fq") / 4)) 페어)에서 페어 $i 만 빼면 rc=$r $([ "$r" -le 128 ] && echo '→ 원인 후보 확정' || echo '→ 여전히 죽음, 배치 우연')"
+  log "확인: 큰 청크($(($(wc -l < "${FULL}_R1.fq") / 4)) 페어)에서 페어 $i 만 빼면 rc=$r $([ "$r" = 0 ] && echo '→ 원인 후보 확정' || echo '→ 여전히 죽음, 배치 우연')"
   log "  $n1 R1 len=${#s1} $s1"; log "  R2 len=${#s2} $s2"
 done
 rm -f "$OUT/sub_R1.fq" "$OUT/sub_R2.fq"
