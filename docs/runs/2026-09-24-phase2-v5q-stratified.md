@@ -27,3 +27,19 @@ BENCH_TRUTH_VER=v5.0q bash phase2_ont/scripts/60_benchmark.sh --collect-strata  
 비용은 무시할 만하다(PacBio 의 25층 층화는 아직 실측 전).
 
 Codex 리뷰는 사용량 한도(2026-09-24 02:48 재개)로 #43 코드 PR 에서 못 받았다. 이 결과 PR 에서도 같다.
+
+## R9 두 런 (같은 날, 로그인 한 번)
+
+```bash
+for d in HG002.guppy-V3.4.5 HG002.UCSC_Ultralong_OxfordNanopore_Promethion; do
+  BENCH_TRUTH_VER=v5.0q BENCH_STRAT_TSV="$INFRA/reference/v5q_strata/strata.tsv" \
+    bash phase2_ont/scripts/60_benchmark.sh "$d"
+done
+#   156642 (guppy-V3.4.5), 156643 (UCSC) — 대기 23분 뒤 수집
+#   156643: exit 0, ru_wallclock 1293s, maxvmem 25.058GB
+#   156642: 수집 시점에 qacct 가 비어 있었다(회계 기록 지연). 층 행은 나왔다
+BENCH_TRUTH_VER=v5.0q bash phase2_ont/scripts/60_benchmark.sh --collect-strata   # 48 rows (R10 포함)
+```
+
+층은 R10 채점 때 만든 `$INFRA/reference/v5q_strata/` 를 그대로 썼다(같은 HG002 BED). 해석은
+[reference §6](../reference/2026-09-24-ont-r10-v5q-stratified.md#6-r9-두-런을-같은-층으로--옛-베이스콜러는-어려운-영역에서-더-무너진다).
