@@ -9,7 +9,7 @@
   2026-08-21 정책이 "GIAB 처리 무시하고 raw부터 전부 재실행"이고, GIAB 산출물 내역은
   giab_processed 열과 notes에 남아 있어서 정보 손실이 없다.
   (aligned_bam 진입 행은 내가 정렬한 게 아니므로 정렬 칸은 GIAB 그대로 둔다)
-- 마지막에 catalog/build_readme.py를 돌려 README.md 표를 재생성
+- 마지막에 catalog/build_readme.py + build_xlsx.py를 돌려 README 표와 엑셀을 재생성
 
 사용 (nbb2, repo 루트 어디서든):
   python phase1_pacbio_hifi/scripts/50_update_catalog.py [--run-base ...] [--dry-run]
@@ -209,7 +209,11 @@ def main():
     with open(CATALOG, "w", encoding="utf-8", newline="\n") as fh:
         fh.write("\n".join("\t".join(r) for r in rows) + "\n")
     subprocess.run([sys.executable, str(REPO / "catalog" / "build_readme.py")], check=True)
-    print(f"{len(updated)}개 행 갱신 + README 표 재생성 완료. git diff 확인 후 커밋할 것.")
+    # 엑셀도 같은 TSV 에서 나온다. 여기서 안 돌리면 TSV·README 만 앞서가고 xlsx 가 조용히
+    # 뒤처진다 — 2026-09-23 에 실제로 25행만큼 벌어져 있었다. --version/--date 를 주지 않으면
+    # 버전 문구는 그대로 두고 Master Catalog 시트만 재생성한다.
+    subprocess.run([sys.executable, str(REPO / "catalog" / "build_xlsx.py")], check=True)
+    print(f"{len(updated)}개 행 갱신 + README 표 + 엑셀 재생성 완료. git diff 확인 후 커밋할 것.")
 
 
 if __name__ == "__main__":

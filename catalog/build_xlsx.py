@@ -5,6 +5,7 @@
 Overview·Master Catalog의 버전/집계 문구만 --version 으로 갱신한다.
 
     python catalog/build_xlsx.py --version 0916 --date 2026-09-16 [--note "..."]
+    python catalog/build_xlsx.py            # 버전 문구는 그대로, 시트만 재생성
 """
 import argparse, csv, os, sys
 from copy import copy
@@ -14,7 +15,12 @@ HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
 TSV = os.path.join(HERE, 'master_catalog.tsv'); XLSX = os.path.join(ROOT, 'GIAB_HG_Catalog.xlsx')
 HEADER_ROW = 4  # row1 제목, row2 원본/집계, row3 빈줄, row4 헤더, row5~ 데이터
 
-ap = argparse.ArgumentParser(); ap.add_argument('--version', required=True); ap.add_argument('--date', required=True)
+ap = argparse.ArgumentParser()
+# 2026-09-23: required 였는데 선택으로 바꿨다. 처리 상태 갱신(50_update_catalog.py)은
+# 카탈로그 판번호를 올릴 이유가 없는데, required 라 그쪽에서 이 스크립트를 못 부르고
+# 결과적으로 TSV·README 만 앞서가고 엑셀이 조용히 뒤처졌다(실제로 25행 벌어졌다).
+# 둘 다 없으면 버전 문구는 그대로 두고 Master Catalog 시트와 집계만 재생성한다.
+ap.add_argument('--version'); ap.add_argument('--date')
 ap.add_argument('--note', default='', help='Overview 마지막 줄(※)에 덧붙일 한 문장'); ap.add_argument('--out', default=XLSX)
 ap.add_argument('--matrix-note', default='', help="'Platform Matrix' 비고에 추가할 한 줄('· '로 시작). 같은 문장이 이미 있으면 건너뜀")
 ap.add_argument('--crawl-date', default='2026-09-16', help='FTP 라이브 크롤을 돌린 날짜. 카탈로그 버전 날짜(--date)와 다르다')
@@ -49,13 +55,14 @@ for tbl in ws.tables.values():  # 표(MasterCatalogTable) 범위를 새 행 수�
     tbl.ref = f'A{HEADER_ROW}:{last_col}{last_row}'
 if ws.auto_filter.ref:
     ws.auto_filter.ref = f'A{HEADER_ROW}:{last_col}{last_row}'
-ws['A1'] = f'GIAB Master Catalog — v{a.version}'
+if a.version:
+    ws['A1'] = f'GIAB Master Catalog — v{a.version}'
 ws['A2'] = f'원본: catalog/master_catalog.tsv · {len(rows)} datasets · {n_files:,} files · {tib:.1f} TiB · 플랫폼·리드·tool·next_step을 원문 그대로 보존'
 
 ov = wb['Overview']
 for row in ov.iter_rows(min_row=1, max_row=ov.max_row):
     c = row[0]; v = str(c.value or '')
-    if v.startswith('카탈로그 버전'):
+    if v.startswith('카탈로그 버전') and a.version and a.date:
         c.value = (f'카탈로그 버전 {a.version} ({a.date}) · 기존 파일 목록 검증 2026-08-13 '
                    f'+ FTP 라이브 크롤 {a.crawl_date} (release·data) · 출처: NIST GIAB / master_catalog.tsv')
     elif v.startswith("· 'Master Catalog'"):
@@ -80,4 +87,5 @@ for label, url in a.link:
             src = al.cell(r - 1, col); c = al.cell(r, col)
             c.font, c.alignment = copy(src.font), copy(src.alignment)
 wb.save(a.out)
-print(f'{a.out}: Master Catalog {len(rows)} rows (was {old_n}), {n_files:,} files, {tib:.1f} TiB, v{a.version}')
+print(f'{a.out}: Master Catalog {len(rows)} rows (was {old_n}), {n_files:,} files, {tib:.1f} TiB'
+      + (f', v{a.version}' if a.version else ' (버전 문구 유지)'))
