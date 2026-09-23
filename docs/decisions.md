@@ -17,6 +17,13 @@
   `release_stale_ftp_removed`(FTP에서 삭제됨)는 파일명 분기에 걸려 `./download.sh declined_by_decision`이 성립했고,
   둘 다 3열이라 크기 비교가 전건 실패해 10.7 TiB를 받고도 전부 MISMATCH로 찍힐 수 있었다. 이름을 거부하도록 했다.
 
+## 2026-09-23 — fetch_all.sh의 완료 판정은 퍼센트가 아니라 파일 수이고, 검증 로그는 격리한다
+
+- `verify.sh`의 `(100.0%)`는 바이트 기준 소수 1자리다. 0바이트 파일이 빠져도, 0.05% 미만이 빠져도 100.0%로 찍힌다. 진입점의 완료 판정은 `TOTAL` 줄의 `done == total`(파일 수) + 검증기 rc 0으로 한다.
+- `run_priority.sh`가 카테고리마다 `TOTAL`을 찍으므로 사후 검증 출력을 같은 로그에 붙이면 마지막 카테고리의 TOTAL을 전체로 오판한다. 검증은 `phase0.verify.log`로 격리하고 그 파일만 읽는다.
+- 다운로드 뒤 검증 범위는 무조건 `all`. `PHASE0_VERIFY_CAT`은 `VERIFY_ONLY=1` 스모크 전용이다.
+- 근거·스모크: [runs/2026-09-23-fetch-all-completion-policy.md](runs/2026-09-23-fetch-all-completion-policy.md). Codex 리뷰 #37 1·2라운드 지적을 그대로 받아들인 결정이다.
+
 ## 2026-09-22 — 다운로드 목록의 기준은 서버 디스크 실측이고, FTP에서 사라진 파일은 지우지 않는다
 
 - **"무엇을 받았나"의 정본은 매니페스트가 아니라 디스크다.** 세 세션이 각자 받은 것을 한 목록으로 맞출 때, 매니페스트를 서로 믿는 대신 nbb2 `/BiO/scratch/ehojune/GIAB_benchmark`를 전수 실측해 네 매니페스트 합집합과 파일·바이트 단위로 대조했다. 결과 81,330/81,330 일치, 매니페스트 밖 데이터 0 — 즉 지금은 매니페스트 = 디스크다. 앞으로 새 데이터를 들일 때는 그 phase의 매니페스트(`sra_manifest.tsv`/`ext_manifest.tsv`)에 먼저 넣고 받는다. 기록: [runs/2026-09-22-disk-vs-manifest-reconciliation.md](runs/2026-09-22-disk-vs-manifest-reconciliation.md).
@@ -915,6 +922,30 @@ Codex 리뷰 지적(PR #36): 입력 트리 감사와 MGISEQ 실패 진단이 `qa
 가능성을 가리킨다. 156584가 같은 자원·같은 청크 크기(`-K 100000000`)로 도는 이상 결정적 버그면
 비슷한 지점에서 또 죽을 것이고, 그게 가장 싼 재현성 검사다 — 그때 가서 해당 구간 리드를
 직접 뽑는다(87~91GB gzip이라 그 지점까지 순차 압축 해제에만 10~20분 걸려 미리 할 이유가 없다).
+
+## 2026-09-23 — [PacBio 세션] #9 somatic 은 bioinfo-agent 위에 짓고 고정 vendor 한다
+
+- **방법 B(somatic caller 추가)** 는 사용자 결정(2026-09-22)이다. 조건 둘 — 다른 데이터와 같은
+  처리는 그대로 하고, repo 정합성을 먼저 맞출 것 — 과 "가능하면 bioinfo-agent 위에" 라는 요청이 있었다.
+- **bioinfo-agent 에 짓는다.** 두 사본은 process 24/25 가 같고 차이는 한 방향씩 하나다(GIAB 의 `run_label`,
+  bioinfo-agent 의 CLR 진입 등 5커밋). 여기서 somatic 을 따로 키우면 갈라진 사본이 셋이 된다.
+  자문 둘(gpt-5.6-sol, gemini-3.8-flash-high, 서로 못 보게)이 같은 결론이었다 — bioinfo-agent 에 넣고
+  고정 커밋을 vendor, 0단계로 sync. gpt-6-astra 는 한도로 못 물었다.
+- **submodule·원격 참조는 안 쓴다.** 계산 노드에 네트워크가 없고, 파이프라인 사본이 바뀌면 47런의
+  `-resume` 캐시 해석이 달라진다. 커밋 해시를 `VENDORED.md` 에 적고 사본을 통째로 교체한다.
+- **실행은 이 세션이 하지 않고 위임한다** (사용자 지시). 프롬프트는 [runs/2026-09-23-bioinfo-agent-somatic-handoff.md](runs/2026-09-23-bioinfo-agent-somatic-handoff.md).
+
+## 2026-09-23 — [PacBio 세션] 구간별 hap.py 는 GIAB 층화 188개 중 25개만 쓴다
+
+- 중간 보고서의 열린 질문 둘(Sequel I INDEL 격차 원인, Revio 에서 Clair3 가 지는 위치)은 BED 전체
+  한 덩어리 점수로는 답이 안 나온다. 그래서 `60_benchmark.sh STRAT=1` 을 만들었다.
+- **전부(188) 대신 25개.** 절반(90)이 샘플별 GenomeSpecific 이라 HG002 런이 HG001~HG007 의 구간까지
+  세게 된다. 층화 수만큼 hap.py 메모리·시간이 늘고, 그 계수는 아직 실측이 없다. 질문에 필요한 것 —
+  호모폴리머 길이 구간, 반복·저매핑·segdup, 쉬운 영역(notin*), MHC·KIR·VDJ, 코딩, chrX nonPAR — 만 골랐다.
+  4~6bp 호모폴리머는 뺐다: 구간 수가 가장 많은데 HiFi 가 약한 길이가 아니다. `BENCH_STRAT_SET=all` 로 전부 돌릴 수 있다.
+- **판은 v3.6** — 디스크에 있는 최신(v2.0~v3.6 보유). 판을 바꾸면 `BENCH_STRAT_VER` 한 줄이다.
+- **기본 결과를 덮지 않는다** — `05_BENCH/happy_strat/` 에 따로 두고, `Subset=*` 행이 기본 실행과
+  TP/FN/FP 까지 같은지 `--collect` 가 대조한다. 같지 않으면 두 실행의 입력이 어긋난 것이다.
 
 ## 2026-09-23 — [숏리드 세션] phase3 2차 입력: 나머지 숏리드 WGS 전부를 새 set으로
 

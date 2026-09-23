@@ -31,25 +31,43 @@ HG008 NIST 만 없었다 — 의도적 제외가 아니라 누락이다. 생성�
 **germline truth 가 없어 `60_benchmark.sh`·`61_benchmark_sv.sh` 가 자동으로 건너뛴다.**
 채점은 #9 가 서야 가능하고, 그전까지는 QC(`35_review_qc.py`)까지만 본다.
 
-## #9 상세 — somatic 평가에서 먼저 정해야 할 것
+## #9 상세 — somatic 평가: 방법 B 결정 (2026-09-22)
 
 **germline caller 출력을 somatic truth 에 그냥 대면 안 된다.** 우리 파이프라인이 HG008-T 에서
 내는 것은 DeepVariant/Clair3 의 **전체 변이**(germline + somatic)인데, GIAB somatic 벤치마크는
 **종양 특이 변이만** 담는다. 그대로 비교하면 germline 변이가 전부 FP 가 되어 precision 이 무너진다.
 
-갈 수 있는 길 셋:
-
-| | 방법 | 문제 |
+| | 방법 | 판정 |
 |---|---|---|
-| A | tumor − normal 뺄셈 | 거칠다. somatic 은 subclonal(저 VAF)이 많은데 germline caller 가 그걸 잘 못 부른다 |
-| B | somatic caller 추가 (DeepSomatic 등, PacBio 지원) | 파이프라인 확장이 필요하다. 가장 정공법 |
-| C | 채점 포기, somatic 구간을 QC·커버리지 확인에만 사용 | 안전하지만 얻는 게 적다 |
+| A | tumor − normal 뺄셈 | 기각 — subclonal(저 VAF) 을 germline caller 가 못 부른다 |
+| **B** | **somatic caller 추가** (DeepSomatic 등) | **채택** (사용자 결정). 조건: 다른 데이터와 같은 처리는 그대로 하고, repo 정합성부터 맞춘다 |
+| C | 채점 포기, QC 만 | 기각 |
 
-**매칭 정상(normal)이 또 하나의 걸림돌이다.** 매니페스트 실측으로 NIST 트리에는 tumor 만 있고
-정상은 Liss_lab 쪽뿐이다(HG008-N-D, HG008-N-P). 즉 NIST 클론 9건의 짝을 맞추려면 **다른 랩·다른
-준비의 정상**을 써야 해서, 랩 차이가 somatic 판정에 섞인다.
+**구현은 bioinfo-agent 위에 얹는다.** 위임 프롬프트: [runs/2026-09-23-bioinfo-agent-somatic-handoff.md](runs/2026-09-23-bioinfo-agent-somatic-handoff.md).
+0단계로 vendor 사본과 diff 0 을 맞추고(`run_label` 역병합), 1단계로 somatic SNV/INDEL. 우리는
+커밋 해시를 받아 고정 vendor 한다(계산 노드에 네트워크가 없어 submodule·원격 참조는 못 쓴다).
+**GPU 가 없다**(`qhost -F gpu` 무응답) — CPU 경로. 쌍 11개를 CPU 로 2주 넘게 걸리면 외부 H100 요청.
 
-이 셋 중 무엇으로 갈지는 사용자 결정이 필요하다 — #8 산출물이 나오기 전에도 정할 수 있다.
+### 서버에서 확인한 설계 사실 (2026-09-23)
+
+**matched pair 가 이미 둘 있다.** 앞서 "정상은 Liss_lab 쪽뿐이라 다른 랩의 정상을 써야 한다"고
+적었는데, Liss_lab 트리 안에 짝이 이미 있다.
+
+| tumor | normal | 비고 |
+|---|---|---|
+| HG008-T.BCM_Revio_20240313 | HG008-N-D.BCM_Revio_20240313 | 이름상 같은 센터·같은 날짜 — 1순위 |
+| HG008-T.PacBio_Revio_20240125 | HG008-N-P.PacBio_Revio_20240125 | 같은 센터 |
+| NIST HG008T-p100 + 클론 8개 | (없음) → HG008-N-D 차용 | NIST 도 BCM Revio 라 센터는 같다. 배치·준비는 다르다 |
+
+**truth 가 무엇을 담는지가 채점 해석을 가른다.** smvar DraftBenchmark V0.3-20260425 README:
+
+- **0823p23 배치 bulk 의 truncal/clonal 변이만** 담는다. 클론은 truncal 변이를 공유하므로 recall 은
+  해석되지만 클론 고유 변이는 FP 로 잡혀 **precision 은 해석할 수 없다.** p100(100계대)도 같다.
+- 권장 VCF `*_tumorvariants.vcf.gz`, BED 는 `_all.bed`(어려운 것 포함) 또는 `_nogermlineinterference.bed`.
+  BED 셋은 디렉토리에 풀려 있지 않고 같은 폴더의 zip 안에만 있다(`unzip -l` 확인, all 1.0 MB · nogermlineinterference 1.1 MB · nogermlinewithin50bp 80.8 MB).
+- 권장 비교 도구는 **aardvark**(PacBio). rtg vcfeval·hap.py 도 시험됐다고 한다.
+- VAF 5~10% 미만은 걸러서 비교하라고 권한다 — caller 출력에 VAF 가 남아야 한다.
+- SV/CNV 는 stvar-CNV V0.5-20260318. HG009 는 somatic truth 가 아직 없다.
 
 ## 표준화 백로그 (#10)
 
@@ -73,16 +91,24 @@ HG008 NIST 만 없었다 — 의도적 제외가 아니라 누락이다. 생성�
 | `35_review_qc.py --check-meth` | ✗ | ✅ | — |
 | `excluded.tsv` 기구 | ✗ | ✅ | — |
 | `run_table.tsv` 의 `files` 열 | ✗ | ✅ | — |
-| `62_tstv_regions.sh` (ts/tv 구간 분할) | ✗ | ✅ | — |
+| `62_tstv_regions.sh` (ts/tv 구간 분할) | ✅ (09-23 이식) | ✅ | — |
+| `60_benchmark.sh STRAT=1` (구간별 hap.py) | ✅ | ✗ | — |
+| `qsub_task.sh` (로그인 노드용 점검을 잡으로) | ✅ | ✗ | — |
 | phase1·2 와 같은 `env.sh`/`lib.sh`/번호 스크립트 구조 | — | — | ✗ |
 
-**phase1 이 가져와야 할 것 8개**(phase2 에 있고 phase1 에 없음). 급하지 않지만, 가져올 때는
+**phase1 이 가져와야 할 것 7개**(phase2 에 있고 phase1 에 없음). 거꾸로 phase1 에만 있는 것 2개는 ONT 세션이 필요할 때 가져간다.
+**ONT 세션 몫 둘** (PR #38 Codex 지적, phase1 판은 고쳤다 — `phase2_ont/scripts/62_tstv_regions.sh`):
+1. **INDEL 수가 안·밖에 이중으로 세어질 수 있다.** bcftools 기본값이 `-R` 은 레코드 겹침, `-T` 는 POS 라서
+   구간 경계에 걸친 결실이 양쪽에 들어간다. SNP·ts/tv 는 영향이 없고(길이 1) 대조도 그 셋만 봐서 통과했다.
+   phase1 판처럼 `--regions-overlap pos` / `--targets-overlap pos` + INDEL 합 대조. reference 문서의 INDEL 열을 다시 볼 것.
+2. `bt()` 가 `GIAB_ROOT` 만 바인드 — `RUN_BASE` 를 그 밖에 두면 VCF 가 안 보인다. 기본 경로에서는 문제없다. 급하지 않지만, 가져올 때는
 phase2 판을 그대로 이식하고 달라지는 부분만 주석에 적는다 — 두 phase 스크립트가 같은 모양인 것이
 지금까지 여러 번 교훈을 한쪽에서 다른 쪽으로 바로 옮길 수 있게 해 줬다.
 
-`62_tstv_regions.sh` 는 phase1 에도 쓸모가 있다. phase1 의 SNP 는 포화(F1 .9984~.9994)라
-ts/tv 로 더 캘 게 없어 보이지만, 구간 안/밖을 갈라 보면 Sequel I 의 INDEL 이 나쁜 이유가
-구간 밖 FP 때문인지 확인할 수 있다 — 지금은 미확인으로 남아 있다.
+`62_tstv_regions.sh` 를 phase1 에 이식했다(09-23). 앞에 "Sequel I INDEL 이 나쁜 이유가 구간 밖 FP
+때문인지 확인할 수 있다"고 적었는데 틀린 기대였다 — ts/tv 는 SNP 지표이고, hap.py 의 FP 는 정의상
+구간 **안** 에서만 센다. 그 질문은 구간별 hap.py(`STRAT=1`)가 맡는다. ts/tv 구간 밖 값은 truth 없는
+영역의 품질을 ONT 와 나란히 보는 용도다.
 
 ## 문서 수치 불일치 (다운로드 세션 몫, 2026-09-23 확인 시점 미해결)
 

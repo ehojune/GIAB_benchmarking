@@ -14,7 +14,7 @@
 
 잡이 끝나거나 결정이 바뀌면 **여기부터** 고친다. 고친 내용은 맨 아래 `## 이력` 에 한 줄.
 
-갱신: 2026-09-23 (숏리드 세션, nbb2 재확인)
+갱신: 2026-09-23 밤 (PacBio 세션)
 
 ## 한눈에 보기 (nbb2 로그인 노드)
 
@@ -32,12 +32,13 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 | 4 | **phase2 ONT HG002 R10.4.1** (PR #17, ONT open data 플로우셀 1개) | **완료** — 파이프라인·채점 전부 | 155279, shepherd-1-8, 30 slots, **16h20m(58,791s) / maxvmem 66.2 GB**. `30_verify_outputs.sh` OK 1/1 | **채점까지 완료** — hap.py 156047(50.7분) + Truvari 156053(4.5분) 둘 다 exit 0. 수치: [2026-09-22-ont-r10-benchmark.md](reference/2026-09-22-ont-r10-benchmark.md) | 없음 |
 | 5 | **phase1 PacBio HiFi hap.py 평가** (`b1.*`, HG001~HG007) | **완료** — 19/19 exit 0 | 155355~155373, 16 slots, 56~83분, maxvmem 48.4~48.8 GB | 수치·판정: [2026-09-22-pacbio-hifi-benchmark-first-results.md](reference/2026-09-22-pacbio-hifi-benchmark-first-results.md) | — |
 | 5b | **phase1 PacBio SV 평가** (`s1.*`, Truvari vs v5.0q, HG002 5런) | **완료** — refine F1 .8208~.8418. **세대 단조성 없음**(SeqI 이 SeqII 를 가른다), recall 이 약점(.757~.788) | 156048~156052, `-t 8`, exit 0 | 수치·판정: [2026-09-22-pacbio-hifi-benchmark-first-results.md](reference/2026-09-22-pacbio-hifi-benchmark-first-results.md) | — |
+| 5c | **phase1 구간별 hap.py** (`STRAT=1`, GIAB strat v3.6 에서 25구간, HG001~HG007 19런) — 중간 보고서의 열린 질문 둘(Sequel I INDEL 격차 원인, Revio Clair3 열세 위치)용 | **시험 1잡 qw** (HG002 Revio, 09-23 22:05) | 156590 `b2.*`, 32 slots / 16 threads. shepherd-1-8 이 SC28 + ONT 156587 로 60/64 라 SC28 뒤에 뜬다 | 시험 잡 maxvmem 보고 슬롯 정한 뒤 나머지 18런 → `STRAT=1 --collect` (Subset=* 가 기본 실행과 같은지 대조) | — |
 | 6 | phase3 Hiseq-subsampled-30x | **완료** (Success) | — | #7에 포함 | — |
 | 7 | **phase3 평가 설계** — 업체 4곳(gd1~4) + 공개 raw 22 샘플의 VCF를 v4.2.1(+HG002 CMRG·v5.0q)로 hap.py | 미착수 | — | 결과 디렉토리 구조 받으면 phase1·2 `60_benchmark.sh` 모양으로 스크립트 | #1·#3 완료 |
-| 8 | **phase1 HG008-T 9 실행단위** — uBAM → BAM → VCF ([상세](backlog.md#8-상세--phase1-hg008-t-9-실행단위-2026-09-22-등록-완료)) | **제출됨** 2026-09-22 17:23 — 2건 r / 7건 qw | 156064~156072, 30 slots. 허용 4노드 중 셋이 `regermline` 60슬롯에 잡혀 shepherd-1-8 만 빈다 | `30_verify_outputs.sh` → `35_review_qc.py`. 채점은 #9 가 서야 가능 | 런당 10~15시간 예상, 9건이면 2~3일 |
-| 9 | **HG008-T somatic 평가 설계** — germline truth가 없는 HG008/HG009를 채점할 유일한 길. **길 셋 중 무엇으로 갈지 사용자 결정이 필요하다** ([상세](backlog.md#9-상세--somatic-평가에서-먼저-정해야-할-것)) | **미착수** | — | smvar V0.3-20260425 / stvar-CNV V0.5-20260318 기준 `62_benchmark_somatic.sh` (가칭) | #8 (평가할 VCF가 먼저 있어야) |
-| 10 | **phase1↔phase2 표준화 잔여** — phase2 에 있고 phase1 에 없는 것 8개 ([상세](backlog.md#표준화-백로그-10)) | 부분 완료 | — | phase3까지 같은 모양으로 | 급하지 않음 |
-| 11 | **phase3 2차 입력 준비** — 1차 밖 숏리드 WGS 전부(HG001·HG005~HG009 + HG002 잔여 2) 53 샘플 / 20 set ([표](../phase3_shortread_wgs/README.md#2차-입력-2026-09-23--나머지-숏리드-전부)) | 스크립트 완료(로컬 테스트 통과), 서버 적용 전 | — | 링크·병합(qsub)·sampleinfo 행 추가 → 사용자가 set별로 국통바빅 실행. germline 11 set 먼저 권장 | 병합 약 11 TiB. somatic 9 set은 채점 경로(#9) 없음 |
+| 8 | **phase1 HG008-T 9 실행단위** — uBAM → BAM → VCF ([상세](backlog.md#8-상세--phase1-hg008-t-9-실행단위-2026-09-22-등록-완료)) | **8/9 완료** (전부 exit 0, wall 4.9~7.0h, maxvmem 49.4~58.3 GB). SC28 1건 실행 중(09-23 16:57~) | 156064~156072, 30 slots, 전부 shepherd-1-8 한 노드에서 2건씩 순차. 허용 4노드 중 셋은 숏리드 `regermline` 60슬롯이 잡고 있다 | 8건 `30_verify_outputs.sh` OK. SC28 뒤 QC 잡 156592(`qsub_task.sh`, hold)가 9건 verify + 전 런 `35_review_qc.py --pass-counts` + MultiQC 를 돈다. 같은 날 ts/tv 구간 분할 19런도 156591 로 제출. 채점은 #9 | 예상(10~15h)보다 빨랐다 |
+| 9 | **HG008-T somatic 평가** — germline truth가 없는 HG008/HG009를 채점할 유일한 길 ([상세](backlog.md#9-상세--somatic-평가-방법-b-결정-2026-09-22)) | **방법 B 결정**(somatic caller 추가). 구현은 bioinfo-agent 쪽에 위임 — 프롬프트 [runs/2026-09-23-bioinfo-agent-somatic-handoff.md](runs/2026-09-23-bioinfo-agent-somatic-handoff.md) | — | 받은 커밋을 재-vendor → 쌍 11개 제출 → smvar V0.3 기준 `62_benchmark_somatic.sh`(가칭) | bioinfo-agent 커밋 해시. CPU 로 2주를 넘기면 외부 H100 요청 |
+| 10 | **phase1↔phase2 표준화 잔여** — phase2 에 있고 phase1 에 없는 것 7개 ([상세](backlog.md#표준화-백로그-10)) | 부분 완료 — 09-23 `62_tstv_regions.sh` phase1 이식. 거꾸로 phase1 에만 있는 것 2개가 생겼다(`STRAT=1`, `qsub_task.sh`) | — | phase3까지 같은 모양으로 | 급하지 않음 |
+| 11 | **phase3 2차 입력 준비** — 1차 밖 숏리드 WGS 전부(HG001·HG005~HG009 + HG002 잔여 2) 53 샘플 / 20 set ([표](../phase3_shortread_wgs/README.md#2차-입력-2026-09-23--나머지-숏리드-전부)) | 스크립트 완료(로컬 테스트 통과), 서버 적용 전 | — | 링크·병합(qsub)·sampleinfo 행 추가 → 사용자가 set별로 국통바빅 실행. germline 11 set 먼저 권장 | 병합 약 11 TiB. somatic 9 set은 국통바빅으로 정렬·QC까지 — 채점은 #9(방법 B) 몫이고, 같은 배치 안 숏리드 T/N 쌍(BCM-2024·NYGC-2023 등)을 그 입력으로 쓸 수 있다 |
 
 ## 자잘한 정리 (급하지 않음)
 
@@ -48,6 +49,7 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 ## 이력
 
 - 2026-09-23 — [숏리드 세션] **2차 입력 준비**: 1차 밖 표준 숏리드 WGS 53 샘플을 20 set으로 배정(`make_more_samplesheets.py` → `more_run_table.tsv`), 03이 1차 set에 새 샘플을 넣으려 하면 멈추게 했다. 병합 동시 실행을 lock으로 막고(두 cat이 같은 .part에 쓰면 크기 검증을 통과한다), sampleinfo 행 자동 추가. HG009 성별을 phase1 BAM idxstats로 female 확정. WSL·Windows 로컬 테스트 25건 통과.
+- 2026-09-23 밤 — [PacBio 세션] #8 8/9 완료(exit 0, 4.9~7.0h — 예상 10~15h 의 절반). #9 는 방법 B 로 정해 bioinfo-agent 위임 프롬프트를 남겼다. 서버에서 확인한 설계 사실 셋: **HG008 matched pair 가 이미 둘 있다**(BCM↔BCM, PacBio↔PacBio — NIST 클론은 짝이 없어 BCM 정상을 빌린다), smvar V0.3 truth 는 **0823p23 배치의 truncal 변이만** 담아 클론·p100 은 recall 만 해석된다, README 권장 비교 도구는 aardvark. phase1 에 구간별 hap.py(`STRAT=1`)·ts/tv 구간 분할·`qsub_task.sh` 추가(PR #38).
 - 2026-09-23 — [숏리드 세션] 사용자 승인으로 MGISEQ HG002 재생성 재제출(155525 실패 → 156584, 동일 자원). 국통바빅 본 파이프라인만 사용자 전용 실행이고 이런 복구 스크립트 qsub는 에이전트가 해도 된다고 확인받음. 옛 이름 중복 디렉토리(`GIAB_publicData_Hiseq_subsampled_30x`, 링크뿐)도 삭제.
 - 2026-09-23 — [숏리드 세션] 사용자가 이 세션을 phase3 전담으로 지정, 파이프라인 입력 트리를 전수 재점검했다. **8개 세트 22개 샘플 디렉토리 전부 규약 준수**(NovaseqX-30x 는 HG002 뿐, 나머지 7세트는 트리오 — 3×7+1=22, #7 행의 "22 샘플"과 일치) — `_1`/`_2.fastq.gz` 정확히 1개씩, mate 접미 외 밑줄 0건, 완료 세트(Hiseq-subsampled-30x·Novaseq6000·NovaseqX)의 산출물(CRAM·gvcf 등)도 같은 이름 규칙을 따른다. 점검 중 **STATUS 의 실수를 하나 찾았다** — #2(MGISEQ HG002 BAM 재생성, 155525)가 "running" 으로 남아 있었지만 실제로는 09-22 15:59 에 exit 1 로 이미 끝나 있었다(원인: [decisions.md](decisions.md) 참고, samtools view 파싱 에러). 표 #1·#2·#3 행 정정. 옛 이름 디렉토리 `GIAB_publicData_Hiseq_subsampled_30x` 는 여전히 남아 있음을 재확인(삭제는 사용자 승인 대기).
 - 2026-09-23 — **STATUS 를 현황판으로 되돌렸다.** 249줄 중 현황이 29줄(12%)이었고 나머지는 레퍼런스·백로그·끝난 인계장이었다. 가른 기준은 "에이전트용이냐"가 아니라 **다음 주에 거짓이 되는가**다 — 안 변하는 것(노드 스펙·`_infra` 자산·점검 명령)은 [reference/server-and-infra.md](reference/server-and-infra.md), 아직 안 한 일(#8·#9·#10 상세 + 다운로드 세션의 문서 수치 불일치 2건)은 [backlog.md](backlog.md) 로 옮겼다. 세션 조율 절 둘("지금 다른 세션이 하는 일"·"세션별 남은 최신화")은 **전부 해소돼 지웠다** — 규칙은 AGENTS.md 가, 내용은 이력과 PR 이 이미 갖고 있다. 이력은 사용자 요청대로 **맨 아래에 전부** 남겼다(14항목 그대로). STATUS 60줄.

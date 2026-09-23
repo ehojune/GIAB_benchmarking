@@ -2,7 +2,7 @@
 
 GIAB 원시 데이터 + truth set을 nbb2로 받는 단계. 대상 목록은 `manifests/`가 전부다.
 **2026-09-18 전량 완료** — 81,302/81,302 files, 116,509.5 GiB (100.0%). **2026-09-22 서버 전수 실측**으로 재확인: 외부 3경로(ENA 12·ONT 4·Google/HPRC 12)까지 합쳐 81,330 files 전부 크기 일치, 미수신 0 — [대조 기록](../docs/runs/2026-09-22-disk-vs-manifest-reconciliation.md). 기록: [docs/runs/2026-09-18-phase0-download-complete.md](../docs/runs/2026-09-18-phase0-download-complete.md).
-**총 81,302 files / 125.1 TB** (2026-08-13 S3 목록 + `current.tree` 기반 HEAD 검증 → 2026-09-16 FTP `release/`·`data/` 라이브 크롤로 재대조. 아래 [release/ 갱신](#release-갱신-2026-09-16), [data/ 갱신](#data-갱신-2026-09-16)). 2026-09-17에 받지 않기로 한 3건(12,423 files / 10.7 TiB)은 미포함 — [manifests/declined_by_decision.tsv](manifests/declined_by_decision.tsv).
+**GIAB FTP/S3 본체: 81,302 files / 125.1 TB** — 이 폴더의 `manifests/`가 받는 범위. 외부 3경로(ENA 12 · ONT 4 · Google/HPRC 12 = 28 files, 0.77 TiB)를 합친 4경로 전체는 **81,330 files**이고 `fetch_all.sh`가 그 단위로 받는다. (2026-08-13 S3 목록 + `current.tree` 기반 HEAD 검증 → 2026-09-16 FTP `release/`·`data/` 라이브 크롤로 재대조. 아래 [release/ 갱신](#release-갱신-2026-09-16), [data/ 갱신](#data-갱신-2026-09-16)). 2026-09-17에 받지 않기로 한 3건(12,423 files / 10.7 TiB)은 미포함 — [manifests/declined_by_decision.tsv](manifests/declined_by_decision.tsv).
 
 데이터셋별 처리 현황은 저장소 루트 [README.md](../README.md)의 master table 참고.
 
