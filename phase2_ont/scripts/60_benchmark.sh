@@ -16,14 +16,14 @@
 # 1. **caller를 런마다 정한다.** phase1은 전 런이 DeepVariant+Clair3였지만 ONT는 R9.4.1에
 #    DeepVariant ONT 모델이 없어 Clair3 단독으로 돈다. run_table.tsv의 dv_model 열이 '-'면
 #    clair3만, 아니면 둘 다 평가한다 (10_submit.sh·35_review_qc.py와 같은 판정 축).
-# 2. **실제 평가 대상은 R9 8런뿐이고 전부 Clair3 단독이다.** germline truth(v4.2.1)가 있는 건
-#    HG001~HG007인데 phase2에서 그 샘플들은 전부 R9이다. DeepVariant가 도는 R10 6런은 전부
-#    HG008이고 HG008에는 germline truth가 없다 (매니페스트의 HG008 draft benchmark는
-#    somatic-stvar/CNV뿐이라 단일 샘플 germline VCF 평가에 못 쓴다).
-#    → **phase2에서 DeepVariant는 벤치마크되지 않는다.** 스크립트는 dv_model을 보고 자동으로
-#    처리하므로, 나중에 HG008 germline truth가 생기면 코드 수정 없이 DV까지 평가된다.
-# 3. 남은 열린 질문(전 런 ts/tv가 2.0~2.1보다 낮음, docs/reference/2026-08-27-ont-qc-first-pass.md)은
-#    이 단계로 R9 8런까지만 답이 나온다. R10의 낮은 ts/tv(1.65~1.73)는 여전히 미해결로 남는다.
+# 2. **평가 대상은 9런** — HG001~HG007 의 R9 8런(Clair3 단독) + HG002 R10 1런(Clair3+DV).
+#    처음엔 R9 8런뿐이라 "phase2 에서 DeepVariant 는 벤치마크되지 않는다" 고 적었다 — truth 있는
+#    샘플은 전부 R9 이고 DV 가 도는 R10 은 전부 HG008(germline truth 없음)이라 겹치는 런이 없었다.
+#    2026-09-19 에 HG002 R10 을 외부에서 들여와 그 공백을 메웠고, 2026-09-22 에 **DV 가 처음
+#    채점됐다.** 코드 수정은 없었다 — 이 스크립트는 dv_model 열로 자동 판정한다.
+#    HG008 6런은 여전히 germline truth 가 없어 빠진다(draft benchmark 가 somatic-stvar/CNV 뿐이다).
+# 3. ts/tv 열린 질문(docs/reference/2026-08-27-ont-qc-first-pass.md)은 R9·R10 양쪽에서 닫혔다 —
+#    62_tstv_regions.sh 로 구간 안/밖을 직접 쟀다(구간 안 2.10~2.14, 밖 1.09~1.48).
 #
 # 왜 raw VCF를 넣는가 (phase1과 동일): hap.py는 FILTER를 자체 처리해 summary.csv에 ALL 행과
 # PASS 행을 둘 다 낸다. 파이프라인의 03_VCF/<caller>/*.vcf.gz는 RefCall을 포함하지만
