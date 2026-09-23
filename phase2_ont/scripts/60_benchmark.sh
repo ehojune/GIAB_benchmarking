@@ -32,7 +32,7 @@
 # **v5.0q — v4.2.1 밖을 truth 로 센다 (2026-09-23).** v4.2.1 구간 밖 콜은 truth 가 없어 ts/tv 같은
 # 간접 지표밖에 없었다(63_caller_diff_regions.sh). HG002 에는 T2T-Q100 유래 v5.0q smvar 가 있어 v4.2.1 이
 # 빼놓은 어려운 영역 상당 부분까지 truth 가 있다.
-#   python scripts/64_v5q_strata.py <v5.0q.bed> <v4.2.1.bed> <dir>     겹침 / v5.0q에만 두 층 BED + strata.tsv
+#   python scripts/64_v5q_strata.py <v5.0q.bed> <v4.2.1.bed> <dir>     겹침 / v5.0q에만 / 다른 염색체 층 + strata.tsv
 #   BENCH_TRUTH_VER=v5.0q BENCH_STRAT_TSV=<dir>/strata.tsv scripts/60_benchmark.sh <dsid>
 #   BENCH_TRUTH_VER=v5.0q scripts/60_benchmark.sh --collect-strata
 # **v5.0q 결과에서 v4.2.1 결과를 빼서 "밖" 을 구하지 않는다.** 두 truth 는 겹치는 구간에서도 다르므로
@@ -60,6 +60,14 @@ KEY=bench
 # v4.2.1 은 기존 값 그대로라 기본 실행의 잡 스크립트는 한 글자도 안 바뀐다.
 if [ "$BENCH_TRUTH_VER" != v4.2.1 ]; then
     BENCH_SUB="05_BENCH/happy_$BENCH_TRUTH_VER"; KEY="bench_$BENCH_TRUTH_VER"
+fi
+# 층화는 별도 판에서만. v4.2.1 과 같이 주면 층화 결과가 기본 채점 디렉토리(05_BENCH/happy)에 섞여
+# 들어가고, FORCE=1 이면 기존 결과를 덮는다. phase1 STRAT=1 은 happy_strat 으로 따로 뺐다 — 여기서는
+# 필요한 쓰임(v5.0q)이 이미 따로 있어 막기만 한다.
+if [ -n "${BENCH_STRAT_TSV:-}" ] && [ "$BENCH_TRUTH_VER" = v4.2.1 ]; then
+    echo "ERROR: BENCH_STRAT_TSV 는 BENCH_TRUTH_VER=v4.2.1 과 같이 못 쓴다 — 기본 채점 결과에 섞인다." >&2
+    echo "       층화는 BENCH_TRUTH_VER=v5.0q 처럼 별도 판에서 쓴다." >&2
+    exit 1
 fi
 
 # dsid의 caller 목록. CALLERS로 고정하지 않았으면 dv_model 열로 판정한다.

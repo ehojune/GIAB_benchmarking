@@ -31,16 +31,20 @@ except Exception:
 
 
 def read_bed(path):
+    """-> ({염색체: 병합된 구간}, [입력에 처음 나온 순서의 염색체])"""
     iv = defaultdict(list)
+    order = []
     with open(path) as f:
         for line in f:
             if not line.strip() or line.startswith(("#", "track", "browser")):
                 continue
             c, s, e = line.split("\t")[:3]
             s, e = int(s), int(e)
+            if c not in iv:
+                order.append(c)
             if e > s:
                 iv[c].append((s, e))
-    return {c: merge(v) for c, v in iv.items()}
+    return {c: merge(v) for c, v in iv.items()}, order
 
 
 def merge(v):
@@ -102,27 +106,41 @@ def write_bed(d, path, order):
 def main():
     if len(sys.argv) != 4:
         sys.exit(__doc__)
-    v5, v4, out = read_bed(sys.argv[1]), read_bed(sys.argv[2]), Path(sys.argv[3])
+    (v5, order), (v4, _), out = read_bed(sys.argv[1]), read_bed(sys.argv[2]), Path(sys.argv[3])
     out.mkdir(parents=True, exist_ok=True)
-    order = sorted(v5, key=lambda c: (len(c), c))       # chr1..chr22, chrX 순 (입력 순서 보존보다 안정적)
-    both = {c: intersect(v5[c], v4.get(c, [])) for c in v5}
-    only = {c: subtract(v5[c], v4.get(c, [])) for c in v5}
+    # 출력은 v5.0q 입력의 염색체 순서를 그대로 따른다(GIAB 가 참조 순서로 낸다). 다시 정렬하지 않는다.
 
-    # 쪼갠 두 층을 합치면 v5.0q 전체와 같아야 한다 — 안 맞으면 구간 연산이 틀린 것이다.
-    if bp(both) + bp(only) != bp(v5):
-        sys.exit(f"ERROR: 겹침 {bp(both)} + v5.0q에만 {bp(only)} != v5.0q {bp(v5)}")
+    # **v4.2.1 이 아예 안 덮는 염색체는 따로 뺀다.** v4.2.1 은 파일명대로 chr1~22 만 덮는다. v5.0q 가
+    # chrX 를 담으면 그 전체가 "v4.2.1 밖" 에 들어가는데, 그건 v4.2.1 이 어렵다고 뺀 영역이 아니라
+    # 애초에 대상이 아니었던 염색체다(HG002 는 남성이라 chrX 는 반접합이기도 하다). 한 층에 섞으면
+    # "어려운 영역에서 caller 가 무엇을 버리나" 를 읽을 수 없다.
+    covered = set(v4)
+    both, only, other = {}, {}, {}
+    for c in order:
+        if c in covered:
+            both[c] = intersect(v5[c], v4[c])
+            only[c] = subtract(v5[c], v4[c])
+        else:
+            other[c] = v5[c]
 
-    write_bed(both, out / "v5q_and_v421.bed", order)
-    write_bed(only, out / "v5q_not_v421.bed", order)
+    # 쪼갠 세 층을 합치면 v5.0q 전체와 같아야 한다 — 안 맞으면 구간 연산이 틀린 것이다.
+    if bp(both) + bp(only) + bp(other) != bp(v5):
+        sys.exit(f"ERROR: 겹침 {bp(both)} + v5.0q에만 {bp(only)} + 다른 염색체 {bp(other)} != v5.0q {bp(v5)}")
+
+    strata = [("v5q_and_v421", both), ("v5q_not_v421", only), ("v5q_other_chrom", other)]
     with open(out / "strata.tsv", "w") as f:
-        f.write(f"v5q_and_v421\t{(out / 'v5q_and_v421.bed').resolve()}\n")
-        f.write(f"v5q_not_v421\t{(out / 'v5q_not_v421.bed').resolve()}\n")
+        for name, d in strata:
+            if bp(d) == 0:            # 빈 BED 를 hap.py 에 넘기지 않는다
+                continue
+            write_bed(d, out / f"{name}.bed", order)
+            f.write(f"{name}\t{(out / f'{name}.bed').resolve()}\n")
 
-    print(f"v5.0q       {bp(v5):>14,} bp")
-    print(f"v4.2.1      {bp(v4):>14,} bp")
-    print(f"  겹침      {bp(both):>14,} bp  ({100 * bp(both) / bp(v5):.1f}% of v5.0q)")
-    print(f"  v5.0q에만 {bp(only):>14,} bp  ({100 * bp(only) / bp(v5):.1f}% of v5.0q)  <- 63 이 truth 없이 본 구간의 일부")
-    print(f"  v4.2.1에만 {bp({c: subtract(v4[c], v5.get(c, [])) for c in v4}):>13,} bp  (v5.0q 가 뺀 구간 — 여기선 안 센다)")
+    print(f"v5.0q        {bp(v5):>14,} bp")
+    print(f"v4.2.1       {bp(v4):>14,} bp  (염색체 {len(covered)}개)")
+    print(f"  겹침       {bp(both):>14,} bp  ({100 * bp(both) / bp(v5):.1f}% of v5.0q)")
+    print(f"  v5.0q에만  {bp(only):>14,} bp  ({100 * bp(only) / bp(v5):.1f}% of v5.0q)  <- v4.2.1 이 덮는 염색체 안의 '밖'")
+    print(f"  다른 염색체 {bp(other):>13,} bp  ({', '.join(other) or '없음'}) — v4.2.1 이 아예 안 덮는 곳")
+    print(f"  v4.2.1에만 {bp({c: subtract(v4[c], v5.get(c, [])) for c in v4}):>14,} bp  (v5.0q 가 뺀 구간 — 여기선 안 센다)")
     print(f"-> {out}/strata.tsv")
 
 
