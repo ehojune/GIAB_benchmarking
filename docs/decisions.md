@@ -856,3 +856,62 @@ PacBio 세션이 phase1 에서 먼저 한 전환을 phase2 에도 적용했다. 
 **이력은 맨 아래에 전부 남긴다**(사용자 결정). 잡 ID·실측 같은 세밀한 것은 README Journal 에
 넣기엔 굵고, "지금 돌던 잡이 왜 끝났나" 를 현황판에서 바로 볼 수 있는 값어치가 있다.
 대신 맨 아래에 둬서 "지금" 을 보러 온 사람이 과거를 먼저 지나가지 않게 했다.
+
+## 2026-09-23 — [숏리드 세션] MGISEQ HG002 재생성 잡(155525)이 이미 실패해 있었다
+
+STATUS.md 는 "running (09-22 07:53~)" 으로 남아 있었지만 `qacct -j 155525` 로 보니 실제로는
+09-22 15:59:55 에 `exit_status=1` 로 끝나 있었다(약 8시간 6분 실행, `failed=0` — SGE 가 죽인 게
+아니라 스크립트 자신이 에러를 감지하고 종료했다). 아무도 23시간 넘게 들여다보지 않은 상태였다.
+
+`repairs/mgi-hg002.IMeaDNit/` 산출물로 원인을 좁혔다. `bwa.stderr` 는 끝까지 정상적으로 read를
+처리하고 있었고, `view.stderr` 에 `[W::sam_read1_sam] Parse error at line 948884480` /
+`samtools view: error reading file "-"` 가 있다 — bwa-mem2 가 samtools view 로 넘기는 SAM 스트림이
+특정 줄에서 깨졌다. 디스크는 `/BiO` 30% 사용(1.7P 여유)이라 공간 문제가 아니다. `qstat -j`의
+`h_vmem=300G`는 다른 잡(155526, regermline)의 값을 잘못 옮겨 적은 것이었다 — 155525 자신의
+요청은 `h_vmem=60G`고 `maxvmem 21.081GB`라 그 잡 자신의 OOM은 아니다. **다만 nbb2의 `h_vmem`은
+예약도 상한도 아니라서(HARVEST.md "SGE h_vmem은 예약도 상한도 아닐 수 있다") 같은 노드의 다른
+잡이 물리 메모리를 눌러 커널이 bwa-mem2를 죽였을 가능성은 배제하지 않는다** — `failed=0`은 SGE
+자신의 추적 기준으로 안 죽였다는 뜻일 뿐 노드 차원의 OOM killer와는 별개다. 원본
+`rawcheck.log`/`trimmedcheck.log` 는 raw·trimmed FASTQ 양쪽 다 PASS 를 찍었으니 입력 FASTQ
+자체는 온전하다. `aligned.bam.partial` 149GB 가 남아 있다.
+
+**재시도 전에 파싱 에러가 재현되는지부터 봐야 한다** — 재현 안 되면 우연한 스트림 손상으로 보고
+그냥 재제출, 재현되면 bwa-mem2 버전/스레드 설정을 의심해야 한다. 국통바빅 파이프라인이든 이
+복구 스크립트든 실행·재제출은 사용자(또는 서버에서 직접 작업하는 Codex 세션) 몫이라 여기서
+qsub 는 하지 않았다 — 읽기 전용 진단만 하고 STATUS #2 행을 "실패"로 정정한다.
+
+## 2026-09-23 — [숏리드 세션] MGISEQ HG002 재생성 재시도: 실패 지점이 두 번 다 거의 같다
+
+사용자 확인: 국통바빅(BIKO) 본 파이프라인 실행만 사용자 전용이고, `repairs/mgi_hg002_recheck.sh`
+같은 복구/유틸리티 스크립트의 qsub 는 에이전트가 해도 된다. 이에 따라 155525 와 동일한 자원
+요청으로 재제출했다(잡 156584, `-q octopus.q,shepherd.q -l h_vmem=60G,hostname=(octopus-2-10|
+octopus-2-11) -pe pe_slots 10`, `qacct -j 155525` 의 `category` 필드에서 그대로 가져옴).
+
+재시도 전에 **1차 실패가 우연이 아닐 수 있다는 신호**를 찾았다. 2026-09-21 원본 파이프라인 실패는
+SAM 948,868,188번째 줄(헤더 3,369줄 제외 정렬 레코드 948,864,819개, 전체 리드 1,451,463,284개
+중 약 65.4% 지점)에서 `SEQ and QUAL are of different length` 로 죽었다. 2026-09-22 복구 스크립트
+1차 시도(155525)는 SAM 948,884,480번째 줄에서 `samtools view: error reading file "-"` (파싱 에러)
+로 죽었다 — **레코드 수로 16,292개, 비율로 0.0017% 밖에 차이가 안 난다.** 스크립트도 다르고
+날짜도 다른 두 번의 독립된 실행이 스트림의 거의 같은 지점에서 깨졌다는 것은, 무작위 스트림 손상보다
+**그 근방 리드 자체(또는 bwa-mem2 가 그 리드를 처리하는 방식)에 문제가 있을 가능성**을 가리킨다.
+
+**156584 가 다시 비슷한 지점에서 죽으면 blind retry를 멈춰야 한다.** 그때는 SAM 줄 번호를 2로
+나눠 페어 위치를 계산하지 않는다 — bwa-mem2가 secondary·supplementary를 낼 수 있어 그 계산은
+±수백만 페어까지 틀어질 수 있다(근거·수치는 [docs/runs/2026-09-23-phase3-input-audit-and-mgiseq-repair.md](runs/2026-09-23-phase3-input-audit-and-mgiseq-repair.md)).
+대신 끊기기 직전의 마지막 완전한 QNAME을 partial BAM/SAM에서 회수해 그 이름 그대로
+`R1/R2.trimmed.fastq.gz`에서 grep 한다. 성공하면 이 우려는 기우였던 것으로 정리한다.
+
+## 2026-09-23 — [숏리드 세션] 위 두 항목의 원 명령/출력을 docs/runs/에 남긴다
+
+Codex 리뷰 지적(PR #36): 입력 트리 감사와 MGISEQ 실패 진단이 `qacct`·클러스터 stderr·디렉토리
+스캔 같은 휘발성 서버 상태에 근거하는데 원 명령/출력을 남긴 곳이 없었다 — AGENTS.md 규약상
+이런 실행 기록은 `docs/runs/`에 남겨야 재현·검증이 가능하다. 맞는 지적이라 추가했다:
+[docs/runs/2026-09-23-phase3-input-audit-and-mgiseq-repair.md](runs/2026-09-23-phase3-input-audit-and-mgiseq-repair.md).
+
+같은 리뷰에서 재시도(156584) 전에 실패 지점부터 조사해야 하지 않냐는 지적도 왔다. 이미 사용자
+승인으로 재제출한 뒤였는데, 그 김에 `bwa.stderr`를 다시 봤다 — **에러 메시지가 하나도 없이
+`task: 1418, 1. Calling kt_for - worker_bwt` 에서 파일이 그냥 끝난다.** 정상 종료도 에러 출력도
+없이 멎었다는 건 bwa-mem2 프로세스 자체가 (samtools 쪽 파싱 에러의 원인이 아니라 결과로) 죽었을
+가능성을 가리킨다. 156584가 같은 자원·같은 청크 크기(`-K 100000000`)로 도는 이상 결정적 버그면
+비슷한 지점에서 또 죽을 것이고, 그게 가장 싼 재현성 검사다 — 그때 가서 해당 구간 리드를
+직접 뽑는다(87~91GB gzip이라 그 지점까지 순차 압축 해제에만 10~20분 걸려 미리 할 이유가 없다).
