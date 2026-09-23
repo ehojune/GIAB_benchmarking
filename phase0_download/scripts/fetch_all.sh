@@ -75,17 +75,20 @@ stage_label() {
 }
 
 declare -a DONE_KEYS=() DONE_STATE=() DONE_NOTE=()
+PHASE0_RAN=0
 record() { DONE_KEYS+=("$1"); DONE_STATE+=("$2"); DONE_NOTE+=("$3"); }
 
 run_stage() {
     local key="$1" rel log rc
-    rel="$(stage_script "$key")" || { record "$key" "SKIP" "알 수 없는 단계 이름"; return; }
+    # 단계 이름 오타나 스크립트 부재는 조용히 넘기면 그 출처가 통째로 빠진다 — FAIL로 집계한다
+    rel="$(stage_script "$key")" || { record "$key" "FAIL(unknown)" "알 수 없는 단계 이름 (phase0~phase3)"; return; }
     local abs="$REPO_ROOT/$rel"
     if [ ! -f "$abs" ]; then
-        record "$key" "SKIP" "스크립트 없음: $rel"
+        record "$key" "FAIL(missing)" "스크립트 없음: $rel"
         return
     fi
     log="$LOG_DIR/$key.log"
+    : > "$log"   # 실행마다 새로 쓴다 — 누적하면 옛 TOTAL 줄이 이번 판정에 섞인다
     echo "[$(date '+%F %T')] START $key — $(stage_label "$key")  (VERIFY_ONLY=$VERIFY_ONLY)"
     echo "    로그: $log"
 
@@ -95,8 +98,17 @@ run_stage() {
             bash "$PHASE0_DIR/scripts/verify.sh" "${PHASE0_VERIFY_CAT:-all}" > "$log" 2>&1
             rc=$?
         else
+            # run_priority.sh/download.sh는 개별 파일 실패를 삼키고 rc 0으로 끝난다.
+            # 그래서 받은 뒤 verify.sh 합계로 완료를 판정한다 — 100%가 아니면 이 단계는 실패다.
             bash "$abs" > "$log" 2>&1
             rc=$?
+            echo "--- post-download verify (${PHASE0_VERIFY_CAT:-all}) ---" >> "$log"
+            bash "$PHASE0_DIR/scripts/verify.sh" "${PHASE0_VERIFY_CAT:-all}" >> "$log" 2>&1
+        fi
+        PHASE0_RAN=1
+        # verify 합계가 100%가 아니면 이 단계 자체를 실패로 — 행 상태에서 바로 보이게 한다
+        if ! grep -E '^TOTAL' "$log" | tail -1 | grep -q '(100.0%)'; then
+            [ "$rc" -eq 0 ] && rc=2   # rc=2: 스크립트는 돌았지만 파일이 다 없다
         fi
     else
         # phase1~3은 같은 규약: VERIFY_ONLY=1 이면 받지 않고 점검만 한다.
@@ -108,6 +120,8 @@ run_stage() {
     tail_line="$(tail -n 1 "$log" 2>/dev/null | cut -c1-90)"
     if [ "$rc" -eq 0 ]; then
         record "$key" "OK" "$tail_line"
+    elif [ "$key" = "phase0" ] && [ "$rc" -eq 2 ]; then
+        record "$key" "FAIL(incomplete)" "$tail_line"
     else
         record "$key" "FAIL(rc=$rc)" "$tail_line"
     fi
@@ -118,7 +132,7 @@ for s in $STAGES; do run_stage "$s"; done
 
 # phase0은 verify.sh 합계 줄에서 진행률을 뽑아 따로 보여준다 (rc=0이어도 미완료일 수 있다).
 p0_progress=""
-if [ -f "$LOG_DIR/phase0.log" ]; then
+if [ "$PHASE0_RAN" = "1" ] && [ -f "$LOG_DIR/phase0.log" ]; then
     p0_progress="$(grep -E '^TOTAL' "$LOG_DIR/phase0.log" | tail -1 | cut -c1-100)"
 fi
 
@@ -135,10 +149,13 @@ done
 echo "로그: $LOG_DIR/"
 echo "================================================"
 
-# 검증 모드에서 phase0이 100%가 아니면 실패로 본다 — verify.sh 자체는 미완료여도 rc=0이라 여기서 판정한다.
-if [ "$VERIFY_ONLY" = "1" ] && [ -n "$p0_progress" ] && ! printf '%s' "$p0_progress" | grep -q '(100.0%)'; then
-    echo "phase0 미완료 — 위 진행률 참고" >&2
-    fail=1
+# phase0이 이번 실행에 포함됐으면 verify 합계가 100%여야 성공이다 — 다운로드 모드든 검증 모드든 같다.
+# (verify.sh 자체는 미완료여도 rc=0이고, run_priority.sh도 개별 실패를 rc로 안 올린다.)
+if [ "$PHASE0_RAN" = "1" ]; then
+    if [ -z "$p0_progress" ] || ! printf '%s' "$p0_progress" | grep -q '(100.0%)'; then
+        echo "phase0 미완료 또는 verify 합계 없음 — 위 진행률/로그 참고" >&2
+        fail=1
+    fi
 fi
 
 exit "$fail"

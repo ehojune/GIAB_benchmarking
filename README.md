@@ -604,7 +604,7 @@ python catalog/build_readme.py
 
 **결정론적으로 계산한 것** — 파일 개수, 바이트, index 존재 여부, 파일 종류 분포.
 `phase0_download/manifests/`의 모든 행은 카탈로그 giab_path에 빠짐없이, 중복 없이 대응한다(미매칭 0건).
-2026-09-16 크롤 반영 후 현재 435개 prefix · 81,302파일이며, 파일은 가장 긴 giab_path 하나에만 배타적으로 배정된다.
+2026-09-16 크롤 반영 후 GIAB FTP 행 435개 prefix · 81,302파일이며, 파일은 가장 긴 giab_path 하나에만 배타적으로 배정된다. 외부 유래 7행(`external/`·`ext/`, 28파일)은 FTP 매니페스트가 아니라 각 phase의 `ext_manifest.tsv`가 원본이라 이 라우팅 대상이 아니다 — 카탈로그 전체는 442행 / 81,316파일.
 
 **GIAB 공식 문서에서 확인한 것** — 툴 이름과 버전, 파이프라인, 처리 주체.
 매니페스트에 있는 GIAB README 514개를 S3/FTP에서 전부 받아 본문을 근거로 삼았다.
@@ -626,6 +626,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-23 — #33 후속: Codex 리뷰 3건 반영(`fetch_all.sh` — phase0는 다운로드 뒤 verify 합계 100%로만 성공 판정, phase0 미실행 시 옛 로그 무시, 단계 이름 오타·스크립트 부재는 FAIL). PacBio 세션이 짚은 README 수치 2곳을 FTP 본체(435행/81,302)와 4경로 전체(442행/81,330)로 구분해 적었다.
 - 2026-09-23 — 이 세션이 phase3 숏리드 전담으로 지정됨. 파이프라인 입력 22샘플 전수 점검(전부 명명 규약 준수), MGISEQ HG002 재생성 잡이 전날 밤 SAM 파싱 에러로 이미 실패해 있던 것을 발견해 STATUS/decisions 정정.
 - 2026-09-23 — **문서 구조 전환: `docs/STATUS.md` 를 현황판으로 되돌렸다**(249줄 → 65줄). 249줄 중 현황이 29줄(12%)뿐이었고 나머지는 레퍼런스·백로그·끝난 인계장이었다. 가른 기준은 "에이전트용이냐"가 아니라 **다음 주에 거짓이 되는가** — 안 변하는 것(노드 스펙·`_infra` 자산·점검 명령)은 [docs/reference/server-and-infra.md](docs/reference/server-and-infra.md), 아직 안 한 일(#8·#9·#10 상세)은 [docs/backlog.md](docs/backlog.md) 로 나눴다. 세션 조율 절 둘은 전부 해소돼 지웠고(규칙은 AGENTS.md 가 갖고 있다), 그 안에 섞여 있던 미해결 2건은 backlog 로 살렸다. 이력은 맨 아래에 14항목 그대로. `AGENTS.md` 충돌 규칙에 **"STATUS 에 다시 쌓지 않는다"** 를 명시했다. 근거: [decisions.md](docs/decisions.md) 2026-09-23 항목.
 - 2026-09-23 — 세 세션(다운로드·PacBio·ONT) repo 정렬. ONT 몫: **카탈로그가 외부에서 들여온 런을 구조적으로 못 보던 구멍**을 찾아 고쳤다 — 카탈로그 행 key 가 `(sample, giab_path basename)` 인데 ext 행은 경로가 배포처 구조를, dataset 이 우리 명명 규칙을 따라 서로 다르다. HG002 R10 은 채점까지 끝난 런인데 카탈로그에 `variant_called=FALSE` 로 남아 있었고, 신호는 경고 한 줄뿐이었다. `EXT_ALIAS` 로 잇고 산출물 경로도 dataset 기준으로 바로잡아 **카탈로그 10행 갱신**. next_step 을 "다음 할 일"에서 **"한 것 + 남은 것"**으로 전환했고(PacBio 가 phase1 에서 먼저 한 전환), `phase2_ont/README.md` 의 소변이·SV·자원 실측 절을 R10 포함해 다시 썼다. 서버에 미추적으로 쌓여 있던 결과 파일 7개는 gitignore.
