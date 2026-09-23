@@ -51,7 +51,7 @@ GIAB_benchmarking 리포는 건드리지 않는다 — 커밋 해시만 보고�
   (예: chr22 수 Mb) 받아 tumor/normal 쌍을 만들고 1회 통과시킨다. -stub 통과도 함께.
   기록은 docs/examples/<날짜>-.../ 에 이 리포 관례대로.
 - 시간 추정을 남긴다: 테스트 구간의 wall·CPU 를 전장·심도(tumor 48~60X, normal ~30X)로 환산한
-  값. **쌍 11개 전부를 CPU 로 돌리는 데 2주를 넘기면** 그 사실을 보고한다(사용자가 외부 H100
+  값. **쌍 13개 전부를 CPU 로 돌리는 데 2주를 넘기면** 그 사실을 보고한다(사용자가 외부 H100
   서버를 따로 요청해야 하는 조건이다).
 
 GIAB 쪽 사실 (설계에 쓸 것, 이 세션이 서버에서 확인함)
@@ -60,6 +60,8 @@ GIAB 쪽 사실 (설계에 쓸 것, 이 세션이 서버에서 확인함)
   HG008-T.PacBio_Revio_20240125 ↔ HG008-N-P.PacBio_Revio_20240125
   NIST HG008T-p100(bulk, passage 100) + 클론 8개(2D6·2E6·3E4·SC6·SC9·SC14·SC24·SC28)
     — 정상 짝이 없다. 같은 BCM Revio 인 HG008-N-D 를 빌려 쓴다.
+  NIST HG008T-p21 · p41 (bulk, UMD Revio 29x, 2026-09-24 추가) — p21 이 truth 배치(p23)에 가장 가깝다.
+    정상 짝 없음. HG008-N-D 차용.
 - truth: NIST HG008-T somatic smvar DraftBenchmark V0.3-20260425. 권장 VCF 는
   `*_tumorvariants.vcf.gz`, BED 는 `*_all.bed` 또는 `*_nogermlineinterference.bed`(BED 는 풀려 있지 않고
   같은 폴더 zip 안에만 있다 — 서버에서 unzip -l 로 확인). README 권장 비교 도구는 aardvark, rtg vcfeval·hap.py 도 시험됨. VAF 5~10% 미만은
