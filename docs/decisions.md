@@ -17,6 +17,13 @@
   `release_stale_ftp_removed`(FTP에서 삭제됨)는 파일명 분기에 걸려 `./download.sh declined_by_decision`이 성립했고,
   둘 다 3열이라 크기 비교가 전건 실패해 10.7 TiB를 받고도 전부 MISMATCH로 찍힐 수 있었다. 이름을 거부하도록 했다.
 
+## 2026-09-23 — fetch_all.sh의 완료 판정은 퍼센트가 아니라 파일 수이고, 검증 로그는 격리한다
+
+- `verify.sh`의 `(100.0%)`는 바이트 기준 소수 1자리다. 0바이트 파일이 빠져도, 0.05% 미만이 빠져도 100.0%로 찍힌다. 진입점의 완료 판정은 `TOTAL` 줄의 `done == total`(파일 수) + 검증기 rc 0으로 한다.
+- `run_priority.sh`가 카테고리마다 `TOTAL`을 찍으므로 사후 검증 출력을 같은 로그에 붙이면 마지막 카테고리의 TOTAL을 전체로 오판한다. 검증은 `phase0.verify.log`로 격리하고 그 파일만 읽는다.
+- 다운로드 뒤 검증 범위는 무조건 `all`. `PHASE0_VERIFY_CAT`은 `VERIFY_ONLY=1` 스모크 전용이다.
+- 근거·스모크: [runs/2026-09-23-fetch-all-completion-policy.md](runs/2026-09-23-fetch-all-completion-policy.md). Codex 리뷰 #37 1·2라운드 지적을 그대로 받아들인 결정이다.
+
 ## 2026-09-22 — 다운로드 목록의 기준은 서버 디스크 실측이고, FTP에서 사라진 파일은 지우지 않는다
 
 - **"무엇을 받았나"의 정본은 매니페스트가 아니라 디스크다.** 세 세션이 각자 받은 것을 한 목록으로 맞출 때, 매니페스트를 서로 믿는 대신 nbb2 `/BiO/scratch/ehojune/GIAB_benchmark`를 전수 실측해 네 매니페스트 합집합과 파일·바이트 단위로 대조했다. 결과 81,330/81,330 일치, 매니페스트 밖 데이터 0 — 즉 지금은 매니페스트 = 디스크다. 앞으로 새 데이터를 들일 때는 그 phase의 매니페스트(`sra_manifest.tsv`/`ext_manifest.tsv`)에 먼저 넣고 받는다. 기록: [runs/2026-09-22-disk-vs-manifest-reconciliation.md](runs/2026-09-22-disk-vs-manifest-reconciliation.md).
