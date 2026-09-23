@@ -17,7 +17,7 @@ phase3 1차 MGISEQ2000-PCRfree set의 HG002만 정렬 BAM이 33% 잘려 있었�
 | 156646 | `07_bwa_reorder_check.sh` L04→L03 | 죽음(134) — 단언문이 원인을 밝힘: `num_smem: 1623546`, `Assertion 'num_smem < *wsize_mem' failed` |
 | (로그인 노드) | 창 651쌍 반복도 훑기 | **150 bp 전부 T인 리드**가 창에 있고 같은 청크 대조 창 둘엔 0 |
 | 156647 | `interleave_shards.py` K=4 | 병합 입력(L03+L04)을 4구간 교차로 다시 씀, 84분, exit 0 |
-| 156648 | `08_rebuild_sorted_bam.sh` | fastp before 1,451,463,284 → after 1,428,410,152(원래와 **같다**). **bwa-mem2 끝까지 통과**: 2,141 청크 · 1,428,410,152 리드, primary 1,428,410,152 = fastp 출력(07:22). bwa 30스레드 약 2시간. 정렬 중(07:22~) → `VALIDATED.txt` |
+| 156648 | `08_rebuild_sorted_bam.sh` | fastp before 1,451,463,284 → after 1,428,410,152(원래와 **같다**). **bwa-mem2 끝까지 통과**: 2,141 청크 · 1,428,410,152 리드, primary 1,428,410,152 = fastp 출력(07:22). bwa 30스레드 약 2시간. 정렬 BAM primary 1,428,410,152 → **`VALIDATED.txt`**(07:50, exit 0, 3h28m, maxvmem 27.2 GB) |
 
 ## 원인
 
