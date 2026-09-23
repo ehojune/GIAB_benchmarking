@@ -50,7 +50,10 @@ else
 fi
 STRAT_DIR="$GIAB_ROOT/release/genome-stratifications/$BENCH_STRAT_VER/${REF_NAME}@all"
 STRAT_SRC="$STRAT_DIR/${REF_NAME}-all-stratifications.tsv"
-STRAT_TSV="$INFRA/reference/strat/${REF_NAME}_${BENCH_STRAT_VER}_selected.tsv"
+# 이번 호출 전용 임시 파일. 공유 경로에 두면 BENCH_STRAT_SET 이 다른 제출 둘이 겹칠 때 먼저 시작한
+# 쪽이 나중 쪽 목록을 잡에 복사한다. 잡마다 사본을 두므로 호출이 끝나면 지운다.
+STRAT_TSV="$INFRA/launch/strata.selected.$$.tsv"
+[ "$STRAT" = 1 ] && trap 'rm -f "$STRAT_TSV" "$STRAT_TSV".tmp' EXIT
 
 # 이미지 경로는 lib.sh의 p1_img_path를 쓴다 (01_prepare_login_node.sh와 같은 규약).
 
@@ -129,21 +132,23 @@ build_strat_tsv() {
     local names name rel n=0 bad=0 tmp
     [ -s "$STRAT_SRC" ] || { echo "ERROR: 층화 목록 없음 ($STRAT_SRC) — BENCH_STRAT_VER 확인"; return 1; }
     if [ "$BENCH_STRAT_SET" = all ]; then names=$(cut -f1 "$STRAT_SRC"); else names="$BENCH_STRAT_SET"; fi
-    mkdir -p "$(dirname "$STRAT_TSV")"
-    tmp="$STRAT_TSV.tmp.$$"
-    : > "$tmp"
+    # 호출부가 `|| exit 1` 이라 이 함수 안에서는 errexit 가 꺼져 있다 — 쓰기마다 직접 본다.
+    mkdir -p "$(dirname "$STRAT_TSV")" || { echo "ERROR: $(dirname "$STRAT_TSV") 를 못 만들었다"; return 1; }
+    tmp="$STRAT_TSV.tmp"
+    : > "$tmp" || { echo "ERROR: $tmp 를 못 썼다"; return 1; }
     for name in $names; do
         rel=$(awk -F'\t' -v n="$name" '$1==n {print $2; exit}' "$STRAT_SRC")
         if [ -z "$rel" ]; then echo "  ! 목록에 없는 층화: $name"; bad=1; continue; fi
         if [ ! -s "$STRAT_DIR/$rel" ]; then echo "  ! 파일 없음: $STRAT_DIR/$rel"; bad=1; continue; fi
-        printf '%s\t%s\n' "$name" "$STRAT_DIR/$rel" >> "$tmp"
+        printf '%s\t%s\n' "$name" "$STRAT_DIR/$rel" >> "$tmp" || { echo "ERROR: $tmp 에 못 썼다"; return 1; }
         n=$((n + 1))
     done
     if [ "$bad" != 0 ] || [ "$n" = 0 ]; then
         rm -f "$tmp"; echo "ERROR: 층화 TSV 를 못 만들었다 ($STRAT_SRC)"; return 1
     fi
-    mv "$tmp" "$STRAT_TSV"
-    echo "  층화 $n 개 ($BENCH_STRAT_VER) -> $STRAT_TSV"
+    mv "$tmp" "$STRAT_TSV" || { echo "ERROR: $STRAT_TSV 로 옮기지 못했다"; return 1; }
+    [ "$(wc -l < "$STRAT_TSV")" = "$n" ] || { echo "ERROR: $STRAT_TSV 줄 수가 $n 이 아니다"; return 1; }
+    echo "  층화 $n 개 ($BENCH_STRAT_VER)"
 }
 
 submit_one() {

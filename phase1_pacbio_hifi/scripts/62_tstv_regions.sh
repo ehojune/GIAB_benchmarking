@@ -5,9 +5,10 @@
 #   bash phase1_pacbio_hifi/scripts/62_tstv_regions.sh HG002.PacBio_HiFi-Revio_20231031
 #   TSV=out.tsv bash phase1_pacbio_hifi/scripts/62_tstv_regions.sh     # 표를 파일로도
 #
-# phase2_ont/scripts/62_tstv_regions.sh 를 그대로 이식했다. 달라진 곳은 셋뿐이다 —
-# 산출 경로(ONT -> PacBio), caller(phase1 은 전 런이 DeepVariant+Clair3 둘 다라 dv_model 열이
-# 없다), dup_of 열 위치(12 -> 8). 로직을 고치면 두 phase 를 같이 고친다.
+# phase2_ont/scripts/62_tstv_regions.sh 를 이식했다. phase 차이는 셋 — 산출 경로(ONT -> PacBio),
+# caller(phase1 은 전 런이 DeepVariant+Clair3 둘 다라 dv_model 열이 없다), dup_of 열 위치(12 -> 8).
+# 그 밖에 phase2 판에 아직 없는 수정이 둘 있다(PR #38 Codex): RUN_BASE 바인드, 안/밖 겹침 규칙을
+# POS 로 통일 + INDEL 합 대조. 로직을 고치면 두 phase 를 같이 고친다.
 #
 # **phase1 에서 왜 보나.** hap.py 는 benchmark BED 안만 채점한다. phase1 SNP 는 그 안에서
 # F1 .9984~.9994 로 포화라 런 차이가 안 보이는데, 구간 밖(어려운 영역)은 채점 도구가 없다.
@@ -84,13 +85,17 @@ run_one() {  # dsid sample dataset
         echo "  세는 중: $dsid / $c" >&2
 
         local a_snp a_ind a_ts a_tv i_snp i_ind i_ts i_tv o_snp o_ind o_ts o_tv
+        # 겹침 규칙을 둘 다 POS 로 못박는다. bcftools 기본값은 -R 이 레코드 겹침, -T 가 POS 라서
+        # 구간 밖에서 시작해 안으로 걸치는 결실이 안·밖 양쪽에 세어진다. SNP 는 길이 1 이라 영향이
+        # 없지만 INDEL 은 틀린다 (PR #38 Codex 지적 — phase2 판은 아직 기본값이다).
         IFS=$'\t' read -r a_snp a_ind a_ts a_tv < <(count_region "$vcf")
-        IFS=$'\t' read -r i_snp i_ind i_ts i_tv < <(count_region -R "$bed" "$vcf")
-        IFS=$'\t' read -r o_snp o_ind o_ts o_tv < <(count_region -T "^$bed" "$vcf")
+        IFS=$'\t' read -r i_snp i_ind i_ts i_tv < <(count_region -R "$bed" --regions-overlap pos "$vcf")
+        IFS=$'\t' read -r o_snp o_ind o_ts o_tv < <(count_region -T "^$bed" --targets-overlap pos "$vcf")
 
         # count_region 이 죽어도 read 는 성공한다 (빈 값). 빈 문자열은 $(( )) 에서 0 이 되므로
         # 세 번 다 실패하면 0+0==0 으로 아래 대조를 통과해 버린다 — 먼저 값이 왔는지 본다.
-        for v in "$a_snp" "$a_ts" "$a_tv" "$i_snp" "$i_ts" "$i_tv" "$o_snp" "$o_ts" "$o_tv"; do
+        for v in "$a_snp" "$a_ind" "$a_ts" "$a_tv" "$i_snp" "$i_ind" "$i_ts" "$i_tv" \
+                 "$o_snp" "$o_ind" "$o_ts" "$o_tv"; do
             [ -n "$v" ] || { echo "ERROR: $dsid/$c bcftools stats 가 값을 안 냈다" >&2; return 1; }
         done
         [ "$a_snp" -gt 0 ] || { echo "ERROR: $dsid/$c PASS SNP 가 0 이다 — VCF 를 확인할 것" >&2; return 1; }
@@ -98,9 +103,10 @@ run_one() {  # dsid sample dataset
         # 여기서 막는다. 합이 안 맞으면 구간 분할이 우리 생각과 다르게 된 것이고,
         # 그 상태의 숫자는 쓰면 안 된다 (조용히 틀린 값이 문서에 박히는 경로다).
         if [ $((i_snp + o_snp)) -ne "$a_snp" ] || [ $((i_ts + o_ts)) -ne "$a_ts" ] \
-           || [ $((i_tv + o_tv)) -ne "$a_tv" ]; then
+           || [ $((i_tv + o_tv)) -ne "$a_tv" ] || [ $((i_ind + o_ind)) -ne "$a_ind" ]; then
             echo "ERROR: $dsid/$c 구간 분할 불일치 — 안+밖 != 전체" >&2
             echo "  SNP  안 $i_snp + 밖 $o_snp = $((i_snp + o_snp))  vs 전체 $a_snp" >&2
+            echo "  INDEL 안 $i_ind + 밖 $o_ind = $((i_ind + o_ind))  vs 전체 $a_ind" >&2
             echo "  ts   안 $i_ts + 밖 $o_ts = $((i_ts + o_ts))  vs 전체 $a_ts" >&2
             echo "  tv   안 $i_tv + 밖 $o_tv = $((i_tv + o_tv))  vs 전체 $a_tv" >&2
             return 1

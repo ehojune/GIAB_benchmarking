@@ -97,8 +97,11 @@ HG008 NIST 만 없었다 — 의도적 제외가 아니라 누락이다. 생성�
 | phase1·2 와 같은 `env.sh`/`lib.sh`/번호 스크립트 구조 | — | — | ✗ |
 
 **phase1 이 가져와야 할 것 7개**(phase2 에 있고 phase1 에 없음). 거꾸로 phase1 에만 있는 것 2개는 ONT 세션이 필요할 때 가져간다.
-**ONT 세션 몫 한 줄**: `phase2_ont/scripts/62_tstv_regions.sh` 의 `bt()` 가 `GIAB_ROOT` 만 바인드한다 —
-`RUN_BASE` 를 그 밖에 두면 bcftools 가 VCF 를 못 본다(PR #38 Codex 지적, phase1 판은 고침). 기본 경로에서는 문제없다. 급하지 않지만, 가져올 때는
+**ONT 세션 몫 둘** (PR #38 Codex 지적, phase1 판은 고쳤다 — `phase2_ont/scripts/62_tstv_regions.sh`):
+1. **INDEL 수가 안·밖에 이중으로 세어질 수 있다.** bcftools 기본값이 `-R` 은 레코드 겹침, `-T` 는 POS 라서
+   구간 경계에 걸친 결실이 양쪽에 들어간다. SNP·ts/tv 는 영향이 없고(길이 1) 대조도 그 셋만 봐서 통과했다.
+   phase1 판처럼 `--regions-overlap pos` / `--targets-overlap pos` + INDEL 합 대조. reference 문서의 INDEL 열을 다시 볼 것.
+2. `bt()` 가 `GIAB_ROOT` 만 바인드 — `RUN_BASE` 를 그 밖에 두면 VCF 가 안 보인다. 기본 경로에서는 문제없다. 급하지 않지만, 가져올 때는
 phase2 판을 그대로 이식하고 달라지는 부분만 주석에 적는다 — 두 phase 스크립트가 같은 모양인 것이
 지금까지 여러 번 교훈을 한쪽에서 다른 쪽으로 바로 옮길 수 있게 해 줬다.
 

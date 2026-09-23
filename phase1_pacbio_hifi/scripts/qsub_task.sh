@@ -42,6 +42,9 @@ mkdir -p "$INFRA/jobs" "$INFRA/logs"
 
 job="$INFRA/jobs/task.$name.sh"
 printf -v cmd '%q ' "$@"
+# 로그에 찍을 명령은 따로 파일로 둔다. %q 출력(여러 줄이면 $'...' 꼴)을 echo "..." 안에 넣으면
+# 따옴표가 깨지거나 $(...) 가 로그 찍을 때 한 번 더 실행된다 (PR #38 Codex 지적).
+printf '%s\n' "$cmd" > "$job.cmd" || { echo "FAIL: $job.cmd 를 못 썼다"; exit 1; }
 if ! cat > "$job" <<EOF
 #!/bin/bash
 #\$ -N t.$name
@@ -56,7 +59,7 @@ if ! cat > "$job" <<EOF
 set -euo pipefail
 source "$P1_DIR/env.sh"
 echo "== \$(date '+%F %T') \$(hostname) slots=\${NSLOTS:-?} =="
-echo "== cmd: $cmd"
+echo "== cmd:"; cat "$job.cmd"
 $cmd
 echo "== DONE \$(date '+%F %T') =="
 EOF
