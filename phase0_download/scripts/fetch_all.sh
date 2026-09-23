@@ -17,7 +17,8 @@
 #      DEST=$GIAB_ROOT                                phase0이 쓰는 이름. 비우면 GIAB_ROOT를 따라간다
 #      TOOL=s3  JOBS=8                                phase0에 전달
 #      STAGES="phase0 phase1 phase2 phase3"           실행할 단계와 순서
-#      PHASE0_VERIFY_CAT=all                          VERIFY_ONLY에서 phase0이 볼 범위.
+#      PHASE0_VERIFY_CAT=all                          VERIFY_ONLY=1 에서만 유효 — phase0이 볼 범위.
+#                                                     다운로드 모드의 사후 검증은 무조건 all 이다.
 #                                                     verify.sh는 파일당 stat 한 번이라 81,302개면 오래 걸린다 —
 #                                                     스모크 테스트는 PHASE0_VERIFY_CAT=trio_analysis 처럼 좁혀서 돌린다
 #
@@ -78,6 +79,17 @@ declare -a DONE_KEYS=() DONE_STATE=() DONE_NOTE=()
 PHASE0_RAN=0
 record() { DONE_KEYS+=("$1"); DONE_STATE+=("$2"); DONE_NOTE+=("$3"); }
 
+# verify.sh 로그의 마지막 TOTAL 줄에서 done/total 파일 수를 읽어 같으면 0.
+# 줄 모양: "TOTAL   <done>/<total> files  <GiB>/<GiB> (<pct>%)"
+phase0_complete() {
+    local line done total
+    line="$(grep -E '^TOTAL' "$1" | tail -1)"
+    [ -n "$line" ] || return 1
+    done="$(printf '%s' "$line" | awk '{split($2, a, "/"); print a[1]}')"
+    total="$(printf '%s' "$line" | awk '{split($2, a, "/"); print a[2]}')"
+    [ -n "$done" ] && [ -n "$total" ] && [ "$done" = "$total" ] && [ "$total" -gt 0 ]
+}
+
 run_stage() {
     local key="$1" rel log rc
     # 단계 이름 오타나 스크립트 부재는 조용히 넘기면 그 출처가 통째로 빠진다 — FAIL로 집계한다
@@ -102,12 +114,15 @@ run_stage() {
             # 그래서 받은 뒤 verify.sh 합계로 완료를 판정한다 — 100%가 아니면 이 단계는 실패다.
             bash "$abs" > "$log" 2>&1
             rc=$?
-            echo "--- post-download verify (${PHASE0_VERIFY_CAT:-all}) ---" >> "$log"
-            bash "$PHASE0_DIR/scripts/verify.sh" "${PHASE0_VERIFY_CAT:-all}" >> "$log" 2>&1
+            # 다운로드 뒤 검증은 항상 전체다. PHASE0_VERIFY_CAT은 VERIFY_ONLY 스모크 전용 —
+            # 부분 검증이 통과했다고 전체가 받아진 것은 아니다.
+            echo "--- post-download verify (all) ---" >> "$log"
+            bash "$PHASE0_DIR/scripts/verify.sh" all >> "$log" 2>&1
         fi
         PHASE0_RAN=1
-        # verify 합계가 100%가 아니면 이 단계 자체를 실패로 — 행 상태에서 바로 보이게 한다
-        if ! grep -E '^TOTAL' "$log" | tail -1 | grep -q '(100.0%)'; then
+        # 완료 판정은 파일 수로 한다: TOTAL 줄의 done/total 이 같아야 한다.
+        # 퍼센트는 바이트 기준 소수 1자리라 0.05% 미만 결손(0바이트 파일 포함)은 100.0%로 찍힌다.
+        if ! phase0_complete "$log"; then
             [ "$rc" -eq 0 ] && rc=2   # rc=2: 스크립트는 돌았지만 파일이 다 없다
         fi
     else
@@ -151,11 +166,9 @@ echo "================================================"
 
 # phase0이 이번 실행에 포함됐으면 verify 합계가 100%여야 성공이다 — 다운로드 모드든 검증 모드든 같다.
 # (verify.sh 자체는 미완료여도 rc=0이고, run_priority.sh도 개별 실패를 rc로 안 올린다.)
-if [ "$PHASE0_RAN" = "1" ]; then
-    if [ -z "$p0_progress" ] || ! printf '%s' "$p0_progress" | grep -q '(100.0%)'; then
-        echo "phase0 미완료 또는 verify 합계 없음 — 위 진행률/로그 참고" >&2
-        fail=1
-    fi
+if [ "$PHASE0_RAN" = "1" ] && ! phase0_complete "$LOG_DIR/phase0.log"; then
+    echo "phase0 미완료(파일 수 불일치) 또는 verify 합계 없음 — 위 진행률/로그 참고" >&2
+    fail=1
 fi
 
 exit "$fail"

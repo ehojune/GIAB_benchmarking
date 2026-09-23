@@ -604,7 +604,7 @@ python catalog/build_readme.py
 
 **결정론적으로 계산한 것** — 파일 개수, 바이트, index 존재 여부, 파일 종류 분포.
 `phase0_download/manifests/`의 모든 행은 카탈로그 giab_path에 빠짐없이, 중복 없이 대응한다(미매칭 0건).
-2026-09-16 크롤 반영 후 GIAB FTP 행 435개 prefix · 81,302파일이며, 파일은 가장 긴 giab_path 하나에만 배타적으로 배정된다. 외부 유래 7행(`external/`·`ext/`, 28파일)은 FTP 매니페스트가 아니라 각 phase의 `ext_manifest.tsv`가 원본이라 이 라우팅 대상이 아니다 — 카탈로그 전체는 442행 / 81,316파일.
+2026-09-16 크롤 반영 후 GIAB FTP 행 435개 prefix · 81,302파일이며, 파일은 가장 긴 giab_path 하나에만 배타적으로 배정된다. 외부에서 받은 파일 28개는 이 라우팅 대상이 아니다 — 그중 14개(phase3 숏리드 6행 + HG002 R10 1행, 각 2파일)는 `external/`·`ext/` 자체 행으로 카탈로그에 들어가 **442행 / 81,316파일**이 되고, 나머지 14개(ENA 12 + rel6 2)는 대응 GIAB 행의 `reads_format`에 출처만 적혀 파일 수에 들어가지 않는다. 원본은 각 phase의 `ext_manifest.tsv`/`sra_manifest.tsv`.
 
 **GIAB 공식 문서에서 확인한 것** — 툴 이름과 버전, 파이프라인, 처리 주체.
 매니페스트에 있는 GIAB README 514개를 S3/FTP에서 전부 받아 본문을 근거로 삼았다.
