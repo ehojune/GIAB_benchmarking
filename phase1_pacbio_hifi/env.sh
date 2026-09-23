@@ -73,6 +73,22 @@ export BENCH_SLOTS="${BENCH_SLOTS:-16}"
 export BENCH_VMEM="${BENCH_VMEM:-56G}"      # 실측 48.8 GB 위. 표시용이고 강제되지 않는다
 export BENCH_TRUTH_VER="${BENCH_TRUTH_VER:-v4.2.1}"   # germline truth set 판 (release/*/NISTv4.2.1/)
 
+# ── 구간별(층화) hap.py (STRAT=1 60_benchmark.sh) ─────────────────────────────
+# GIAB genome-stratifications 판. release/genome-stratifications/<판>/GRCh38@all/ 구조(v3.5+)를 전제한다.
+export BENCH_STRAT_VER="${BENCH_STRAT_VER:-v3.6}"
+# 고른 구간. GIAB 목록(188개)의 절반이 샘플별 GenomeSpecific 이라 남의 샘플 구간까지 세게 되고,
+# 층화 수만큼 메모리·시간이 는다. 물을 질문에 맞춰 골랐다 — 호모폴리머 길이 구간(Sequel I INDEL 격차),
+# 반복·저매핑·segdup(Revio Clair3 vs DeepVariant 가 어디서 갈리나), 쉬운 영역(notin*), 코딩 영역.
+# 4~6bp 호모폴리머는 뺐다 — 구간 수가 가장 많은 파일인데 HiFi 가 약한 길이가 아니다.
+# 전부 돌리려면 BENCH_STRAT_SET=all.
+export BENCH_STRAT_SET="${BENCH_STRAT_SET:-alldifficultregions notinalldifficultregions alllowmapandsegdupregions AllHomopolymers_ge7bp_imperfectge11bp_slop5 notinAllHomopolymers_ge7bp_imperfectge11bp_slop5 SimpleRepeat_homopolymer_7to11_slop5 SimpleRepeat_homopolymer_ge12_slop5 SimpleRepeat_homopolymer_ge21_slop5 AllTandemRepeatsandHomopolymers_slop5 notinAllTandemRepeatsandHomopolymers_slop5 AllTandemRepeats_le50bp_slop5 AllTandemRepeats_51to200bp_slop5 AllTandemRepeats_201to10000bp_slop5 SimpleRepeat_diTR_10to49_slop5 satellites_slop5 lowmappabilityall notinlowmappabilityall segdups notinsegdups MHC KIR VDJ gclt25orgt65_slop50 refseq_cds chrX_nonPAR}"
+# **실측 전 값이다.** 기본 hap.py 가 스레드당 ~3 GB(16스레드 48.8 GB)라 16스레드면 층화 전 ~49 GB.
+# 32슬롯 = 노드당 2잡이라 층화 부담이 스레드당 4.8 GB 까지 늘어도 251 GB 안이다. 첫 잡의
+# maxvmem 을 보고 고칠 것.
+export BENCH_STRAT_THREADS="${BENCH_STRAT_THREADS:-16}"
+export BENCH_STRAT_SLOTS="${BENCH_STRAT_SLOTS:-32}"
+export BENCH_STRAT_VMEM="${BENCH_STRAT_VMEM:-120G}"   # 표시용이고 강제되지 않는다
+
 # ── SV 정확도 평가 (61_benchmark_sv.sh) ───────────────────────────────────────
 # **실측 (2026-09-22, phase1 HG002 5런, -t 8)**: maxvmem 91.6 / 96.5 / 99.5 / 121.0 / 136.2 GB,
 # wall 247~257초. 전 런 exit 0.
