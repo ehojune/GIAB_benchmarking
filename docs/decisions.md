@@ -17,6 +17,19 @@
   `release_stale_ftp_removed`(FTP에서 삭제됨)는 파일명 분기에 걸려 `./download.sh declined_by_decision`이 성립했고,
   둘 다 3열이라 크기 비교가 전건 실패해 10.7 TiB를 받고도 전부 MISMATCH로 찍힐 수 있었다. 이름을 거부하도록 했다.
 
+## 2026-09-23 — HG008-T BioSkryb×UG100 단일세포 CRAM(4.4 TiB, 외부 S3)은 받지 않는다 — 필요가 생길 때까지
+
+- 사실: GIAB FTP `data_somatic/HG008/Liss_lab/HG008-T_bioskryb-libraries-UG100/`에는 QC CSV·README·AWS 매니페스트만 있고, 실데이터는 `s3://giab-aws/WGS/Bioskryb/2024/...`(https 공개)에 있다. 매니페스트 합산: **119 세포 × (CRAM + VCF) = 238 files, 4,862 GB = 4.42 TiB** (CRAM 4,797.6 GB, VCF 64.3 GB). Ultima UG100 single-end 300 bp, BioSkryb ResolveDNA 단일세포 라이브러리.
+- 판단: 지금 벤치마킹 축(germline 소변이·SV, HG008 somatic bulk)에 단일세포 CNV/WGD 데이터가 들어갈 자리가 없다. 같은 세포주의 Illumina 단일세포(120셀, 40.7 GiB)는 이미 받았다. 4.4 TiB는 스토리지 문제는 아니지만 받아둔 뒤 안 쓰는 데이터를 늘리지 않는다.
+- 받기로 바뀌면: 매니페스트 TSV(`size_Gb`, `url`, `idx_url`)가 그대로 다운로드 목록이 된다 — phase0 `ext_manifest` 형식(relpath/bytes/url/md5/kind)으로 변환해 `fetch_all.sh`에 단계를 추가. md5는 매니페스트에 없어 크기+CRAM 헤더로 검증해야 한다.
+- 사용자 결정 대기. 세 세션 검토 지점 7번의 후속.
+
+## 2026-09-23 — md5 참조는 current.tree 하나로 못 믿는다: sidecar를 2차 판정으로 쓰고 결과를 갈라 적는다
+
+- `current.tree`는 FTP 원본이 2025-02-28 이후 갱신되지 않았다(2026-09-23 확인). 그 뒤 GIAB가 바꾼 파일은 tree md5와 다르지만 손상이 아니다. 2026-09-09 검증의 FAIL 110건 중 75건이 README·checksums.md5 같은 문서인 것이 그 증거다.
+- 그래서 tree 불일치를 곧 FAIL로 두지 않고 같은 디렉토리 sidecar와 다시 비교한다. 판정을 `PASS_SIDECAR_TREE_STALE` / `FAIL_BOTH` / `FAIL_TREE_ONLY`로 갈라 적어 "tree가 낡았다"와 "파일이 깨졌다"를 뒤에서 구분할 수 있게 한다. FAIL_TREE_ONLY는 FTP에서 그 파일을 다시 HEAD/받아 비교해야 결론이 난다.
+- sidecar 패턴은 매니페스트 실측으로 정했다(checksums.md5 132 등). 추측으로 넣은 패턴은 없다. 기록: [runs/2026-09-23-md5-verification-status.md](runs/2026-09-23-md5-verification-status.md).
+
 ## 2026-09-22 — 다운로드 목록의 기준은 서버 디스크 실측이고, FTP에서 사라진 파일은 지우지 않는다
 
 - **"무엇을 받았나"의 정본은 매니페스트가 아니라 디스크다.** 세 세션이 각자 받은 것을 한 목록으로 맞출 때, 매니페스트를 서로 믿는 대신 nbb2 `/BiO/scratch/ehojune/GIAB_benchmark`를 전수 실측해 네 매니페스트 합집합과 파일·바이트 단위로 대조했다. 결과 81,330/81,330 일치, 매니페스트 밖 데이터 0 — 즉 지금은 매니페스트 = 디스크다. 앞으로 새 데이터를 들일 때는 그 phase의 매니페스트(`sra_manifest.tsv`/`ext_manifest.tsv`)에 먼저 넣고 받는다. 기록: [runs/2026-09-22-disk-vs-manifest-reconciliation.md](runs/2026-09-22-disk-vs-manifest-reconciliation.md).
