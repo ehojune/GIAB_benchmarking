@@ -94,8 +94,13 @@ category     -q octopus.q,shepherd.q -l h_vmem=60G,hostname=(octopus-2-10|octopu
 ```
 
 **8시간 6분 실행 후 exit 1로 이미 끝나 있었다.** `failed=0`이라 SGE가 강제 종료한 게 아니라
-스크립트 자신이 에러를 감지하고 종료했다. `maxvmem 21.081GB`는 요청 60G에 크게 못 미쳐 OOM이
-아니고, `df -h /BiO` 도 30% 사용(1.7P 여유)이라 디스크 문제도 아니다.
+스크립트 자신이 에러를 감지하고 종료했다. `df -h /BiO`는 30% 사용(1.7P 여유)이라 디스크 문제는
+아니다. **이 잡 자신의 OOM은 아니지만 노드 전체의 메모리 압박은 배제 못 한다** — `maxvmem
+21.081GB`는 요청 60G에 크게 못 미치지만, nbb2의 `h_vmem`은 예약도 상한도 아니다(consumable=NO,
+HARVEST.md "SGE h_vmem은 예약도 상한도 아닐 수 있다" 항목). 같은 노드(octopus-2-10)의 **다른
+잡이** 물리 메모리를 눌러 커널 OOM killer가 bwa-mem2를 죽였을 가능성이 남아 있고, 그 경우 정확히
+지금 본 증상(`bwa.stderr`가 에러 없이 중간에서 끊기고, samtools view가 이어서 파싱 에러)이
+나온다. dmesg/노드 로그는 이 세션에서 접근하지 않았다 — 확인 전까지 OOM을 배제하지 않는다.
 
 `repairs/mgi-hg002.IMeaDNit/view.stderr` (samtools view, `-bS -h` 로 bwa-mem2 SAM 스트림을 받는 쪽):
 
@@ -146,11 +151,14 @@ qsub -N mgi_HG002_rebuild -q octopus.q,shepherd.q \
 ```
 
 **재시도 자체를 재현성 검사로 쓴다.** 같은 자원·같은 청크 크기라 결정적 버그라면 156584도
-비슷한 지점에서 죽을 것이다. 그러면 blind retry를 멈추고, 실패 지점 부근(레코드 약
-474,400,000~474,480,000번째 pair, `R1/R2.trimmed.fastq.gz`의 65% 지점 — gzip이라 인덱스가
-없어 그 지점까지 순차 압축 해제가 필요하다, 87~91GB 파일 기준 대략 10~20분 추정)의 리드를
-직접 뽑아 SEQ/QUAL 길이·N-run·비정상 문자를 본다. 156584가 성공하면 두 실패는 우연히 가까운
-자리였던 것으로 정리한다.
+비슷한 지점에서 죽을 것이다. 그러면 blind retry를 멈추고 리드를 직접 봐야 하는데, **SAM 줄
+번호를 2로 나눠 FASTQ 페어 위치를 추정하면 안 된다** — bwa-mem2는 기본 설정에서도 secondary·
+supplementary 정렬을 낼 수 있어 SAM 레코드 수가 입력 리드 수보다 많을 수 있다(같은 종류의
+과다 계수가 `docs/reference/server-and-infra.md`의 idxstats 단계에도 있고 ≲0.4% 로 적혀 있는데,
+714,205,076 페어 기준 0.4%면 ±280만 페어 — 애초에 제안했던 8만 페어 폭의 탐색 구간을 통째로
+벗어난다). 대신 **끊기기 직전의 마지막 완전한 QNAME을 partial BAM/SAM 쪽에서 회수해서**, 그
+QNAME 그대로 `R1/R2.trimmed.fastq.gz`에서 grep 하는 쪽이 안전하다 — 위치를 계산할 필요가
+없어진다. 156584가 성공하면 두 실패는 우연히 가까운 자리였던 것으로 정리한다.
 
 ## 근거
 

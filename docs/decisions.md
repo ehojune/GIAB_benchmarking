@@ -866,11 +866,14 @@ STATUS.md 는 "running (09-22 07:53~)" 으로 남아 있었지만 `qacct -j 1555
 `repairs/mgi-hg002.IMeaDNit/` 산출물로 원인을 좁혔다. `bwa.stderr` 는 끝까지 정상적으로 read를
 처리하고 있었고, `view.stderr` 에 `[W::sam_read1_sam] Parse error at line 948884480` /
 `samtools view: error reading file "-"` 가 있다 — bwa-mem2 가 samtools view 로 넘기는 SAM 스트림이
-특정 줄에서 깨졌다. 디스크는 `/BiO` 30% 사용(1.7P 여유)이라 공간 문제가 아니고, `qstat -j` 의
-`h_vmem=300G` 대비 job 자체가 `failed=0` 인 것도 OOM·walltime 킬이 아님을 가리킨다. 원본
+특정 줄에서 깨졌다. 디스크는 `/BiO` 30% 사용(1.7P 여유)이라 공간 문제가 아니다. `qstat -j`의
+`h_vmem=300G`는 다른 잡(155526, regermline)의 값을 잘못 옮겨 적은 것이었다 — 155525 자신의
+요청은 `h_vmem=60G`고 `maxvmem 21.081GB`라 그 잡 자신의 OOM은 아니다. **다만 nbb2의 `h_vmem`은
+예약도 상한도 아니라서(HARVEST.md "SGE h_vmem은 예약도 상한도 아닐 수 있다") 같은 노드의 다른
+잡이 물리 메모리를 눌러 커널이 bwa-mem2를 죽였을 가능성은 배제하지 않는다** — `failed=0`은 SGE
+자신의 추적 기준으로 안 죽였다는 뜻일 뿐 노드 차원의 OOM killer와는 별개다. 원본
 `rawcheck.log`/`trimmedcheck.log` 는 raw·trimmed FASTQ 양쪽 다 PASS 를 찍었으니 입력 FASTQ
-자체는 온전하다 — bwa-mem2 프로세스 쪽(우연한 스트림 손상 또는 특정 레코드 처리 버그)이 의심된다.
-`aligned.bam.partial` 149GB 가 남아 있다.
+자체는 온전하다. `aligned.bam.partial` 149GB 가 남아 있다.
 
 **재시도 전에 파싱 에러가 재현되는지부터 봐야 한다** — 재현 안 되면 우연한 스트림 손상으로 보고
 그냥 재제출, 재현되면 bwa-mem2 버전/스레드 설정을 의심해야 한다. 국통바빅 파이프라인이든 이
@@ -892,12 +895,11 @@ SAM 948,868,188번째 줄(헤더 3,369줄 제외 정렬 레코드 948,864,819개
 날짜도 다른 두 번의 독립된 실행이 스트림의 거의 같은 지점에서 깨졌다는 것은, 무작위 스트림 손상보다
 **그 근방 리드 자체(또는 bwa-mem2 가 그 리드를 처리하는 방식)에 문제가 있을 가능성**을 가리킨다.
 
-**156584 가 다시 비슷한 지점에서 죽으면 blind retry를 멈춰야 한다.** 그때는 트리밍된
-`R1/R2.trimmed.fastq.gz` 에서 **페어(mate 쌍) 인덱스로 약 474,400,000~474,480,000번째**
-(전체 페어 714,205,076개 중 약 65~66% 지점 — 1,451,463,284 는 raw 기준 리드 수 = 페어 수의
-2배라, 이 인덱스로 한쪽 mate 파일만 찾으면 파일 끝을 넘어간다) 부근의 리드를 R1/R2 양쪽에서
-같이 뽑아 길이·문자셋 이상, N-run, 비정상 품질 문자열 등을 살펴보는 쪽으로 넘어가는 게 낫다.
-성공하면 이 우려는 기우였던 것으로 정리한다.
+**156584 가 다시 비슷한 지점에서 죽으면 blind retry를 멈춰야 한다.** 그때는 SAM 줄 번호를 2로
+나눠 페어 위치를 계산하지 않는다 — bwa-mem2가 secondary·supplementary를 낼 수 있어 그 계산은
+±수백만 페어까지 틀어질 수 있다(근거·수치는 [docs/runs/2026-09-23-phase3-input-audit-and-mgiseq-repair.md](runs/2026-09-23-phase3-input-audit-and-mgiseq-repair.md)).
+대신 끊기기 직전의 마지막 완전한 QNAME을 partial BAM/SAM에서 회수해 그 이름 그대로
+`R1/R2.trimmed.fastq.gz`에서 grep 한다. 성공하면 이 우려는 기우였던 것으로 정리한다.
 
 ## 2026-09-23 — [숏리드 세션] 위 두 항목의 원 명령/출력을 docs/runs/에 남긴다
 
