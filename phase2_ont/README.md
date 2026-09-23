@@ -231,8 +231,12 @@ ONT 정렬을 버리고 우리 minimap2 로 재정렬한 결과다 — 재정렬
 결함도 없다는 뜻이다. corpus 15런 중 외부 대조군이 있는 런은 이것뿐이라 **나머지 14런의 신뢰도도
 이 한 점에 얹힌다.**
 
+**v4.2.1 밖에서도 DV 가 이긴다** (2026-09-24, v5.0q smvar 층화). v4.2.1 이 빼놓은 상염색체 83 Mb 에서 DV 가
+FN SNP −17% · INDEL −10%, FP 절반 이하다. 그 구간은 정말 어렵다 — DV INDEL F1 이 0.94 → 0.62 로 떨어진다.
+
 전체 수치: [2026-09-18 R9 8런](../docs/reference/2026-09-18-ont-benchmark-first-results.md) ·
-[2026-09-22 R10 + DV](../docs/reference/2026-09-22-ont-r10-benchmark.md).
+[2026-09-22 R10 + DV](../docs/reference/2026-09-22-ont-r10-benchmark.md) ·
+[2026-09-24 v5.0q 층화](../docs/reference/2026-09-24-ont-r10-v5q-stratified.md).
 
 ## SV 정확도 평가 ([61_benchmark_sv.sh](scripts/61_benchmark_sv.sh))
 
