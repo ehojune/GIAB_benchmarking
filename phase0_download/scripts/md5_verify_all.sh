@@ -92,7 +92,17 @@ sidecar_md5() {
               "$dir"/*.md5sum "$dir"/*.md5sums "$dir"/*md5sum*.txt "$dir"/*md5sum*.in "$dir"/*.md5; do
         [ -f "$sc" ] || continue
         [ "$sc" = "$f" ] && continue
-        v=$(grep -F -- "$base" "$sc" 2>/dev/null | grep -oE '[0-9a-f]{32}' | head -1)
+        # basename을 토큰 단위로 정확히 맞춘다 — 부분 문자열(grep -F)은 a.bam 을 찾다가 a.bam.bai 줄을 물 수 있다.
+        # 지원 형식: "hash  name" / "hash *name" / "hash ./dir/name" / "name hash"
+        v=$(awk -v b="$base" '{
+                for (i = 1; i <= NF; i++) {
+                    f = $i; if (substr(f, 1, 1) == "*") f = substr(f, 2)
+                    n = split(f, pp, "/")
+                    if (pp[n] == b) {
+                        for (j = 1; j <= NF; j++) if (length($j) == 32 && $j ~ /^[0-9a-f]+$/) { print $j; exit }
+                    }
+                }
+            }' "$sc" 2>/dev/null)
         [ -n "$v" ] && { printf '%s' "$v"; return 0; }
     done
     return 1
