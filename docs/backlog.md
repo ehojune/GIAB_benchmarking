@@ -64,7 +64,7 @@ HG008 NIST 만 없었다 — 의도적 제외가 아니라 누락이다. 생성�
 - **0823p23 배치 bulk 의 truncal/clonal 변이만** 담는다. 클론은 truncal 변이를 공유하므로 recall 은
   해석되지만 클론 고유 변이는 FP 로 잡혀 **precision 은 해석할 수 없다.** p100(100계대)도 같다.
 - 권장 VCF `*_tumorvariants.vcf.gz`, BED 는 `_all.bed`(어려운 것 포함) 또는 `_nogermlineinterference.bed`.
-  디렉토리에는 VCF·README·zip 만 보이고 BED 는 없다 — zip 안일 것으로 보인다(미확인).
+  BED 셋은 디렉토리에 풀려 있지 않고 같은 폴더의 zip 안에만 있다(`unzip -l` 확인, all 1.0 MB · nogermlineinterference 1.1 MB · nogermlinewithin50bp 80.8 MB).
 - 권장 비교 도구는 **aardvark**(PacBio). rtg vcfeval·hap.py 도 시험됐다고 한다.
 - VAF 5~10% 미만은 걸러서 비교하라고 권한다 — caller 출력에 VAF 가 남아야 한다.
 - SV/CNV 는 stvar-CNV V0.5-20260318. HG009 는 somatic truth 가 아직 없다.
