@@ -36,9 +36,10 @@ source "$HERE/lib.sh"
 RT="$HERE/../run_table.tsv"
 
 # 61_benchmark_sv.sh 와 같은 방식 — 파이프라인이 실제로 쓴 판을 그대로 쓴다.
+# RUN_BASE 도 따로 바인드한다 — env.local.sh 로 GIAB_ROOT 밖에 두면 안 보인다 (PR #38 Codex 지적. phase2 판은 아직 GIAB_ROOT 만).
 BT_IMG="$(p1_img_path "$(p1_container_uris | grep '/bcftools:')")"
 [ -s "$BT_IMG" ] || { echo "ERROR: bcftools 컨테이너가 없다 ($BT_IMG) — 01_prepare_login_node.sh 먼저" >&2; exit 1; }
-bt() { singularity exec -B "$GIAB_ROOT:$GIAB_ROOT" "$BT_IMG" bcftools "$@"; }
+bt() { singularity exec -B "$GIAB_ROOT:$GIAB_ROOT" -B "$RUN_BASE:$RUN_BASE" "$BT_IMG" bcftools "$@"; }
 
 # 60_benchmark.sh 의 bench_truth 와 같은 해석. BED 만 쓴다.
 truth_bed() {

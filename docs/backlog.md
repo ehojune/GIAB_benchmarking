@@ -96,7 +96,9 @@ HG008 NIST 만 없었다 — 의도적 제외가 아니라 누락이다. 생성�
 | `qsub_task.sh` (로그인 노드용 점검을 잡으로) | ✅ | ✗ | — |
 | phase1·2 와 같은 `env.sh`/`lib.sh`/번호 스크립트 구조 | — | — | ✗ |
 
-**phase1 이 가져와야 할 것 7개**(phase2 에 있고 phase1 에 없음). 거꾸로 phase1 에만 있는 것 2개는 ONT 세션이 필요할 때 가져간다. 급하지 않지만, 가져올 때는
+**phase1 이 가져와야 할 것 7개**(phase2 에 있고 phase1 에 없음). 거꾸로 phase1 에만 있는 것 2개는 ONT 세션이 필요할 때 가져간다.
+**ONT 세션 몫 한 줄**: `phase2_ont/scripts/62_tstv_regions.sh` 의 `bt()` 가 `GIAB_ROOT` 만 바인드한다 —
+`RUN_BASE` 를 그 밖에 두면 bcftools 가 VCF 를 못 본다(PR #38 Codex 지적, phase1 판은 고침). 기본 경로에서는 문제없다. 급하지 않지만, 가져올 때는
 phase2 판을 그대로 이식하고 달라지는 부분만 주석에 적는다 — 두 phase 스크립트가 같은 모양인 것이
 지금까지 여러 번 교훈을 한쪽에서 다른 쪽으로 바로 옮길 수 있게 해 줬다.
 
