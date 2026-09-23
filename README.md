@@ -626,6 +626,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-23 — `fetch_all.sh` 완료 판정 정책 확정(#37): 파일 수 `done==total` + 검증기 rc 0, 검증 로그 격리, 사후 검증은 항상 all. 기록 [docs/runs/2026-09-23-fetch-all-completion-policy.md](docs/runs/2026-09-23-fetch-all-completion-policy.md).
 - 2026-09-23 — #33 후속: Codex 리뷰 3건 반영(`fetch_all.sh` — phase0는 다운로드 뒤 verify 합계 100%로만 성공 판정, phase0 미실행 시 옛 로그 무시, 단계 이름 오타·스크립트 부재는 FAIL). PacBio 세션이 짚은 README 수치 2곳을 FTP 본체(435행/81,302)와 4경로 전체(442행/81,330)로 구분해 적었다.
 - 2026-09-23 — 이 세션이 phase3 숏리드 전담으로 지정됨. 파이프라인 입력 22샘플 전수 점검(전부 명명 규약 준수), MGISEQ HG002 재생성 잡이 전날 밤 SAM 파싱 에러로 이미 실패해 있던 것을 발견해 STATUS/decisions 정정.
 - 2026-09-23 — **문서 구조 전환: `docs/STATUS.md` 를 현황판으로 되돌렸다**(249줄 → 65줄). 249줄 중 현황이 29줄(12%)뿐이었고 나머지는 레퍼런스·백로그·끝난 인계장이었다. 가른 기준은 "에이전트용이냐"가 아니라 **다음 주에 거짓이 되는가** — 안 변하는 것(노드 스펙·`_infra` 자산·점검 명령)은 [docs/reference/server-and-infra.md](docs/reference/server-and-infra.md), 아직 안 한 일(#8·#9·#10 상세)은 [docs/backlog.md](docs/backlog.md) 로 나눴다. 세션 조율 절 둘은 전부 해소돼 지웠고(규칙은 AGENTS.md 가 갖고 있다), 그 안에 섞여 있던 미해결 2건은 backlog 로 살렸다. 이력은 맨 아래에 14항목 그대로. `AGENTS.md` 충돌 규칙에 **"STATUS 에 다시 쌓지 않는다"** 를 명시했다. 근거: [decisions.md](docs/decisions.md) 2026-09-23 항목.
