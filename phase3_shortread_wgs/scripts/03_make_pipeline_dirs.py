@@ -112,6 +112,8 @@ ap.add_argument("--hard", action="store_true", help="1쌍짜리를 심볼릭 링
 ap.add_argument("--run-concat", action="store_true", help="concat.sh 전부를 여기서 실행하고 끝날 때까지 기다린다 (--jobs 병렬)")
 ap.add_argument("--jobs", type=int, default=3, help="--run-concat 동시 실행 수 (기본 3; 로그인 노드 I/O 고려)")
 ap.add_argument("--qsub", action="store_true", help="concat.sh 를 샘플별 SGE 잡으로 제출 (이미 완료된 샘플은 건너뜀)")
+ap.add_argument("--lanes", type=int, default=0, help="--qsub 동시 실행 상한: 큰 샘플부터 N줄로 세우고 k번째 잡이 k-N번째를 -hold_jid로 기다린다 "
+                "(0=제한 없음). 병합은 Lustre I/O라 한꺼번에 수십 개를 띄우지 않는다")
 # 쓸 수 있는 노드 집합은 고정이 아니다 — 2026-09-22에 shepherd 3대에서 octopus 2 + shepherd 2로 바뀌었고
 # 큐도 둘로 갈렸다. phase1/2 의 env.sh 와 같은 값을 기본으로 두되, 환경변수로 덮는 쪽이 정상 경로다.
 # 큐 x 노드가 안 겹치면 잡은 에러 없이 qw 로 영원히 남는다 — 제출 뒤 qstat 로 상태를 확인할 것.
@@ -319,6 +321,8 @@ for sdir, name, pairs in concat:
 if a.dry_run or not concat:
     sys.exit(0)
 todo = [(sdir, name) for sdir, name, pairs in concat if not concat_done(sdir, name, pairs)]
+size = {sdir: sum(os.path.getsize(p) for pr in pairs for p in pr) for sdir, name, pairs in concat}
+todo.sort(key=lambda t: -size[t[0]])   # 큰 것부터 — 꼬리에 800 GiB짜리가 혼자 남지 않게
 
 # ---- 병합 실행 -------------------------------------------------------------------------
 def job_alive(sdir):
@@ -335,6 +339,7 @@ def job_alive(sdir):
 
 if a.qsub:
     n_sub = 0
+    lane_last = [None] * max(a.lanes, 1)   # 줄마다 마지막으로 낸 잡 번호
     for sdir, name in todo:
         if os.path.isdir(os.path.join(sdir, ".concat.lock")):
             print(f"SKIP {name}: .concat.lock 있음(병합 중이거나 죽은 잡의 흔적 — owner: "
@@ -349,15 +354,18 @@ if a.qsub:
         job = os.path.join(sdir, "concat.qsub.sh")
         with open(job, "w", newline="\n") as f:
             f.write(QSUB_SH.format(name=name, sdir=os.path.abspath(sdir), queue=a.queue, hosts=a.hosts))
-        out = subprocess.run(["qsub", job], capture_output=True, text=True, stdin=subprocess.DEVNULL)
+        lane = n_sub % len(lane_last)
+        hold = ["-hold_jid", lane_last[lane]] if a.lanes and lane_last[lane] else []
+        out = subprocess.run(["qsub"] + hold + [job], capture_output=True, text=True, stdin=subprocess.DEVNULL)
         msg = (out.stdout or out.stderr).strip()
         m = re.search(r"Your job (\d+)", msg)
         if out.returncode != 0 or not m:
             print(f"FAIL qsub {name}: {msg}"); continue
         with open(os.path.join(sdir, "concat.jobid"), "w") as f:
             f.write(m.group(1) + "\n")
+        lane_last[lane] = m.group(1)
         n_sub += 1
-        print(f"QSUB {name}: {msg}")
+        print(f"QSUB {name}: {msg}{' (hold ' + hold[1] + ')' if hold else ''}")
     print(f"{n_sub}/{len(todo)} 잡 제출. 상태: qstat  · 결과: <샘플 dir>/concat.<JOB_ID>.log 마지막 줄이 'DONE'")
 elif a.run_concat:
     running = {}   # name -> (Popen, sdir, log)

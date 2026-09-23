@@ -89,7 +89,7 @@ NIST_BGIseq_2x150_100x·Element_AVITI_20231018은 1차 DIRNAME에 없어 2차(�
 cd /BiO/scratch/dyl/kbb/G000
 python ~/GIAB_benchmarking/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py --dry-run --sampleinfo sampleinfo/sample_information_nbb2.xlsx   # 계획 + 추가될 sampleinfo 행
 python ~/GIAB_benchmarking/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py --qsub --sampleinfo sampleinfo/sample_information_nbb2.xlsx \
-    --hosts '(octopus-2-8|octopus-2-9|octopus-2-10|octopus-2-11|shepherd-1-8|shepherd-1-9)'           # 링크 + 병합 잡 + sampleinfo 행 추가(백업 후)
+    --hosts '(octopus-2-8|octopus-2-9|octopus-2-10|octopus-2-11|shepherd-1-8|shepherd-1-9)'           # 링크 + 병합 잡(큰 것부터 8줄, -hold_jid) + sampleinfo 행 추가(백업 후)
 ```
 
 | tier | set dir | 샘플(label) | 쌍 | GiB | 처리 | 기종 |
