@@ -54,7 +54,8 @@ phase1·phase2 스크립트는 일부러 같은 모양이라 한쪽 교훈이 �
 
 | 파일 | 규칙 |
 |---|---|
-| `docs/STATUS.md` | `## 이력`은 **맨 위에 한 줄 추가만**. 작업 흐름 표는 **자기 행만** 고친다. 표 구조를 바꿔야 하면 그 PR 하나만 그것을 한다 |
+| `docs/STATUS.md` | **현황만 담는다**(2026-09-23 재편). `## 이력`은 맨 아래에 있고 **그 절 맨 위에 한 줄 추가만**. 작업 흐름 표는 **자기 행만** 고친다. 표 구조를 바꿔야 하면 그 PR 하나만 그것을 한다. 안 변하는 것은 [reference/server-and-infra.md](docs/reference/server-and-infra.md), 아직 안 한 일의 상세는 [backlog.md](docs/backlog.md) 로 — **STATUS 에 다시 쌓지 않는다** |
+| `docs/backlog.md` | 자기 phase 의 절만. 일이 끝나면 그 절을 지우고 STATUS 이력에 결과 한 줄 |
 | `docs/decisions.md` | **append only.** 남의 항목을 고치지 않는다. 남의 판단을 뒤집을 때는 새 항목에 "정정" 으로 쓴다 |
 | `HARVEST.md` | 표 끝에 행 추가. 남의 행을 고칠 때는 그 사실을 PR 본문에 쓴다 |
 | `README.md ## Journal` | 맨 위에 한 줄 추가만 |

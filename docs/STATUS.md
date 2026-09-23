@@ -1,10 +1,20 @@
 # 진행 현황 — 지금 돌고 있는 것과 다음 손
 
-읽고 지나가는 문서가 아니라 **매번 갱신하는 표**다. phase1 채점 결과의 해석은
-[중간 보고](reports/2026-09-22-phase1-pacbio-benchmark.md) — #8·#9 가 끝나면 그것과 합쳐 최종 보고를 다시 쓴다. 잡이 끝나거나 결정이 바뀌면 여기부터 고친다. 근거·경위는 [decisions.md](decisions.md), 결과 수치는 `docs/reference/`.
-`docs/runs/`가 아니라 여기 두는 이유(한 번 쓰고 남기는 실행 기록이 아니라 계속 덮어쓰는 현황판)는 decisions.md 2026-09-21 항목에 있다.
+**지금 무엇이 돌고 무엇이 막혀 있는지만 적는다.** 다음 주에 거짓이 될 것만 여기 있고,
+안 변하는 것·이미 끝난 것은 아래로 나가 있다.
 
-갱신: 2026-09-22 (phase1 SV 5런 -t 8 재실행 중 · phase2 HG002 R10 완주 확인)
+| 찾는 것 | 어디 |
+|---|---|
+| 잡이 왜 그 크기인지, 노드 스펙, `_infra` 에 뭐가 있는지, 확인 명령 | [reference/server-and-infra.md](reference/server-and-infra.md) |
+| 아직 안 한 일의 상세 (#8·#9·#10) | [backlog.md](backlog.md) |
+| 왜 그렇게 정했는지 | [decisions.md](decisions.md) |
+| 결과 수치 | `reference/` 의 날짜별 문서. phase1 채점 해석은 [중간 보고](reports/2026-09-22-phase1-pacbio-benchmark.md) |
+| 한 번 하고 남기는 실행 기록 | `runs/` |
+| 여러 세션이 동시에 붙을 때의 규칙 | [AGENTS.md](../AGENTS.md) |
+
+잡이 끝나거나 결정이 바뀌면 **여기부터** 고친다. 고친 내용은 맨 아래 `## 이력` 에 한 줄.
+
+갱신: 2026-09-23
 
 ## 한눈에 보기 (nbb2 로그인 노드)
 
@@ -12,106 +22,9 @@
 qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo; cd /BiO/scratch/dyl/kbb/G000 && for d in GIAB-publicData-*/; do printf '%-45s DONE=%-8s err=%s\n' "${d%/}" "$(grep -o 'Success\|Error' $d/__DONE__ 2>/dev/null | head -1)" "$(cat $d/error_list.txt 2>/dev/null | tr '\n' ' ' | cut -c1-60)"; done; echo; ls /BiO/scratch/ehojune/GIAB_benchmark/repairs/mgi-hg002.*/VALIDATED.txt 2>/dev/null || echo "MGISEQ HG002 rebuild: 아직"
 ```
 
-## 지금 다른 세션이 하는 일 (2026-09-23 갱신)
-
-세 세션이 같은 repo 를 동시에 고친다. 규칙은 [AGENTS.md](../AGENTS.md) 의
-"여러 에이전트가 동시에 붙을 때". **이 절은 상태이므로 낡으면 지운다.**
-
-| | 세션 | 상태 |
-|---|---|---|
-| #29 · #32 | ONT — HG002 R10 채점, ts/tv 구간 분할 | **머지됨** |
-| #33 | 다운로드 — 디스크 전수 대조(81,330/81,330 일치) + `fetch_all.sh` (#27 대체) | 열림. **PacBio 에게 묻는 항목 4개** — 아래 답 |
-| #31 | PacBio — 조율 규칙(AGENTS.md) | 열림 |
-
-**ONT 세션이 정정해 준 것**(#29): main 에 "truvari 는 ONT 67~73 GB / HiFi 91.6~136.2 GB,
-데이터셋이 두 배를 가른다" 고 적었던 것은 틀렸다. 그 ONT 값은 `BENCH_SV_THREADS` 가 생기기 전
-**기본 4스레드** 값이었고, `-t 8` 로 맞춰 재니 R10 이 133.5 GB 로 HiFi 대역 안이었다.
-**데이터셋 차이가 아니라 스레드 설정 차이다.** PacBio 세션은 동의한다.
-
-### #33 의 PacBio 질문에 대한 답 (2026-09-23)
-
-1. **sra_manifest 밖에 받은 것 없다.** phase1 의 외부 다운로드는 `02_fetch_sra_reads.sh` 가
-   ENA 에서 받는 12 fastq 뿐이고 전부 `sra_manifest.tsv` 에 있다. 다른 출처(SRA toolkit,
-   PacBio 공개 버킷)를 쓴 적 없다.
-2. **`_infra/` 자산 목록은 아래 "공유 `_infra` 자산" 절.** ONT 와 같은 디렉토리를 쓰므로
-   중복은 한 번만 적었다.
-3. **미추적 파일 처리** — `phase1_bench_summary.tsv`(repo 루트)는 **옛 경로**다. 지금 스크립트는
-   `phase1_pacbio_hifi/` 밑에 쓴다. 루트 것은 삭제, phase 디렉토리의 둘은 **gitignore**
-   (재생성 가능한 산출물이고 `--collect` 한 번이면 나온다). `env.local.sh.bak` 도 gitignore.
-4. **phase0 매니페스트 밖 입력 계획은 지금 없다.** #8 의 HG008-T 10 파일은 전부 phase0 안이다.
-   생기면 `sra_manifest.tsv` 에 먼저 등록하고 받겠다.
-
-## 세션별 남은 최신화 (2026-09-23 코드·문서 직접 확인)
-
-PacBio 세션이 repo 전반을 훑어 찾은 것이다. **자기 것만 고치면 된다** — 남의 것은 소유 구분대로 둔다.
-
-### 🟠 ONT 세션 (이 PR 에서 처리함)
-
-| 무엇 | 어떻게 |
-|---|---|
-| 카탈로그 next_step 이 "다음: …평가" 로 낡았던 것 | `50_update_catalog.py` 의 문구를 **"한 것 + 남은 것"** 으로 바꿔 재실행. **10행 갱신** — germline 8행(채점 완료) + `BCM_ONT-std_HG008T-p2`(미기록이었다) + `PAW70337`(아래) |
-| **R10 행이 스크립트에 영영 안 잡히던 버그** | 카탈로그 key 는 `(sample, giab_path basename)` = `(HG002, PAW70337)` 인데 run_table dataset 은 `ONT-R10_giab2025.01_PAW70337` 이라 안 맞았다. 경로는 배포처 구조를, dataset 은 우리 명명 규칙을 따르기 때문이다. `EXT_ALIAS` 로 명시적으로 이었다. 같은 이유로 산출물 경로도 basename 이 아니라 dataset 으로 만들게 고쳤다 |
-| `phase2_ont/README.md` "자원 실측은 아직 없다" | 표로 교체 — 파이프라인 16h20m/66.2 GB, hap.py 50.7분/24.6 GB, truvari 4.5분/133.5 GB. 소변이·SV 실측 절도 R10 포함해 다시 썼다 |
-| 엑셀 | `50_update_catalog.py` 가 이제 `build_xlsx.py` 까지 돌린다(PacBio 수정). 카탈로그와 같이 재생성됐다 |
-| 서버 미추적 결과 파일 7개 | `.gitignore` 에 넣었다 (양쪽 phase 의 `--collect` 산출물 + `--tsv` 산출물 + `*.bak`). 전부 수 초면 재생성되고 실측값 정본은 `docs/reference/` 다 |
-
-### 🟢 다운로드 세션
-
-| 무엇 | 어디 |
-|---|---|
-| "현재 **435개 prefix · 81,302파일**" — 카탈로그는 442 / 81,316 이다 | `README.md` 605행 |
-| phase0 README 의 81,302 / 116,509.5 GiB 는 **FTP/S3 본체만**인 값이라 그 자체로 틀리진 않지만, 81,330(4경로 합집합)과 나란히 있어 읽는 사람이 헷갈린다 | `phase0_download/README.md` 4·5·26행 |
-
-### 🔵 PacBio 세션 (이 PR 에서 처리함)
-
-카탈로그 25행·엑셀·phase1 README·루트 README·백로그 표. 남은 것은 **phase2 에 있고 phase1 에 없는 8개**(위 백로그 표) — 급하지 않아 이번 PR 에 안 넣었다.
-
-## 공유 `_infra` 자산 (phase1·phase2 공용, 2026-09-23 확인)
-
-`$RUN_BASE/_infra` = `/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/_infra`.
-**산출물이 아니라 실행에 필요한 자산**이라 매니페스트 대조 대상이 아니었다. 계산 노드에
-외부망이 없어 전부 로그인 노드에서 미리 받아 둔 것들이다(`01_prepare_login_node.sh`).
-
-### `reference/` — 3.2 GB
-
-| 파일 | 크기 | 출처 | 받은 곳 |
-|---|---|---|---|
-| `GCA_000001405.15_GRCh38_no_alt_analysis_set.fasta` | 3,144,230,986 | phase0 `release/references/GRCh38/` 사본을 압축 해제. 없으면 GIAB FTP 직접 | phase1 `01_prepare` |
-| `…fasta.fai` | 7,804 | `samtools faidx` 로 생성 (hap.py·truvari 가 요구) | phase1 `60_benchmark` |
-| `human_GRCh38_no_alt_analysis_set.trf.bed` | 7,594,623 | `raw.githubusercontent.com/PacificBiosciences/pbsv/master/annotations/` | phase1 `01_prepare` |
-| `clair3_models/` 3개 | **195 MB** (78+78+39) | HKU `bio8.cs.hku.hk/clair3/clair3_models/` 우선, 실패 시 Rerio `cdn.oxfordnanoportal.com/software/analysis/models/clair3/`. `r1041_e82_400bps_sup_v420` 78 MB · `…_v430` 78 MB · `r941_prom_hac_g238` 39 MB — 컨테이너 `/opt/models` 에 없는 것만 받는다 | **phase2** `01_prepare` |
-| `sv_truth/HG002_GRCh38_v5.0q_stvar.noast.{vcf.gz,tbi}` | — | 파생물. phase0 truth 에서 `ALT="*"` 제거 (v5.0q README 지시) | phase1 `61_benchmark_sv`, phase2 와 공유 |
-
-### `containers/` — 4.9 GB, 이미지 16개
-
-| | |
-|---|---|
-| 공용 | `bcftools 1.24` 84 MB · `samtools 1.24` 44 MB · `mosdepth 0.3.14` 44 MB · `multiqc 1.35` 383 MB |
-| 변이 호출 | `deepvariant 1.10.0` 1,879 MB · `clair3 v1.2.0` 1,413 MB |
-| phase1 전용 | `pbmm2 26.2.0` · `pbsv 2.11.0` · `pbccs 6.4.0` · `pbtk 3.5.0` (합 41 MB) · `whatshap 2.8` 152 MB |
-| phase2 전용 | `minimap2_samtools`(seqera wave) 140 MB · `sniffles 2.8.0` 134 MB · `longphase 2.0.2` 29 MB |
-| 벤치마크 | `hap.py v0.3.12` 447 MB · `truvari 5.4.0` 141 MB |
-
-전부 `docker://` 에서 `singularity pull` 로 받았다. URI 는 각 phase 의 `nextflow.config`
-`container_*` 와 `env.sh` 의 `BENCH_IMAGES` 가 정본이고, 파일명은 Nextflow 규약
-(프로토콜 제거 후 `[/:]` → `-`, `.img`)이라 URI 에서 기계적으로 나온다.
-
-**받은 데이터가 아니라 실행 자산**이다. 지우면 `01_prepare_login_node.sh` 한 번으로 복구된다
-(로그인 노드에서, 외부망 필요).
-
-## 클러스터 사실 (2026-09-22 직접 확인)
-
-세 세션이 다 알아야 하는 것이라 여기 둔다.
-
-| | |
-|---|---|
-| **GPU 없음** | `qhost -F gpu` 가 리소스 행을 하나도 안 낸다. 어느 노드도 `gpu` complex 를 광고하지 않는다. DeepSomatic 등은 CPU 경로로 설계해야 한다 |
-| **octopus 노드는 1 TB RAM** | `octopus-2-*` 1007.1 GB / `shepherd-1-*` 251.1 GB. 지금까지의 슬롯 계산은 전부 251 GB 기준이라 **octopus 에서는 과하게 보수적**이다. 노드별로 다르게 잡을 여지가 있다 |
-| 전 노드 64코어 | octopus-2-1~2-11, shepherd-1-1~1-14 (큐 인스턴스 25개). **그중 우리에게 허용된 집합은 따로 물어야 한다** — SGE ACL 이 아니라 사람끼리의 약속이다 |
-
 ## 작업 흐름
 
-| # | 작업 | 상태 (2026-09-22) | 잡 | 끝나면 | 막힌 것 / 의존 |
+| # | 작업 | 상태 (2026-09-23) | 잡 | 끝나면 | 막힌 것 / 의존 |
 |---|---|---|---|---|---|
 | 1 | **phase3 WGRS 재개** — markdup Java 8→17 (BGISEQ500, Element-AVITI, Hiseq-300x, Illumina-250PE, Novaseq6000, NovaseqX) | **running** 4잡 (09-21 16:36~) | 155526~155529 `regermline`, 60 slots, octopus-2-8/9/11 + shepherd-1-9 | 세트별 `__DONE__` Success·`error_list.txt` 없음 확인 → #7 | 지정 호스트가 비어야 시작. 오래 qw면 `qstat -j 155519 \| grep -i "cannot run\|reason"` |
 | 2 | **MGISEQ HG002 BAM 재생성** (정렬 BAM 33% 누락) | **running** (09-22 07:53~) | 155525 `mgi_HG002_rebuild`, 10 slots, octopus-2-10, Codex 스크립트 `repairs/mgi_hg002_recheck.sh --rebuild` | `repairs/mgi-hg002.*/VALIDATED.txt` 확인 → `tmp/04.sort/…HG002_sort.bam`(+.bai) 교체(옛것 보관) → #3 | `rawcheck.log` FAIL이면 원본 GIAB 파일 문제 — 별도 판단 |
@@ -121,89 +34,9 @@ PacBio 세션이 repo 전반을 훑어 찾은 것이다. **자기 것만 고치�
 | 5b | **phase1 PacBio SV 평가** (`s1.*`, Truvari vs v5.0q, HG002 5런) | **완료** — refine F1 .8208~.8418. **세대 단조성 없음**(SeqI 이 SeqII 를 가른다), recall 이 약점(.757~.788) | 156048~156052, `-t 8`, exit 0 | 수치·판정: [2026-09-22-pacbio-hifi-benchmark-first-results.md](reference/2026-09-22-pacbio-hifi-benchmark-first-results.md) | — |
 | 6 | phase3 Hiseq-subsampled-30x | **완료** (Success) | — | #7에 포함 | — |
 | 7 | **phase3 평가 설계** — 업체 4곳(gd1~4) + 공개 raw 22 샘플의 VCF를 v4.2.1(+HG002 CMRG·v5.0q)로 hap.py | 미착수 | — | 결과 디렉토리 구조 받으면 phase1·2 `60_benchmark.sh` 모양으로 스크립트 | #1·#3 완료 |
-| 8 | **phase1 HG008-T 9 실행단위** — uBAM → BAM → VCF | **제출됨** 2026-09-22 17:23 — 2건 r / 7건 qw | 156064~156072, 30 slots. 허용 4노드 중 셋이 `regermline` 60슬롯에 잡혀 shepherd-1-8 만 빈다 | `30_verify_outputs.sh` → `35_review_qc.py`. 채점은 #9 가 서야 가능 | 런당 10~15시간 예상, 9건이면 2~3일 |
-| 9 | **HG008-T somatic 평가 설계** — germline truth가 없는 HG008/HG009를 채점할 유일한 길 | **미착수** | — | smvar V0.3-20260425 / stvar-CNV V0.5-20260318 기준 `62_benchmark_somatic.sh` (가칭) | #8 (평가할 VCF가 먼저 있어야) |
-| 10 | **phase1↔phase2 표준화 잔여** — 아래 "표준화 백로그" | 부분 완료 | — | phase3까지 같은 모양으로 | 급하지 않음 |
-
-## #8 상세 — phase1 HG008-T 9 실행단위 (2026-09-22 등록 완료)
-
-`make_samplesheets.py` 의 RUNS 스펙에서 **HG008 의 NIST 트리가 통째로 빠져 있었다.** 다운로드는
-2026-08-30 에 끝나 있었다. HG008 은 Liss_lab 4건만, HG009 는 NIST 11건이 다 등록돼 있었는데
-HG008 NIST 만 없었다 — 의도적 제외가 아니라 누락이다. 생성기를 고쳐 재생성했다(손으로 넣으면
-다음 재생성 때 사라진다).
-
-**진입 타입은 fastq 가 아니라 uBAM 이다.** Revio 가 기기에서 CCS 를 끝내 보낸다.
-
-| 실행 단위 | uBAM | GiB |
-|---|---|---|
-| HG008T-p100 (bulk, 20240508p100) | 1 | 49.9 |
-| HG008T-2D6 / 2E6 / 3E4 (20240718p14 클론) | 1 / **2** / 1 | 46.1 / 57.5 / 69.9 |
-| HG008T-SC6 / SC9 / SC14 / SC24 / SC28 (20240805p19 클론) | 1 each | 61.5 / 64.8 / 67.2 / 50.8 / 60.2 |
-
-**합계 10 uBAM / 528.1 GiB.** 2E6 만 SMRT cell 이 2개다.
-
-> 이전에 "1,001 GiB" 로 적었던 것은 **디렉토리 총량**이다. 절반이 GIAB 이 만든 정렬본
-> (`*_PacBio-HiFi-Revio_<N>X_GRCh38-GIABv3.bam`)이고 **그건 입력이 아니다** — 우리는 uBAM 부터
-> 다시 정렬한다. 패턴이 demux uBAM 만 잡으므로 정렬본은 자동으로 빠진다.
-
-커버리지가 48~60X 라 런당 10~15시간 예상(phase1 30x 실측 6~7시간 기준). 파이프라인 잡은
-30슬롯이라 노드당 2런이다.
-
-**germline truth 가 없어 `60_benchmark.sh`·`61_benchmark_sv.sh` 가 자동으로 건너뛴다.**
-채점은 #9 가 서야 가능하고, 그전까지는 QC(`35_review_qc.py`)까지만 본다.
-
-## #9 상세 — somatic 평가에서 먼저 정해야 할 것
-
-**germline caller 출력을 somatic truth 에 그냥 대면 안 된다.** 우리 파이프라인이 HG008-T 에서
-내는 것은 DeepVariant/Clair3 의 **전체 변이**(germline + somatic)인데, GIAB somatic 벤치마크는
-**종양 특이 변이만** 담는다. 그대로 비교하면 germline 변이가 전부 FP 가 되어 precision 이 무너진다.
-
-갈 수 있는 길 셋:
-
-| | 방법 | 문제 |
-|---|---|---|
-| A | tumor − normal 뺄셈 | 거칠다. somatic 은 subclonal(저 VAF)이 많은데 germline caller 가 그걸 잘 못 부른다 |
-| B | somatic caller 추가 (DeepSomatic 등, PacBio 지원) | 파이프라인 확장이 필요하다. 가장 정공법 |
-| C | 채점 포기, somatic 구간을 QC·커버리지 확인에만 사용 | 안전하지만 얻는 게 적다 |
-
-**매칭 정상(normal)이 또 하나의 걸림돌이다.** 매니페스트 실측으로 NIST 트리에는 tumor 만 있고
-정상은 Liss_lab 쪽뿐이다(HG008-N-D, HG008-N-P). 즉 NIST 클론 9건의 짝을 맞추려면 **다른 랩·다른
-준비의 정상**을 써야 해서, 랩 차이가 somatic 판정에 섞인다.
-
-이 셋 중 무엇으로 갈지는 사용자 결정이 필요하다 — #8 산출물이 나오기 전에도 정할 수 있다.
-
-## 표준화 백로그 (#10)
-
-**방향이 한 번 뒤집혔다.** 원래 "phase2 를 기준으로 phase1 을 맞춘다" 였는데, phase1 이 따라가는
-동안 phase2 가 더 나갔다. 2026-09-23 코드 직접 확인 결과가 아래다 — **표를 "미착수"로 뭉뚱그려
-두었더니 이미 한 것까지 안 한 것으로 보였다.**
-
-| 항목 | phase1 | phase2 | phase3 |
-|---|---|---|---|
-| `lib.sh` 공용 헬퍼 (`*_img_path`, `*_container_uris`, `*_sge_*`) | ✅ | ✅ | ✗ |
-| `60_benchmark.sh` 하드닝 (`.fai` 자동생성, qsub 검증, `submit_many`) | ✅ | ✅ | — |
-| `10_submit.sh` qsub 하드닝 | ✅ | ✅ | — |
-| `61_benchmark_sv.sh` | ✅ | ✅ | — |
-| `env.local.sh.example` 벤치마크 프리셋 | ✅ | ✅ | — |
-| `35_review_qc.py --pass-counts` (bcftools 해석 포함) | ✅ | ✅ | — |
-| `50_update_catalog.py` 가 엑셀도 재생성 | ✅ | ✅ | — |
-| `30_verify_outputs.sh` 에 haplotagged BAM 점검 | ✗ | ✅ | — |
-| `30_verify_outputs.sh` 에 mosdepth/QC 점검 | ✗ | ✅ | — |
-| `35_review_qc.py --calibrate` | ✗ | ✅ | — |
-| `35_review_qc.py basemap_pct` (CIGAR 기반 매핑률) | ✗ | ✅ | — |
-| `35_review_qc.py --check-meth` | ✗ | ✅ | — |
-| `excluded.tsv` 기구 | ✗ | ✅ | — |
-| `run_table.tsv` 의 `files` 열 | ✗ | ✅ | — |
-| `62_tstv_regions.sh` (ts/tv 구간 분할) | ✗ | ✅ | — |
-| phase1·2 와 같은 `env.sh`/`lib.sh`/번호 스크립트 구조 | — | — | ✗ |
-
-**phase1 이 가져와야 할 것 8개**(phase2 에 있고 phase1 에 없음). 급하지 않지만, 가져올 때는
-phase2 판을 그대로 이식하고 달라지는 부분만 주석에 적는다 — 두 phase 스크립트가 같은 모양인 것이
-지금까지 여러 번 교훈을 한쪽에서 다른 쪽으로 바로 옮길 수 있게 해 줬다.
-
-`62_tstv_regions.sh` 는 phase1 에도 쓸모가 있다. phase1 의 SNP 는 포화(F1 .9984~.9994)라
-ts/tv 로 더 캘 게 없어 보이지만, 구간 안/밖을 갈라 보면 Sequel I 의 INDEL 이 나쁜 이유가
-구간 밖 FP 때문인지 확인할 수 있다 — 지금은 미확인으로 남아 있다.
+| 8 | **phase1 HG008-T 9 실행단위** — uBAM → BAM → VCF ([상세](backlog.md#8-상세--phase1-hg008-t-9-실행단위-2026-09-22-등록-완료)) | **제출됨** 2026-09-22 17:23 — 2건 r / 7건 qw | 156064~156072, 30 slots. 허용 4노드 중 셋이 `regermline` 60슬롯에 잡혀 shepherd-1-8 만 빈다 | `30_verify_outputs.sh` → `35_review_qc.py`. 채점은 #9 가 서야 가능 | 런당 10~15시간 예상, 9건이면 2~3일 |
+| 9 | **HG008-T somatic 평가 설계** — germline truth가 없는 HG008/HG009를 채점할 유일한 길. **길 셋 중 무엇으로 갈지 사용자 결정이 필요하다** ([상세](backlog.md#9-상세--somatic-평가에서-먼저-정해야-할-것)) | **미착수** | — | smvar V0.3-20260425 / stvar-CNV V0.5-20260318 기준 `62_benchmark_somatic.sh` (가칭) | #8 (평가할 VCF가 먼저 있어야) |
+| 10 | **phase1↔phase2 표준화 잔여** — phase2 에 있고 phase1 에 없는 것 8개 ([상세](backlog.md#표준화-백로그-10)) | 부분 완료 | — | phase3까지 같은 모양으로 | 급하지 않음 |
 
 ## 자잘한 정리 (급하지 않음)
 
@@ -212,26 +45,9 @@ ts/tv 로 더 캘 게 없어 보이지만, 구간 안/밖을 갈라 보면 Seque
 - Java 17 결정은 decisions.md 2026-09-21 항목에 적었다(검증 대기 표시). #1 성공 확인 후 "검증됨"으로 바꾼다.
 - 파이프라인이 bwa 실패를 삼키고 `Finished`로 넘긴 경로(Codex 확인) — 공용 파이프라인이라 우리가 안 고침. 재개 전 BAM 리드 수 대조가 방어책(아래 명령).
 
-## 자주 쓰는 확인 명령
-
-정렬 BAM 완전성 검사는 두 단계다.
-
-**1단계 — 빠른 스크리닝** (인덱스만 읽어 즉시 끝남). `idxstats`는 secondary/supplementary까지 세므로 작은 누락(≲0.4%)은 가릴 수 있다. 잘린 파일(MGISEQ HG002처럼 수십 %)만 잡는 용도다. samtools 실패(파일 없음 포함)는 idxstats의 종료 코드로 잡아 `NOBAM`으로 따로 표시한다 — 파이프 뒤에 두면 awk 종료 코드에 가려진다.
-
-```bash
-cd /BiO/scratch/dyl/kbb/G000 && SAM=/home/ehojune/program/samtools-1.24/samtools; for j in GIAB-publicData-*/tmp/02.trimmed/*_fastp.json; do s=$(basename "$j" _fastp.json); d=${j%%/tmp/*}; exp=$(python -c "import json;print(json.load(open('$j'))['summary']['after_filtering']['total_reads'])"); if ! out=$($SAM idxstats "$d/tmp/04.sort/${s}_sort.bam" 2>/dev/null); then printf '%-50s fastp=%s NOBAM\n' "$s" "$exp"; continue; fi; got=$(printf '%s\n' "$out" | awk '{s+=$3+$4} END{print s+0}'); printf '%-50s fastp=%s idxstats=%s %s\n' "$s" "$exp" "$got" "$([ "$got" -ge "$exp" ] && echo OK || echo SHORT)"; done
-```
-
-**2단계 — 확정** (primary만 세므로 정확하지만 BAM 전체를 읽는다. 샘플당 수 분~수십 분, SGE 잡으로). `fastp after_filtering total_reads`와 정확히 같아야 한다.
-
-```bash
-cd /BiO/scratch/dyl/kbb/G000 && SAM=/home/ehojune/program/samtools-1.24/samtools; for j in GIAB-publicData-*/tmp/02.trimmed/*_fastp.json; do s=$(basename "$j" _fastp.json); d=${j%%/tmp/*}; exp=$(python -c "import json;print(json.load(open('$j'))['summary']['after_filtering']['total_reads'])"); got=$($SAM view -c -F 0x900 -@ 4 "$d/tmp/04.sort/${s}_sort.bam") || { printf '%-50s FAIL(samtools)\n' "$s"; continue; }; printf '%-50s fastp=%s primary=%s %s\n' "$s" "$exp" "$got" "$([ "$got" -eq "$exp" ] && echo OK || echo MISMATCH)"; done
-```
-
-(1단계에서 `NOBAM`은 세트가 Success로 끝나 tmp가 정리된 경우다 — Hiseq-subsampled-30x가 그렇다. 2026-09-21 1단계 결과: 20 OK, MGISEQ HG002 SHORT. 2단계는 아직 안 돌렸다.)
-
 ## 이력
 
+- 2026-09-23 — **STATUS 를 현황판으로 되돌렸다.** 249줄 중 현황이 29줄(12%)이었고 나머지는 레퍼런스·백로그·끝난 인계장이었다. 가른 기준은 "에이전트용이냐"가 아니라 **다음 주에 거짓이 되는가**다 — 안 변하는 것(노드 스펙·`_infra` 자산·점검 명령)은 [reference/server-and-infra.md](reference/server-and-infra.md), 아직 안 한 일(#8·#9·#10 상세 + 다운로드 세션의 문서 수치 불일치 2건)은 [backlog.md](backlog.md) 로 옮겼다. 세션 조율 절 둘("지금 다른 세션이 하는 일"·"세션별 남은 최신화")은 **전부 해소돼 지웠다** — 규칙은 AGENTS.md 가, 내용은 이력과 PR 이 이미 갖고 있다. 이력은 사용자 요청대로 **맨 아래에 전부** 남겼다(14항목 그대로). STATUS 60줄.
 - 2026-09-23 — [ONT 세션] 세 세션 정렬(#33)에 ONT 몫 반영. **카탈로그가 외부 유래 런을 영영 못 보던 구멍을 찾았다** — 행 key 가 `(sample, giab_path basename)` 인데 ext 행은 경로(배포처 구조)와 dataset(우리 명명)이 달라 HG002 R10 이 채점 완료 후에도 `variant_called=FALSE` 로 남아 있었다. 경고 한 줄로만 났다. `EXT_ALIAS` + 산출물 경로를 dataset 기준으로 고쳐 **10행 갱신**(germline 8 + HG008T-p2 + PAW70337). next_step 을 "한 것 + 남은 것" 으로 전환. phase2 README 의 소변이·SV·자원 실측 절을 R10 포함해 다시 썼고, 서버 미추적 결과 파일 7개를 gitignore 했다. PAW70337 행의 coverage 를 추정 ~45x 에서 **실측 49x** 로, notes 에 BAM 헤더 실측(정렬 PG 없음 · @RG basecall 모델 · GRCh38 195 contig)을 넣었다.
 - 2026-09-23 — repo 전반 최신화 훑기. **엑셀이 25행만큼 뒤처져 있었다** — `50_update_catalog.py` 가 `build_readme.py` 만 돌리고 `build_xlsx.py` 는 안 돌렸다. 양쪽 phase 에 추가하고, `build_xlsx.py` 의 `--version`/`--date` 를 선택으로 바꿨다(처리 상태 갱신이 카탈로그 판번호를 올릴 이유가 없는데 required 라 부를 수 없었다). **표준화 백로그의 방향이 뒤집힌 것도 발견** — "phase2 기준으로 phase1 을 맞춘다" 였는데 phase1 이 따라가는 동안 phase2 가 더 나가서, 지금은 phase2 에 있고 phase1 에 없는 것이 8개다. 표를 phase 별 3열로 바꿔 코드 확인 결과를 그대로 적었다. 세션별 남은 최신화 목록도 절로 뒀다.
 - 2026-09-23 — phase1 문서 최신화. 채점이 끝났는데 문서가 "앞으로 할 일" 상태였고 **사실 오류가 둘** 있었다: 카탈로그 note 가 HG002 에 "SV benchmark v0.6 으로 Truvari 평가"(v0.6 은 **GRCh37 전용**이라 못 쓴다 — 실제로 쓴 것은 v5.0q), HG001·HG003~007 에 "교차 콜러 일치도와 수동 검토로 평가"(하지 않았고 할 계획도 없다). `50_update_catalog.py` 문구를 고쳐 25행 재생성. phase1 README 에 SV 절 신설(있던 "SV 와 somatic 은 아직 못 한다" 가 낡았다), 채점 대상 23런 -> 19런, BENCH_SLOTS 8/32G -> 16/56G. **ONT 세션 할 일**: `phase2_ont/scripts/50_update_catalog.py` 의 같은 v0.6 오류를 고쳤으니(문구만) 재실행해 ONT 8행에 반영할 것.

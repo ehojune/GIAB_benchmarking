@@ -7,7 +7,9 @@ GIAB 9개 샘플(HG001–HG007 germline, HG008·HG009 tumor-normal)의 **전체 
 | | |
 |---|---|
 | 데이터 규모 | **442 datasets / 81,316 files / 125.7 TB** · **다운로드 완료 — 2026-09-22 서버 전수 실측: 4경로(FTP/S3·ENA·ONT 공개·Google/HPRC) 81,330/81,330 files 크기 일치, 미수신 0, 매니페스트 밖 데이터 0** ([대조 기록](docs/runs/2026-09-22-disk-vs-manifest-reconciliation.md)); 그 외 FTP에서 삭제된 release 구버전 52 files / 8.4 GiB를 디스크에 보유 (2026-08-13 HEAD 검증 + 2026-09-16 FTP `release/`·`data/` 라이브 크롤: HG002 v5.0q·stratifications v3.6, HG008/HG009 신규 데이터셋 추가. GIAB FTP 밖 데이터 중 숏리드 6행 359 GiB(`external/`, 2026-09-17)와 HG002 R10.4.1 ONT 1행 160 GiB(`ext/`, 2026-09-22) 포함 — 아래 "외부 보충 리드". 2026-09-17에 받지 않기로 한 3건 12,423 files / 10.7 TiB는 [manifests/declined_by_decision.tsv](phase0_download/manifests/declined_by_decision.tsv)에 목록만 남기고 제외) |
-| **지금 돌고 있는 것** | [docs/STATUS.md](docs/STATUS.md) — 잡 ID, 끝나면 할 일, 막힌 것. 매 세션 갱신 |
+| **지금 돌고 있는 것** | [docs/STATUS.md](docs/STATUS.md) — 잡 ID, 끝나면 할 일, 막힌 것. 현황만 담는다 |
+| 아직 안 한 일 | [docs/backlog.md](docs/backlog.md) — STATUS 표 #8·#9·#10 의 상세 |
+| 서버·자산·점검 명령 | [docs/reference/server-and-infra.md](docs/reference/server-and-infra.md) — 노드 스펙, `_infra` 자산, 매니페스트 밖에서 받은 것 (조회용) |
 | 다운로드 | [phase0_download/](phase0_download/) — 스크립트, 매니페스트, 속도·용량 계획 |
 | PacBio HiFi 처리 | [phase1_pacbio_hifi/](phase1_pacbio_hifi/) — 47개 실행 단위, raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트. 채점 완료(소변이 19런·SV 5런), HG008-T 9런 처리 중 |
 | ONT 처리 | [phase2_ont/](phase2_ont/) — **19개 실행 단위(기본 제출 15)**, raw→VCF Nextflow 파이프라인 + SGE 제출 스크립트. **파이프라인·채점 모두 완료** — 소변이 9런(HG001~HG007 R9 8 + HG002 R10 1), SV 3런(HG002). HG008 6런은 germline truth가 없어 구조적으로 채점 대상이 아니다 |
