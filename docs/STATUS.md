@@ -27,8 +27,8 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 | # | 작업 | 상태 (2026-09-23) | 잡 | 끝나면 | 막힌 것 / 의존 |
 |---|---|---|---|---|---|
 | 1 | **phase3 WGRS 재개** — markdup Java 8→17 (BGISEQ500, Element-AVITI, Hiseq-300x, Illumina-250PE, Novaseq6000, NovaseqX) | **2/6 Success**(Novaseq6000·NovaseqX, 09-22 새벽), **4/6 running**(BGISEQ500·Element-AVITI·Hiseq-300x·Illumina-250PE — `__DONE__`는 재개 전 옛 Error라 무시, `qstat -j`로 CPU 계속 증가 확인함) | 155526~155529 `regermline`, 60 slots, octopus-2-8/9/11 + shepherd-1-9 (09-21 16:36~, 09-23 기준 약 47h) | 세트별 `__DONE__` Success·`error_list.txt` 없음 확인 → #7 | 지정 호스트가 비어야 시작. 오래 qw면 `qstat -j 155519 \| grep -i "cannot run\|reason"` |
-| 2 | **MGISEQ HG002 BAM 재생성** (정렬 BAM 33% 누락) | **실패** (09-22 15:59 종료, exit_status=1 — STATUS 에 running 으로 잘못 남아 23시간 방치됐었다) | 155525 `mgi_HG002_rebuild`, octopus-2-10, `repairs/mgi_hg002_recheck.sh --rebuild` | 파싱 에러 재현 여부 확인 후 재시도 → `VALIDATED.txt` → BAM 교체 → #3 | bwa-mem2→samtools view 파이프가 SAM 파싱 에러로 끊김(`view.stderr` line 948884480). 디스크·메모리 문제 아님(원인: [decisions.md](decisions.md) 2026-09-23). 재시도는 사용자/Codex 몫 |
-| 3 | **MGISEQ 세트 재개** (HG002 새 BAM + HG003/4 markdup) | 대기 | — | #1과 같은 Java 17 래퍼로 재제출 | #2 (실패 상태라 재시도부터 필요) |
+| 2 | **MGISEQ HG002 BAM 재생성** (정렬 BAM 33% 누락) | **qw** (사용자 승인으로 재제출, 09-23 15:29) | 156584 `mgi_HG002_rebuild`, `-q octopus.q,shepherd.q -l h_vmem=60G,hostname=(octopus-2-10\|octopus-2-11) -pe pe_slots 10`(155525와 동일 자원) | `repairs/mgi-hg002.*/VALIDATED.txt` 확인 → BAM 교체 → #3 | **1차 실패(155525)가 우연이 아닐 수 있다** — SAM 스트림 처리량 약 65.4% 지점에서 끊겼는데, 이 위치가 2026-09-21 원본 파이프라인 실패 지점과 레코드 수 기준 0.002%밖에 안 다르다(근거: [decisions.md](decisions.md) 2026-09-23). 이번에도 비슷한 지점에서 죽으면 blind retry 대신 그 구간 리드를 직접 봐야 한다 |
+| 3 | **MGISEQ 세트 재개** (HG002 새 BAM + HG003/4 markdup) | 대기 | — | #1과 같은 Java 17 래퍼로 재제출 | #2 |
 | 4 | **phase2 ONT HG002 R10.4.1** (PR #17, ONT open data 플로우셀 1개) | **완료** — 파이프라인·채점 전부 | 155279, shepherd-1-8, 30 slots, **16h20m(58,791s) / maxvmem 66.2 GB**. `30_verify_outputs.sh` OK 1/1 | **채점까지 완료** — hap.py 156047(50.7분) + Truvari 156053(4.5분) 둘 다 exit 0. 수치: [2026-09-22-ont-r10-benchmark.md](reference/2026-09-22-ont-r10-benchmark.md) | 없음 |
 | 5 | **phase1 PacBio HiFi hap.py 평가** (`b1.*`, HG001~HG007) | **완료** — 19/19 exit 0 | 155355~155373, 16 slots, 56~83분, maxvmem 48.4~48.8 GB | 수치·판정: [2026-09-22-pacbio-hifi-benchmark-first-results.md](reference/2026-09-22-pacbio-hifi-benchmark-first-results.md) | — |
 | 5b | **phase1 PacBio SV 평가** (`s1.*`, Truvari vs v5.0q, HG002 5런) | **완료** — refine F1 .8208~.8418. **세대 단조성 없음**(SeqI 이 SeqII 를 가른다), recall 이 약점(.757~.788) | 156048~156052, `-t 8`, exit 0 | 수치·판정: [2026-09-22-pacbio-hifi-benchmark-first-results.md](reference/2026-09-22-pacbio-hifi-benchmark-first-results.md) | — |
@@ -40,13 +40,13 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 
 ## 자잘한 정리 (급하지 않음)
 
-- `/BiO/scratch/dyl/kbb/G000/GIAB_publicData_Hiseq_subsampled_30x` — 옛 이름, 손으로 바꾼 트리와 중복. 링크 2쌍뿐. 지워도 됨.
 - `sample_information_nbb2.filled.xlsx`(로컬) — GIAB 22행 채운 사본. 원본 반영은 사용자.
 - Java 17 결정은 decisions.md 2026-09-21 항목에 적었다(검증 대기 표시). #1 성공 확인 후 "검증됨"으로 바꾼다.
 - 파이프라인이 bwa 실패를 삼키고 `Finished`로 넘긴 경로(Codex 확인) — 공용 파이프라인이라 우리가 안 고침. 재개 전 BAM 리드 수 대조가 방어책(아래 명령).
 
 ## 이력
 
+- 2026-09-23 — [숏리드 세션] 사용자 승인으로 MGISEQ HG002 재생성 재제출(155525 실패 → 156584, 동일 자원). 국통바빅 본 파이프라인만 사용자 전용 실행이고 이런 복구 스크립트 qsub는 에이전트가 해도 된다고 확인받음. 옛 이름 중복 디렉토리(`GIAB_publicData_Hiseq_subsampled_30x`, 링크뿐)도 삭제.
 - 2026-09-23 — [숏리드 세션] 사용자가 이 세션을 phase3 전담으로 지정, 파이프라인 입력 트리를 전수 재점검했다. **8개 세트 × 3샘플 = 24개 샘플 디렉토리 전부 규약 준수** — `_1`/`_2.fastq.gz` 정확히 1개씩, mate 접미 외 밑줄 0건, 완료 세트(Hiseq-subsampled-30x·Novaseq6000·NovaseqX)의 산출물(CRAM·gvcf 등)도 같은 이름 규칙을 따른다. 점검 중 **STATUS 의 실수를 하나 찾았다** — #2(MGISEQ HG002 BAM 재생성, 155525)가 "running" 으로 남아 있었지만 실제로는 09-22 15:59 에 exit 1 로 이미 끝나 있었다(원인: [decisions.md](decisions.md) 참고, samtools view 파싱 에러). 표 #1·#2·#3 행 정정. 옛 이름 디렉토리 `GIAB_publicData_Hiseq_subsampled_30x` 는 여전히 남아 있음을 재확인(삭제는 사용자 승인 대기).
 - 2026-09-23 — **STATUS 를 현황판으로 되돌렸다.** 249줄 중 현황이 29줄(12%)이었고 나머지는 레퍼런스·백로그·끝난 인계장이었다. 가른 기준은 "에이전트용이냐"가 아니라 **다음 주에 거짓이 되는가**다 — 안 변하는 것(노드 스펙·`_infra` 자산·점검 명령)은 [reference/server-and-infra.md](reference/server-and-infra.md), 아직 안 한 일(#8·#9·#10 상세 + 다운로드 세션의 문서 수치 불일치 2건)은 [backlog.md](backlog.md) 로 옮겼다. 세션 조율 절 둘("지금 다른 세션이 하는 일"·"세션별 남은 최신화")은 **전부 해소돼 지웠다** — 규칙은 AGENTS.md 가, 내용은 이력과 PR 이 이미 갖고 있다. 이력은 사용자 요청대로 **맨 아래에 전부** 남겼다(14항목 그대로). STATUS 60줄.
 - 2026-09-23 — [ONT 세션] 세 세션 정렬(#33)에 ONT 몫 반영. **카탈로그가 외부 유래 런을 영영 못 보던 구멍을 찾았다** — 행 key 가 `(sample, giab_path basename)` 인데 ext 행은 경로(배포처 구조)와 dataset(우리 명명)이 달라 HG002 R10 이 채점 완료 후에도 `variant_called=FALSE` 로 남아 있었다. 경고 한 줄로만 났다. `EXT_ALIAS` + 산출물 경로를 dataset 기준으로 고쳐 **10행 갱신**(germline 8 + HG008T-p2 + PAW70337). next_step 을 "한 것 + 남은 것" 으로 전환. phase2 README 의 소변이·SV·자원 실측 절을 R10 포함해 다시 썼고, 서버 미추적 결과 파일 7개를 gitignore 했다. PAW70337 행의 coverage 를 추정 ~45x 에서 **실측 49x** 로, notes 에 BAM 헤더 실측(정렬 PG 없음 · @RG basecall 모델 · GRCh38 195 contig)을 넣었다.
