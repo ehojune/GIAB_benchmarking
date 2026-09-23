@@ -198,6 +198,7 @@ GIAB truth set 대비 hap.py. phase1의 같은 스크립트와 구조가 같고 
 | caller | 런마다 `dv_model` 열로 정한다 — R9는 Clair3 단독, R10은 Clair3+DeepVariant |
 | 입력 | `03_VCF/<caller>/*.vcf.gz` **원본**. hap.py가 FILTER를 자체 처리해 ALL/PASS 행을 둘 다 내므로 재실행이 필요 없다 |
 | 산출 | `<dataset>/05_BENCH/happy/<id>.<caller>.summary.csv` → `--collect`가 `phase2_bench_summary.tsv`로 모은다 |
+| v5.0q | `BENCH_TRUTH_VER=v5.0q` + `BENCH_STRAT_TSV` 로 HG002 를 T2T-Q100 유래 truth 로 채점하고 **v4.2.1 밖 구간**을 따로 센다. 층 BED 는 [`64_v5q_strata.py`](scripts/64_v5q_strata.py). 결과는 `05_BENCH/happy_v5.0q/`, 모음은 `--collect-strata` |
 | 잡 크기 | `BENCH_SLOTS=8` / `BENCH_VMEM=32G` (hap.py는 병렬성이 낮다). 실측 maxvmem 23.7~24.6 GB — **caller 두 개짜리 잡도 같다**(순차로 돌아 누적되지 않는다) |
 
 **HG002 R10 런이 들어오기 전까지 DeepVariant는 한 번도 채점되지 않았다.** DV가 도는 것은 R10 런인데
