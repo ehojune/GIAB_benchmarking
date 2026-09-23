@@ -626,6 +626,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-24 — MGISEQ HG002 정렬 실패의 원인을 찾아 고쳤다: bwa-mem2 2.2.1이 poly-T 150 bp 리드가 몰린 배치에서 SMEM 버퍼를 넘친다(세 실행이 같은 946,145,492 리드에서 죽었다). 리드를 버리지 않고 입력을 4구간 교차로 섞어 끝까지 통과(1,428,410,152 리드, fastp 출력과 일치). 파이프라인이 bwa 실패를 삼키므로 다른 MGI/BGI set도 끝나면 BAM 리드 수 검사를 돌릴 것. [기록](docs/runs/2026-09-24-mgiseq-hg002-bwa-mem2-smem.md)
 - 2026-09-24 — [PacBio] #8 9/9 완료. QC 거짓 경고 39건의 원인 둘(ts/tv 하한, 종양 판정 목록)을 고쳤고, 카탈로그 category 가 other 라 빠져 있던 HG008-T bulk p21·p41 을 등록했다(49 실행 단위). 구간별 hap.py 시험: Revio Clair3 의 INDEL 열세는 90% 가 12bp+ 호모폴리머.
 - 2026-09-24 — [ONT] HG002 R9 두 런(guppy 3.4.5, 3.2.x)을 R10 과 같은 v5.0q 층으로 채점했다. **옛 베이스콜러일수록 v4.2.1 밖 어려운 영역에서 더 무너진다** — SNP F1 R10 0.895 / 3.4.5 0.857 / 3.2.x 0.802, 겹침 층에선 셋 다 0.987 이상이라 안 보이던 차이다. R9 INDEL 은 겹침 층에서도 0.554 이하. [docs/reference/2026-09-24-ont-r10-v5q-stratified.md](docs/reference/2026-09-24-ont-r10-v5q-stratified.md) §6
 - 2026-09-24 — [ONT] **DeepVariant 는 v4.2.1 밖 어려운 영역에서도 Clair3 를 이긴다.** HG002 v5.0q smvar(T2T-Q100) 로 층화 채점해 v4.2.1 이 빼놓은 상염색체 83 Mb 를 truth 로 셌다 — DV 가 FN SNP −17% · INDEL −10%, FP 는 절반 이하다. 9/22 에 "구간 안에서만 검증" 으로 한정해 뒀던 기본 caller 결정이 밖으로 넓어졌다. v5.0q 결과에서 v4.2.1 결과를 빼지 않고 한 채점 안에서 층을 갈랐고(두 truth 차이가 섞이지 않게), 겹침 층이 v4.2.1 채점과 0.001 안에서 맞아 해석이 선다. 남성 샘플의 chrX·Y 는 FN≈FP 대칭이라 유전형 표현 불일치로 보여 따로 뗐다. 같이 적은 것: ONT 공개 층화로 보면 R10 INDEL 오류의 94% 가 9bp 넘는 homopolymer 에 있다. [수치](docs/reference/2026-09-24-ont-r10-v5q-stratified.md).
