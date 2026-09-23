@@ -89,6 +89,7 @@ bash phase1_pacbio_hifi/scripts/60_benchmark.sh --list     # 정확도 평가 �
 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --ready    # hap.py 제출 (HG001~HG007)
 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --collect  # 결과를 한 TSV로 모음
 STRAT=1 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --ready    # 구간별(층화) hap.py
+BENCH_TRUTH_VER=v5.0q BENCH_STRAT_TSV=$INFRA/reference/v5q_strata/strata.tsv bash phase1_pacbio_hifi/scripts/60_benchmark.sh --ready  # HG002: v4.2.1 밖을 v5.0q truth 로 (phase2 와 같은 인터페이스)
 bash phase1_pacbio_hifi/scripts/62_tstv_regions.sh         # ts/tv 를 benchmark 구간 안/밖으로 갈라 셈
 bash phase1_pacbio_hifi/scripts/qsub_task.sh <이름> -- <명령>  # 위 로그인 노드용 점검을 SGE 잡으로 (전 런이면 한두 시간)
 ```

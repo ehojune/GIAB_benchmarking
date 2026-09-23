@@ -20,6 +20,13 @@
 #   STRAT=1 scripts/60_benchmark.sh --ready / <dsid> / --collect
 # 고른 구간 목록은 env.sh 의 BENCH_STRAT_SET. "all" 이면 GIAB 목록 전체(188개).
 #
+# **v5.0q — v4.2.1 밖을 truth 로 센다.** phase2 와 같은 인터페이스다(HG002 만 해당):
+#   BENCH_TRUTH_VER=v5.0q BENCH_STRAT_TSV=$INFRA/reference/v5q_strata/strata.tsv scripts/60_benchmark.sh <dsid>
+#   BENCH_TRUTH_VER=v5.0q scripts/60_benchmark.sh --collect           (전체)
+#   BENCH_TRUTH_VER=v5.0q scripts/60_benchmark.sh --collect-strata    (층별)
+# 층 파일은 phase2_ont/scripts/64_v5q_strata.py 가 만든다. v5.0q 결과에서 v4.2.1 결과를 빼서 "밖" 을
+# 구하지 않는다 — 두 truth 가 겹치는 곳에서도 달라 차이에 truth 의 차이가 섞인다(순 차이 함정).
+#
 # 왜 raw VCF 를 넣는가: hap.py 는 FILTER 를 자체 처리해 summary.csv 에 ALL 행과 PASS 행을
 # 둘 다 낸다. 파이프라인의 03_VCF/<caller>/*.vcf.gz 는 RefCall 을 포함하지만(PASS 필터 없음)
 # 그대로 넣고 PASS 행을 읽으면 된다. SNV/INDEL 분리본을 넣으면 hap.py 자체 분류와 어긋나므로
@@ -48,6 +55,19 @@ else
     BENCH_SUB="05_BENCH/happy"; KEY=bench; JOBP=b1
     SLOTS="$BENCH_SLOTS"; VMEM="$BENCH_VMEM"
 fi
+# **v4.2.1 이 아닌 truth(v5.0q 등)는 결과·잡·임시 디렉토리를 전부 따로 둔다** — phase2 60_benchmark.sh 와
+# 같은 규약(05_BENCH/happy_<판>, KEY=bench_<판>). 같은 경로면 v4.2.1 결과를 덮고 jobid 가드도 공유한다.
+# 층은 BENCH_STRAT_TSV 로 준다(예: phase2_ont/scripts/64_v5q_strata.py 가 만든 v5.0q 3층 — HG002 BED 만
+# 다루는 플랫폼 무관 스크립트라 phase1 에 복사하지 않고 같은 층 파일을 쓴다).
+# STRAT=1(GIAB 구간, v4.2.1 전용)과는 섞지 않는다. 한 실행에 층 목록이 둘이면 어느 쪽 결과인지 흐려진다.
+if [ "$BENCH_TRUTH_VER" != v4.2.1 ]; then
+    [ "$STRAT" = 1 ] && { echo "ERROR: STRAT=1 은 v4.2.1 전용이다 — 다른 truth 는 BENCH_STRAT_TSV 로 층을 준다" >&2; exit 1; }
+    BENCH_SUB="05_BENCH/happy_$BENCH_TRUTH_VER"; KEY="bench_$BENCH_TRUTH_VER"; JOBP=b3
+fi
+if [ -n "${BENCH_STRAT_TSV:-}" ] && [ "$BENCH_TRUTH_VER" = v4.2.1 ]; then
+    echo "ERROR: BENCH_STRAT_TSV 는 v4.2.1 과 같이 못 쓴다 — 기본 채점 결과에 섞인다. v4.2.1 구간별은 STRAT=1." >&2
+    exit 1
+fi
 STRAT_DIR="$GIAB_ROOT/release/genome-stratifications/$BENCH_STRAT_VER/${REF_NAME}@all"
 STRAT_SRC="$STRAT_DIR/${REF_NAME}-all-stratifications.tsv"
 # 이번 호출 전용 임시 파일. 공유 경로에 두면 BENCH_STRAT_SET 이 다른 제출 둘이 겹칠 때 먼저 시작한
@@ -74,6 +94,16 @@ bench_truth() {
                  "$d/${s}_"*_"$ver"_benchmark_noinconsistent.bed 2>/dev/null \
               | grep -v '/\._' | head -1) || true
         [ -n "$bed" ] || continue
+        printf '%s\t%s\n' "$vcf" "$bed"
+        return 0
+    done
+    # v5.0q 부터 GIAB 는 NIST 접두사·참조 하위 디렉토리 없이 release/<trio>/<sample>/<판>/ 에 smvar·stvar 를
+    # 같이 둔다 (phase2 bench_truth 와 같은 탐색. 61_benchmark_sv.sh 가 stvar 를 찾는 배치와도 같다).
+    for d in "$GIAB_ROOT"/release/*/*/"$ver" "$GIAB_ROOT"/release/*/"$ver"; do
+        [ -d "$d" ] || continue
+        vcf="$d/${s}_${REF_NAME}_${ver}_smvar.vcf.gz"
+        bed="$d/${s}_${REF_NAME}_${ver}_smvar.benchmark.bed"
+        [ -s "$vcf" ] && [ -s "$vcf.tbi" ] && [ -s "$bed" ] || continue
         printf '%s\t%s\n' "$vcf" "$bed"
         return 0
     done
@@ -194,8 +224,11 @@ submit_one() {
     fi
     # 층화 TSV 는 잡마다 사본을 둔다. 큐에서 기다리는 동안 누가 BENCH_STRAT_SET 을 바꿔
     # 다시 제출해도 이미 들어간 잡은 제출 시점의 목록으로 돈다.
-    if [ "$STRAT" = 1 ]; then
-        cp "$STRAT_TSV" "$launch/strata.tsv" || { echo "FAIL $dsid: 층화 TSV 복사 실패"; return 1; }
+    local src_tsv=""
+    if [ "$STRAT" = 1 ]; then src_tsv="$STRAT_TSV"; elif [ -n "${BENCH_STRAT_TSV:-}" ]; then src_tsv="$BENCH_STRAT_TSV"; fi
+    if [ -n "$src_tsv" ]; then
+        [ -s "$src_tsv" ] || { echo "FAIL $dsid: 층 TSV 없음 — $src_tsv"; return 1; }
+        cp "$src_tsv" "$launch/strata.tsv" || { echo "FAIL $dsid: 층화 TSV 복사 실패"; return 1; }
         strat_arg=" --stratification $launch/strata.tsv"   # 앞 공백 포함: 비면 b1 잡이 한 글자도 안 바뀐다
     fi
 
@@ -279,7 +312,9 @@ submit_many() {
 # summary.csv 를 한 장으로 모은다. hap.py 는 Type(SNP/INDEL) x Filter(ALL/PASS) 로 행을 낸다.
 # PASS 행이 실제 성능이다 (RefCall 이 빠진 값).
 collect() {
-    local out="${1:-$PHASE1/phase1_bench_summary.tsv}" dsid r sample dataset id base c f
+    local def="$PHASE1/phase1_bench_summary.tsv"
+    [ "$BENCH_TRUTH_VER" = v4.2.1 ] || def="$PHASE1/phase1_bench_summary.$BENCH_TRUTH_VER.tsv"
+    local out="${1:-$def}" dsid r sample dataset id base c f
     {
         printf 'dsid\tsample\tdataset\tcaller\ttype\tfilter\ttruth_total\ttp\tfn\tfp\trecall\tprecision\tf1\n'
         for dsid in $(p1_dsids); do
@@ -363,8 +398,38 @@ collect_strat() {
     echo "  awk -F'\\t' 'NR==1 || (\$7==\"PASS\" && \$1==\"<dsid>\")' $out | column -t -s\$'\\t'"
 }
 
+# BENCH_STRAT_TSV 층화 결과(v5.0q 등)를 모은다 — phase2 collect_strata 와 같은 열·같은 필터.
+# 두 phase 표를 그대로 이어 붙일 수 있게 열 순서를 맞췄다. STRAT=1(v4.2.1 GIAB 구간)은 위 collect_strat.
+collect_strata() {
+    local def="$PHASE1/phase1_bench_strata.$BENCH_TRUTH_VER.tsv"
+    local out="${1:-$def}" dsid r sample dataset id base c f n=0
+    {
+        printf 'dsid\tcaller\tsubset\ttype\tfilter\ttruth_total\ttp\tfn\tfp\trecall\tprecision\tf1\n'
+        for dsid in $(p1_dsids); do
+            r=$(p1_row "$dsid"); sample=$(p1_col "$r" 2); dataset=$(p1_col "$r" 3)
+            base="$RUN_BASE/$sample/PacBio/$dataset"; id="$sample.$dataset.$REF_NAME"
+            for c in $CALLERS; do
+                f="$base/$BENCH_SUB/$id.$c.extended.csv"
+                [ -s "$f" ] || continue
+                awk -F, -v d="$dsid" -v cl="$c" '
+                    NR==1 { for (i=1;i<=NF;i++) h[$i]=i; next }
+                    $h["Filter"]=="PASS" && $h["Genotype"]=="*" && $h["Subtype"]=="*" {
+                      printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+                        d, cl, $h["Subset"], $h["Type"], $h["Filter"],
+                        $h["TRUTH.TOTAL"], $h["TRUTH.TP"], $h["TRUTH.FN"], $h["QUERY.FP"],
+                        $h["METRIC.Recall"], $h["METRIC.Precision"], $h["METRIC.F1_Score"]
+                    }' "$f"
+            done
+        done
+    } > "$out"
+    n=$(($(wc -l < "$out") - 1))
+    echo "-> $out ($n rows)"
+    [ "$n" -gt 0 ] || echo "  (층화 결과가 없다 — BENCH_STRAT_TSV 를 주고 돌렸는지, BENCH_TRUTH_VER 가 같은지 확인)"
+}
+
 case "${1:-}" in
     --list)    list_all ;;
+    --collect-strata) shift; collect_strata "${1:-}" ;;
     --collect)
         shift
         if [ "$STRAT" = 1 ]; then collect_strat "${1:-}"; else collect "${1:-}"; fi ;;
