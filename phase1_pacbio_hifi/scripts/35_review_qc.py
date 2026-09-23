@@ -63,7 +63,12 @@ TH = {
     # PASS 기준으로만 의미 있음 (--pass-counts 필요)
     "snp_lo": 2_500_000, "snp_hi": 5_500_000,
     "indel_lo": 300_000, "indel_hi": 1_500_000,
-    "tstv_lo": 1.8, "tstv_hi": 2.3,
+    # 하한 1.8 -> 1.65 (2026-09-24). DeepVariant 전장 PASS ts/tv 는 germline 19런 실측 1.742~1.820 이라
+    # 1.8 이면 16/19 런이 걸려 가려내는 힘이 없었다. 원인은 런이 아니라 구간 밖 호출이다 —
+    # 62_tstv_regions.sh 실측으로 benchmark 구간 안은 38건(19런 x 2 caller) 전부 2.094~2.107,
+    # 구간 밖이 DV 1.07~1.21 로 전장 값을 끌어내린다. 심도가 높을수록 구간 밖 호출이 늘어 더 낮다
+    # (정상 HG009N-WT-p4 84x 1.71). 1.65 는 그 최솟값 아래에 둔, 크게 망가진 런만 잡는 선이다.
+    "tstv_lo": 1.65, "tstv_hi": 2.3,
     "caller_ratio_min": 0.8,  # DV↔C3 SNV 수 비가 이보다 벌어지면 한쪽이 잘못 돈 것
     "sv_lo": 5_000, "sv_hi": 60_000,
     # 위상 — germline / tumor 를 나눈다. 종양은 LOH·aneuploidy로 het 자체가 줄어
@@ -72,8 +77,11 @@ TH = {
     "phased_min_tumor": 55.0,
     "n50_min": 20_000,
 }
-# 종양 실행 단위: HG008-T / HG009T-* (HG008-N-*, HG009N-* 는 정상이다)
-TUMOR_PAT = ("HG008-T", "HG009T")
+# 종양 실행 단위: HG008-T / HG008T-* / HG009T-* (HG008-N-*, HG009N-* 는 정상이다)
+# HG008T 는 2026-09-24 추가. #8 에서 NIST 트리를 HG008T-p100·HG008T-SC6 같은 이름으로 등록했는데
+# 여기가 "HG008-T" 만 알아서 9런이 정상으로 판정됐다 — 위상 63~65% 와 PASS ts/tv 가 거짓 경고로
+# 떴다. phase2 판은 처음부터 HG008T 를 갖고 있다.
+TUMOR_PAT = ("HG008-T", "HG008T", "HG009T")
 
 
 def is_tumor(sample):

@@ -173,6 +173,15 @@ RUNS = [
     hg008t("HG008T-SC14", "HG008-T_clones", 1),
     hg008t("HG008T-SC24", "HG008-T_clones", 1),
     hg008t("HG008T-SC28", "HG008-T_clones", 1),
+    # HG008-T NIST bulk p21·p41 (UMD Revio, 각 29x). 2026-09-24 추가 — 카탈로그 category 가 other 로
+    # 잡혀 있어 pacbio_hifi 목록에서 빠졌다. 디렉토리 규약이 BCM 과 달라(movie ID 없는 XZOOK_ 파일명,
+    # <sample>_ubams/ 하위) hg008t() 를 못 쓴다. p21 은 somatic truth 배치(0823p23)와 계대가 가장 가깝다.
+    dict(manifest="HG008", mcat="other", sample="HG008T-p21", dataset="HG008-T_bulk", entry="hifi_bam",
+         clair3="hifi_revio", expect=1,
+         pattern=r"^data_somatic/HG008/NIST/HG008-T_bulk/20240508p21/UMD-Revio-HG008Tp21-\d+/HG008-Tp21_ubams/[^/]+\.hifi_reads\.bam$"),
+    dict(manifest="HG008", mcat="other", sample="HG008T-p41", dataset="HG008-T_bulk", entry="hifi_bam",
+         clair3="hifi_revio", expect=1,
+         pattern=r"^data_somatic/HG008/NIST/HG008-T_bulk/20240508p41/UMD-Revio-HG008Tp41-\d+/HG008-Tp41_ubams/[^/]+\.hifi_reads\.bam$"),
     # --- HG009 (passage/clone 별도 sample) ---
     hg009("HG009N-WT-p25", "HG009-N_bulk", 1),
     hg009("HG009N-WT-p4", "HG009-N_bulk", 2),
@@ -196,9 +205,10 @@ DUP_MOVIE_CHECKS = [
 ]
 
 
-def load_manifest(name):
+def load_manifest(name, cat="pacbio_hifi"):
+    """phase0 매니페스트 한 장. cat 은 phase0 가 붙인 분류 파일 이름(pacbio_hifi/other/...)."""
     rows = {}
-    with open(MANIFESTS / name / "pacbio_hifi.tsv", newline="", encoding="utf-8") as fh:
+    with open(MANIFESTS / name / f"{cat}.tsv", newline="", encoding="utf-8") as fh:
         for line in fh:
             relpath, size = line.rstrip("\n").split("\t")
             rows[relpath] = int(size)
@@ -251,7 +261,13 @@ def main():
             paths = sra.get(dsid, {})
             picked = sorted(paths)
         else:
-            paths = manifests[run["manifest"]]
+            # mcat: phase0 가 다른 분류 파일에 넣어 둔 PacBio 데이터 (예: HG008 UMD Revio 는 other.tsv).
+            # 분류는 다운로드 세션 소유라 옮기지 않고 여기서 골라 읽는다.
+            mcat = run.get("mcat", "pacbio_hifi")
+            if mcat == "pacbio_hifi":
+                paths = manifests[run["manifest"]]
+            else:
+                paths = load_manifest(run["manifest"], mcat)
             rex = re.compile(run["pattern"])
             picked = sorted(p for p in paths if rex.match(p))
         if len(picked) != run["expect"]:

@@ -28,6 +28,12 @@ HG008 NIST 만 없었다 — 의도적 제외가 아니라 누락이다. 생성�
 커버리지가 48~60X 라 런당 10~15시간 예상(phase1 30x 실측 6~7시간 기준). 파이프라인 잡은
 30슬롯이라 노드당 2런이다.
 
+**2026-09-24 추가 — bulk p21·p41 (UMD Revio, 각 29x, uBAM 1개씩 47·50 GB).** 카탈로그에 있었는데
+category 가 `other`, phase0 매니페스트도 `HG008/other.tsv` 라 PacBio 목록(`pacbio_hifi.tsv`)만 읽는 생성기가
+못 봤다. 파일명에 movie ID 가 없고(`XZOOK_…_1-1-A01.hifi_reads.bam`) `<시료>_ubams/` 하위라 `hg008t()` 규칙과도
+다르다. 생성기에 `mcat` 을 두어 분류 파일을 골라 읽게 했다(매니페스트는 다운로드 세션 것이라 안 옮김).
+p21 은 somatic truth 배치(0823p23)에 가장 가까운 계대라 #9 에 중요하다 — p21·p41·p100 이 계대 계열이 된다.
+
 **germline truth 가 없어 `60_benchmark.sh`·`61_benchmark_sv.sh` 가 자동으로 건너뛴다.**
 채점은 #9 가 서야 가능하고, 그전까지는 QC(`35_review_qc.py`)까지만 본다.
 
@@ -58,6 +64,7 @@ HG008 NIST 만 없었다 — 의도적 제외가 아니라 누락이다. 생성�
 | HG008-T.BCM_Revio_20240313 | HG008-N-D.BCM_Revio_20240313 | 이름상 같은 센터·같은 날짜 — 1순위 |
 | HG008-T.PacBio_Revio_20240125 | HG008-N-P.PacBio_Revio_20240125 | 같은 센터 |
 | NIST HG008T-p100 + 클론 8개 | (없음) → HG008-N-D 차용 | NIST 도 BCM Revio 라 센터는 같다. 배치·준비는 다르다 |
+| NIST HG008T-p21 · p41 (UMD Revio, 09-24 추가) | (없음) → HG008-N-D 차용 | 센터도 다르다(UMD). p21 이 truth 배치(p23)에 가장 가깝다 |
 
 **truth 가 무엇을 담는지가 채점 해석을 가른다.** smvar DraftBenchmark V0.3-20260425 README:
 
