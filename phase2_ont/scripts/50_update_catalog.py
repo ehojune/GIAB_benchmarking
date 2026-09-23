@@ -40,8 +40,13 @@ def next_step_done(sample, dv_note=""):
     prefix = ("phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + LongPhase 위상)"
               f"{dv_note}. 산출물 경로는 variant_local_path. ")
     if sample == "HG002":
+        # 2026-09-23 (PacBio 세션): "SV benchmark v0.6" 은 사실 오류다 — HG002_SVs_Tier1_v0.6 은
+        # **GRCh37 전용**이라 GRCh38 정렬 결과에 못 쓴다. phase2 의 61_benchmark_sv.sh 는 이미
+        # v5.0q(BENCH_SV_TRUTH_VER 기본값)를 쓰고 있으므로 코드가 아니라 이 문구만 낡았다.
+        # 판정 문구 전체는 ONT 세션이 채점 결과에 맞게 다시 쓸 것 — 여기서는 오류만 고친다.
         return prefix + ("다음: NIST v4.2.1 VCF+BED로 Clair3/DeepVariant 소형변이를 hap.py 또는 "
-                         "rtg vcfeval로 평가하고, SV benchmark v0.6으로 Sniffles2를 Truvari 평가.")
+                         "rtg vcfeval로 평가하고, SV benchmark **v5.0q**(T2T-Q100 유래)로 Sniffles2를 "
+                         "Truvari 평가. Tier1 v0.6 은 GRCh37 전용이라 못 쓴다.")
     if sample in {"HG001", "HG003", "HG004", "HG005", "HG006", "HG007"}:
         return prefix + ("다음: 해당 샘플의 NIST v4.2.1 VCF+BED로 Clair3/DeepVariant 소형변이를 "
                          "hap.py 또는 rtg vcfeval로 평가. 공식 샘플별 SV benchmark는 없으므로 "
