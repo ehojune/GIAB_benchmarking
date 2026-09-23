@@ -41,6 +41,31 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 4. **phase0 매니페스트 밖 입력 계획은 지금 없다.** #8 의 HG008-T 10 파일은 전부 phase0 안이다.
    생기면 `sra_manifest.tsv` 에 먼저 등록하고 받겠다.
 
+## 세션별 남은 최신화 (2026-09-23 코드·문서 직접 확인)
+
+PacBio 세션이 repo 전반을 훑어 찾은 것이다. **자기 것만 고치면 된다** — 남의 것은 소유 구분대로 둔다.
+
+### 🟠 ONT 세션 (이 PR 에서 처리함)
+
+| 무엇 | 어떻게 |
+|---|---|
+| 카탈로그 next_step 이 "다음: …평가" 로 낡았던 것 | `50_update_catalog.py` 의 문구를 **"한 것 + 남은 것"** 으로 바꿔 재실행. **10행 갱신** — germline 8행(채점 완료) + `BCM_ONT-std_HG008T-p2`(미기록이었다) + `PAW70337`(아래) |
+| **R10 행이 스크립트에 영영 안 잡히던 버그** | 카탈로그 key 는 `(sample, giab_path basename)` = `(HG002, PAW70337)` 인데 run_table dataset 은 `ONT-R10_giab2025.01_PAW70337` 이라 안 맞았다. 경로는 배포처 구조를, dataset 은 우리 명명 규칙을 따르기 때문이다. `EXT_ALIAS` 로 명시적으로 이었다. 같은 이유로 산출물 경로도 basename 이 아니라 dataset 으로 만들게 고쳤다 |
+| `phase2_ont/README.md` "자원 실측은 아직 없다" | 표로 교체 — 파이프라인 16h20m/66.2 GB, hap.py 50.7분/24.6 GB, truvari 4.5분/133.5 GB. 소변이·SV 실측 절도 R10 포함해 다시 썼다 |
+| 엑셀 | `50_update_catalog.py` 가 이제 `build_xlsx.py` 까지 돌린다(PacBio 수정). 카탈로그와 같이 재생성됐다 |
+| 서버 미추적 결과 파일 7개 | `.gitignore` 에 넣었다 (양쪽 phase 의 `--collect` 산출물 + `--tsv` 산출물 + `*.bak`). 전부 수 초면 재생성되고 실측값 정본은 `docs/reference/` 다 |
+
+### 🟢 다운로드 세션
+
+| 무엇 | 어디 |
+|---|---|
+| "현재 **435개 prefix · 81,302파일**" — 카탈로그는 442 / 81,316 이다 | `README.md` 605행 |
+| phase0 README 의 81,302 / 116,509.5 GiB 는 **FTP/S3 본체만**인 값이라 그 자체로 틀리진 않지만, 81,330(4경로 합집합)과 나란히 있어 읽는 사람이 헷갈린다 | `phase0_download/README.md` 4·5·26행 |
+
+### 🔵 PacBio 세션 (이 PR 에서 처리함)
+
+카탈로그 25행·엑셀·phase1 README·루트 README·백로그 표. 남은 것은 **phase2 에 있고 phase1 에 없는 8개**(위 백로그 표) — 급하지 않아 이번 PR 에 안 넣었다.
+
 ## 공유 `_infra` 자산 (phase1·phase2 공용, 2026-09-23 확인)
 
 `$RUN_BASE/_infra` = `/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/_infra`.
@@ -54,7 +79,7 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 | `GCA_000001405.15_GRCh38_no_alt_analysis_set.fasta` | 3,144,230,986 | phase0 `release/references/GRCh38/` 사본을 압축 해제. 없으면 GIAB FTP 직접 | phase1 `01_prepare` |
 | `…fasta.fai` | 7,804 | `samtools faidx` 로 생성 (hap.py·truvari 가 요구) | phase1 `60_benchmark` |
 | `human_GRCh38_no_alt_analysis_set.trf.bed` | 7,594,623 | `raw.githubusercontent.com/PacificBiosciences/pbsv/master/annotations/` | phase1 `01_prepare` |
-| `clair3_models/` 3개 | — | HKU/Rerio. `r1041_e82_400bps_sup_v420`, `…_v430`, `r941_prom_hac_g238` — 컨테이너에 없는 것들 | **phase2** `01_prepare` |
+| `clair3_models/` 3개 | **195 MB** (78+78+39) | HKU `bio8.cs.hku.hk/clair3/clair3_models/` 우선, 실패 시 Rerio `cdn.oxfordnanoportal.com/software/analysis/models/clair3/`. `r1041_e82_400bps_sup_v420` 78 MB · `…_v430` 78 MB · `r941_prom_hac_g238` 39 MB — 컨테이너 `/opt/models` 에 없는 것만 받는다 | **phase2** `01_prepare` |
 | `sv_truth/HG002_GRCh38_v5.0q_stvar.noast.{vcf.gz,tbi}` | — | 파생물. phase0 truth 에서 `ALT="*"` 제거 (v5.0q README 지시) | phase1 `61_benchmark_sv`, phase2 와 공유 |
 
 ### `containers/` — 4.9 GB, 이미지 16개
@@ -149,20 +174,36 @@ HG008 NIST 만 없었다 — 의도적 제외가 아니라 누락이다. 생성�
 
 ## 표준화 백로그 (#10)
 
-phase2를 기준으로 phase1을 맞추는 작업의 잔여분. 급하지 않지만 남겨 둔다.
+**방향이 한 번 뒤집혔다.** 원래 "phase2 를 기준으로 phase1 을 맞춘다" 였는데, phase1 이 따라가는
+동안 phase2 가 더 나갔다. 2026-09-23 코드 직접 확인 결과가 아래다 — **표를 "미착수"로 뭉뚱그려
+두었더니 이미 한 것까지 안 한 것으로 보였다.**
 
-| 항목 | 상태 |
-|---|---|
-| `lib.sh` 공용 헬퍼(`*_img_path`, `*_container_uris`, `*_sge_*`) | **완료** (2026-09-22) |
-| `60_benchmark.sh` 하드닝(.fai 자동생성, qsub 검증, `submit_many`) | **완료** |
-| `10_submit.sh` qsub 하드닝 (양쪽 phase) | **완료** |
-| `61_benchmark_sv.sh` phase1 이식 | **완료** |
-| `env.local.sh.example` 벤치마크 프리셋 (양쪽) | **완료** |
-| `30_verify_outputs.sh`·`20_status.sh`에 haplotagged BAM + mosdepth/samtools 점검 추가 | 미착수 |
-| `35_review_qc.py`에 `--calibrate`, `basemap_pct`(CIGAR 기반 매핑률), `--check-meth` | 미착수 |
-| `50_update_catalog.py`의 `excluded.tsv` 기구 | 미착수 |
-| `run_table.tsv`에 `files` 열 | 미착수 |
-| phase3를 phase1·2와 같은 `env.sh`/`lib.sh`/번호 스크립트 구조로 | 미착수 |
+| 항목 | phase1 | phase2 | phase3 |
+|---|---|---|---|
+| `lib.sh` 공용 헬퍼 (`*_img_path`, `*_container_uris`, `*_sge_*`) | ✅ | ✅ | ✗ |
+| `60_benchmark.sh` 하드닝 (`.fai` 자동생성, qsub 검증, `submit_many`) | ✅ | ✅ | — |
+| `10_submit.sh` qsub 하드닝 | ✅ | ✅ | — |
+| `61_benchmark_sv.sh` | ✅ | ✅ | — |
+| `env.local.sh.example` 벤치마크 프리셋 | ✅ | ✅ | — |
+| `35_review_qc.py --pass-counts` (bcftools 해석 포함) | ✅ | ✅ | — |
+| `50_update_catalog.py` 가 엑셀도 재생성 | ✅ | ✅ | — |
+| `30_verify_outputs.sh` 에 haplotagged BAM 점검 | ✗ | ✅ | — |
+| `30_verify_outputs.sh` 에 mosdepth/QC 점검 | ✗ | ✅ | — |
+| `35_review_qc.py --calibrate` | ✗ | ✅ | — |
+| `35_review_qc.py basemap_pct` (CIGAR 기반 매핑률) | ✗ | ✅ | — |
+| `35_review_qc.py --check-meth` | ✗ | ✅ | — |
+| `excluded.tsv` 기구 | ✗ | ✅ | — |
+| `run_table.tsv` 의 `files` 열 | ✗ | ✅ | — |
+| `62_tstv_regions.sh` (ts/tv 구간 분할) | ✗ | ✅ | — |
+| phase1·2 와 같은 `env.sh`/`lib.sh`/번호 스크립트 구조 | — | — | ✗ |
+
+**phase1 이 가져와야 할 것 8개**(phase2 에 있고 phase1 에 없음). 급하지 않지만, 가져올 때는
+phase2 판을 그대로 이식하고 달라지는 부분만 주석에 적는다 — 두 phase 스크립트가 같은 모양인 것이
+지금까지 여러 번 교훈을 한쪽에서 다른 쪽으로 바로 옮길 수 있게 해 줬다.
+
+`62_tstv_regions.sh` 는 phase1 에도 쓸모가 있다. phase1 의 SNP 는 포화(F1 .9984~.9994)라
+ts/tv 로 더 캘 게 없어 보이지만, 구간 안/밖을 갈라 보면 Sequel I 의 INDEL 이 나쁜 이유가
+구간 밖 FP 때문인지 확인할 수 있다 — 지금은 미확인으로 남아 있다.
 
 ## 자잘한 정리 (급하지 않음)
 
@@ -191,6 +232,10 @@ cd /BiO/scratch/dyl/kbb/G000 && SAM=/home/ehojune/program/samtools-1.24/samtools
 
 ## 이력
 
+- 2026-09-23 — [ONT 세션] 세 세션 정렬(#33)에 ONT 몫 반영. **카탈로그가 외부 유래 런을 영영 못 보던 구멍을 찾았다** — 행 key 가 `(sample, giab_path basename)` 인데 ext 행은 경로(배포처 구조)와 dataset(우리 명명)이 달라 HG002 R10 이 채점 완료 후에도 `variant_called=FALSE` 로 남아 있었다. 경고 한 줄로만 났다. `EXT_ALIAS` + 산출물 경로를 dataset 기준으로 고쳐 **10행 갱신**(germline 8 + HG008T-p2 + PAW70337). next_step 을 "한 것 + 남은 것" 으로 전환. phase2 README 의 소변이·SV·자원 실측 절을 R10 포함해 다시 썼고, 서버 미추적 결과 파일 7개를 gitignore 했다. PAW70337 행의 coverage 를 추정 ~45x 에서 **실측 49x** 로, notes 에 BAM 헤더 실측(정렬 PG 없음 · @RG basecall 모델 · GRCh38 195 contig)을 넣었다.
+- 2026-09-23 — repo 전반 최신화 훑기. **엑셀이 25행만큼 뒤처져 있었다** — `50_update_catalog.py` 가 `build_readme.py` 만 돌리고 `build_xlsx.py` 는 안 돌렸다. 양쪽 phase 에 추가하고, `build_xlsx.py` 의 `--version`/`--date` 를 선택으로 바꿨다(처리 상태 갱신이 카탈로그 판번호를 올릴 이유가 없는데 required 라 부를 수 없었다). **표준화 백로그의 방향이 뒤집힌 것도 발견** — "phase2 기준으로 phase1 을 맞춘다" 였는데 phase1 이 따라가는 동안 phase2 가 더 나가서, 지금은 phase2 에 있고 phase1 에 없는 것이 8개다. 표를 phase 별 3열로 바꿔 코드 확인 결과를 그대로 적었다. 세션별 남은 최신화 목록도 절로 뒀다.
+- 2026-09-23 — phase1 문서 최신화. 채점이 끝났는데 문서가 "앞으로 할 일" 상태였고 **사실 오류가 둘** 있었다: 카탈로그 note 가 HG002 에 "SV benchmark v0.6 으로 Truvari 평가"(v0.6 은 **GRCh37 전용**이라 못 쓴다 — 실제로 쓴 것은 v5.0q), HG001·HG003~007 에 "교차 콜러 일치도와 수동 검토로 평가"(하지 않았고 할 계획도 없다). `50_update_catalog.py` 문구를 고쳐 25행 재생성. phase1 README 에 SV 절 신설(있던 "SV 와 somatic 은 아직 못 한다" 가 낡았다), 채점 대상 23런 -> 19런, BENCH_SLOTS 8/32G -> 16/56G. **ONT 세션 할 일**: `phase2_ont/scripts/50_update_catalog.py` 의 같은 v0.6 오류를 고쳤으니(문구만) 재실행해 ONT 8행에 반영할 것.
+- 2026-09-22 — [다운로드 세션] **서버 디스크 전수 대조 완료**: 매니페스트 4종 합집합 81,330 files 전부 디스크에 크기 일치(mismatch 0·missing 0), 매니페스트 밖 데이터 0, FTP 삭제 release 구버전 52건 8.4 GiB 보유. 세션 정지 상태에서 컨텍스트 정렬용 PR(#27 대체)을 올림 — PacBio·ONT 세션에 확인 요청 4건은 그 PR 본문. 서버 repo(`~/GIAB_benchmarking`)는 main 4c7778f + 미추적 결과 파일 5개.
 - 2026-09-22 밤 — **ts/tv 구간 분할을 직접 쟀다**(`62_tstv_regions.sh`, 10건 전부 `안+밖=전체` 통과). **2026-08-27 의 열린 질문이 R9·R10 양쪽에서 닫혔다** — 구간 안이 전 런 2.0972~2.1400 으로 germline 기대치 그대로고 구간 밖만 1.09~1.48 이다. 2026-09-18 의 추정(HG005 1.33)은 실측 **1.3064**(오차 1.8%)로 확인됐고 "구간 안 = 2.1" 가정도 사실이었다. 새 관찰 둘: 베이스콜러가 좋을수록 구간 밖 ts/tv 가 오히려 **낮다**(어려운 영역까지 더 부른다), 그리고 구간 밖에서 DV↔C3 순 차이의 ts/tv 가 2.18 이라 **DV 가 구간 밖에서 버리는 쪽이 FP 가 아닐 수 있다**(미확인, reference §5).
 - 2026-09-22 밤 — **phase2 HG002 R10 채점 전량 완료**(hap.py 156047 + Truvari 156053, 둘 다 exit 0). **ONT 가 같은 플로우셀에 공개한 hap.py 결과와 SNP F1 −0.0001 / INDEL F1 −0.0013 로 일치** — 우리가 ONT 정렬을 버리고 재정렬했는데도 그렇다. **DeepVariant 가 네 칸 전부에서 Clair3 를 이긴다**(INDEL F1 +0.024, FP −33%). SV 는 R10 이 R9 를 F1 +0.031 로 이기는데 그 이득이 거의 전부 recall(+0.048)이다. truvari 가 133.5 GB 를 써서 `BENCH_SV_SLOTS` 를 22→33 으로 올렸다 — env.sh 의 옛 "67~73 GB" 는 4스레드 값이었다. 수치: [2026-09-22-ont-r10-benchmark.md](reference/2026-09-22-ont-r10-benchmark.md)
 - 2026-09-22 17:30 — #8 제출(156064~156072). **GPU 는 없다**(`qhost -F gpu` 무응답) — somatic 은 CPU 경로로 설계해야 한다. **octopus 노드가 1 TB RAM** 인 것을 처음 확인했다(shepherd 251 GB) — 지금까지의 슬롯 계산이 전부 251 GB 기준이라 octopus 에서는 과하게 보수적이다. 세 세션이 동시에 repo 를 고치고 있어 AGENTS.md 에 조율 규칙을 넣었다(소유 구분, 충돌 잦은 파일, PR 전 merge-tree 확인, 남의 실측을 덮어쓰지 않기).

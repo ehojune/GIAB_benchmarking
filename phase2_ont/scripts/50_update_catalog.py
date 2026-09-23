@@ -9,7 +9,7 @@
   2026-08-21 정책이 "GIAB 처리 무시하고 raw부터 전부 재실행"이고, GIAB 산출물 내역은
   giab_processed 열과 notes에 남아 있어서 정보 손실이 없다.
 - excluded.tsv의 행은 next_step에 제외 이유를 적는다 (경고로만 남기지 않는다)
-- 마지막에 catalog/build_readme.py를 돌려 README.md 표를 재생성
+- 마지막에 catalog/build_readme.py + build_xlsx.py를 돌려 README 표와 엑셀을 재생성
 
 사용 (nbb2, repo 루트 어디서든):
   python phase2_ont/scripts/50_update_catalog.py [--run-base ...] [--dry-run]
@@ -40,12 +40,20 @@ def next_step_done(sample, dv_note=""):
     prefix = ("phase2 raw→VCF 완료 (minimap2 정렬 + Clair3 + Sniffles2 + LongPhase 위상)"
               f"{dv_note}. 산출물 경로는 variant_local_path. ")
     if sample == "HG002":
-        return prefix + ("다음: NIST v4.2.1 VCF+BED로 Clair3/DeepVariant 소형변이를 hap.py 또는 "
-                         "rtg vcfeval로 평가하고, SV benchmark v0.6으로 Sniffles2를 Truvari 평가.")
+        # 2026-09-23 (ONT 세션): 채점이 끝나 "다음에 할 일"에서 "한 것 + 남은 것"으로 바꾼다.
+        # (앞서 여기 있던 "SV benchmark v0.6" 은 사실 오류였다 — HG002_SVs_Tier1_v0.6 은 GRCh37
+        #  전용이라 GRCh38 결과에 못 쓴다. 실제로 쓴 것은 v5.0q 이고 코드는 처음부터 맞았다.)
+        return prefix + ("채점 완료: 소변이는 NIST v4.2.1 로 hap.py, SV 는 v5.0q(T2T-Q100 유래)로 "
+                         "Truvari(refine 포함). R9 2런 + R10 1런이 같은 truth·같은 파라미터로 선다. "
+                         "수치는 docs/reference/2026-09-22-ont-r10-benchmark.md, "
+                         "docs/reference/2026-09-18-ont-benchmark-first-results.md. "
+                         "남은 것: 없음(이 샘플은 소변이·SV 둘 다 공식 truth 가 있어 더 할 평가가 없다).")
     if sample in {"HG001", "HG003", "HG004", "HG005", "HG006", "HG007"}:
-        return prefix + ("다음: 해당 샘플의 NIST v4.2.1 VCF+BED로 Clair3/DeepVariant 소형변이를 "
-                         "hap.py 또는 rtg vcfeval로 평가. 공식 샘플별 SV benchmark는 없으므로 "
-                         "Sniffles2는 교차 콜러 일치도와 수동 검토로 평가.")
+        return prefix + ("채점 완료: NIST v4.2.1 로 hap.py 소변이 평가(Clair3 단독 — R9.4.1 이라 "
+                         "DeepVariant ONT 모델이 없다). 수치는 "
+                         "docs/reference/2026-09-18-ont-benchmark-first-results.md. "
+                         "남은 것: SV 는 이 샘플의 공식 germline SV benchmark 가 없어 정확도를 말할 수 "
+                         "없다(GRCh38 stvar truth 는 HG002 뿐). Sniffles2 콜셋은 내되 성능으로 보고하지 않는다.")
     if sample == "HG008":
         return prefix + ("다음: HG008-T와 N-D/N-P를 짝지어 자체 somatic SNV/INDEL·SV 콜셋 생성. "
                          "소형변이는 NIST draft V0.3으로 aardvark(보조: rtg vcfeval/hap.py), "
@@ -118,6 +126,13 @@ def main():
     runs = load_rows("run_table.tsv")
     excluded = load_rows("excluded.tsv")
 
+    # ext/ 로 들여온 런은 카탈로그 경로 basename 과 run_table 의 dataset 이름이 다르다 —
+    # 경로는 배포처 구조(ont-open-data/.../PAW70337)를 따르고 dataset 은 우리 명명 규칙
+    # (ONT-R10_giab2025.01_PAW70337)을 따르기 때문이다. 자동 매칭(끝부분 일치 등)은 엉뚱한 행을
+    # 물 수 있어 명시적으로 잇는다. 여기 없으면 그 행은 "경고: run_table에 대응 실행 단위가 없음"
+    # 으로만 뜨고 영영 기록되지 않는다 (2026-09-23 발견).
+    EXT_ALIAS = {("HG002", "PAW70337"): "ONT-R10_giab2025.01_PAW70337"}
+
     # 카탈로그 행 key = (HG샘플, GIAB 디렉토리 basename). run sample 은 HG008-N-D 처럼 파생형.
     groups = {}
     for r in runs:
@@ -147,7 +162,7 @@ def main():
                 updated.append((f"{key[0]}/{key[1]} (제외 기록)", changes))
             skipped.append(f"{key[0]}/{key[1]}")
             continue
-        ds_runs = groups.get(key)
+        ds_runs = groups.get(key) or groups.get((key[0], EXT_ALIAS.get(key, "")))
         if not ds_runs:
             missing_rows.append(f"{key[0]} {key[1]}")
             continue
@@ -166,7 +181,10 @@ def main():
         var_tool = " + ".join(callers) + f" [clair3 model: {','.join(models)}]"
 
         samples = sorted({r["sample"] for r in ds_runs})
-        mid = f"{args.run_base}/{samples[0] if len(samples) == 1 else '*'}/ONT/{key[1]}"
+        # 산출물 디렉토리는 run_table 의 **dataset** 으로 만들어진다 (10_submit.sh). 카탈로그
+        # basename(key[1])과 보통 같지만 EXT_ALIAS 로 이은 행은 다르다 — key[1] 을 쓰면 없는
+        # 경로를 적게 된다. 한 그룹의 런들은 dataset 이 같으므로 아무거나 써도 된다.
+        mid = f"{args.run_base}/{samples[0] if len(samples) == 1 else '*'}/ONT/{ds_runs[0]['dataset']}"
         changes = []
         if any(r["entry_type"] != "aligned_bam" for r in ds_runs):
             set_cell(row, "aligned", "TRUE", changes)
@@ -213,7 +231,11 @@ def main():
     with open(CATALOG, "w", encoding="utf-8", newline="\n") as fh:
         fh.write("\n".join("\t".join(r) for r in rows) + "\n")
     subprocess.run([sys.executable, str(REPO / "catalog" / "build_readme.py")], check=True)
-    print(f"{len(updated)}개 행 갱신 + README 표 재생성 완료. git diff 확인 후 커밋할 것.")
+    # 엑셀도 같은 TSV 에서 나온다. 여기서 안 돌리면 TSV·README 만 앞서가고 xlsx 가 조용히
+    # 뒤처진다 — 2026-09-23 에 실제로 25행만큼 벌어져 있었다. --version/--date 를 주지 않으면
+    # 버전 문구는 그대로 두고 Master Catalog 시트만 재생성한다.
+    subprocess.run([sys.executable, str(REPO / "catalog" / "build_xlsx.py")], check=True)
+    print(f"{len(updated)}개 행 갱신 + README 표 + 엑셀 재생성 완료. git diff 확인 후 커밋할 것.")
 
 
 if __name__ == "__main__":

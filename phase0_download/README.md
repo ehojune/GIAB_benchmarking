@@ -1,7 +1,7 @@
 # Phase 0 — 데이터 다운로드
 
 GIAB 원시 데이터 + truth set을 nbb2로 받는 단계. 대상 목록은 `manifests/`가 전부다.
-**2026-09-18 전량 완료** — 81,302/81,302 files, 116,509.5 GiB (100.0%). 기록: [docs/runs/2026-09-18-phase0-download-complete.md](../docs/runs/2026-09-18-phase0-download-complete.md).
+**2026-09-18 전량 완료** — 81,302/81,302 files, 116,509.5 GiB (100.0%). **2026-09-22 서버 전수 실측**으로 재확인: 외부 3경로(ENA 12·ONT 4·Google/HPRC 12)까지 합쳐 81,330 files 전부 크기 일치, 미수신 0 — [대조 기록](../docs/runs/2026-09-22-disk-vs-manifest-reconciliation.md). 기록: [docs/runs/2026-09-18-phase0-download-complete.md](../docs/runs/2026-09-18-phase0-download-complete.md).
 **총 81,302 files / 125.1 TB** (2026-08-13 S3 목록 + `current.tree` 기반 HEAD 검증 → 2026-09-16 FTP `release/`·`data/` 라이브 크롤로 재대조. 아래 [release/ 갱신](#release-갱신-2026-09-16), [data/ 갱신](#data-갱신-2026-09-16)). 2026-09-17에 받지 않기로 한 3건(12,423 files / 10.7 TiB)은 미포함 — [manifests/declined_by_decision.tsv](manifests/declined_by_decision.tsv).
 
 데이터셋별 처리 현황은 저장소 루트 [README.md](../README.md)의 master table 참고.
@@ -15,8 +15,24 @@ GIAB 원시 데이터 + truth set을 nbb2로 받는 단계. 대상 목록은 `ma
 git clone https://github.com/ehojune/GIAB_benchmarking.git && cd GIAB_benchmarking
 mkdir -p logs
 screen -S giab
-JOBS=12 bash phase0_download/scripts/run_priority.sh 2>&1 | tee logs/run_priority.log
+JOBS=12 bash phase0_download/scripts/fetch_all.sh 2>&1 | tee logs/fetch_all.log
 ```
+
+**`fetch_all.sh`가 이 저장소의 다운로드 진입점이다.** 취득 경로가 네 군데로 갈라져 있어
+(GIAB FTP/S3 · ENA · ONT 공개 데이터 · Google/HPRC 버킷) 어느 하나를 빼먹기 쉬웠다. 이 스크립트가 순서대로 부른다.
+
+| 단계 | 무엇을 | 하위 스크립트 | 규모 |
+|---|---|---|---|
+| phase0 | GIAB FTP/S3 본체 | `run_priority.sh` | 81,302 files / 113.8 TiB |
+| phase1 | HG001·HG005 SequelII 11kb (ENA PRJNA540705/540706) | `phase1_pacbio_hifi/scripts/02_fetch_sra_reads.sh` | 12 files / 135 GiB |
+| phase2 | HG001 rel6 + HG002 R10.4.1 (ONT 공개) | `phase2_ont/scripts/02_fetch_external_reads.sh` | 4 files / 297 GiB |
+| phase3 | 숏리드 업체 비교군 (Google GCS, HPRC S3) | `phase3_shortread_wgs/scripts/02_fetch_external_reads.sh` | 12 files / 359 GiB |
+
+한 단계가 실패해도 다음으로 넘어가고 마지막에 결과표를 찍는다. 상태 점검만 하려면
+`VERIFY_ONLY=1 bash phase0_download/scripts/fetch_all.sh`, 일부만 받으려면 `STAGES="phase1 phase2"`.
+phase0만 옛 방식으로 돌리려면 `run_priority.sh`를 그대로 써도 된다.
+
+처리용 자산(레퍼런스·Clair3 모델·컨테이너)은 여기 없다 — 각 phase의 `01_prepare_login_node.sh` 담당이다.
 
 `run_priority.sh`는 release → pacbio_hifi → ont → pacbio_clr → 나머지 순으로 받는다.
 screen 나오기 `Ctrl-A d`, 다시 붙기 `screen -r giab`.

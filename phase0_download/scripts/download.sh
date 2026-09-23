@@ -56,7 +56,15 @@ elif [ "$CAT" = "all" ]; then
         for m in "$REPO_DIR/manifests/$s"/*.tsv; do [ -e "$m" ] && MANIFESTS+=("$m"); done
     done
 elif [ -f "$REPO_DIR/manifests/$CAT.tsv" ]; then
-    # 선택 manifest (예: optional_trio_analysis_legacy) — all/run_priority에는 안 들어간다. 이름으로 직접 지정해야 받는다
+    # 선택 manifest (예: README의 legacy_trio_analysis 생성 절차) — all/run_priority에는 안 들어간다. 이름으로 직접 지정해야 받는다.
+    # 단 '대상 아님' 목록은 이름이 맞아도 거부한다: declined는 받지 않기로 결정한 10.7 TiB이고,
+    # stale은 FTP에서 사라진 파일이다. 둘 다 3열(경로/바이트/사유)이라 dl_line의 크기 비교도 전건 실패한다.
+    case "$CAT" in
+        declined_by_decision|release_stale_ftp_removed)
+            echo "거부: $CAT.tsv 는 다운로드 대상이 아니다 (declined = 받지 않기로 결정, stale = FTP에서 삭제됨)." >&2
+            echo "  정말 받아야 하면 2열(경로<TAB>바이트)로 따로 뽑아 다른 이름의 manifest로 만들 것 — phase0_download/README.md 참고." >&2
+            exit 1 ;;
+    esac
     MANIFESTS+=("$REPO_DIR/manifests/$CAT.tsv")
 else
     ok=0; for c in "${CATEGORIES[@]}"; do [ "$c" = "$CAT" ] && ok=1; done

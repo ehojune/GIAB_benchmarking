@@ -9,7 +9,7 @@
   2026-08-21 정책이 "GIAB 처리 무시하고 raw부터 전부 재실행"이고, GIAB 산출물 내역은
   giab_processed 열과 notes에 남아 있어서 정보 손실이 없다.
   (aligned_bam 진입 행은 내가 정렬한 게 아니므로 정렬 칸은 GIAB 그대로 둔다)
-- 마지막에 catalog/build_readme.py를 돌려 README.md 표를 재생성
+- 마지막에 catalog/build_readme.py + build_xlsx.py를 돌려 README 표와 엑셀을 재생성
 
 사용 (nbb2, repo 루트 어디서든):
   python phase1_pacbio_hifi/scripts/50_update_catalog.py [--run-base ...] [--dry-run]
@@ -37,19 +37,38 @@ SCRIPT_REF = "phase1_pacbio_hifi/scripts/10_submit.sh"
 
 
 def next_step_done(sample):
+    # 2026-09-23: 채점이 끝나 문구를 "다음 할 일"에서 "한 것 + 남은 것"으로 바꿨다.
+    # 옛 문구에 사실 오류가 둘 있었다 —
+    #   (1) HG002 에 "SV benchmark v0.6 으로 Truvari 평가" 라고 썼는데 v0.6 은 **GRCh37 전용**이라
+    #       GRCh38 정렬 결과에 못 쓴다. 실제로 쓴 것은 v5.0q(T2T-Q100 유래)다.
+    #   (2) HG001·HG003~007 에 "공식 샘플별 SV benchmark 는 없으므로" 라고 쓴 것은 맞지만,
+    #       그 결론으로 제시한 "교차 콜러 일치도와 수동 검토" 는 하지 않았고 할 계획도 없다.
     prefix = ("phase1 raw→VCF 완료 (pbmm2 정렬 + DeepVariant/Clair3 + pbsv + WhatsHap 위상). "
               "산출물 경로는 variant_local_path. ")
+    happy = ("소변이 채점 완료 — hap.py 0.3.12 vs NIST v4.2.1 (2026-09-22, 19런 x 2 caller). "
+             "SNP F1 .9984~.9994 로 포화, INDEL 은 기기 세대가 가른다. 기본 caller 는 DeepVariant "
+             "(Revio 에서 Clair3 가 INDEL -.006~-.017 로 진다). ")
     if sample == "HG002":
-        return prefix + ("다음: NIST v4.2.1 VCF+BED로 DeepVariant/Clair3 소형변이를 hap.py 또는 "
-                         "rtg vcfeval로 평가하고, SV benchmark v0.6으로 pbsv를 Truvari 평가.")
+        return prefix + happy + (
+            "SV 채점도 완료 — Truvari 5.4.0 vs HG002 GRCh38 v5.0q stvar, refine 후 F1 .8208~.8418. "
+            "recall .757~.788 이 약점이다(못 찾는 쪽). "
+            "**v5.0q 를 쓴 이유**: 널리 쓰이는 HG002_SVs_Tier1_v0.6 은 GRCh37 전용이라 못 쓴다. "
+            "수치: docs/reference/2026-09-22-pacbio-hifi-benchmark-first-results.md")
     if sample in {"HG001", "HG003", "HG004", "HG005", "HG006", "HG007"}:
-        return prefix + ("다음: 해당 샘플의 NIST v4.2.1 VCF+BED로 DeepVariant/Clair3 소형변이를 "
-                         "hap.py 또는 rtg vcfeval로 평가. 공식 샘플별 SV benchmark는 없으므로 "
-                         "pbsv는 교차 콜러 일치도와 수동 검토로 평가.")
+        return prefix + happy + (
+            "SV 는 채점 불가 — GRCh38 germline SV truth 를 가진 GIAB 샘플이 HG002 하나뿐이다. "
+            "pbsv 콜셋은 만들어 뒀으나 정답셋이 없어 정확도를 말할 수 없다. "
+            "수치: docs/reference/2026-09-22-pacbio-hifi-benchmark-first-results.md")
     if sample == "HG008":
-        return prefix + ("다음: HG008-T와 N-D/N-P를 짝지어 자체 somatic SNV/INDEL·SV 콜셋 생성. "
-                         "소형변이는 NIST draft V0.3으로 aardvark(보조: rtg vcfeval/hap.py), "
-                         "SV는 draft V0.5로 Truvari v5+ 평가. batch 0823p23 외 passage에는 V0.5 clonal BED 사용.")
+        return prefix + (
+            "**germline 채점은 구조적으로 불가** — HG008 의 draft benchmark 는 somatic-stvar/CNV 라 "
+            "단일 샘플 germline VCF 평가에 못 쓴다. 60_benchmark.sh·61_benchmark_sv.sh 가 자동으로 건너뛴다. "
+            "다음: HG008-T와 N-D/N-P를 짝지어 자체 somatic SNV/INDEL·SV 콜셋 생성. "
+            "소형변이는 NIST draft V0.3으로 aardvark(보조: rtg vcfeval/hap.py), "
+            "SV는 draft V0.5로 Truvari v5+ 평가. batch 0823p23 외 passage에는 V0.5 clonal BED 사용. "
+            "**설계 쟁점**(docs/STATUS.md #9): germline caller 출력은 germline+somatic 전체라 "
+            "somatic truth 에 그냥 대면 germline 이 전부 FP 가 된다 — somatic caller 가 필요하다. "
+            "매칭 정상도 NIST 트리에 없어 Liss_lab 것을 써야 해 랩 차이가 섞인다.")
     if sample == "HG009":
         return prefix + ("공식 HG009 truth/benchmark는 아직 없음. 다음: WT-p4를 matched normal로 "
                          "T-p16/p42와 6개 클론의 somatic 콜셋을 만들고, passage·clone 일치도와 "
@@ -190,7 +209,11 @@ def main():
     with open(CATALOG, "w", encoding="utf-8", newline="\n") as fh:
         fh.write("\n".join("\t".join(r) for r in rows) + "\n")
     subprocess.run([sys.executable, str(REPO / "catalog" / "build_readme.py")], check=True)
-    print(f"{len(updated)}개 행 갱신 + README 표 재생성 완료. git diff 확인 후 커밋할 것.")
+    # 엑셀도 같은 TSV 에서 나온다. 여기서 안 돌리면 TSV·README 만 앞서가고 xlsx 가 조용히
+    # 뒤처진다 — 2026-09-23 에 실제로 25행만큼 벌어져 있었다. --version/--date 를 주지 않으면
+    # 버전 문구는 그대로 두고 Master Catalog 시트만 재생성한다.
+    subprocess.run([sys.executable, str(REPO / "catalog" / "build_xlsx.py")], check=True)
+    print(f"{len(updated)}개 행 갱신 + README 표 + 엑셀 재생성 완료. git diff 확인 후 커밋할 것.")
 
 
 if __name__ == "__main__":

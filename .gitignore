@@ -16,3 +16,17 @@ work/
 # python 바이트코드 (스크립트를 py_compile 로 검사하면 생긴다)
 __pycache__/
 *.pyc
+
+# 벤치마크 --collect 산출물. 서버에서 언제든 재생성되고(수 초), 실측값의 정본은
+# docs/reference/ 의 날짜별 기록이다. 두 세션이 서버에서 미추적으로 들고 있던 것들.
+phase1_bench_summary.tsv
+phase*/phase*_bench_summary.tsv
+phase*/phase*_bench_sv_summary.tsv
+
+# 리뷰 스크립트의 --tsv / TSV= 산출물 (35_review_qc.py, 62_tstv_regions.sh)
+qc_review_ont.tsv
+qc_review.tsv
+tstv_regions.tsv
+
+# 편집 중 백업
+*.bak

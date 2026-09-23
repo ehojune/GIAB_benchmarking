@@ -194,32 +194,44 @@ GIAB truth set 대비 hap.py. phase1의 같은 스크립트와 구조가 같고 
 
 | | |
 |---|---|
-| 대상 | **HG001~HG007 8런**. HG008 6런은 germline truth가 없어 자동으로 빠진다 |
+| 대상 | **9런** — HG001~HG007 의 R9 8런 + HG002 R10 1런. HG008 6런은 germline truth가 없어 자동으로 빠진다 |
 | caller | 런마다 `dv_model` 열로 정한다 — R9는 Clair3 단독, R10은 Clair3+DeepVariant |
 | 입력 | `03_VCF/<caller>/*.vcf.gz` **원본**. hap.py가 FILTER를 자체 처리해 ALL/PASS 행을 둘 다 내므로 재실행이 필요 없다 |
 | 산출 | `<dataset>/05_BENCH/happy/<id>.<caller>.summary.csv` → `--collect`가 `phase2_bench_summary.tsv`로 모은다 |
-| 잡 크기 | `BENCH_SLOTS=8` / `BENCH_VMEM=32G` (hap.py는 병렬성이 낮다) |
+| 잡 크기 | `BENCH_SLOTS=8` / `BENCH_VMEM=32G` (hap.py는 병렬성이 낮다). 실측 maxvmem 23.7~24.6 GB — **caller 두 개짜리 잡도 같다**(순차로 돌아 누적되지 않는다) |
 
-**phase2에서 DeepVariant는 벤치마크되지 않는다.** DV가 도는 건 R10 6런뿐인데 그게 전부 HG008이고,
-HG008에는 germline truth가 없다 — 매니페스트에 있는 HG008 draft benchmark는 `somatic-stvar`/`CNV`라
-단일 샘플 germline VCF 평가에 못 쓴다. 스크립트는 `dv_model`을 보고 자동 판정하므로 나중에 HG008
-germline truth가 생기면 코드 수정 없이 DV까지 평가된다.
+**HG002 R10 런이 들어오기 전까지 DeepVariant는 한 번도 채점되지 않았다.** DV가 도는 것은 R10 런인데
+truth 가 있는 샘플은 전부 R9 였다 — 겹치는 런이 없었다. 2026-09-19 에 그 공백을 메우려고 HG002 R10 을
+들여왔고(위), 2026-09-22 에 **처음으로 DV가 채점됐다.** 스크립트는 `dv_model` 열로 자동 판정하므로
+코드 수정은 없었다. 남은 HG008 6런은 germline truth 자체가 없다 — 매니페스트의 HG008 draft benchmark 는
+`somatic-stvar`/`CNV` 라 단일 샘플 germline VCF 평가에 못 쓴다.
 
-따라서 [열린 질문인 ts/tv](../docs/reference/2026-08-27-ont-qc-first-pass.md)는 이 단계로 **R9 8런까지만**
-답이 나온다. R10의 더 낮은 ts/tv(1.65~1.73)는 미해결로 남는다.
+### 실측 (9런 전부 완료 — R9 8런 2026-09-18, R10 1런 2026-09-22)
 
-### 실측 (2026-09-18, 8런 전부 완료)
+| 베이스콜러 | 케미 | SNP F1 | INDEL F1 | INDEL precision | INDEL recall |
+|---|---|---|---|---|---|
+| guppy 3.2.x · rel6 (HG001~HG004) | R9 | .986~.989 | .217~.228 | **.146~.159** | .399~.430 |
+| guppy 3.4.5 (HG002) | R9 | .995 | .556 | .560 | .552 |
+| guppy 4.2.2 (HG005~007) | R9 | .997 | .771~.822 | .896~.916 | .676~.747 |
+| **dorado 0.8.2 sup (HG002)** | **R10** | **.998** | **.913** | **.928** | **.900** |
+| **〃 DeepVariant** | **R10** | **.999** | **.938** | **.951** | **.925** |
 
-| 베이스콜러 | SNP F1 | INDEL F1 | INDEL precision | INDEL FP |
-|---|---|---|---|---|
-| guppy 3.2.x · rel6 (HG001~HG004) | .986~.989 | .217~.228 | .146~.159 | 1.08~1.27M |
-| guppy 3.4.5 (HG002) | .995 | .556 | .560 | 234k |
-| guppy 4.2.2 (HG005~007) | .997 | .771~.822 | .896~.915 | 29~35k |
+**INDEL은 베이스콜러가 지배한다.** 네 세대가 한 줄에 선다 — guppy 3.2.x 는 부른 indel 의 **84~85%가
+거짓**이고(precision .15), 거기서 dorado R10 + DV 까지 가면 FP 비율이 **17배** 줄고 recall 은 2.3배가 된다.
+SNP 는 같은 구간에서 .986 → .999 로만 움직였다. **정확도 향상은 거의 전부 INDEL 에서 일어났다.**
 
-**SNV는 전 런 쓸 만하고(F1 .986~.997) indel은 베이스콜러가 지배한다.** 2026-08-27에 개수로 추정한
-3.5배 격차는 truth 대비 **FP 42배**였다. precision은 베이스콜러로 6.3배 좋아지지만 recall은 1.8배에
-그쳐 guppy 4.2.2조차 .68~.75다 — R9이 못 부르는 indel은 남는다.
-전체 수치·자원 실측: [docs/reference/2026-09-18-ont-benchmark-first-results.md](../docs/reference/2026-09-18-ont-benchmark-first-results.md).
+**DeepVariant 가 Clair3 를 네 칸 전부에서 이긴다** (INDEL F1 +0.024, FP −33%, FN −25%). phase1 PacBio 와
+같은 방향이라 **ONT R10 의 기본 caller 를 DeepVariant 로 둔다** — Clair3 는 교차 확인용으로 유지한다
+(QC 게이트 `caller_ratio_min` 이 둘을 쓰고, R9 런은 DV 모델 자체가 없다).
+
+**외부 대조군과 맞았다.** ONT 가 같은 플로우셀 PAW70337 에 자기 hap.py 결과를 공개해 뒀고
+(SNP F1 .9983 / INDEL F1 .9147), 우리 Clair3 가 **SNP −0.0001 / INDEL −0.0013** 으로 재현한다.
+ONT 정렬을 버리고 우리 minimap2 로 재정렬한 결과다 — 재정렬 결정이 정확도를 깎지 않았고 배선에 숨은
+결함도 없다는 뜻이다. corpus 15런 중 외부 대조군이 있는 런은 이것뿐이라 **나머지 14런의 신뢰도도
+이 한 점에 얹힌다.**
+
+전체 수치: [2026-09-18 R9 8런](../docs/reference/2026-09-18-ont-benchmark-first-results.md) ·
+[2026-09-22 R10 + DV](../docs/reference/2026-09-22-ont-r10-benchmark.md).
 
 ## SV 정확도 평가 ([61_benchmark_sv.sh](scripts/61_benchmark_sv.sh))
 
@@ -227,16 +239,16 @@ Sniffles2 콜을 GIAB HG002 SV truth set 대비 Truvari로 채점한다.
 
 | | |
 |---|---|
-| 대상 | **HG002 2런뿐** — `guppy-V3.4.5`, `UCSC_Ultralong_..._Promethion`. 둘 다 R9.4.1 |
+| 대상 | **HG002 3런뿐** — R9 둘(`guppy-V3.4.5`, `UCSC_Ultralong_..._Promethion`) + R10 하나(`ONT-R10_giab2025.01_PAW70337`) |
 | truth | `HG002_GRCh38_v5.0q_stvar` (T2T-Q100 유래, 전장) |
 | 입력 | `03_VCF/SV_sniffles/<id>.sniffles.vcf.gz` |
 | 산출 | `<dataset>/05_BENCH/truvari/{summary.json,refine.variant_summary.json}` → `--collect`가 `phase2_bench_sv_summary.tsv` |
-| 잡 크기 | `BENCH_SV_SLOTS=8` / `BENCH_SV_VMEM=32G` |
+| 잡 크기 | `BENCH_SV_SLOTS=33`(노드당 1잡) / `BENCH_SV_THREADS=8`. 실측 maxvmem **133.5 GB** — 2잡이면 267 GB 로 251 GB 노드를 넘는다 |
 
 **GRCh38 germline SV truth를 가진 GIAB 샘플은 HG002 하나다.** 자주 인용되는
 `HG002_SVs_Tier1_v0.6`은 **GRCh37 전용**이라 GRCh38로 정렬한 우리 런에는 쓸 수 없다.
 HG001·HG003~HG007에는 SV truth가 아예 없고, HG008의 draft benchmark는 `somatic-stvar`/`CNV`라
-소변이 때와 같은 이유로 못 쓴다. 그래서 **R10의 SV 성능은 이 단계로도 알 수 없다.**
+소변이 때와 같은 이유로 못 쓴다. HG002 R10 런이 들어오면서 **R10 의 SV 성능도 같은 truth 로 잴 수 있게 됐다**(아래 실측).
 
 파라미터는 GIAB v5.0q README가 지정한 명령 그대로다 — `--pick ac --passonly -r 2000 -C 5000 --refine`.
 truvari 5.4.0 기본값과 다른 건 `-r`(500→2000)과 `-C`(1000→5000) 둘뿐이고, `-C`는 chunksize지
@@ -247,21 +259,46 @@ FP가 되어 수치가 실제보다 나쁘게 나온다. 다만 **기본 정렬�
 재현이 필요하면 `BENCH_SV_ALIGN=mafft`. `--collect`는 refine 전/후를 `stage` 열로 둘 다 내보내므로
 refine이 수치를 얼마나 움직였는지 보고 판단하면 된다.
 
-### 실측 (2026-09-18, 2런 전부 완료)
+### 실측 (3런 전부 완료 — R9 둘 2026-09-18, R10 하나 2026-09-22)
 
-| 런 | stage | precision | recall | F1 |
+truth `base_cnt` 28,123 은 세 런 공통이다.
+
+| 런 | 케미 | stage | precision | recall | F1 | gt_conc |
+|---|---|---|---|---|---|---|
+| **ONT-R10_…_PAW70337** | **R10** | bench → **refine** | .918 → **.945** | .751 → **.822** | .826 → **.879** | .831 |
+| guppy-V3.4.5 | R9 | bench → **refine** | .917 → **.939** | .706 → **.774** | .798 → **.849** | .806 |
+| UCSC_…_Promethion | R9 | bench → **refine** | .891 → **.914** | .690 → **.752** | .778 → **.825** | .807 |
+
+**R10 이 R9 를 F1 +0.031 로 이기는데 그 이득이 거의 전부 recall 이다** (recall +0.048 / precision +0.006).
+소변이 INDEL 은 둘이 같이 올랐는데 SV 는 다르다 — **R9 도 SV 를 헛부르진 않았고(precision .94) 놓쳤을
+뿐이다.** 유전형까지 맞히는 비율도 2.5점 올랐다.
+
+**refine 이득은 케미스트리와 무관하게 일정하다** — +4.8 / +5.1 / **+5.3**점. 복잡영역의 표현 차이를
+푸는 단계라 베이스콜 품질과 독립인 것으로 보인다. 기본으로 켠 판단이 실측으로 뒷받침됐다.
+`refine` 행의 `gt_concordance` 는 truvari 가 그 키를 안 내서 `NA` 라 bench 행 값을 쓴다.
+
+전체 수치: [2026-09-22-ont-r10-benchmark.md](../docs/reference/2026-09-22-ont-r10-benchmark.md) §4.
+
+## 자원 실측
+
+| 단계 | 잡 | wall | maxvmem | 슬롯 |
 |---|---|---|---|---|
-| HG002.guppy-V3.4.5 | bench → **refine** | .917 → **.939** | .706 → **.774** | .798 → **.849** |
-| HG002.UCSC_..._Promethion | bench → **refine** | .891 → **.914** | .690 → **.752** | .778 → **.825** |
+| 파이프라인 raw→VCF (HG002 R10, ~49x) | 155279 | **16h 20m** | 66.2 GB | 30 |
+| hap.py (caller 2개) | 156047 | 50.7분 | 24.6 GB | 8 |
+| Truvari + refine | 156053 | 4.5분 | **133.5 GB** | 22 → 이후 33 |
 
-**refine이 F1을 4.8~5.1점 올린다 — 기본으로 켠 판단이 실측으로 뒷받침됐다.** 비용은 5분이다
-(잡 전체가 5~6.6분, maxvmem 67~73 GB). 설계 시점의 유일한 미지수였던 poa 런타임 걱정은 기우였다.
-recall .75가 상한이고 truth 28,123건 중 6,363건을 못 부른다. `refine` 행의 `gt_concordance`는
-truvari가 그 키를 안 내서 `NA`다.
+**프리셋 A(노드당 2잡 = 132 GB)가 맞다.** 다만 이 런은 정렬 BAM 진입 ~49x 이고, 남은 UL 런
+(HG008-N-D 93x)은 이 값으로 판단하면 안 된다 — ONT 는 리드 길이 분포가 극단적이라(UL 은 100 kb+)
+정렬 메모리·시간이 심도에 단순 비례하지 않는다. **런마다 `qacct -j <jobid>` 로 확인하고
+[env.local.sh.example](env.local.sh.example) 의 프리셋을 고를 것.**
 
-## 자원 실측은 아직 없다
+**hap.py 는 caller 를 순차로 돈다** — caller 2개짜리 잡의 maxvmem 이 1개짜리(23.7~24.5 GB)와 같다.
+`BENCH_SLOTS` 를 caller 수로 나눌 필요가 없다.
 
-phase1은 30슬롯 잡으로 30x HiFi가 6~7시간, 피크 43~54 GB였다. ONT는 리드 길이 분포가 극단적이라
-(UL은 100 kb+) 정렬 메모리·시간이 다르게 튄다. **첫 1~2런이 끝나면 `qacct -j <jobid>`의
-maxvmem / ru_wallclock을 보고 [env.local.sh.example](env.local.sh.example)의 프리셋을 고를 것.**
-현재 값(30슬롯 / 110 GB)은 phase1 실측 + Clair3 문서(50x ONT를 36코어로 ~8시간)에 기댄 추정이다.
+**truvari 133.5 GB 는 `-t 8` 값이다.** env.sh 에 오래 적혀 있던 "67~73 GB" 는 `BENCH_SV_THREADS` 가
+생기기 전 **기본 4스레드** 측정이었다. phase1 이 같은 날 `-t 8` 로 본 91.6~136.2 GB 대역 안에 정확히
+들어간다 — 한동안 "데이터셋이 메모리를 두 배로 가른다" 고 적혀 있었지만 **스레드 설정 차이였다.**
+`BENCH_SV_SLOTS` 를 33(노드당 1잡)으로 올린 근거가 이것이다.
+
+**노드가 두 종류다**(2026-09-22 확인): `shepherd-1-*` 251.1 GB / `octopus-2-*` **1007.1 GB**.
+위 계산은 전부 251 GB 기준이라 octopus 에서는 과하게 보수적이다 — 아직 조정하지 않았다.
