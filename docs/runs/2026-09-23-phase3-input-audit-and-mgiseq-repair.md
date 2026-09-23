@@ -18,6 +18,7 @@ for d in GIAB-publicData-*/outcome/*/; do
   d="${d%/}"
   sample=$(basename "$d")
   ok=1
+  case "$sample" in *_*) ok=0 ;; esac
   for mate in 1 2; do
     files=$(ls "$d"/*_${mate}.fastq.gz 2>/dev/null)
     n=$(echo -n "$files" | grep -c . || true)
@@ -25,46 +26,46 @@ for d in GIAB-publicData-*/outcome/*/; do
     [ "$n" = "1" ] && [ "$(basename "$files")" != "${sample}_${mate}.fastq.gz" ] && ok=0
   done
   extra=$(ls "$d" 2>/dev/null | grep -vE "^(concat\.sh|concat\.log|concat_R1\.list|concat_R2\.list|${sample}_1\.fastq\.gz|${sample}_2\.fastq\.gz)$" | tr '\n' ',')
-  printf '%-75s exact_name_ok=%s extra=[%s]\n' "$d" "$ok" "$extra"
+  printf '%-75s ok=%s extra=[%s]\n' "$d" "$ok" "$extra"
 done
 ```
 
-**결과 (2026-09-23 15:57 KST 재실행, 전문):**
+**결과 (2026-09-23 16:20 KST 재실행, 전문):**
 
 ```
-GIAB-publicData-BGISEQ500/outcome/GIAB-publicData-BGISEQ500-HG002           exact_name_ok=1 extra=[]
-GIAB-publicData-BGISEQ500/outcome/GIAB-publicData-BGISEQ500-HG003           exact_name_ok=1 extra=[]
-GIAB-publicData-BGISEQ500/outcome/GIAB-publicData-BGISEQ500-HG004           exact_name_ok=1 extra=[]
-GIAB-publicData-Element-AVITI/outcome/GIAB-publicData-Element-AVITI-HG002   exact_name_ok=1 extra=[]
-GIAB-publicData-Element-AVITI/outcome/GIAB-publicData-Element-AVITI-HG003   exact_name_ok=1 extra=[]
-GIAB-publicData-Element-AVITI/outcome/GIAB-publicData-Element-AVITI-HG004   exact_name_ok=1 extra=[]
-GIAB-publicData-Hiseq-300x/outcome/GIAB-publicData-Hiseq-300x-HG002         exact_name_ok=1 extra=[]
-GIAB-publicData-Hiseq-300x/outcome/GIAB-publicData-Hiseq-300x-HG003         exact_name_ok=1 extra=[]
-GIAB-publicData-Hiseq-300x/outcome/GIAB-publicData-Hiseq-300x-HG004         exact_name_ok=1 extra=[]
-GIAB-publicData-Hiseq-subsampled-30x/outcome/GIAB-publicData-Hiseq-subsampled-30x-HG002 exact_name_ok=1 extra=[GIAB-publicData-Hiseq-subsampled-30x-HG002_canvas.CNV_filtered.vcf,GIAB-publicData-Hiseq-subsampled-30x-HG002.diploidSV.conInv_filtered.vcf,GIAB-publicData-Hiseq-subsampled-30x-HG002_v1.1.0.cram,GIAB-publicData-Hiseq-subsampled-30x-HG002_v1.1.0.cram.crai,GIAB-publicData-Hiseq-subsampled-30x-HG002_v1.1.0.g.vcf.gz,GIAB-publicData-Hiseq-subsampled-30x-HG002_v1.1.0.g.vcf.gz.tbi,]
-GIAB-publicData-Hiseq-subsampled-30x/outcome/GIAB-publicData-Hiseq-subsampled-30x-HG003 exact_name_ok=1 extra=[GIAB-publicData-Hiseq-subsampled-30x-HG003_canvas.CNV_filtered.vcf,GIAB-publicData-Hiseq-subsampled-30x-HG003.diploidSV.conInv_filtered.vcf,GIAB-publicData-Hiseq-subsampled-30x-HG003_v1.1.0.cram,GIAB-publicData-Hiseq-subsampled-30x-HG003_v1.1.0.cram.crai,GIAB-publicData-Hiseq-subsampled-30x-HG003_v1.1.0.g.vcf.gz,GIAB-publicData-Hiseq-subsampled-30x-HG003_v1.1.0.g.vcf.gz.tbi,]
-GIAB-publicData-Hiseq-subsampled-30x/outcome/GIAB-publicData-Hiseq-subsampled-30x-HG004 exact_name_ok=1 extra=[GIAB-publicData-Hiseq-subsampled-30x-HG004_canvas.CNV_filtered.vcf,GIAB-publicData-Hiseq-subsampled-30x-HG004.diploidSV.conInv_filtered.vcf,GIAB-publicData-Hiseq-subsampled-30x-HG004_v1.1.0.cram,GIAB-publicData-Hiseq-subsampled-30x-HG004_v1.1.0.cram.crai,GIAB-publicData-Hiseq-subsampled-30x-HG004_v1.1.0.g.vcf.gz,GIAB-publicData-Hiseq-subsampled-30x-HG004_v1.1.0.g.vcf.gz.tbi,]
-GIAB-publicData-Illumina-250PE/outcome/GIAB-publicData-Illumina-250PE-HG002 exact_name_ok=1 extra=[]
-GIAB-publicData-Illumina-250PE/outcome/GIAB-publicData-Illumina-250PE-HG003 exact_name_ok=1 extra=[]
-GIAB-publicData-Illumina-250PE/outcome/GIAB-publicData-Illumina-250PE-HG004 exact_name_ok=1 extra=[]
-GIAB-publicData-MGISEQ2000-PCRfree/outcome/GIAB-publicData-MGISEQ2000-PCRfree-HG002 exact_name_ok=1 extra=[]
-GIAB-publicData-MGISEQ2000-PCRfree/outcome/GIAB-publicData-MGISEQ2000-PCRfree-HG003 exact_name_ok=1 extra=[]
-GIAB-publicData-MGISEQ2000-PCRfree/outcome/GIAB-publicData-MGISEQ2000-PCRfree-HG004 exact_name_ok=1 extra=[]
-GIAB-publicData-Novaseq6000-PCRfree-30x/outcome/GIAB-publicData-Novaseq6000-PCRfree-30x-HG002 exact_name_ok=1 extra=[GIAB-publicData-Novaseq6000-PCRfree-30x-HG002_canvas.CNV_filtered.vcf,GIAB-publicData-Novaseq6000-PCRfree-30x-HG002.diploidSV.conInv_filtered.vcf,GIAB-publicData-Novaseq6000-PCRfree-30x-HG002_v1.1.0.cram,GIAB-publicData-Novaseq6000-PCRfree-30x-HG002_v1.1.0.cram.crai,GIAB-publicData-Novaseq6000-PCRfree-30x-HG002_v1.1.0.g.vcf.gz,GIAB-publicData-Novaseq6000-PCRfree-30x-HG002_v1.1.0.g.vcf.gz.tbi,]
-GIAB-publicData-Novaseq6000-PCRfree-30x/outcome/GIAB-publicData-Novaseq6000-PCRfree-30x-HG003 exact_name_ok=1 extra=[GIAB-publicData-Novaseq6000-PCRfree-30x-HG003_canvas.CNV_filtered.vcf,GIAB-publicData-Novaseq6000-PCRfree-30x-HG003.diploidSV.conInv_filtered.vcf,GIAB-publicData-Novaseq6000-PCRfree-30x-HG003_v1.1.0.cram,GIAB-publicData-Novaseq6000-PCRfree-30x-HG003_v1.1.0.cram.crai,GIAB-publicData-Novaseq6000-PCRfree-30x-HG003_v1.1.0.g.vcf.gz,GIAB-publicData-Novaseq6000-PCRfree-30x-HG003_v1.1.0.g.vcf.gz.tbi,]
-GIAB-publicData-Novaseq6000-PCRfree-30x/outcome/GIAB-publicData-Novaseq6000-PCRfree-30x-HG004 exact_name_ok=1 extra=[GIAB-publicData-Novaseq6000-PCRfree-30x-HG004_canvas.CNV_filtered.vcf,GIAB-publicData-Novaseq6000-PCRfree-30x-HG004.diploidSV.conInv_filtered.vcf,GIAB-publicData-Novaseq6000-PCRfree-30x-HG004_v1.1.0.cram,GIAB-publicData-Novaseq6000-PCRfree-30x-HG004_v1.1.0.cram.crai,GIAB-publicData-Novaseq6000-PCRfree-30x-HG004_v1.1.0.g.vcf.gz,GIAB-publicData-Novaseq6000-PCRfree-30x-HG004_v1.1.0.g.vcf.gz.tbi,]
-GIAB-publicData-NovaseqX-30x/outcome/GIAB-publicData-NovaseqX-30x-HG002     exact_name_ok=1 extra=[GIAB-publicData-NovaseqX-30x-HG002_canvas.CNV_filtered.vcf,GIAB-publicData-NovaseqX-30x-HG002.diploidSV.conInv_filtered.vcf,GIAB-publicData-NovaseqX-30x-HG002_v1.1.0.cram,GIAB-publicData-NovaseqX-30x-HG002_v1.1.0.cram.crai,GIAB-publicData-NovaseqX-30x-HG002_v1.1.0.g.vcf.gz,GIAB-publicData-NovaseqX-30x-HG002_v1.1.0.g.vcf.gz.tbi,]
+GIAB-publicData-BGISEQ500/outcome/GIAB-publicData-BGISEQ500-HG002           ok=1 extra=[]
+GIAB-publicData-BGISEQ500/outcome/GIAB-publicData-BGISEQ500-HG003           ok=1 extra=[]
+GIAB-publicData-BGISEQ500/outcome/GIAB-publicData-BGISEQ500-HG004           ok=1 extra=[]
+GIAB-publicData-Element-AVITI/outcome/GIAB-publicData-Element-AVITI-HG002   ok=1 extra=[]
+GIAB-publicData-Element-AVITI/outcome/GIAB-publicData-Element-AVITI-HG003   ok=1 extra=[]
+GIAB-publicData-Element-AVITI/outcome/GIAB-publicData-Element-AVITI-HG004   ok=1 extra=[]
+GIAB-publicData-Hiseq-300x/outcome/GIAB-publicData-Hiseq-300x-HG002         ok=1 extra=[]
+GIAB-publicData-Hiseq-300x/outcome/GIAB-publicData-Hiseq-300x-HG003         ok=1 extra=[]
+GIAB-publicData-Hiseq-300x/outcome/GIAB-publicData-Hiseq-300x-HG004         ok=1 extra=[]
+GIAB-publicData-Hiseq-subsampled-30x/outcome/GIAB-publicData-Hiseq-subsampled-30x-HG002 ok=1 extra=[GIAB-publicData-Hiseq-subsampled-30x-HG002_canvas.CNV_filtered.vcf,GIAB-publicData-Hiseq-subsampled-30x-HG002.diploidSV.conInv_filtered.vcf,GIAB-publicData-Hiseq-subsampled-30x-HG002_v1.1.0.cram,GIAB-publicData-Hiseq-subsampled-30x-HG002_v1.1.0.cram.crai,GIAB-publicData-Hiseq-subsampled-30x-HG002_v1.1.0.g.vcf.gz,GIAB-publicData-Hiseq-subsampled-30x-HG002_v1.1.0.g.vcf.gz.tbi,]
+GIAB-publicData-Hiseq-subsampled-30x/outcome/GIAB-publicData-Hiseq-subsampled-30x-HG003 ok=1 extra=[GIAB-publicData-Hiseq-subsampled-30x-HG003_canvas.CNV_filtered.vcf,GIAB-publicData-Hiseq-subsampled-30x-HG003.diploidSV.conInv_filtered.vcf,GIAB-publicData-Hiseq-subsampled-30x-HG003_v1.1.0.cram,GIAB-publicData-Hiseq-subsampled-30x-HG003_v1.1.0.cram.crai,GIAB-publicData-Hiseq-subsampled-30x-HG003_v1.1.0.g.vcf.gz,GIAB-publicData-Hiseq-subsampled-30x-HG003_v1.1.0.g.vcf.gz.tbi,]
+GIAB-publicData-Hiseq-subsampled-30x/outcome/GIAB-publicData-Hiseq-subsampled-30x-HG004 ok=1 extra=[GIAB-publicData-Hiseq-subsampled-30x-HG004_canvas.CNV_filtered.vcf,GIAB-publicData-Hiseq-subsampled-30x-HG004.diploidSV.conInv_filtered.vcf,GIAB-publicData-Hiseq-subsampled-30x-HG004_v1.1.0.cram,GIAB-publicData-Hiseq-subsampled-30x-HG004_v1.1.0.cram.crai,GIAB-publicData-Hiseq-subsampled-30x-HG004_v1.1.0.g.vcf.gz,GIAB-publicData-Hiseq-subsampled-30x-HG004_v1.1.0.g.vcf.gz.tbi,]
+GIAB-publicData-Illumina-250PE/outcome/GIAB-publicData-Illumina-250PE-HG002 ok=1 extra=[]
+GIAB-publicData-Illumina-250PE/outcome/GIAB-publicData-Illumina-250PE-HG003 ok=1 extra=[]
+GIAB-publicData-Illumina-250PE/outcome/GIAB-publicData-Illumina-250PE-HG004 ok=1 extra=[]
+GIAB-publicData-MGISEQ2000-PCRfree/outcome/GIAB-publicData-MGISEQ2000-PCRfree-HG002 ok=1 extra=[]
+GIAB-publicData-MGISEQ2000-PCRfree/outcome/GIAB-publicData-MGISEQ2000-PCRfree-HG003 ok=1 extra=[]
+GIAB-publicData-MGISEQ2000-PCRfree/outcome/GIAB-publicData-MGISEQ2000-PCRfree-HG004 ok=1 extra=[]
+GIAB-publicData-Novaseq6000-PCRfree-30x/outcome/GIAB-publicData-Novaseq6000-PCRfree-30x-HG002 ok=1 extra=[GIAB-publicData-Novaseq6000-PCRfree-30x-HG002_canvas.CNV_filtered.vcf,GIAB-publicData-Novaseq6000-PCRfree-30x-HG002.diploidSV.conInv_filtered.vcf,GIAB-publicData-Novaseq6000-PCRfree-30x-HG002_v1.1.0.cram,GIAB-publicData-Novaseq6000-PCRfree-30x-HG002_v1.1.0.cram.crai,GIAB-publicData-Novaseq6000-PCRfree-30x-HG002_v1.1.0.g.vcf.gz,GIAB-publicData-Novaseq6000-PCRfree-30x-HG002_v1.1.0.g.vcf.gz.tbi,]
+GIAB-publicData-Novaseq6000-PCRfree-30x/outcome/GIAB-publicData-Novaseq6000-PCRfree-30x-HG003 ok=1 extra=[GIAB-publicData-Novaseq6000-PCRfree-30x-HG003_canvas.CNV_filtered.vcf,GIAB-publicData-Novaseq6000-PCRfree-30x-HG003.diploidSV.conInv_filtered.vcf,GIAB-publicData-Novaseq6000-PCRfree-30x-HG003_v1.1.0.cram,GIAB-publicData-Novaseq6000-PCRfree-30x-HG003_v1.1.0.cram.crai,GIAB-publicData-Novaseq6000-PCRfree-30x-HG003_v1.1.0.g.vcf.gz,GIAB-publicData-Novaseq6000-PCRfree-30x-HG003_v1.1.0.g.vcf.gz.tbi,]
+GIAB-publicData-Novaseq6000-PCRfree-30x/outcome/GIAB-publicData-Novaseq6000-PCRfree-30x-HG004 ok=1 extra=[GIAB-publicData-Novaseq6000-PCRfree-30x-HG004_canvas.CNV_filtered.vcf,GIAB-publicData-Novaseq6000-PCRfree-30x-HG004.diploidSV.conInv_filtered.vcf,GIAB-publicData-Novaseq6000-PCRfree-30x-HG004_v1.1.0.cram,GIAB-publicData-Novaseq6000-PCRfree-30x-HG004_v1.1.0.cram.crai,GIAB-publicData-Novaseq6000-PCRfree-30x-HG004_v1.1.0.g.vcf.gz,GIAB-publicData-Novaseq6000-PCRfree-30x-HG004_v1.1.0.g.vcf.gz.tbi,]
+GIAB-publicData-NovaseqX-30x/outcome/GIAB-publicData-NovaseqX-30x-HG002     ok=1 extra=[GIAB-publicData-NovaseqX-30x-HG002_canvas.CNV_filtered.vcf,GIAB-publicData-NovaseqX-30x-HG002.diploidSV.conInv_filtered.vcf,GIAB-publicData-NovaseqX-30x-HG002_v1.1.0.cram,GIAB-publicData-NovaseqX-30x-HG002_v1.1.0.cram.crai,GIAB-publicData-NovaseqX-30x-HG002_v1.1.0.g.vcf.gz,GIAB-publicData-NovaseqX-30x-HG002_v1.1.0.g.vcf.gz.tbi,]
 ```
 
-**8개 세트 22개 샘플 디렉토리 전부 `exact_name_ok=1`.** 세트별 샘플 수: BGISEQ500(3) ·
+**8개 세트 22개 샘플 디렉토리 전부 `ok=1`.** 세트별 샘플 수: BGISEQ500(3) ·
 Element-AVITI(3) · Hiseq-300x(3) · Hiseq-subsampled-30x(3) · Illumina-250PE(3) ·
 MGISEQ2000-PCRfree(3) · Novaseq6000-PCRfree-30x(3) · NovaseqX-30x(1, HG002만) = 22. 완료 세트
 (Hiseq-subsampled-30x·Novaseq6000·NovaseqX)의 `extra` 는 그 세트가 낸 산출물(CRAM·gvcf·CNV vcf
 등)이고 전부 같은 이름 규칙을 따른다. 나머지 5세트는 입력 fastq 2개 + concat 부산물뿐.
 
-첫 점검(같은 날 앞서)은 접미 매치만 봐서(`grep -vE '_[12]\.fastq\.gz$'`) `sample_bad_1.fastq.gz`
-같은 숨은 밑줄 위반을 통과시킬 수 있는 허점이 있었다(Codex 리뷰 지적) — 위 재실행은 파일 이름
-전체 일치로 고쳤고, 사실 관계는 바뀌지 않았다(여전히 22/22 통과).
+검사 스크립트는 Codex 리뷰로 두 번 고쳤다(사실 관계는 처음부터 끝까지 22/22 통과로 안 바뀜):
+접미 매치만 보던 것(`grep -vE '_[12]\.fastq\.gz$'`)을 파일 이름 전체 일치로, 그다음 디렉토리
+이름 자체에 밑줄이 섞인 경우(`sample_bad`)를 놓치던 것을 `case "$sample" in *_*)` 로 막았다.
 
 옛 이름(밑줄) 잔존 확인:
 
