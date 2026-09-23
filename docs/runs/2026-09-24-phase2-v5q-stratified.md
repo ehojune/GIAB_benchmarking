@@ -43,3 +43,20 @@ BENCH_TRUTH_VER=v5.0q bash phase2_ont/scripts/60_benchmark.sh --collect-strata  
 
 층은 R10 채점 때 만든 `$INFRA/reference/v5q_strata/` 를 그대로 썼다(같은 HG002 BED). 해석은
 [reference §6](../reference/2026-09-24-ont-r10-v5q-stratified.md#6-r9-두-런을-같은-층으로--옛-베이스콜러는-어려운-영역에서-더-무너진다).
+
+## V3.2.4 dup 런도 같은 층으로 — 두 번째 감시 스크립트 (00:58)
+
+V3.2.4(156587)가 V3.4.5·UCSC 와 같은 층에 서면 §6 의 어려운 영역 격차를 기기와 베이스콜러로 가를 수 있다.
+9/23 에 띄운 `dup_bench_poller.sh` 는 v4.2.1 채점(60·61)만 넣는다. **도는 스크립트는 고치지 않고**(HARVEST:
+bash 는 실행하면서 스크립트를 읽는다) 따로 하나 띄웠다:
+
+```
+$INFRA/jobs/dup_bench_v5q_poller.sh   PID 2577074, 48시간 뒤 스스로 끝남
+$INFRA/logs/dup_bench_v5q_poller.log
+```
+
+156587 이 큐에서 빠지면 한 번 넣고 끝난다. 띄울 때 156587 은 3시간째 `MINIMAP2_ALIGN`. 프로세스가 정리돼 있으면 손으로:
+
+```bash
+BENCH_TRUTH_VER=v5.0q BENCH_STRAT_TSV="$INFRA/reference/v5q_strata/strata.tsv" DUP_OK=1 bash phase2_ont/scripts/60_benchmark.sh HG002.guppy-V3.2.4_2020-01-22
+```
