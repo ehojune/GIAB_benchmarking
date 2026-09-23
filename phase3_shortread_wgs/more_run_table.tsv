@@ -1,0 +1,54 @@
+dsid	set	label	hg	sex	tier	platform	read_len	fastq_files	fastq_pairs	size_gib	truthset	note
+HG002.NIST_BGIseq_2x150_100x	NIST-BGIseq-100x	HG002	HG002	male	germline	MGI DNBSEQ 2x150 (V350038332)	150	30	15	324.0	release/AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38/HG002_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	
+HG002.Element_AVITI_20231018	Element-AVITI-2023	HG002	HG002	male	germline	Element AVITI 2x150 Std+Lng insert	150	4	2	268.9	release/AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38/HG002_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	StdInsert 81x + LngInsert 55x — 1차 Element-AVITI(2024)와 같은 규칙으로 한 쌍에 병합(인서트 이봉)
+HG001.HiSeq300x	Hiseq-300x-NA12878	HG001	HG001	female	germline	Illumina HiSeq 2500 2x148 (D00360, RM8398)	148	1742	871	758.4	release/NA12878_HG001/NISTv4.2.1/GRCh38/HG001_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	HG002~4 Homogeneity 300x와 같은 설계(플로우셀 × Sample_U* 라이브러리)
+HG001.BGISEQ500	BGISEQ500-NA12878	HG001	HG001	female	germline	BGISEQ-500 PCR-free PE100	100	4	2	215.4	release/NA12878_HG001/NISTv4.2.1/GRCh38/HG001_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	
+HG001-stdlib.BGISEQ500_stdlib	BGISEQ500-NA12878	HG001-stdlib	HG001	female	germline	BGISEQ-500 standard(PCR) library PE100, ENA 재배포 ERR1799697/8	100	4	2	95.1	release/NA12878_HG001/NISTv4.2.1/GRCh38/HG001_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	같은 디렉토리의 CL100004823(PE50)는 fastp length_required 70에 전부 걸려 뺐다
+HG001.MGISEQ2000_PCRfree	MGISEQ2000-PCRfree-NA12878	HG001	HG001	female	germline	MGISEQ-2000 PCR-free 2x150	150	8	4	360.4	release/NA12878_HG001/NISTv4.2.1/GRCh38/HG001_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	라이브러리 2개(NA12878_1, _2) 병합 — 1차 HG004와 같은 처리
+HG001.Element_AVITI_20240920	Element-AVITI-NA12878	HG001	HG001	female	germline	Element AVITI 2x150 Std+Lng insert	150	4	2	233.3	release/NA12878_HG001/NISTv4.2.1/GRCh38/HG001_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	
+HG005.NIST_BGIseq_2x150_100x	NIST-BGIseq-100x	HG005	HG005	male	germline	MGI DNBSEQ 2x150 (V350038332/V350038580)	150	30	15	311.4	release/ChineseTrio/HG005_NA24631_son/NISTv4.2.1/GRCh38/HG005_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	
+HG005.HiSeq300x_2x250	Hiseq-250PE-300x	HG005	HG005	male	germline	Illumina HiSeq 2500 2x250 (D00360, basespace)	250	336	168	856.9	release/ChineseTrio/HG005_NA24631_son/NISTv4.2.1/GRCh38/HG005_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	1차 Hiseq-300x(2x148)와 리드 길이가 달라 별도 set
+HG006.HiSeq100x	Hiseq-100x	HG006	HG006	male	germline	Illumina HiSeq 2500 2x148	148	600	300	293.2	release/ChineseTrio/HG006_NA24694_father/NISTv4.2.1/GRCh38/HG006_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	
+HG007.HiSeq100x	Hiseq-100x	HG007	HG007	female	germline	Illumina HiSeq 2500 2x148	148	612	306	302.0	release/ChineseTrio/HG007_NA24695_mother/NISTv4.2.1/GRCh38/HG007_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	
+HG005.BGISEQ500	BGISEQ500-ChineseTrio	HG005	HG005	male	germline	BGISEQ-500 PCR-free PE100	100	4	2	211.8	release/ChineseTrio/HG005_NA24631_son/NISTv4.2.1/GRCh38/HG005_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	
+HG006.BGISEQ500	BGISEQ500-ChineseTrio	HG006	HG006	male	germline	BGISEQ-500 PCR-free PE100	100	4	2	192.5	release/ChineseTrio/HG006_NA24694_father/NISTv4.2.1/GRCh38/HG006_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	
+HG007.BGISEQ500	BGISEQ500-ChineseTrio	HG007	HG007	female	germline	BGISEQ-500 PCR-free PE100	100	4	2	209.0	release/ChineseTrio/HG007_NA24695_mother/NISTv4.2.1/GRCh38/HG007_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	
+HG005.MGISEQ2000_PCRfree	MGISEQ2000-PCRfree-ChineseTrio	HG005	HG005	male	germline	MGISEQ-2000 PCR-free 2x150	150	4	2	185.8	release/ChineseTrio/HG005_NA24631_son/NISTv4.2.1/GRCh38/HG005_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	
+HG005.Element_AVITI_20240920	Element-AVITI-ChineseTrio	HG005	HG005	male	germline	Element AVITI 2x150 Std+Lng insert	150	4	2	231.4	release/ChineseTrio/HG005_NA24631_son/NISTv4.2.1/GRCh38/HG005_GRCh38_1_22_v4.2.1_benchmark.vcf.gz	
+HG008-T.BCM_Illumina_2024	HG008-Illumina-BCM-2024	HG008-T	HG008	female	somatic	Illumina NovaSeq 6000 2x151 PCR-free (BCM)	151	8	4	218.8	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-N-D.BCM_Illumina_2024	HG008-Illumina-BCM-2024	HG008-N-D	HG008	female	somatic	Illumina NovaSeq 6000 2x151 PCR-free (BCM)	151	2	1	247.1	없음 (germline 정답셋 없음 — somatic 경로)	README 본문에 N-P 조직 언급이 있으나 GIAB 디렉토리 이름(N-D)을 따른다
+HG008-T.NYGC_Illumina_2023	HG008-Illumina-NYGC-2023	HG008-T	HG008	female	somatic	Illumina NovaSeq 6000 2x150 TruSeq UDI (NYGC)	150	24	12	212.2	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-N-D.NYGC_Illumina_2023	HG008-Illumina-NYGC-2023	HG008-N-D	HG008	female	somatic	Illumina NovaSeq 6000 2x150 TruSeq UDI (NYGC)	150	24	12	180.1	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-N-D.BCM_NovaSeqX	HG008-NovaseqX-bulk	HG008-N-D	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	8	4	443.5	없음 (germline 정답셋 없음 — somatic 경로)	라이브러리 2개(ILMN-PCR-free-9a/9b, 335190_3/_4) 병합 — 아래 T 벌크·passage와 같은 기종
+HG008-T-p2.BCM_NovaSeqX	HG008-NovaseqX-bulk	HG008-T-p2	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	4	2	174.6	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T-p13.BCM_NovaSeqX	HG008-NovaseqX-bulk	HG008-T-p13	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	4	2	137.9	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T-p21.BCM_NovaSeqX	HG008-NovaseqX-bulk	HG008-T-p21	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	4	2	162.6	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T-p41.BCM_NovaSeqX	HG008-NovaseqX-bulk	HG008-T-p41	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	4	2	189.2	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T-p100.BCM_NovaSeqX	HG008-NovaseqX-bulk	HG008-T-p100	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	8	4	199.4	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T-2D6.BCM_NovaSeqX	HG008-NovaseqX-clones	HG008-T-2D6	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	6	3	155.8	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T-2E6.BCM_NovaSeqX	HG008-NovaseqX-clones	HG008-T-2E6	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	8	4	202.7	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T-3E4.BCM_NovaSeqX	HG008-NovaseqX-clones	HG008-T-3E4	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	8	4	159.2	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T-SC6.BCM_NovaSeqX	HG008-NovaseqX-clones	HG008-T-SC6	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	8	4	205.9	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T-SC9.BCM_NovaSeqX	HG008-NovaseqX-clones	HG008-T-SC9	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	8	4	189.1	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T-SC14.BCM_NovaSeqX	HG008-NovaseqX-clones	HG008-T-SC14	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	8	4	215.6	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T-SC24.BCM_NovaSeqX	HG008-NovaseqX-clones	HG008-T-SC24	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	8	4	203.3	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T-SC28.BCM_NovaSeqX	HG008-NovaseqX-clones	HG008-T-SC28	HG008	female	somatic	Illumina NovaSeq X 2x151 PCR-free (BCM)	151	8	4	167.6	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T.Element_AVITI_20240626	HG008-Element-AVITI-202406	HG008-T	HG008	female	somatic	Element AVITI UltraQ Std+Lng insert	150	4	2	211.9	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-N-D.Element_AVITI_20240626	HG008-Element-AVITI-202406	HG008-N-D	HG008	female	somatic	Element AVITI UltraQ Std+Lng insert	150	4	2	233.8	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-N-P.Element_AVITI_20240626	HG008-Element-AVITI-202406	HG008-N-P	HG008	female	somatic	Element AVITI UltraQ Std+Lng insert	150	4	2	205.1	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T.Element_AVITI_20241216	HG008-Element-AVITI-202412	HG008-T	HG008	female	somatic	Element AVITI UltraQ	150	2	1	181.9	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-N-D.Element_AVITI_20241216	HG008-Element-AVITI-202412	HG008-N-D	HG008	female	somatic	Element AVITI UltraQ	150	2	1	190.6	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-N-P.Element_AVITI_20241216	HG008-Element-AVITI-202412	HG008-N-P	HG008	female	somatic	Element AVITI UltraQ	150	2	1	186.9	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-T.PacBio_Onso_20240415	HG008-Onso	HG008-T	HG008	female	somatic	PacBio Onso SBB 2x150 (배포처 트리밍, 가변 길이)	≤150	2	1	233.2	없음 (germline 정답셋 없음 — somatic 경로)	
+HG008-N-D.PacBio_Onso_20240415	HG008-Onso	HG008-N-D	HG008	female	somatic	PacBio Onso SBB 2x150 (배포처 트리밍, 가변 길이)	≤150	2	1	119.5	없음 (germline 정답셋 없음 — somatic 경로)	
+HG009-N-WT-p4.BCM_NovaSeqX	HG009-NovaseqX-bulk	HG009-N-WT-p4	HG009	female	somatic	Illumina NovaSeq X 25B PCR-free KAPA HyperPrep (BCM)	151	8	4	178.1	없음 (germline 정답셋 없음 — somatic 경로)	카탈로그는 2x125 로 적었으나 리드 헤더 실측(2026-09-23)은 151
+HG009-N-WT-p25.BCM_NovaSeqX	HG009-NovaseqX-bulk	HG009-N-WT-p25	HG009	female	somatic	Illumina NovaSeq X 25B PCR-free KAPA HyperPrep (BCM)	151	8	4	212.4	없음 (germline 정답셋 없음 — somatic 경로)	카탈로그는 2x125 로 적었으나 리드 헤더 실측(2026-09-23)은 151
+HG009-N-LVTert-p23.BCM_NovaSeqX	HG009-NovaseqX-bulk	HG009-N-LVTert-p23	HG009	female	somatic	Illumina NovaSeq X 25B PCR-free KAPA HyperPrep (BCM)	151	8	4	189.5	없음 (germline 정답셋 없음 — somatic 경로)	카탈로그는 2x125 로 적었으나 리드 헤더 실측(2026-09-23)은 151
+HG009-T-p16.BCM_NovaSeqX	HG009-NovaseqX-bulk	HG009-T-p16	HG009	female	somatic	Illumina NovaSeq X 25B PCR-free KAPA HyperPrep (BCM)	151	8	4	196.9	없음 (germline 정답셋 없음 — somatic 경로)	카탈로그는 2x125 로 적었으나 리드 헤더 실측(2026-09-23)은 151
+HG009-T-p42.BCM_NovaSeqX	HG009-NovaseqX-bulk	HG009-T-p42	HG009	female	somatic	Illumina NovaSeq X 25B PCR-free KAPA HyperPrep (BCM)	151	8	4	203.2	없음 (germline 정답셋 없음 — somatic 경로)	카탈로그는 2x125 로 적었으나 리드 헤더 실측(2026-09-23)은 151
+HG009-T-1C3.BCM_NovaSeqX	HG009-NovaseqX-clones	HG009-T-1C3	HG009	female	somatic	Illumina NovaSeq X 25B PCR-free KAPA HyperPrep (BCM)	151	8	4	235.5	없음 (germline 정답셋 없음 — somatic 경로)	카탈로그는 2x125 로 적었으나 리드 헤더 실측(2026-09-23)은 151
+HG009-T-1D5.BCM_NovaSeqX	HG009-NovaseqX-clones	HG009-T-1D5	HG009	female	somatic	Illumina NovaSeq X 25B PCR-free KAPA HyperPrep (BCM)	151	8	4	165.4	없음 (germline 정답셋 없음 — somatic 경로)	카탈로그는 2x125 로 적었으나 리드 헤더 실측(2026-09-23)은 151
+HG009-T-3C4.BCM_NovaSeqX	HG009-NovaseqX-clones	HG009-T-3C4	HG009	female	somatic	Illumina NovaSeq X 25B PCR-free KAPA HyperPrep (BCM)	151	2	1	169.5	없음 (germline 정답셋 없음 — somatic 경로)	카탈로그는 2x125 로 적었으나 리드 헤더 실측(2026-09-23)은 151
+HG009-T-3C9.BCM_NovaSeqX	HG009-NovaseqX-clones	HG009-T-3C9	HG009	female	somatic	Illumina NovaSeq X 25B PCR-free KAPA HyperPrep (BCM)	151	8	4	199.6	없음 (germline 정답셋 없음 — somatic 경로)	카탈로그는 2x125 로 적었으나 리드 헤더 실측(2026-09-23)은 151
+HG009-T-3F2.BCM_NovaSeqX	HG009-NovaseqX-clones	HG009-T-3F2	HG009	female	somatic	Illumina NovaSeq X 25B PCR-free KAPA HyperPrep (BCM)	151	8	4	167.3	없음 (germline 정답셋 없음 — somatic 경로)	카탈로그는 2x125 로 적었으나 리드 헤더 실측(2026-09-23)은 151
+HG009-T-4G9.BCM_NovaSeqX	HG009-NovaseqX-clones	HG009-T-4G9	HG009	female	somatic	Illumina NovaSeq X 25B PCR-free KAPA HyperPrep (BCM)	151	8	4	187.0	없음 (germline 정답셋 없음 — somatic 경로)	카탈로그는 2x125 로 적었으나 리드 헤더 실측(2026-09-23)은 151

@@ -626,6 +626,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-23 — phase3 2차 입력: 1차 밖 숏리드 WGS 전부(HG001·HG005~HG009 + HG002 잔여) 53 샘플을 20 set으로 배정하는 생성기와, 1차 set에 새 샘플을 못 넣게 하는 가드·병합 lock·sampleinfo 자동 추가를 03에 넣었다. germline 11 set(5.0 TiB) + somatic 9 set(7.3 TiB). [표](phase3_shortread_wgs/README.md#2차-입력-2026-09-23--나머지-숏리드-전부).
 - 2026-09-23 — `fetch_all.sh` 완료 판정 정책 확정(#37): 파일 수 `done==total` + 검증기 rc 0, 검증 로그 격리, 사후 검증은 항상 all. 기록 [docs/runs/2026-09-23-fetch-all-completion-policy.md](docs/runs/2026-09-23-fetch-all-completion-policy.md).
 - 2026-09-23 — #33 후속: Codex 리뷰 3건 반영(`fetch_all.sh` — phase0는 다운로드 뒤 verify 합계 100%로만 성공 판정, phase0 미실행 시 옛 로그 무시, 단계 이름 오타·스크립트 부재는 FAIL). PacBio 세션이 짚은 README 수치 2곳을 FTP 본체(435행/81,302)와 4경로 전체(442행/81,330)로 구분해 적었다.
 - 2026-09-23 — [PacBio] #8 HG008-T 9런 중 8런 완료(예상의 절반인 5~7h). #9 는 방법 B 로 정하고 bioinfo-agent 위임 프롬프트를 남겼다 — 서버에서 HG008 matched pair 둘, smvar V0.3 이 truncal 만 담는다는 점(클론은 recall 만 해석)을 확인. phase1 에 구간별 hap.py(`STRAT=1`)·ts/tv 구간 분할·`qsub_task.sh`.

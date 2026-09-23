@@ -946,3 +946,46 @@ Codex 리뷰 지적(PR #36): 입력 트리 감사와 MGISEQ 실패 진단이 `qa
 - **판은 v3.6** — 디스크에 있는 최신(v2.0~v3.6 보유). 판을 바꾸면 `BENCH_STRAT_VER` 한 줄이다.
 - **기본 결과를 덮지 않는다** — `05_BENCH/happy_strat/` 에 따로 두고, `Subset=*` 행이 기본 실행과
   TP/FN/FP 까지 같은지 `--collect` 가 대조한다. 같지 않으면 두 실행의 입력이 어긋난 것이다.
+
+## 2026-09-23 — [숏리드 세션] phase3 2차 입력: 나머지 숏리드 WGS 전부를 새 set으로
+
+사용자 지시: "GIAB 의 모든 숏리드 데이터는 국통바빅 파이프라인으로 돌아야 한다." 1차(HG002/3/4 22 샘플) 밖의 표준 short-read WGS를
+phase0 manifest에서 전수로 골라 **53 샘플 / 20 set**을 만든다(`make_more_samplesheets.py` → `more_run_table.tsv`). 판단 여섯.
+
+1. **새 샘플은 1차 set에 넣지 않는다.** 1차 8 set은 파이프라인이 끝났거나(Success·Error) 돌고 있다(155526~9). 같은 BGISEQ500이라도
+   HG001·ChineseTrio를 `GIAB-publicData-BGISEQ500`에 넣으면 끝난 set의 의미가 바뀌고, 다음 재실행이 섞인다. 그래서 1차에 같은
+   dataset set이 있으면 코호트 접미(`-NA12878` / `-ChineseTrio`)를 붙인 새 set, 새 dataset이면 접미 없이, HG008/HG009는
+   `HG00x-<기종/배치>`. 03에는 가드를 넣었다 — 파이프라인 흔적(`__DONE__`·`error_list.txt`·`tmp/`·`.snakemake/`·`analyze_meta/`)이
+   있는 set에 **없던 샘플 dir**을 만들려 하면 아무것도 만들지 않고 멈춘다(dry-run에서도). 이미 있는 샘플의 재실행은 통과.
+2. **tier 둘.** germline = NIST v4.2.1 정답셋이 있는 HG001~HG007(11 set, 16 샘플, 5.0 TiB) — 국통바빅 결과를 바로 채점한다.
+   somatic = HG008/HG009(9 set, 37 샘플, 7.3 TiB) — germline 정답셋이 없어 국통바빅은 QC·정렬까지, 채점은 #9(nf-core somatic) 몫.
+   그래도 "모든 숏리드"라는 지시대로 만든다. 같은 배치 안에 T/N 짝이 있어(BCM-2024·NYGC-2023·Element 두 배치·Onso·HG009 BCM)
+   somatic 파이프라인의 입력으로도 그대로 쓸 수 있다 — PacBio 쪽 NIST 클론에 짝 정상이 없던 것(backlog #9)과 다르다.
+3. **뺀 것과 이유.** BGISEQ500 standard_library의 PE50(CL100004823): 국통바빅 fastp가 `--length_required 70`이라 리드가 전부 걸린다
+   (같은 디렉토리 PE100 ERR1799697/8은 `HG001-stdlib`로 넣었다). HG008 Element 20240118: README가 in-development R&D 화학이고
+   이후 데이터가 대체한다고 적었다. MissionBio Tapestri(표적 단일세포), superseded-2022-data, MGISEQ/stLFR는 WGS가 아니거나 대체됐다.
+   mate-pair·Moleculo·10X·Hi-C·Dovetail·Strand-seq·엑솜은 1차와 같은 이유.
+4. **HG009 성별은 측정했다.** README에 없고 저장소 어디에도 없었다. 파이프라인 sampleinfo에 SEX가 필요해서, 이미 있는 phase1 HiFi
+   BAM(HG009N-WT-p25, HG009T-p16)에 `samtools idxstats`만 돌렸다(로그인 노드, 인덱스만 읽음): chrX/chr1 깊이비 0.97·1.03,
+   chrY/chr1 0.08·0.07 → female. 같은 방법으로 HG008T-p100 1.01/0.07(README "female"과 일치), 남성 대조 HG002 0.38/1.12.
+5. **병합을 lock으로 한 번에 하나만.** 03 `--qsub`을 두 번 돌리면 같은 샘플에 잡이 둘 뜬다. 두 cat이 같은 `.part`에 `>`로 쓰면 최종
+   크기는 입력 합과 같은데 내용이 섞일 수 있고, concat.sh의 크기 검증이 그걸 **통과시킨다**. `mkdir .concat.lock`(Lustre에서 원자적,
+   flock은 마운트 옵션에 따라 안 된다)으로 막고, `--qsub`은 lock이 있거나 `concat.jobid`의 잡이 qstat에 남아 있으면 다시 내지 않는다.
+6. **sampleinfo 행은 03이 덧붙인다(`--sampleinfo`).** "돌아와서 바로 돌리면 되게"가 요구라, 파이프라인이 읽는 `G000/sampleinfo/
+   sample_information_nbb2.xlsx`에 없는 DNA_ID만 추가한다. 먼저 `.bak-<시각>`으로 복사하고, 같은 DNA_ID가 다른 SET_ID·SEX로 있으면
+   쓰지 않고 멈춘다. note 열은 1차처럼 HG 번호, somatic은 label(예: HG008-T-p100).
+
+검증: WSL에서 가짜 FASTQ·가짜 qsub/qstat로 18건(링크 대상, 300쌍 병합의 R1/R2 순서, 멱등 재실행, 가드 두 경우, lock, qsub 중복 방지),
+Windows에서 실제 sampleinfo 사본으로 3건(추가·백업, 재실행 0건, 충돌 시 파일 불변). manifest 패턴 53개가 전부 기대 파일 수와 일치했다
+(HG005 MGISEQ는 stLFR까지 잡는 패턴이라 기대 수 불일치로 한 번 걸렸고 `PCR-free/`로 좁혔다).
+
+**리뷰 (PR #41).** GitHub Codex 봇과 로컬 Codex CLI 둘 다 사용 한도에 걸려(로컬은 "try again at Sep 24th, 2026 2:48 AM") 리뷰를
+못 받았다. 재시도하지 않고 Gemini(`gemini-3.8-flash-high`, agyq)에 독립 리뷰를 맡겼다 — Codex 리뷰가 아니다. 지적 10건 중 받은 것:
+sampleinfo 쓰기를 링크·concat.sh 생성 **뒤로** 옮김(중간에 멈추면 반쪽 샘플 행이 남는다 — 옮기고 나서 Windows 테스트에서 concat.sh를
+인코딩 없이 쓰던 버그가 드러나 전부 `encoding="utf-8"`로 고침), `--lanes` 재실행 때 살아 있는 잡도 줄을 차지하게(안 그러면 새 잡이
+hold 없이 떠 상한이 깨진다), xlsx는 마지막으로 값이 있는 행 다음에 직접 쓰고 Excel 표가 있으면 멈춤, 머리행 대소문자 무시, 빈 샘플
+dir(입력 없음)은 "이미 만든 샘플"로 치지 않음(가드 우회 방지), unit에 플로우셀 dir까지(정렬 키지만 HiSeq에서 711건 겹쳤다).
+안 받은 것과 이유: 죽은 잡의 lock 자동 제거(qstat 일시 실패와 구분이 안 돼 산 병합을 깰 수 있다 — 대신 주인 잡이 큐에 없으면 지우는
+명령을 안내), qstat 일시 실패 시 중복 제출(lock이 두 번째 cat을 exit 3으로 막는다), jobid 덮어쓰기(같은 이유로 무해),
+파이프라인 잡이 qw일 때 마커가 없어 가드가 안 걸림(아직 시작 전이면 새 샘플이 그 실행에 들어가는 것뿐이다).
+Codex가 풀리면(09-24 02:48 이후) 이 브랜치의 diff로 한 번 더 돌려 후속 PR로 처리한다.

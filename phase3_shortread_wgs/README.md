@@ -1,4 +1,4 @@
-# Phase 3 — 숏리드 WGS (HG002·HG003·HG004)
+# Phase 3 — 숏리드 WGS (1차 HG002·HG003·HG004, 2차 HG001·HG005~HG009)
 
 대상: 원시 FASTQ가 있는 표준 short-read WGS만. mate-pair·Moleculo·10X·stLFR·Hi-C·Strand-seq·엑솜(BAM only)·
 Complete Genomics·SOLiD는 제외 (이유: 일반 germline 파이프라인에 그대로 넣을 수 없음).
@@ -77,7 +77,50 @@ python <repo>/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py --prune --qs
 2026-09-18에 `_` 이름으로 만들어 둔 트리는 `scripts/04_rename_underscore_to_hyphen.sh <dest> [제외 dir]`로 바꾼다(기본 dry-run, `APPLY=1`로 적용, 이미 있는 이름은 SKIP). 샘플당 쌍이 하나면 링크, 둘 이상이면 cat 병합(사용자 결정 "각각 알아서"): 샘플 dir의
 `concat_R1.list`/`concat_R2.list`(같은 순서)를 `concat.sh`가 이어붙이고 출력 크기 = 입력 합을 확인한다(gzip 멀티멤버, 이미 맞으면 SKIP). 병합 파일은 실사본이라 약 3.6 TiB가 추가로 든다.
 `--run-concat --jobs N`은 로그인 노드에서 N개씩 병렬로 전부 돌리고 끝까지 기다린다(nohup 권장), `--qsub`은 샘플별 SGE 잡(shepherd.q, phase2와 같은 호스트 제한)으로 제출한다.
-NIST_BGIseq_2x150_100x·Element_AVITI_20231018은 목록에 없어 만들지 않는다. 재실행은 멱등이고, 같은 이름이 다른 원본을 가리키면 멈춘다. `--prune`은 계획에 없는 옛 심볼릭 링크만 지운다(일반 파일·병합 결과는 안 건드림). 원본은 samplesheets의 절대경로 그대로다.
+NIST_BGIseq_2x150_100x·Element_AVITI_20231018은 1차 DIRNAME에 없어 2차(아래)에서 새 set으로 만든다. 재실행은 멱등이고, 같은 이름이 다른 원본을 가리키면 멈춘다. `--prune`은 계획에 없는 옛 심볼릭 링크만 지운다(일반 파일·병합 결과는 안 건드림). 원본은 samplesheets의 절대경로 그대로다.
+
+## 2차 입력 (2026-09-23) — 나머지 숏리드 전부
+
+사용자 지시 "GIAB의 모든 숏리드 데이터는 국통바빅 파이프라인으로". 1차 22 샘플 밖의 표준 short-read WGS 53 샘플(20 set)을 같은 규약으로 만든다.
+생성: `python scripts/make_more_samplesheets.py` → `samplesheets/<dsid>.csv` + [more_run_table.tsv](more_run_table.tsv)(set·label·성별·tier·read 길이 실측).
+03이 이 표를 읽어 **새 set dir**에 넣는다 — 1차 set(돌았거나 도는 중)에는 절대 넣지 않고, 넣으려 하면 멈춘다.
+
+```bash
+cd /BiO/scratch/dyl/kbb/G000
+python ~/GIAB_benchmarking/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py --dry-run --sampleinfo sampleinfo/sample_information_nbb2.xlsx   # 계획 + 추가될 sampleinfo 행
+python ~/GIAB_benchmarking/phase3_shortread_wgs/scripts/03_make_pipeline_dirs.py --qsub --sampleinfo sampleinfo/sample_information_nbb2.xlsx \
+    --hosts '(octopus-2-8|octopus-2-9|octopus-2-10|octopus-2-11|shepherd-1-8|shepherd-1-9)'           # 링크 + 병합 잡(큰 것부터 8줄, -hold_jid) + sampleinfo 행 추가(백업 후)
+```
+
+| tier | set dir | 샘플(label) | 쌍 | GiB | 처리 | 기종 |
+|---|---|---|---|---|---|---|
+| germline | `GIAB-publicData-NIST-BGIseq-100x` | HG002 · HG005 | 15/15 | 635 | cat | MGI DNBSEQ 2x150 |
+| germline | `GIAB-publicData-Element-AVITI-2023` | HG002 | 2 | 269 | cat | AVITI Std+Lng |
+| germline | `GIAB-publicData-Hiseq-300x-NA12878` | HG001 | 871 | 758 | cat | HiSeq 2500 2x148 |
+| germline | `GIAB-publicData-BGISEQ500-NA12878` | HG001 · HG001-stdlib | 2/2 | 310 | cat | BGISEQ-500 PE100 (PCR-free / standard) |
+| germline | `GIAB-publicData-MGISEQ2000-PCRfree-NA12878` | HG001 | 4 | 360 | cat | MGISEQ-2000 2x150, 라이브러리 2 |
+| germline | `GIAB-publicData-Element-AVITI-NA12878` | HG001 | 2 | 233 | cat | AVITI Std+Lng |
+| germline | `GIAB-publicData-Hiseq-250PE-300x` | HG005 | 168 | 857 | cat | HiSeq 2500 **2x250** |
+| germline | `GIAB-publicData-Hiseq-100x` | HG006 · HG007 | 300/306 | 595 | cat | HiSeq 2500 2x148 |
+| germline | `GIAB-publicData-BGISEQ500-ChineseTrio` | HG005 · HG006 · HG007 | 2/2/2 | 613 | cat | BGISEQ-500 PE100 |
+| germline | `GIAB-publicData-MGISEQ2000-PCRfree-ChineseTrio` | HG005 | 2 | 186 | cat | MGISEQ-2000 2x150 |
+| germline | `GIAB-publicData-Element-AVITI-ChineseTrio` | HG005 | 2 | 231 | cat | AVITI Std+Lng |
+| somatic | `GIAB-publicData-HG008-Illumina-BCM-2024` | HG008-T · HG008-N-D | 4/1 | 466 | cat·링크 | NovaSeq 6000 2x151 |
+| somatic | `GIAB-publicData-HG008-Illumina-NYGC-2023` | HG008-T · HG008-N-D | 12/12 | 392 | cat | NovaSeq 6000 2x150 |
+| somatic | `GIAB-publicData-HG008-NovaseqX-bulk` | HG008-N-D · T-p2 · T-p13 · T-p21 · T-p41 · T-p100 | 4/2/2/2/2/4 | 1307 | cat | NovaSeq X 2x151 |
+| somatic | `GIAB-publicData-HG008-NovaseqX-clones` | HG008-T-2D6 · 2E6 · 3E4 · SC6 · SC9 · SC14 · SC24 · SC28 | 3~4 | 1499 | cat | NovaSeq X 2x151 |
+| somatic | `GIAB-publicData-HG008-Element-AVITI-202406` | HG008-T · N-D · N-P | 2/2/2 | 651 | cat | AVITI Std+Lng |
+| somatic | `GIAB-publicData-HG008-Element-AVITI-202412` | HG008-T · N-D · N-P | 1/1/1 | 559 | 링크 | AVITI |
+| somatic | `GIAB-publicData-HG008-Onso` | HG008-T · N-D | 1/1 | 353 | 링크 | PacBio Onso(배포처 트리밍) |
+| somatic | `GIAB-publicData-HG009-NovaseqX-bulk` | HG009-N-WT-p4 · N-WT-p25 · N-LVTert-p23 · T-p16 · T-p42 | 4씩 | 980 | cat | NovaSeq X 25B |
+| somatic | `GIAB-publicData-HG009-NovaseqX-clones` | HG009-T-1C3 · 1D5 · 3C4 · 3C9 · 3F2 · 4G9 | 4 (3C4만 1) | 1124 | cat·링크 | NovaSeq X 25B |
+
+label 앞 `HG008-`는 set 이름에만 줄여 적었다 — 샘플 dir은 전부 `<set>-<label>` 전체다(예: `GIAB-publicData-HG008-NovaseqX-clones-HG008-T-2D6`).
+병합 실사본 약 11 TiB(germline 5.0 + somatic 6.0; 1쌍짜리 1.3 TiB는 링크). 성별은 HG008/HG009 모두 female(HG009는 README에 없어 phase1 HiFi BAM idxstats로 측정).
+
+- **이름 규칙**: 1차에 같은 dataset set이 있으면 코호트 접미(`-NA12878` / `-ChineseTrio`), 새 dataset이면 접미 없이, HG008/HG009는 `HG00x-<기종/배치>`
+- **somatic tier**는 germline 정답셋이 없어 국통바빅 결과로 채점하지 못한다 — QC·정렬(나중 nf-core somatic의 입력 BAM)까지. 같은 배치 안에 T/N 짝이 있다(BCM-2024, NYGC-2023, Element 두 배치, Onso, HG009 BCM)
+- **뺀 것**: mate-pair·Moleculo·10X·stLFR(MGISEQ/stLFR 포함)·Hi-C·Dovetail·Strand-seq·엑솜, BGISEQ500 standard_library의 **PE50**(CL100004823 — fastp `length_required 70`에 전부 걸림), HG008 Element **20240118**(README가 superseded R&D 화학), MissionBio Tapestri(표적 단일세포), superseded-2022-data
 
 ## 정답셋 (small variant)
 
