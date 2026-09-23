@@ -305,18 +305,33 @@ for link, src in plan:
     made += 1
 
 # ---- 여러 쌍: concat.sh 작성 ------------------------------------------------------------
+def write_if_changed(path, text):
+    """내용이 같으면 건드리지 않는다. 도는 bash는 스크립트를 조금씩 읽어서, 실행 중에 덮어쓰면 엉뚱한 곳부터 읽을 수 있다"""
+    try:
+        if open(path, encoding="utf-8").read() == text:
+            return False
+    except OSError:
+        pass
+    with open(path, "w", newline="\n", encoding="utf-8") as f:   # 로케일이 UTF-8이 아니어도(LANG=C 잡 환경 등) 한글·기호가 안 깨지게
+        f.write(text)
+    return True
+
+
+held = 0
 for sdir, name, pairs in concat:
     if a.dry_run:
         continue
     os.makedirs(sdir, exist_ok=True)
-    with open(os.path.join(sdir, "concat_R1.list"), "w", newline="\n", encoding="utf-8") as f1, \
-         open(os.path.join(sdir, "concat_R2.list"), "w", newline="\n", encoding="utf-8") as f2:
-        for r1, r2 in pairs:
-            f1.write(r1 + "\n"); f2.write(r2 + "\n")
+    if os.path.isdir(os.path.join(sdir, ".concat.lock")):   # 병합이 도는 중 — concat.sh·list를 바꾸지 않는다
+        held += 1
+        continue
+    write_if_changed(os.path.join(sdir, "concat_R1.list"), "".join(r1 + "\n" for r1, _ in pairs))
+    write_if_changed(os.path.join(sdir, "concat_R2.list"), "".join(r2 + "\n" for _, r2 in pairs))
     sh = os.path.join(sdir, "concat.sh")
-    with open(sh, "w", newline="\n", encoding="utf-8") as f:   # 로케일이 UTF-8이 아니어도(LANG=C 잡 환경 등) 한글·기호가 안 깨지게
-        f.write(CONCAT_SH.format(name=name, n=len(pairs)))
+    write_if_changed(sh, CONCAT_SH.format(name=name, n=len(pairs)))
     os.chmod(sh, 0o755)
+if held:
+    print(f"병합 중(.concat.lock)인 샘플 {held}개는 concat.sh·list를 그대로 뒀다")
 
 if a.sampleinfo and not a.dry_run:   # 링크·concat.sh를 다 만든 뒤
     update_sampleinfo(a.sampleinfo, samples, False)
