@@ -1106,3 +1106,19 @@ hap.py 는 Subtype(indel 길이)별로도 행을 내서 `Subtype=="*"` 를 안 �
 bash는 스크립트를 한 번에 읽지 않고 실행하면서 조금씩 읽으므로, 병합이 도는 중에 파일을 잘라 다시 쓰면 엉뚱한 위치부터 읽을 수 있다.
 그래서 `.concat.lock`이 있는 샘플은 concat.sh·list를 건드리지 않고, 없어도 내용이 같으면 다시 쓰지 않는다. 준비 상태 확인은 03 재실행
 대신 phase3 README의 READY 한 줄(읽기만 함)로 한다. 테스트 하네스를 `scripts/test_03_make_pipeline_dirs.sh`로 저장소에 넣었다(25건).
+
+## 2026-09-23 — [숏리드 세션] MGISEQ HG002: bwa-mem2가 같은 청크에서 segfault — 결정적 버그 확정, 이분법으로 리드를 찾는다
+
+재시도 156584가 23:36:31에 `Segmentation fault (core dumped)`로 죽었다(`exit_status 139`, SGE `failed 0`). 이번엔 samtools view가
+정상 종료("Done")했고 `view.stderr`가 비어 있다 — 155525의 "Parse error / error reading file -"는 **bwa-mem2가 줄을 쓰다 죽은 결과**였다.
+노드 OOM 가능성(앞 항목에서 배제 못 한 것)도 사라졌다: OOM killer는 SIGKILL(137)이지 SIGSEGV(139)가 아니다.
+결정적이라는 근거: 두 실행의 `bwa.stderr`에서 끝까지 처리된 리드 수가 **946,145,492로 한 리드도 안 틀리게 같다**(청크 1,418개,
+`-K 100000000`), partial BAM 크기는 149,241,795,803 / 149,246,172,572 B. 09-21 원본 파이프라인도 SAM 948,868,188번째 줄에서 끊겼다.
+셋 다 같은 입력 위치다.
+
+그래서 재시도는 더 하지 않는다. `phase3_shortread_wgs/scripts/05_bwa_crash_bisect.sh`: `bwa.stderr`로 죽은 청크의 페어 위치를 계산해
+trimmed FASTQ에서 그 청크(~66만 쌍)만 잘라, (1) 같은 인자로 재현되는지, (2) SIMD 빌드별(디스패처=avx512bw / avx2 / sse42)로 다른지,
+(3) 이분법으로 죽이는 페어를 좁힌다. 가짜 bwa(표지 리드에서 SIGSEGV)로 로컬 확인: 200쌍 중 표지 페어를 6단계에 찾았다.
+다음 판단은 결과를 보고 한다 — 한 쌍이면 그 쌍만 파이프라인 입력에서 빼는 것이 데이터 손실이 가장 작고(14억 리드 중 2개),
+특정 SIMD 빌드에서만 죽으면 그 샘플만 다른 빌드로 정렬하는 길도 있다. **#3(MGISEQ 세트 재개)을 지금 그대로 돌리면 HG002는
+같은 자리에서 또 잘린다** — 파이프라인이 bwa 실패를 삼키고 넘어가므로(09-21 확인) 결과가 조용히 틀린다.
