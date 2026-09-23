@@ -86,6 +86,9 @@ python phase1_pacbio_hifi/scripts/50_update_catalog.py     # 완료분 → 카�
 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --list     # 정확도 평가 대상 확인 (truth set 유무)
 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --ready    # hap.py 제출 (HG001~HG007)
 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --collect  # 결과를 한 TSV로 모음
+STRAT=1 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --ready    # 구간별(층화) hap.py
+bash phase1_pacbio_hifi/scripts/62_tstv_regions.sh         # ts/tv 를 benchmark 구간 안/밖으로 갈라 셈
+bash phase1_pacbio_hifi/scripts/qsub_task.sh <이름> -- <명령>  # 위 로그인 노드용 점검을 SGE 잡으로 (전 런이면 한두 시간)
 ```
 
 - 특정 것만: `10_submit.sh HG002.PacBio_CCS_15kb ...` / 로그: `tail -f $INFRA/logs/<dsid>.<jobid>.log`
@@ -135,6 +138,21 @@ HG008·HG009는 germline truth가 없어 자동으로 빠진다.
 - 컨테이너는 `env.sh`의 `HAPPY_IMG`(`jmcdani20/hap.py:v0.3.12`, GIAB/NIST 문서가 쓰는 이미지)와
   `TRUVARI_IMG`. `nextflow.config`가 아니라 `env.sh`에 둔 이유는 파이프라인이 쓰지 않기 때문이고,
   `01_prepare_login_node.sh`가 `BENCH_IMAGES`도 함께 미리 받는다.
+
+### 구간별 평가 (`STRAT=1`)
+
+위 점수는 benchmark BED 전체 한 덩어리다. Sequel I 의 INDEL 격차가 호모폴리머 탓인지,
+Revio 에서 Clair3 가 DeepVariant 에 지는 곳이 어디인지는 이것으로 안 보인다.
+`STRAT=1` 은 GIAB genome-stratifications(`BENCH_STRAT_VER`, 기본 v3.6)에서 고른 25개 구간을
+`hap.py --stratification` 으로 함께 센다.
+
+- 산출은 `05_BENCH/happy_strat/` 에 따로 둔다. 기본 결과를 덮지 않는다.
+- `--collect` 가 `extended.csv` 를 모아 `phase1_bench_strat_summary.tsv` 로 만들고, `Subset=*` 행이
+  기본 실행 `summary.csv` 와 TP·FN·FP 까지 같은지 대조한다. 다르면 두 실행의 입력이 어긋난 것이다.
+- 구간 목록은 `env.sh` 의 `BENCH_STRAT_SET`. GIAB 목록 188개 중 절반은 샘플별 GenomeSpecific 이라
+  질문에 맞춰 골랐다(호모폴리머 길이, 반복·저매핑·segdup, 쉬운 영역, 코딩 영역). 전부는 `=all`.
+- 잡 크기(`BENCH_STRAT_THREADS=16` / `BENCH_STRAT_SLOTS=32`)는 **실측 전 값**이다. 슬롯은 노드당
+  동시 2잡으로 묶는 용도이고 hap.py 는 16스레드로 돈다.
 
 ## SV 정확도 평가 ([61_benchmark_sv.sh](scripts/61_benchmark_sv.sh))
 

@@ -22,6 +22,7 @@ __pycache__/
 phase1_bench_summary.tsv
 phase*/phase*_bench_summary.tsv
 phase*/phase*_bench_sv_summary.tsv
+phase*/phase*_bench_strat_summary.tsv
 
 # 리뷰 스크립트의 --tsv / TSV= 산출물 (35_review_qc.py, 62_tstv_regions.sh)
 qc_review_ont.tsv
