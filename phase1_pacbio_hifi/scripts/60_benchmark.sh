@@ -191,7 +191,7 @@ submit_one() {
     # 다시 제출해도 이미 들어간 잡은 제출 시점의 목록으로 돈다.
     if [ "$STRAT" = 1 ]; then
         cp "$STRAT_TSV" "$launch/strata.tsv" || { echo "FAIL $dsid: 층화 TSV 복사 실패"; return 1; }
-        strat_arg="--stratification $launch/strata.tsv"
+        strat_arg=" --stratification $launch/strata.tsv"   # 앞 공백 포함: 비면 b1 잡이 한 글자도 안 바뀐다
     fi
 
     # 쓰기가 실패하면(디스크 참, 권한) 예전 잡 스크립트가 남아 엉뚱한 걸 제출하게 된다.
@@ -225,7 +225,7 @@ for c in$todo; do
         /opt/hap.py/bin/hap.py \\
             "$truth_vcf" \\
             "$base/03_VCF/\$c/$id.\$c.vcf.gz" \\
-            -f "$truth_bed" $strat_arg \\
+            -f "$truth_bed"$strat_arg \\
             -r "$REF_FASTA" \\
             -o "$base/$BENCH_SUB/$id.\$c" \\
             --threads "\$THREADS" \\
