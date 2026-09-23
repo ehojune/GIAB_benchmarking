@@ -626,6 +626,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-23 — [ONT] 하루 전 "DV 가 구간 밖에서 진짜 변이를 버린다" 는 의심의 근거였던 **두 caller 의 구간 밖 순차분 ts/tv 2.18 이 빼기의 부산물이었다.** `63_caller_diff_regions.sh` 로 실제 차집합을 세니 Clair3 단독 0.87 · DV 단독 0.67 로 germline 같은 집합이 없었다 — 순 차이는 두 집합의 구성 차이를 재지 원소를 재지 않는다. 다만 이것이 "버리지 않는다" 의 증명은 아니어서, 질문은 v5.0q smvar(T2T-Q100) truth 로 채점해 닫는다. **ONT 외부 대조군은 Clair3 였다** — hap.py 출력에 옮겨진 FILTER 설명 문구가 Clair3 소스와 일치한다. HG002 dup 런은 **V3.2.4 하나만** 돈다: 기기(PromethION vs MinION)와 베이스콜러가 섞인 헤드라인 비교를 가르려는 것이다. 같이 넣은 V2.3.4 는 **HG001 오라벨 플로우셀이 섞여 있어 시작 전 취소했다** — run_table 의 note 를 안 읽고 제출했고 Codex 리뷰가 잡았다. run_id 대조로 이미 채점한 V3.4.5 도 깨끗함을 확인했다. 통합 MultiQC 는 15런으로 갱신. [수치](docs/reference/2026-09-22-ont-r10-benchmark.md) §1·§5.
 - 2026-09-23 — phase3 2차 입력: 1차 밖 숏리드 WGS 전부(HG001·HG005~HG009 + HG002 잔여) 53 샘플을 20 set으로 배정하는 생성기와, 1차 set에 새 샘플을 못 넣게 하는 가드·병합 lock·sampleinfo 자동 추가를 03에 넣었다. germline 11 set(5.0 TiB) + somatic 9 set(7.3 TiB). [표](phase3_shortread_wgs/README.md#2차-입력-2026-09-23--나머지-숏리드-전부).
 - 2026-09-23 — `fetch_all.sh` 완료 판정 정책 확정(#37): 파일 수 `done==total` + 검증기 rc 0, 검증 로그 격리, 사후 검증은 항상 all. 기록 [docs/runs/2026-09-23-fetch-all-completion-policy.md](docs/runs/2026-09-23-fetch-all-completion-policy.md).
 - 2026-09-23 — #33 후속: Codex 리뷰 3건 반영(`fetch_all.sh` — phase0는 다운로드 뒤 verify 합계 100%로만 성공 판정, phase0 미실행 시 옛 로그 무시, 단계 이름 오타·스크립트 부재는 FAIL). PacBio 세션이 짚은 README 수치 2곳을 FTP 본체(435행/81,302)와 4경로 전체(442행/81,330)로 구분해 적었다.
