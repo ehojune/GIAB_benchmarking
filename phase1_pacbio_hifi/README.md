@@ -88,6 +88,7 @@ bash phase1_pacbio_hifi/scripts/60_benchmark.sh --ready    # hap.py 제출 (HG00
 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --collect  # 결과를 한 TSV로 모음
 STRAT=1 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --ready    # 구간별(층화) hap.py
 bash phase1_pacbio_hifi/scripts/62_tstv_regions.sh         # ts/tv 를 benchmark 구간 안/밖으로 갈라 셈
+bash phase1_pacbio_hifi/scripts/qsub_task.sh <이름> -- <명령>  # 위 로그인 노드용 점검을 SGE 잡으로 (전 런이면 한두 시간)
 ```
 
 - 특정 것만: `10_submit.sh HG002.PacBio_CCS_15kb ...` / 로그: `tail -f $INFRA/logs/<dsid>.<jobid>.log`
