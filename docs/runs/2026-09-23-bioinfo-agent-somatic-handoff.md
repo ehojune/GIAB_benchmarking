@@ -61,8 +61,8 @@ GIAB 쪽 사실 (설계에 쓸 것, 이 세션이 서버에서 확인함)
   NIST HG008T-p100(bulk, passage 100) + 클론 8개(2D6·2E6·3E4·SC6·SC9·SC14·SC24·SC28)
     — 정상 짝이 없다. 같은 BCM Revio 인 HG008-N-D 를 빌려 쓴다.
 - truth: NIST HG008-T somatic smvar DraftBenchmark V0.3-20260425. 권장 VCF 는
-  `*_tumorvariants.vcf.gz`, BED 는 `*_all.bed` 또는 `*_nogermlineinterference.bed`(BED 는 같이 온 zip
-  안에 있다). README 권장 비교 도구는 aardvark, rtg vcfeval·hap.py 도 시험됨. VAF 5~10% 미만은
+  `*_tumorvariants.vcf.gz`, BED 는 `*_all.bed` 또는 `*_nogermlineinterference.bed`(BED 는 풀려 있지 않고
+  같은 폴더 zip 안에만 있다 — 서버에서 unzip -l 로 확인). README 권장 비교 도구는 aardvark, rtg vcfeval·hap.py 도 시험됨. VAF 5~10% 미만은
   걸러서 비교하라고 한다. SV 는 stvar-CNV V0.5-20260318.
 - truth 는 **0823p23 배치 bulk 의 truncal 변이만** 담는다. 그래서 클론·p100 은 truncal recall 만
   해석할 수 있고 precision 은 못 한다(클론 고유 변이·장기 계대 변이가 FP 로 잡힌다). 채점은 GIAB 쪽
