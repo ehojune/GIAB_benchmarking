@@ -45,13 +45,15 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 
 PacBio 세션이 repo 전반을 훑어 찾은 것이다. **자기 것만 고치면 된다** — 남의 것은 소유 구분대로 둔다.
 
-### 🟠 ONT 세션
+### 🟠 ONT 세션 (이 PR 에서 처리함)
 
-| 무엇 | 어디 |
+| 무엇 | 어떻게 |
 |---|---|
-| **카탈로그 8행이 낡았다** — next_step 이 아직 "다음: …평가" 다. 채점은 끝났다 | `phase2_ont/scripts/50_update_catalog.py` 재실행. 문구 안의 v0.6 사실 오류는 PacBio 가 이미 고쳤다(v0.6 은 GRCh37 전용) |
-| **"자원 실측은 아직 없다"** — R10 런을 돌려 실측이 생겼다 | `phase2_ont/README.md` 262행 |
-| 엑셀은 PacBio 가 재생성해 뒀다. ONT 가 카탈로그를 고치면 **다시 돌려야 한다** | `python catalog/build_xlsx.py` (이제 `--version` 없이도 돈다) |
+| 카탈로그 next_step 이 "다음: …평가" 로 낡았던 것 | `50_update_catalog.py` 의 문구를 **"한 것 + 남은 것"** 으로 바꿔 재실행. **10행 갱신** — germline 8행(채점 완료) + `BCM_ONT-std_HG008T-p2`(미기록이었다) + `PAW70337`(아래) |
+| **R10 행이 스크립트에 영영 안 잡히던 버그** | 카탈로그 key 는 `(sample, giab_path basename)` = `(HG002, PAW70337)` 인데 run_table dataset 은 `ONT-R10_giab2025.01_PAW70337` 이라 안 맞았다. 경로는 배포처 구조를, dataset 은 우리 명명 규칙을 따르기 때문이다. `EXT_ALIAS` 로 명시적으로 이었다. 같은 이유로 산출물 경로도 basename 이 아니라 dataset 으로 만들게 고쳤다 |
+| `phase2_ont/README.md` "자원 실측은 아직 없다" | 표로 교체 — 파이프라인 16h20m/66.2 GB, hap.py 50.7분/24.6 GB, truvari 4.5분/133.5 GB. 소변이·SV 실측 절도 R10 포함해 다시 썼다 |
+| 엑셀 | `50_update_catalog.py` 가 이제 `build_xlsx.py` 까지 돌린다(PacBio 수정). 카탈로그와 같이 재생성됐다 |
+| 서버 미추적 결과 파일 7개 | `.gitignore` 에 넣었다 (양쪽 phase 의 `--collect` 산출물 + `--tsv` 산출물 + `*.bak`). 전부 수 초면 재생성되고 실측값 정본은 `docs/reference/` 다 |
 
 ### 🟢 다운로드 세션
 
@@ -77,7 +79,7 @@ PacBio 세션이 repo 전반을 훑어 찾은 것이다. **자기 것만 고치�
 | `GCA_000001405.15_GRCh38_no_alt_analysis_set.fasta` | 3,144,230,986 | phase0 `release/references/GRCh38/` 사본을 압축 해제. 없으면 GIAB FTP 직접 | phase1 `01_prepare` |
 | `…fasta.fai` | 7,804 | `samtools faidx` 로 생성 (hap.py·truvari 가 요구) | phase1 `60_benchmark` |
 | `human_GRCh38_no_alt_analysis_set.trf.bed` | 7,594,623 | `raw.githubusercontent.com/PacificBiosciences/pbsv/master/annotations/` | phase1 `01_prepare` |
-| `clair3_models/` 3개 | — | HKU/Rerio. `r1041_e82_400bps_sup_v420`, `…_v430`, `r941_prom_hac_g238` — 컨테이너에 없는 것들 | **phase2** `01_prepare` |
+| `clair3_models/` 3개 | **195 MB** (78+78+39) | HKU `bio8.cs.hku.hk/clair3/clair3_models/` 우선, 실패 시 Rerio `cdn.oxfordnanoportal.com/software/analysis/models/clair3/`. `r1041_e82_400bps_sup_v420` 78 MB · `…_v430` 78 MB · `r941_prom_hac_g238` 39 MB — 컨테이너 `/opt/models` 에 없는 것만 받는다 | **phase2** `01_prepare` |
 | `sv_truth/HG002_GRCh38_v5.0q_stvar.noast.{vcf.gz,tbi}` | — | 파생물. phase0 truth 에서 `ALT="*"` 제거 (v5.0q README 지시) | phase1 `61_benchmark_sv`, phase2 와 공유 |
 
 ### `containers/` — 4.9 GB, 이미지 16개
@@ -230,6 +232,7 @@ cd /BiO/scratch/dyl/kbb/G000 && SAM=/home/ehojune/program/samtools-1.24/samtools
 
 ## 이력
 
+- 2026-09-23 — [ONT 세션] 세 세션 정렬(#33)에 ONT 몫 반영. **카탈로그가 외부 유래 런을 영영 못 보던 구멍을 찾았다** — 행 key 가 `(sample, giab_path basename)` 인데 ext 행은 경로(배포처 구조)와 dataset(우리 명명)이 달라 HG002 R10 이 채점 완료 후에도 `variant_called=FALSE` 로 남아 있었다. 경고 한 줄로만 났다. `EXT_ALIAS` + 산출물 경로를 dataset 기준으로 고쳐 **10행 갱신**(germline 8 + HG008T-p2 + PAW70337). next_step 을 "한 것 + 남은 것" 으로 전환. phase2 README 의 소변이·SV·자원 실측 절을 R10 포함해 다시 썼고, 서버 미추적 결과 파일 7개를 gitignore 했다. PAW70337 행의 coverage 를 추정 ~45x 에서 **실측 49x** 로, notes 에 BAM 헤더 실측(정렬 PG 없음 · @RG basecall 모델 · GRCh38 195 contig)을 넣었다.
 - 2026-09-23 — repo 전반 최신화 훑기. **엑셀이 25행만큼 뒤처져 있었다** — `50_update_catalog.py` 가 `build_readme.py` 만 돌리고 `build_xlsx.py` 는 안 돌렸다. 양쪽 phase 에 추가하고, `build_xlsx.py` 의 `--version`/`--date` 를 선택으로 바꿨다(처리 상태 갱신이 카탈로그 판번호를 올릴 이유가 없는데 required 라 부를 수 없었다). **표준화 백로그의 방향이 뒤집힌 것도 발견** — "phase2 기준으로 phase1 을 맞춘다" 였는데 phase1 이 따라가는 동안 phase2 가 더 나가서, 지금은 phase2 에 있고 phase1 에 없는 것이 8개다. 표를 phase 별 3열로 바꿔 코드 확인 결과를 그대로 적었다. 세션별 남은 최신화 목록도 절로 뒀다.
 - 2026-09-23 — phase1 문서 최신화. 채점이 끝났는데 문서가 "앞으로 할 일" 상태였고 **사실 오류가 둘** 있었다: 카탈로그 note 가 HG002 에 "SV benchmark v0.6 으로 Truvari 평가"(v0.6 은 **GRCh37 전용**이라 못 쓴다 — 실제로 쓴 것은 v5.0q), HG001·HG003~007 에 "교차 콜러 일치도와 수동 검토로 평가"(하지 않았고 할 계획도 없다). `50_update_catalog.py` 문구를 고쳐 25행 재생성. phase1 README 에 SV 절 신설(있던 "SV 와 somatic 은 아직 못 한다" 가 낡았다), 채점 대상 23런 -> 19런, BENCH_SLOTS 8/32G -> 16/56G. **ONT 세션 할 일**: `phase2_ont/scripts/50_update_catalog.py` 의 같은 v0.6 오류를 고쳤으니(문구만) 재실행해 ONT 8행에 반영할 것.
 - 2026-09-22 — [다운로드 세션] **서버 디스크 전수 대조 완료**: 매니페스트 4종 합집합 81,330 files 전부 디스크에 크기 일치(mismatch 0·missing 0), 매니페스트 밖 데이터 0, FTP 삭제 release 구버전 52건 8.4 GiB 보유. 세션 정지 상태에서 컨텍스트 정렬용 PR(#27 대체)을 올림 — PacBio·ONT 세션에 확인 요청 4건은 그 PR 본문. 서버 repo(`~/GIAB_benchmarking`)는 main 4c7778f + 미추적 결과 파일 5개.
