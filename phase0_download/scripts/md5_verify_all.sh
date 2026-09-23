@@ -20,7 +20,7 @@
 # Env: JOBS=8 (동시 md5 수 — 디스크가 병목이므로 8~16 권장), DEST, RESULTS(기본 $DEST/.md5_results.tsv)
 #
 # 예상 소요: 전체 107.6 TiB, JOBS=8 기준 대략 1~2일 (스토리지 읽기 속도에 좌우)
-# FAIL 재처리: awk -F'\t' '$2=="FAIL"{print $1}' $DEST/.md5_results.tsv 로 목록 확인 →
+# FAIL 재처리: awk -F'\t' '$2 ~ /^FAIL/{print $1}' $DEST/.md5_results.tsv 로 목록 확인 →
 #   해당 파일 rm 후 download.sh 재실행 → RESULTS에서 그 줄 지우고 본 스크립트 재실행
 
 set -uo pipefail
@@ -57,8 +57,13 @@ esac
 touch "$RESULTS"
 
 summary() {
-    awk -F'\t' '{c[$2]++} END{printf "PASS %d / FAIL %d / NOREF %d / MISS %d (누적 %d)\n",
-        c["PASS"], c["FAIL"], c["NOREF"], c["MISS"], NR}' "$RESULTS"
+    # 헤드라인은 접두로 묶는다 — PASS*(정상) / FAIL*(재처리 대상) / NOREF / MISS. 상태별 상세는 그 아래.
+    awk -F'\t' '
+        { c[$2]++; if ($2 ~ /^PASS/) p++; else if ($2 ~ /^FAIL/) f++; else if ($2 == "NOREF") n++; else if ($2 == "MISS") m++ }
+        END {
+            printf "PASS* %d / FAIL* %d / NOREF %d / MISS %d (누적 %d)\n", p, f, n, m, NR
+            for (k in c) printf "  %-26s %d\n", k, c[k]
+        }' "$RESULTS"
     awk -F'\t' '$2 ~ /^FAIL/{print "  " $2 ":", $1}' "$RESULTS"
 }
 if [ "$SUMMARY" = "1" ]; then summary; exit 0; fi
@@ -87,9 +92,11 @@ echo "[$(date '+%F %T')] 검사 대상 $total_todo files (JOBS=$JOBS, 결과: $R
 sidecar_md5() {
     local f="$1" base dir sc v
     base=$(basename "$f"); dir=$(dirname "$f")
-    for sc in "$dir"/md5.in "$dir"/md5.in_all "$dir"/MD5 "$dir"/md5sum "$dir"/md5sum.txt "$dir"/md5sum.in \
-              "$dir"/md5sum.sub "$dir"/md5sum.chk "$dir"/checksums.md5 "$dir/$base.md5" "$dir/${base}_md5sum" \
-              "$dir"/*.md5sum "$dir"/*.md5sums "$dir"/*md5sum*.txt "$dir"/*md5sum*.in "$dir"/*.md5; do
+    # 파일별 사이드카(<name>.md5 등)를 먼저, 그 다음 이름에 md5/MD5/checksum 이 들어간 목록 파일 전부.
+    # 매니페스트 실측: md5.in · md5s.in · MD5 · MD5.txt · md5sum · md5sum.txt · md5sum.chk · checksums.md5 ·
+    # *-genome-stratifications-md5s.txt · *.md5sum · <file>.md5 … — 열거하면 또 빠진다.
+    for sc in "$dir/$base.md5" "$dir/${base}.md5sum" "$dir/${base}_md5sum" \
+              "$dir"/*md5* "$dir"/*MD5* "$dir"/*checksum* "$dir"/*CHECKSUM*; do
         [ -f "$sc" ] || continue
         [ "$sc" = "$f" ] && continue
         # basename을 토큰 단위로 정확히 맞춘다 — 부분 문자열(grep -F)은 a.bam 을 찾다가 a.bam.bai 줄을 물 수 있다.
