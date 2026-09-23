@@ -12,6 +12,78 @@
 qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo; cd /BiO/scratch/dyl/kbb/G000 && for d in GIAB-publicData-*/; do printf '%-45s DONE=%-8s err=%s\n' "${d%/}" "$(grep -o 'Success\|Error' $d/__DONE__ 2>/dev/null | head -1)" "$(cat $d/error_list.txt 2>/dev/null | tr '\n' ' ' | cut -c1-60)"; done; echo; ls /BiO/scratch/ehojune/GIAB_benchmark/repairs/mgi-hg002.*/VALIDATED.txt 2>/dev/null || echo "MGISEQ HG002 rebuild: 아직"
 ```
 
+## 지금 다른 세션이 하는 일 (2026-09-23 갱신)
+
+세 세션이 같은 repo 를 동시에 고친다. 규칙은 [AGENTS.md](../AGENTS.md) 의
+"여러 에이전트가 동시에 붙을 때". **이 절은 상태이므로 낡으면 지운다.**
+
+| | 세션 | 상태 |
+|---|---|---|
+| #29 · #32 | ONT — HG002 R10 채점, ts/tv 구간 분할 | **머지됨** |
+| #33 | 다운로드 — 디스크 전수 대조(81,330/81,330 일치) + `fetch_all.sh` (#27 대체) | 열림. **PacBio 에게 묻는 항목 4개** — 아래 답 |
+| #31 | PacBio — 조율 규칙(AGENTS.md) | 열림 |
+
+**ONT 세션이 정정해 준 것**(#29): main 에 "truvari 는 ONT 67~73 GB / HiFi 91.6~136.2 GB,
+데이터셋이 두 배를 가른다" 고 적었던 것은 틀렸다. 그 ONT 값은 `BENCH_SV_THREADS` 가 생기기 전
+**기본 4스레드** 값이었고, `-t 8` 로 맞춰 재니 R10 이 133.5 GB 로 HiFi 대역 안이었다.
+**데이터셋 차이가 아니라 스레드 설정 차이다.** PacBio 세션은 동의한다.
+
+### #33 의 PacBio 질문에 대한 답 (2026-09-23)
+
+1. **sra_manifest 밖에 받은 것 없다.** phase1 의 외부 다운로드는 `02_fetch_sra_reads.sh` 가
+   ENA 에서 받는 12 fastq 뿐이고 전부 `sra_manifest.tsv` 에 있다. 다른 출처(SRA toolkit,
+   PacBio 공개 버킷)를 쓴 적 없다.
+2. **`_infra/` 자산 목록은 아래 "공유 `_infra` 자산" 절.** ONT 와 같은 디렉토리를 쓰므로
+   중복은 한 번만 적었다.
+3. **미추적 파일 처리** — `phase1_bench_summary.tsv`(repo 루트)는 **옛 경로**다. 지금 스크립트는
+   `phase1_pacbio_hifi/` 밑에 쓴다. 루트 것은 삭제, phase 디렉토리의 둘은 **gitignore**
+   (재생성 가능한 산출물이고 `--collect` 한 번이면 나온다). `env.local.sh.bak` 도 gitignore.
+4. **phase0 매니페스트 밖 입력 계획은 지금 없다.** #8 의 HG008-T 10 파일은 전부 phase0 안이다.
+   생기면 `sra_manifest.tsv` 에 먼저 등록하고 받겠다.
+
+## 공유 `_infra` 자산 (phase1·phase2 공용, 2026-09-23 확인)
+
+`$RUN_BASE/_infra` = `/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/_infra`.
+**산출물이 아니라 실행에 필요한 자산**이라 매니페스트 대조 대상이 아니었다. 계산 노드에
+외부망이 없어 전부 로그인 노드에서 미리 받아 둔 것들이다(`01_prepare_login_node.sh`).
+
+### `reference/` — 3.2 GB
+
+| 파일 | 크기 | 출처 | 받은 곳 |
+|---|---|---|---|
+| `GCA_000001405.15_GRCh38_no_alt_analysis_set.fasta` | 3,144,230,986 | phase0 `release/references/GRCh38/` 사본을 압축 해제. 없으면 GIAB FTP 직접 | phase1 `01_prepare` |
+| `…fasta.fai` | 7,804 | `samtools faidx` 로 생성 (hap.py·truvari 가 요구) | phase1 `60_benchmark` |
+| `human_GRCh38_no_alt_analysis_set.trf.bed` | 7,594,623 | `raw.githubusercontent.com/PacificBiosciences/pbsv/master/annotations/` | phase1 `01_prepare` |
+| `clair3_models/` 3개 | — | HKU/Rerio. `r1041_e82_400bps_sup_v420`, `…_v430`, `r941_prom_hac_g238` — 컨테이너에 없는 것들 | **phase2** `01_prepare` |
+| `sv_truth/HG002_GRCh38_v5.0q_stvar.noast.{vcf.gz,tbi}` | — | 파생물. phase0 truth 에서 `ALT="*"` 제거 (v5.0q README 지시) | phase1 `61_benchmark_sv`, phase2 와 공유 |
+
+### `containers/` — 4.9 GB, 이미지 16개
+
+| | |
+|---|---|
+| 공용 | `bcftools 1.24` 84 MB · `samtools 1.24` 44 MB · `mosdepth 0.3.14` 44 MB · `multiqc 1.35` 383 MB |
+| 변이 호출 | `deepvariant 1.10.0` 1,879 MB · `clair3 v1.2.0` 1,413 MB |
+| phase1 전용 | `pbmm2 26.2.0` · `pbsv 2.11.0` · `pbccs 6.4.0` · `pbtk 3.5.0` (합 41 MB) · `whatshap 2.8` 152 MB |
+| phase2 전용 | `minimap2_samtools`(seqera wave) 140 MB · `sniffles 2.8.0` 134 MB · `longphase 2.0.2` 29 MB |
+| 벤치마크 | `hap.py v0.3.12` 447 MB · `truvari 5.4.0` 141 MB |
+
+전부 `docker://` 에서 `singularity pull` 로 받았다. URI 는 각 phase 의 `nextflow.config`
+`container_*` 와 `env.sh` 의 `BENCH_IMAGES` 가 정본이고, 파일명은 Nextflow 규약
+(프로토콜 제거 후 `[/:]` → `-`, `.img`)이라 URI 에서 기계적으로 나온다.
+
+**받은 데이터가 아니라 실행 자산**이다. 지우면 `01_prepare_login_node.sh` 한 번으로 복구된다
+(로그인 노드에서, 외부망 필요).
+
+## 클러스터 사실 (2026-09-22 직접 확인)
+
+세 세션이 다 알아야 하는 것이라 여기 둔다.
+
+| | |
+|---|---|
+| **GPU 없음** | `qhost -F gpu` 가 리소스 행을 하나도 안 낸다. 어느 노드도 `gpu` complex 를 광고하지 않는다. DeepSomatic 등은 CPU 경로로 설계해야 한다 |
+| **octopus 노드는 1 TB RAM** | `octopus-2-*` 1007.1 GB / `shepherd-1-*` 251.1 GB. 지금까지의 슬롯 계산은 전부 251 GB 기준이라 **octopus 에서는 과하게 보수적**이다. 노드별로 다르게 잡을 여지가 있다 |
+| 전 노드 64코어 | octopus-2-1~2-11, shepherd-1-1~1-14 (큐 인스턴스 25개). **그중 우리에게 허용된 집합은 따로 물어야 한다** — SGE ACL 이 아니라 사람끼리의 약속이다 |
+
 ## 작업 흐름
 
 | # | 작업 | 상태 (2026-09-22) | 잡 | 끝나면 | 막힌 것 / 의존 |
@@ -24,7 +96,7 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 | 5b | **phase1 PacBio SV 평가** (`s1.*`, Truvari vs v5.0q, HG002 5런) | **완료** — refine F1 .8208~.8418. **세대 단조성 없음**(SeqI 이 SeqII 를 가른다), recall 이 약점(.757~.788) | 156048~156052, `-t 8`, exit 0 | 수치·판정: [2026-09-22-pacbio-hifi-benchmark-first-results.md](reference/2026-09-22-pacbio-hifi-benchmark-first-results.md) | — |
 | 6 | phase3 Hiseq-subsampled-30x | **완료** (Success) | — | #7에 포함 | — |
 | 7 | **phase3 평가 설계** — 업체 4곳(gd1~4) + 공개 raw 22 샘플의 VCF를 v4.2.1(+HG002 CMRG·v5.0q)로 hap.py | 미착수 | — | 결과 디렉토리 구조 받으면 phase1·2 `60_benchmark.sh` 모양으로 스크립트 | #1·#3 완료 |
-| 8 | **phase1 HG008 9런 등록** — uBAM → BAM → VCF | **등록 완료** (2026-09-22) — run_table 38 → 47, samplesheet 9개 생성 | 미제출 | `10_submit.sh --list` 로 입력 확인 → `--ready` | 노드 여유. 런당 10~15시간 예상 |
+| 8 | **phase1 HG008-T 9 실행단위** — uBAM → BAM → VCF | **제출됨** 2026-09-22 17:23 — 2건 r / 7건 qw | 156064~156072, 30 slots. 허용 4노드 중 셋이 `regermline` 60슬롯에 잡혀 shepherd-1-8 만 빈다 | `30_verify_outputs.sh` → `35_review_qc.py`. 채점은 #9 가 서야 가능 | 런당 10~15시간 예상, 9건이면 2~3일 |
 | 9 | **HG008-T somatic 평가 설계** — germline truth가 없는 HG008/HG009를 채점할 유일한 길 | **미착수** | — | smvar V0.3-20260425 / stvar-CNV V0.5-20260318 기준 `62_benchmark_somatic.sh` (가칭) | #8 (평가할 VCF가 먼저 있어야) |
 | 10 | **phase1↔phase2 표준화 잔여** — 아래 "표준화 백로그" | 부분 완료 | — | phase3까지 같은 모양으로 | 급하지 않음 |
 
@@ -121,6 +193,7 @@ cd /BiO/scratch/dyl/kbb/G000 && SAM=/home/ehojune/program/samtools-1.24/samtools
 
 - 2026-09-22 밤 — **ts/tv 구간 분할을 직접 쟀다**(`62_tstv_regions.sh`, 10건 전부 `안+밖=전체` 통과). **2026-08-27 의 열린 질문이 R9·R10 양쪽에서 닫혔다** — 구간 안이 전 런 2.0972~2.1400 으로 germline 기대치 그대로고 구간 밖만 1.09~1.48 이다. 2026-09-18 의 추정(HG005 1.33)은 실측 **1.3064**(오차 1.8%)로 확인됐고 "구간 안 = 2.1" 가정도 사실이었다. 새 관찰 둘: 베이스콜러가 좋을수록 구간 밖 ts/tv 가 오히려 **낮다**(어려운 영역까지 더 부른다), 그리고 구간 밖에서 DV↔C3 순 차이의 ts/tv 가 2.18 이라 **DV 가 구간 밖에서 버리는 쪽이 FP 가 아닐 수 있다**(미확인, reference §5).
 - 2026-09-22 밤 — **phase2 HG002 R10 채점 전량 완료**(hap.py 156047 + Truvari 156053, 둘 다 exit 0). **ONT 가 같은 플로우셀에 공개한 hap.py 결과와 SNP F1 −0.0001 / INDEL F1 −0.0013 로 일치** — 우리가 ONT 정렬을 버리고 재정렬했는데도 그렇다. **DeepVariant 가 네 칸 전부에서 Clair3 를 이긴다**(INDEL F1 +0.024, FP −33%). SV 는 R10 이 R9 를 F1 +0.031 로 이기는데 그 이득이 거의 전부 recall(+0.048)이다. truvari 가 133.5 GB 를 써서 `BENCH_SV_SLOTS` 를 22→33 으로 올렸다 — env.sh 의 옛 "67~73 GB" 는 4스레드 값이었다. 수치: [2026-09-22-ont-r10-benchmark.md](reference/2026-09-22-ont-r10-benchmark.md)
+- 2026-09-22 17:30 — #8 제출(156064~156072). **GPU 는 없다**(`qhost -F gpu` 무응답) — somatic 은 CPU 경로로 설계해야 한다. **octopus 노드가 1 TB RAM** 인 것을 처음 확인했다(shepherd 251 GB) — 지금까지의 슬롯 계산이 전부 251 GB 기준이라 octopus 에서는 과하게 보수적이다. 세 세션이 동시에 repo 를 고치고 있어 AGENTS.md 에 조율 규칙을 넣었다(소유 구분, 충돌 잦은 파일, PR 전 merge-tree 확인, 남의 실측을 덮어쓰지 않기).
 - 2026-09-22 밤 — SV 5런 최종 수치 확정. **"세대 순서가 소변이와 같다"는 앞선 보고를 정정한다** — `CCS_15kb`(Sequel I)가 F1 .8333 으로 `SequelII_CCS_11kb`(.8275)보다 위라 Sequel I 두 런이 Sequel II 를 사이에 두고 갈라진다. **소변이 순위와도 뒤집힌다**: `CCS_15kb` 는 INDEL 19런 중 최하위(F1 .9282)인데 SV 는 5런 중 3위다. 런을 하나의 품질 축으로 줄 세우면 안 된다. refine 이득은 +4.9~5.4점으로 phase2 ONT(+4.8~5.1)와 거의 같다 — 표현 정규화라는 설명과 맞는다. phase1 벤치마킹은 **채점 가능한 전량 완료**(소변이 19런, SV 5런). 남은 것은 #8·#9.
 - 2026-09-22 저녁 — SV 5런 `-t 8` 로 전량 완주(maxvmem 91.6~136.2 GB). **"메모리가 스레드에 비례한다"는 앞선 판단을 정정한다** — 같은 데이터로 `-t 22 -> 8` 하니 스레드 64% 감소에 메모리는 29~46%만 줄었다. 가장 큰 영역 하나의 작업 공간이 고정분으로 남는 것으로 보인다. 초판의 비례 주장은 ONT(-t 8)와 HiFi(-t 22)를 비교한 것이라 데이터셋 차이가 섞여 있었다. **제어 수단은 스레드가 아니라 동시 실행 수** — `BENCH_SV_SLOTS` 를 33(노드당 1잡)으로 올렸다. 22슬롯이면 최악 257 GB 로 251 GB 초과다.
 - 2026-09-22 — **phase2 HG002 R10.4.1 완주 확인**(155279, exit_status 0, 58,791s = 16h20m, maxvmem 66.2 GB / 30슬롯, shepherd-1-8). `30_verify_outputs.sh` OK 1/1 — dv 산출물 포함 전부 있다. `aligned_bam_realign` 진입이 실전에서 처음 증명됐고, 이 런 하나가 R10 소변이·R10 SV·DeepVariant 채점 셋을 동시에 연다. 이어서 `35_review_qc.py --pass-counts` 가 `PermissionError: 'bcftools'` 로 죽어 도구 해석을 고쳤다(decisions 2026-09-22).
