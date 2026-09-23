@@ -6,6 +6,10 @@
 #   scripts/60_benchmark.sh --ready            VCF 완료 + truth set 있는 것 전부 제출
 #   scripts/60_benchmark.sh <dsid> [dsid ...]  지정 제출
 #   scripts/60_benchmark.sh --collect          끝난 결과를 한 TSV로 모음
+#   BENCH_TRUTH_VER=v5.0q BENCH_STRAT_TSV=<tsv> scripts/60_benchmark.sh <dsid>
+#                                              v5.0q smvar 로 채점 + 구간별 (아래 "v5.0q" 절)
+#   BENCH_TRUTH_VER=v5.0q scripts/60_benchmark.sh --collect-strata
+#                                              층화 결과(extended.csv 의 Subset 행)를 모음
 #
 # 환경 변수: DRY=1     qsub 하지 않고 잡 스크립트만 생성
 #            FORCE=1   결과가 이미 있어도 재제출
@@ -16,14 +20,25 @@
 # 1. **caller를 런마다 정한다.** phase1은 전 런이 DeepVariant+Clair3였지만 ONT는 R9.4.1에
 #    DeepVariant ONT 모델이 없어 Clair3 단독으로 돈다. run_table.tsv의 dv_model 열이 '-'면
 #    clair3만, 아니면 둘 다 평가한다 (10_submit.sh·35_review_qc.py와 같은 판정 축).
-# 2. **실제 평가 대상은 R9 8런뿐이고 전부 Clair3 단독이다.** germline truth(v4.2.1)가 있는 건
-#    HG001~HG007인데 phase2에서 그 샘플들은 전부 R9이다. DeepVariant가 도는 R10 6런은 전부
-#    HG008이고 HG008에는 germline truth가 없다 (매니페스트의 HG008 draft benchmark는
-#    somatic-stvar/CNV뿐이라 단일 샘플 germline VCF 평가에 못 쓴다).
-#    → **phase2에서 DeepVariant는 벤치마크되지 않는다.** 스크립트는 dv_model을 보고 자동으로
-#    처리하므로, 나중에 HG008 germline truth가 생기면 코드 수정 없이 DV까지 평가된다.
-# 3. 남은 열린 질문(전 런 ts/tv가 2.0~2.1보다 낮음, docs/reference/2026-08-27-ont-qc-first-pass.md)은
-#    이 단계로 R9 8런까지만 답이 나온다. R10의 낮은 ts/tv(1.65~1.73)는 여전히 미해결로 남는다.
+# 2. **평가 대상은 9런** — HG001~HG007 의 R9 8런(Clair3 단독) + HG002 R10 1런(Clair3+DV).
+#    처음엔 R9 8런뿐이라 "phase2 에서 DeepVariant 는 벤치마크되지 않는다" 고 적었다 — truth 있는
+#    샘플은 전부 R9 이고 DV 가 도는 R10 은 전부 HG008(germline truth 없음)이라 겹치는 런이 없었다.
+#    2026-09-19 에 HG002 R10 을 외부에서 들여와 그 공백을 메웠고, 2026-09-22 에 **DV 가 처음
+#    채점됐다.** 코드 수정은 없었다 — 이 스크립트는 dv_model 열로 자동 판정한다.
+#    HG008 6런은 여전히 germline truth 가 없어 빠진다(draft benchmark 가 somatic-stvar/CNV 뿐이다).
+# 3. ts/tv 열린 질문(docs/reference/2026-08-27-ont-qc-first-pass.md)은 R9·R10 양쪽에서 닫혔다 —
+#    62_tstv_regions.sh 로 구간 안/밖을 직접 쟀다(구간 안 2.10~2.14, 밖 1.09~1.48).
+#
+# **v5.0q — v4.2.1 밖을 truth 로 센다 (2026-09-23).** v4.2.1 구간 밖 콜은 truth 가 없어 ts/tv 같은
+# 간접 지표밖에 없었다(63_caller_diff_regions.sh). HG002 에는 T2T-Q100 유래 v5.0q smvar 가 있어 v4.2.1 이
+# 빼놓은 어려운 영역 상당 부분까지 truth 가 있다.
+#   python scripts/64_v5q_strata.py <v5.0q.bed> <v4.2.1.bed> <dir>     겹침 / v5.0q에만 / 다른 염색체 층 + strata.tsv
+#   BENCH_TRUTH_VER=v5.0q BENCH_STRAT_TSV=<dir>/strata.tsv scripts/60_benchmark.sh <dsid>
+#   BENCH_TRUTH_VER=v5.0q scripts/60_benchmark.sh --collect-strata
+# **v5.0q 결과에서 v4.2.1 결과를 빼서 "밖" 을 구하지 않는다.** 두 truth 는 겹치는 구간에서도 다르므로
+# 차이에 truth 의 차이가 섞인다 — 순 차이 함정(2026-09-23 decisions). 한 번의 채점 안에서 층화로 가른다.
+# 결과·잡·jobid·임시 디렉토리는 KEY=bench_v5.0q / 05_BENCH/happy_v5.0q 로 따로 둔다. v4.2.1 기본 실행의
+# 잡 스크립트는 이 기능이 생기기 전과 바이트 단위로 같다(검증함).
 #
 # 왜 raw VCF를 넣는가 (phase1과 동일): hap.py는 FILTER를 자체 처리해 summary.csv에 ALL 행과
 # PASS 행을 둘 다 낸다. 파이프라인의 03_VCF/<caller>/*.vcf.gz는 RefCall을 포함하지만
@@ -39,6 +54,21 @@ source "$HERE/lib.sh"
 SGE_Q_ARG="$SGE_QUEUE"
 PHASE2="$P2_DIR"
 BENCH_SUB="05_BENCH/happy"
+KEY=bench
+# **v4.2.1 이 아닌 truth 로 돌릴 때는 결과·잡·임시 디렉토리를 전부 따로 둔다.** 같은 경로면
+# v4.2.1 결과를 덮고, 중복 제출 가드(jobid 파일)와 hap.py 임시 디렉토리까지 공유한다.
+# v4.2.1 은 기존 값 그대로라 기본 실행의 잡 스크립트는 한 글자도 안 바뀐다.
+if [ "$BENCH_TRUTH_VER" != v4.2.1 ]; then
+    BENCH_SUB="05_BENCH/happy_$BENCH_TRUTH_VER"; KEY="bench_$BENCH_TRUTH_VER"
+fi
+# 층화는 별도 판에서만. v4.2.1 과 같이 주면 층화 결과가 기본 채점 디렉토리(05_BENCH/happy)에 섞여
+# 들어가고, FORCE=1 이면 기존 결과를 덮는다. phase1 STRAT=1 은 happy_strat 으로 따로 뺐다 — 여기서는
+# 필요한 쓰임(v5.0q)이 이미 따로 있어 막기만 한다.
+if [ -n "${BENCH_STRAT_TSV:-}" ] && [ "$BENCH_TRUTH_VER" = v4.2.1 ]; then
+    echo "ERROR: BENCH_STRAT_TSV 는 BENCH_TRUTH_VER=v4.2.1 과 같이 못 쓴다 — 기본 채점 결과에 섞인다." >&2
+    echo "       층화는 BENCH_TRUTH_VER=v5.0q 처럼 별도 판에서 쓴다." >&2
+    exit 1
+fi
 
 # dsid의 caller 목록. CALLERS로 고정하지 않았으면 dv_model 열로 판정한다.
 run_callers() {  # dv_model -> "clair3" | "clair3 deepvariant"
@@ -63,6 +93,16 @@ bench_truth() {
                  "$d/${s}_"*_"$ver"_benchmark_noinconsistent.bed 2>/dev/null \
               | grep -v '/\._' | head -1) || true
         [ -n "$bed" ] || continue
+        printf '%s\t%s\n' "$vcf" "$bed"
+        return 0
+    done
+    # v5.0q 부터 GIAB 는 NIST 접두사·참조 하위 디렉토리 없이 release/<trio>/<sample>/<ver>/ 에 smvar·stvar 를
+    # 같이 둔다. 61_benchmark_sv.sh 의 sv_truth 가 stvar 를 찾는 것과 같은 배치다.
+    for d in "$GIAB_ROOT"/release/*/*/"$ver" "$GIAB_ROOT"/release/*/"$ver"; do
+        [ -d "$d" ] || continue
+        vcf="$d/${s}_${REF_NAME}_${ver}_smvar.vcf.gz"
+        bed="$d/${s}_${REF_NAME}_${ver}_smvar.benchmark.bed"
+        [ -s "$vcf" ] && [ -s "$vcf.tbi" ] && [ -s "$bed" ] || continue
         printf '%s\t%s\n' "$vcf" "$bed"
         return 0
     done
@@ -140,12 +180,19 @@ submit_one() {
     if [ -z "$todo" ]; then
         echo "SKIP $dsid: 평가 완료 (재실행은 FORCE=1)"; return 0
     fi
-    if p2_job_alive "bench.$dsid"; then
+    if p2_job_alive "$KEY.$dsid"; then
         echo "SKIP $dsid: 이미 큐/실행 중"; return 0
     fi
 
-    mkdir -p "$base/$BENCH_SUB" "$INFRA/launch/bench.$dsid"
-    local job="$INFRA/jobs/bench.$dsid.sh" simg
+    mkdir -p "$base/$BENCH_SUB" "$INFRA/launch/$KEY.$dsid"
+    local job="$INFRA/jobs/$KEY.$dsid.sh" simg strat_arg=""
+    # 층화 TSV 는 잡마다 사본을 둔다 — 큐에서 기다리는 동안 원본이 바뀌어도 제출 시점 목록으로 돈다.
+    # 인자는 앞 공백을 포함해 --logfile 줄 끝에 붙인다: 비면 기본 잡이 한 글자도 안 바뀐다(phase1 과 같다).
+    if [ -n "${BENCH_STRAT_TSV:-}" ]; then
+        [ -s "$BENCH_STRAT_TSV" ] || { echo "FAIL $dsid: BENCH_STRAT_TSV 없음 — $BENCH_STRAT_TSV"; return 1; }
+        cp "$BENCH_STRAT_TSV" "$INFRA/launch/$KEY.$dsid/strata.tsv" || { echo "FAIL $dsid: 층화 TSV 복사 실패"; return 1; }
+        strat_arg=" --stratification $INFRA/launch/$KEY.$dsid/strata.tsv"
+    fi
     simg=$(p2_img_path "$HAPPY_IMG")
 
     # 쓰기가 실패하면(디스크 참, 권한) 예전 잡 스크립트가 남아 엉뚱한 걸 제출하게 된다.
@@ -158,15 +205,15 @@ submit_one() {
 #\$ -S /bin/bash
 #\$ -V
 #\$ -j y
-#\$ -o $INFRA/logs/bench.$dsid.\$JOB_ID.log
+#\$ -o $INFRA/logs/$KEY.$dsid.\$JOB_ID.log
 #\$ -l h_vmem=$BENCH_VMEM
 #\$ -l h='$SGE_HOSTS'
-#\$ -wd $INFRA/launch/bench.$dsid
+#\$ -wd $INFRA/launch/$KEY.$dsid
 set -euo pipefail
 source "$PHASE2/env.sh"
 
 THREADS="\${NSLOTS:-$BENCH_SLOTS}"
-TMP="$INFRA/launch/bench.$dsid/tmp"
+TMP="$INFRA/launch/$KEY.$dsid/tmp"
 mkdir -p "\$TMP"
 
 for c in$todo; do
@@ -184,7 +231,7 @@ for c in$todo; do
             -o "$base/$BENCH_SUB/$id.\$c" \\
             --threads "\$THREADS" \\
             --scratch-prefix "\$TMP" \\
-            --logfile "$base/$BENCH_SUB/$id.\$c.hap.py.log"
+            --logfile "$base/$BENCH_SUB/$id.\$c.hap.py.log"$strat_arg
 done
 echo "ALL DONE $dsid"
 EOF
@@ -206,7 +253,7 @@ EOF
     [ -n "$jid" ] || { echo "FAIL $dsid: qsub 출력에서 jobid를 못 읽었다 — $out"; return 1; }
     # jobid 기록이 실패하면 중복 제출 가드가 그 dsid에 대해 무력해진다 — 잡은 이미 들어갔으므로
     # 실패로 보고하되 잡 번호를 반드시 보여준다(사람이 qdel 할 수 있어야 한다).
-    echo "$jid" > "$INFRA/jobs/bench.$dsid.jobid"         || { echo "FAIL $dsid: jobid=$jid 로 제출됐으나 기록 실패 — $INFRA/jobs/bench.$dsid.jobid"; return 1; }
+    echo "$jid" > "$INFRA/jobs/$KEY.$dsid.jobid"         || { echo "FAIL $dsid: jobid=$jid 로 제출됐으나 기록 실패 — $INFRA/jobs/$KEY.$dsid.jobid"; return 1; }
     echo "OK  $dsid: jobid=$jid callers:$todo truth=$(basename "$truth_vcf")"
 }
 
@@ -214,7 +261,9 @@ EOF
 # PASS 행이 실제 성능이다 (RefCall이 빠진 값).
 # chem 열을 같이 넣는다 — ONT는 R9/R10에서 특히 indel 성능이 갈려서 이 축 없이는 표를 못 읽는다.
 collect() {
-    local out="${1:-$PHASE2/phase2_bench_summary.tsv}" dsid r sample dataset dv chem bc id base c f
+    local def="$PHASE2/phase2_bench_summary.tsv"
+    [ "$BENCH_TRUTH_VER" = v4.2.1 ] || def="$PHASE2/phase2_bench_summary.$BENCH_TRUTH_VER.tsv"
+    local out="${1:-$def}" dsid r sample dataset dv chem bc id base c f
     {
         printf 'dsid\tsample\tdataset\tchem\tbasecaller\tcaller\ttype\tfilter\ttruth_total\ttp\tfn\tfp\trecall\tprecision\tf1\n'
         for dsid in $(p2_dsids); do
@@ -246,6 +295,38 @@ collect() {
     echo "  awk -F'\\t' 'NR==1 || (\$8==\"PASS\" && \$7==\"INDEL\")' $out | column -t -s\$'\\t'"
 }
 
+# 층화 결과를 모은다. hap.py 는 --stratification 을 주면 extended.csv 에 Subset 별 행을 낸다
+# (Subset=* 가 전체, 나머지가 구간). summary.csv 는 전체만 담아 여기서는 extended.csv 를 읽는다.
+# 행 수가 많아(구간 x Type x Subtype x Filter x Genotype) PASS·전 Subtype·전 유전형 행만 남긴다.
+collect_strata() {
+    local def="$PHASE2/phase2_bench_strata.$BENCH_TRUTH_VER.tsv"
+    local out="${1:-$def}" dsid r sample dataset dv id base c f n=0
+    {
+        printf 'dsid\tcaller\tsubset\ttype\tfilter\ttruth_total\ttp\tfn\tfp\trecall\tprecision\tf1\n'
+        for dsid in $(p2_dsids); do
+            r=$(p2_row "$dsid"); sample=$(p2_col "$r" 2); dataset=$(p2_col "$r" 3); dv=$(p2_col "$r" 10)
+            base="$RUN_BASE/$sample/ONT/$dataset"; id="$sample.$dataset.$REF_NAME"
+            for c in $(run_callers "$dv"); do
+                f="$base/$BENCH_SUB/$id.$c.extended.csv"
+                [ -s "$f" ] || continue
+                awk -F, -v d="$dsid" -v cl="$c" '
+                    NR==1 { for (i=1;i<=NF;i++) h[$i]=i; next }
+                    # Subtype 도 * 로 묶어야 한다 — 안 그러면 indel 길이(C1_5, D6_15 ...)별로 한 구간이 여러 행이 된다
+                    # (ONT 공개 extended.csv 로 확인: 이 조건이면 Type x Subset 당 정확히 한 행)
+                    $h["Filter"]=="PASS" && $h["Genotype"]=="*" && $h["Subtype"]=="*" {
+                      printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+                        d, cl, $h["Subset"], $h["Type"], $h["Filter"],
+                        $h["TRUTH.TOTAL"], $h["TRUTH.TP"], $h["TRUTH.FN"], $h["QUERY.FP"],
+                        $h["METRIC.Recall"], $h["METRIC.Precision"], $h["METRIC.F1_Score"]
+                    }' "$f"
+            done
+        done
+    } > "$out"
+    n=$(($(wc -l < "$out") - 1))
+    echo "-> $out ($n rows)"
+    [ "$n" -gt 0 ] || echo "  (층화 결과가 없다 — BENCH_STRAT_TSV 를 주고 돌렸는지, BENCH_TRUTH_VER 가 같은지 확인)"
+}
+
 # 같은 dsid가 두 번 들어오면 같은 출력 경로에 잡 둘이 동시에 쓴다.
 # p2_job_alive는 preflight 때 뜬 qstat 스냅샷을 보므로 방금 넣은 잡을 못 본다 — 입력에서 잘라낸다.
 dedup_dsids() { awk 'NF && !seen[$0]++'; }
@@ -263,6 +344,7 @@ submit_many() {
 case "${1:-}" in
     --list)    list_all ;;
     --collect) shift; collect "${1:-}" ;;
+    --collect-strata) shift; collect_strata "${1:-}" ;;
     --ready)
         preflight
         # shellcheck disable=SC2046
