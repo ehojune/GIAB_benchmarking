@@ -950,6 +950,18 @@ Codex 리뷰 지적(PR #36): 입력 트리 감사와 MGISEQ 실패 진단이 `qa
 - **기본 결과를 덮지 않는다** — `05_BENCH/happy_strat/` 에 따로 두고, `Subset=*` 행이 기본 실행과
   TP/FN/FP 까지 같은지 `--collect` 가 대조한다. 같지 않으면 두 실행의 입력이 어긋난 것이다.
 
+## 2026-09-23 — HG008-T BioSkryb×UG100 단일세포 CRAM(4.4 TiB, 외부 S3)은 받지 않는다 — 필요가 생길 때까지
+
+- 사실: GIAB FTP `data_somatic/HG008/Liss_lab/HG008-T_bioskryb-libraries-UG100/`에는 QC CSV·README·AWS 매니페스트만 있고, 실데이터는 `s3://giab-aws/WGS/Bioskryb/2024/...`(https 공개)에 있다. 매니페스트 합산: **119 세포 × (CRAM + VCF) = 238 files, 4,862 GB = 4.42 TiB** (CRAM 4,797.6 GB, VCF 64.3 GB). Ultima UG100 single-end 300 bp, BioSkryb ResolveDNA 단일세포 라이브러리.
+- 판단: 지금 벤치마킹 축(germline 소변이·SV, HG008 somatic bulk)에 단일세포 CNV/WGD 데이터가 들어갈 자리가 없다. 같은 세포주의 Illumina 단일세포(120셀, 40.7 GiB)는 이미 받았다. 4.4 TiB는 스토리지 문제는 아니지만 받아둔 뒤 안 쓰는 데이터를 늘리지 않는다.
+- 받기로 바뀌면: 매니페스트 TSV(`size_Gb`, `url`, `idx_url`)가 그대로 다운로드 목록이 된다 — phase0 `ext_manifest` 형식(relpath/bytes/url/md5/kind)으로 변환해 `fetch_all.sh`에 단계를 추가. md5는 매니페스트에 없어 크기+CRAM 헤더로 검증해야 한다.
+- 사용자 결정 대기. 세 세션 검토 지점 7번의 후속.
+
+## 2026-09-23 — md5 참조는 current.tree 하나로 못 믿는다: sidecar를 2차 판정으로 쓰고 결과를 갈라 적는다
+
+- `current.tree`는 FTP 원본이 2025-02-28 이후 갱신되지 않았다(2026-09-23 확인). 그 뒤 GIAB가 바꾼 파일은 tree md5와 다르지만 손상이 아니다. 2026-09-09 검증의 FAIL 110건 중 75건이 README·checksums.md5 같은 문서인 것이 그 증거다.
+- 그래서 tree 불일치를 곧 FAIL로 두지 않고 같은 디렉토리 sidecar와 다시 비교한다. 판정을 `PASS_SIDECAR_TREE_STALE` / `FAIL_BOTH` / `FAIL_TREE_ONLY`로 갈라 적어 "tree가 낡았다"와 "파일이 깨졌다"를 뒤에서 구분할 수 있게 한다. FAIL_TREE_ONLY는 FTP에서 그 파일을 다시 HEAD/받아 비교해야 결론이 난다.
+- sidecar 패턴은 매니페스트 실측으로 정했다(checksums.md5 132 등). 추측으로 넣은 패턴은 없다. 기록: [runs/2026-09-23-md5-verification-status.md](runs/2026-09-23-md5-verification-status.md).
 ## 2026-09-23 — [숏리드 세션] phase3 2차 입력: 나머지 숏리드 WGS 전부를 새 set으로
 
 사용자 지시: "GIAB 의 모든 숏리드 데이터는 국통바빅 파이프라인으로 돌아야 한다." 1차(HG002/3/4 22 샘플) 밖의 표준 short-read WGS를

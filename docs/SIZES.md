@@ -1,6 +1,8 @@
 # GIAB platform-level sizes (lookup-only reference)
 
-Source: S3 ListObjectsV2 on s3://giab, 2026-08-13. Sizes are exact byte sums.
+생성: `python phase0_download/scripts/build_sizes.py` — 원본은 `phase0_download/manifests/**` + 외부 매니페스트 3종. 바이트는 정확한 합계. 손으로 고치지 말 것.
+
+## GIAB FTP/S3 — 샘플 × 플랫폼 디렉토리
 
 | sample | platform dir | category | files | bytes | GiB |
 |---|---|---|---|---|---|
@@ -10,6 +12,7 @@ Source: S3 ListObjectsV2 on s3://giab, 2026-08-13. Sizes are exact byte sums.
 | HG001 | BGISEQ500 | bgi_mgi | 19 | 702199436156 | 654.0 |
 | HG001 | CompleteGenomics_normal | complete_genomics | 59 | 501542582234 | 467.1 |
 | HG001 | CompleteGenomics_normal_RMDNA | complete_genomics | 597 | 1739597712380 | 1,620.1 |
+| HG001 | Element_AVITI_20240920 | other | 12 | 452049791297 | 421.0 |
 | HG001 | Garvan_NA12878_HG001_HiSeq_Exome | exome | 28 | 42082351521 | 39.2 |
 | HG001 | HudsonAlpha_PacBio_CCS | pacbio_hifi | 20 | 70753508977 | 65.9 |
 | HG001 | MGISEQ | bgi_mgi | 8 | 387014256646 | 360.4 |
@@ -21,7 +24,7 @@ Source: S3 ListObjectsV2 on s3://giab, 2026-08-13. Sizes are exact byte sums.
 | HG001 | PacBio_CCS_15kb_20kb_chemistry2 | pacbio_hifi | 20 | 225179195008 | 209.7 |
 | HG001 | PacBio_SequelII_CCS_11kb | pacbio_hifi | 9 | 118071717440 | 110.0 |
 | HG001 | Ultralong_OxfordNanopore | ont | 6 | 353415034147 | 329.1 |
-| HG001 | analysis | other | 367 | 97854373720 | 91.1 |
+| HG001 | analysis | other | 369 | 509437738253 | 474.5 |
 | HG001 | ion_exome | exome | 6 | 69928314003 | 65.1 |
 | HG001 | stLFR | linked_reads | 8 | 551502577660 | 513.6 |
 | HG002 | 10XGenomics | linked_reads | 3 | 64566886820 | 60.1 |
@@ -33,10 +36,12 @@ Source: S3 ListObjectsV2 on s3://giab, 2026-08-13. Sizes are exact byte sums.
 | HG002 | CompleteGenomics_normal_RMDNA | complete_genomics | 607 | 1938371319975 | 1,805.2 |
 | HG002 | Dovetail_ChicagoLibraties | other | 13 | 25356952859 | 23.6 |
 | HG002 | Element_AVITI_20231018 | other | 20 | 977851167572 | 910.7 |
+| HG002 | Element_AVITI_20240920 | other | 12 | 459824111998 | 428.2 |
+| HG002 | HG002B-PhaseGenomics-20241031 | other | 14 | 414415156890 | 386.0 |
 | HG002 | HiC_downsampled | other | 10 | 228380008054 | 212.7 |
 | HG002 | Illumina_PCRfree_downsampled | illumina_wgs | 4 | 88750315079 | 82.7 |
 | HG002 | MGISEQ | bgi_mgi | 8 | 444393747194 | 413.9 |
-| HG002 | NIST_BGIseq_2x150bp_100x | bgi_mgi | 35 | 1185850028421 | 1,104.4 |
+| HG002 | NIST_BGIseq_2x150bp_100x | bgi_mgi | 38 | 1185852050769 | 1,104.4 |
 | HG002 | NIST_HiSeq_HG002_Homogeneity-10953946 | illumina_wgs | 2069 | 2519428085259 | 2,346.4 |
 | HG002 | NIST_Illumina_2x250bps | illumina_wgs | 78 | 475674590746 | 443.0 |
 | HG002 | NIST_SOLiD5500W | other | 30 | 1111109922208 | 1,034.8 |
@@ -63,6 +68,7 @@ Source: S3 ListObjectsV2 on s3://giab, 2026-08-13. Sizes are exact byte sums.
 | HG003 | BioNano_DLE | other | 132 | 5828567126 | 5.4 |
 | HG003 | CompleteGenomics_normal_RMDNA | complete_genomics | 603 | 1990685548323 | 1,854.0 |
 | HG003 | Dovetail_ChicagoLibraties | other | 13 | 17932119145 | 16.7 |
+| HG003 | Element_AVITI_20240920 | other | 12 | 447676515973 | 416.9 |
 | HG003 | HiC_UCSC | other | 34 | 73951440295 | 68.9 |
 | HG003 | MGISEQ | bgi_mgi | 4 | 191272818607 | 178.1 |
 | HG003 | NIST_HiSeq_HG003_Homogeneity-12389378 | illumina_wgs | 2228 | 2521277562873 | 2,348.1 |
@@ -70,7 +76,7 @@ Source: S3 ListObjectsV2 on s3://giab, 2026-08-13. Sizes are exact byte sums.
 | HG003 | NIST_Stanford_Illumina_6kb_matepair | illumina_wgs | 11 | 192398755735 | 179.2 |
 | HG003 | NIST_Stanford_Moleculo | illumina_wgs | 9216 | 132338847307 | 123.3 |
 | HG003 | OsloUniversityHospital_Exome | exome | 2 | 8976828496 | 8.4 |
-| HG003 | PacBio_CCS_15kb_20kb_chemistry2 | pacbio_hifi | 58 | 706947189440 | 658.4 |
+| HG003 | PacBio_CCS_15kb_20kb_chemistry2 | pacbio_hifi | 59 | 706947189877 | 658.4 |
 | HG003 | PacBio_CCS_Google_15kb | pacbio_hifi | 8 | 48245474817 | 44.9 |
 | HG003 | PacBio_CCS_HudsonAlpha_14kb_15kb_19kb | pacbio_hifi | 36 | 204785799675 | 190.7 |
 | HG003 | PacBio_HiFi-Revio_20231031 | pacbio_hifi | 10 | 296252393361 | 275.9 |
@@ -86,6 +92,7 @@ Source: S3 ListObjectsV2 on s3://giab, 2026-08-13. Sizes are exact byte sums.
 | HG004 | BioNano_DLE | other | 132 | 6667088102 | 6.2 |
 | HG004 | CompleteGenomics_normal_RMDNA | complete_genomics | 589 | 1875792873985 | 1,747.0 |
 | HG004 | Dovetail_ChicagoLibraties | other | 13 | 18630481762 | 17.4 |
+| HG004 | Element_AVITI_20240920 | other | 12 | 489276112783 | 455.7 |
 | HG004 | HiC_UCSC | other | 34 | 71772973554 | 66.8 |
 | HG004 | MGISEQ | bgi_mgi | 8 | 380075591092 | 354.0 |
 | HG004 | NIST_HiSeq_HG004_Homogeneity-14572558 | illumina_wgs | 2242 | 2883807704868 | 2,685.8 |
@@ -106,11 +113,12 @@ Source: S3 ListObjectsV2 on s3://giab, 2026-08-13. Sizes are exact byte sums.
 | HG005 | BioNano | other | 9 | 874244104 | 0.8 |
 | HG005 | CompleteGenomics_normal_RMDNA | complete_genomics | 597 | 1928327554836 | 1,795.9 |
 | HG005 | CompleteGenomics_normal_cellsDNA | complete_genomics | 611 | 2002058649304 | 1,864.6 |
+| HG005 | Element_AVITI_20240920 | other | 12 | 450278970217 | 419.4 |
 | HG005 | HG005_NA24631_son_HiSeq_300x | illumina_wgs | 439 | 3272926125262 | 3,048.1 |
 | HG005 | HudsonAlpha_PacBio_CCS | pacbio_hifi | 23 | 127561620641 | 118.8 |
 | HG005 | MGISEQ | bgi_mgi | 6 | 442229557306 | 411.9 |
 | HG005 | MtSinai_PacBio | pacbio_clr | 149 | 1858315901637 | 1,730.7 |
-| HG005 | NIST_BGIseq_2x150bp_100x | bgi_mgi | 35 | 1107201326692 | 1,031.2 |
+| HG005 | NIST_BGIseq_2x150bp_100x | bgi_mgi | 38 | 1107203349053 | 1,031.2 |
 | HG005 | NIST_SOLiD5500W | other | 30 | 978329781263 | 911.1 |
 | HG005 | NIST_Stanford_Illumina_6kb_matepair | illumina_wgs | 11 | 198204874102 | 184.6 |
 | HG005 | NIST_Stanford_Moleculo | illumina_wgs | 6144 | 71656319336 | 66.7 |
@@ -118,7 +126,7 @@ Source: S3 ListObjectsV2 on s3://giab, 2026-08-13. Sizes are exact byte sums.
 | HG005 | PacBio_CCS_15kb_20kb_chemistry2 | pacbio_hifi | 22 | 395934064863 | 368.7 |
 | HG005 | PacBio_SequelII_CCS_11kb | pacbio_hifi | 9 | 132095148680 | 123.0 |
 | HG005 | Strand-Seq_BCCRC | other | 92 | 11700493648 | 10.9 |
-| HG005 | UCSC_Ultralong_OxfordNanopore_Promethion | ont | 12 | 565785557098 | 526.9 |
+| HG005 | UCSC_Ultralong_OxfordNanopore_Promethion | ont | 14 | 565785559126 | 526.9 |
 | HG005 | ion_exome | exome | 9 | 223024778944 | 207.7 |
 | HG005 | stLFR | linked_reads | 7 | 460917683287 | 429.3 |
 | HG006 | BGISEQ500 | bgi_mgi | 4 | 206644164737 | 192.5 |
@@ -130,7 +138,7 @@ Source: S3 ListObjectsV2 on s3://giab, 2026-08-13. Sizes are exact byte sums.
 | HG006 | PacBio_HiFi_Google | pacbio_hifi | 5 | 59746453381 | 55.6 |
 | HG006 | PacBio_MtSinai | pacbio_clr | 64 | 924231091315 | 860.8 |
 | HG006 | Strand-Seq_BCCRC | other | 50 | 6884908114 | 6.4 |
-| HG006 | UCSC_Ultralong_OxfordNanopore_Promethion | ont | 12 | 504935708148 | 470.3 |
+| HG006 | UCSC_Ultralong_OxfordNanopore_Promethion | ont | 14 | 504935710220 | 470.3 |
 | HG006 | stLFR | linked_reads | 5 | 453450809594 | 422.3 |
 | HG007 | BGISEQ500 | bgi_mgi | 4 | 224430646661 | 209.0 |
 | HG007 | CompleteGenomics_normal_cellsDNA | complete_genomics | 613 | 2005195739771 | 1,867.5 |
@@ -141,47 +149,79 @@ Source: S3 ListObjectsV2 on s3://giab, 2026-08-13. Sizes are exact byte sums.
 | HG007 | PacBio_HiFi_Google | pacbio_hifi | 5 | 47771044860 | 44.5 |
 | HG007 | PacBio_MtSinai | pacbio_clr | 60 | 911185487343 | 848.6 |
 | HG007 | Strand-Seq_BCCRC | other | 72 | 8318936579 | 7.7 |
-| HG007 | UCSC_Ultralong_OxfordNanopore_Promethion | ont | 12 | 410097622927 | 381.9 |
+| HG007 | UCSC_Ultralong_OxfordNanopore_Promethion | ont | 14 | 410097624999 | 381.9 |
 | HG007 | stLFR | linked_reads | 5 | 462603243725 | 430.8 |
+| HG008 | (root) | other | 3 | 13400 | 0.0 |
+| HG008 | Liss_lab/Arima_HiC-ILMN_20240112 | other | 7 | 320951681869 | 298.9 |
+| HG008 | Liss_lab/BCM_ILMN-WGS_20251124 | illumina_wgs | 14 | 601674227277 | 560.4 |
+| HG008 | Liss_lab/BCM_Illumina-WGS_20240313 | illumina_wgs | 24 | 1482434563822 | 1,380.6 |
+| HG008 | Liss_lab/BCM_Revio_20240313 | pacbio_hifi | 22 | 812686266796 | 756.9 |
+| HG008 | Liss_lab/Bionano_OpticalMapping_20231019 | other | 6 | 2856757806 | 2.7 |
+| HG008 | Liss_lab/Bioskryb_ResolveDNA_20230914 | other | 8 | 43677262800 | 40.7 |
+| HG008 | Liss_lab/Dovetail_LinkPrep-ILMN_HG8NP_20250625 | other | 11 | 224899371958 | 209.5 |
+| HG008 | Liss_lab/Element-AVITI-20241216 | other | 26 | 2057894507763 | 1,916.6 |
+| HG008 | Liss_lab/Element_AVITI_20240118 | other | 20 | 834444303781 | 777.1 |
+| HG008 | Liss_lab/Element_AVITI_20240626 | other | 56 | 2452078000016 | 2,283.7 |
+| HG008 | Liss_lab/HG008-T_bioskryb-libraries-UG100 | other | 3 | 173708 | 0.0 |
+| HG008 | Liss_lab/NYGC_Illumina-WGS_20231023 | illumina_wgs | 58 | 1857940849538 | 1,730.3 |
+| HG008 | Liss_lab/Northeastern-ONT-UL-20241216 | ont | 9 | 576381644407 | 536.8 |
+| HG008 | Liss_lab/Northeastern_ONT-std_20240422 | ont | 64 | 2977190375582 | 2,772.7 |
+| HG008 | Liss_lab/PacBio_Onso_20240415 | other | 18 | 1305499239051 | 1,215.8 |
+| HG008 | Liss_lab/PacBio_Revio_20240125 | pacbio_hifi | 17 | 684260969954 | 637.3 |
+| HG008 | Liss_lab/UCSC_ONT-UL_20231207 | ont | 12 | 468938869860 | 436.7 |
+| HG008 | Liss_lab/UCSC_ONT_20231003 | ont | 11 | 547741921555 | 510.1 |
+| HG008 | Liss_lab/Ultima-ppmSeq-UG100-20241028 | other | 7 | 481463325068 | 448.4 |
+| HG008 | Liss_lab/Ultima_UG100-WGS_20240530 | other | 14 | 1561546827897 | 1,454.3 |
+| HG008 | Liss_lab/analysis | other | 1614 | 1854819718735 | 1,727.4 |
+| HG008 | Liss_lab/other_passages | illumina_wgs | 16 | 422356526332 | 393.4 |
+| HG008 | Liss_lab/other_passages | ont | 1097 | 915924902341 | 853.0 |
+| HG008 | Liss_lab/other_passages | other | 34 | 4155649045 | 3.9 |
+| HG008 | Liss_lab/superseded-2022-data | other | 224 | 1896951891342 | 1,766.7 |
+| HG008 | NIST/HG008-T_bulk | illumina_wgs | 28 | 746381610275 | 695.1 |
+| HG008 | NIST/HG008-T_bulk | other | 1320 | 1255529749702 | 1,169.3 |
+| HG008 | NIST/HG008-T_bulk | pacbio_hifi | 9 | 101484184828 | 94.5 |
+| HG008 | NIST/HG008-T_clones | illumina_wgs | 94 | 2040519961687 | 1,900.4 |
+| HG008 | NIST/HG008-T_clones | other | 396 | 16666307650 | 15.5 |
+| HG008 | NIST/HG008-T_clones | pacbio_hifi | 74 | 973758341728 | 906.9 |
+| HG009 | NIST/HG009-N_bulk | illumina_wgs | 39 | 1030502240045 | 959.7 |
+| HG009 | NIST/HG009-N_bulk | other | 54 | 178255624709 | 166.0 |
+| HG009 | NIST/HG009-N_bulk | pacbio_hifi | 121 | 459969692614 | 428.4 |
+| HG009 | NIST/HG009-T_bulk | illumina_wgs | 26 | 708043024405 | 659.4 |
+| HG009 | NIST/HG009-T_bulk | other | 42 | 8427123035 | 7.8 |
+| HG009 | NIST/HG009-T_bulk | pacbio_hifi | 112 | 359228648205 | 334.6 |
+| HG009 | NIST/HG009-T_clones | illumina_wgs | 72 | 1988516117548 | 1,851.9 |
+| HG009 | NIST/HG009-T_clones | other | 154 | 255363873330 | 237.8 |
+| HG009 | NIST/HG009-T_clones | pacbio_hifi | 330 | 835995990228 | 778.6 |
 
-## HG008 (data_somatic/HG008/, T + N-D + N-P 통합)
+## GIAB FTP — release / RNA-seq / trio analysis
 
-| sample | platform dir | category | files | bytes | GiB |
-|---|---|---|---|---|---|
-| HG008 | Arima_HiC-ILMN_20240112 | other | 7 | 320951681869 | 298.9 |
-| HG008 | BCM_Illumina-WGS_20240313 | illumina_wgs | 24 | 1482434563822 | 1,380.6 |
-| HG008 | BCM_Revio_20240313 | pacbio_hifi | 22 | 812686266796 | 756.9 |
-| HG008 | Bionano_OpticalMapping_20231019 | other | 6 | 2856757806 | 2.7 |
-| HG008 | Bioskryb_ResolveDNA_20230914 | other | 8 | 43677262800 | 40.7 |
-| HG008 | Element-AVITI-20241216 | other | 26 | 2057894507763 | 1,916.6 |
-| HG008 | Element_AVITI_20240118 | other | 20 | 834444303781 | 777.1 |
-| HG008 | Element_AVITI_20240626 | other | 56 | 2452078000016 | 2,283.7 |
-| HG008 | HG008-T_bioskryb-libraries-UG100 | other | 3 | 173708 | 0.0 |
-| HG008 | HG008-T_bulk | other | 24 | 187511479932 | 174.6 |
-| HG008 | HG008-T_clones | other | 14 | 1233861 | 0.0 |
-| HG008 | Liss_lab(root) | other | 1 | 163 | 0.0 |
-| HG008 | NIST(root) | other | 1 | 163 | 0.0 |
-| HG008 | NYGC_Illumina-WGS_20231023 | illumina_wgs | 58 | 1857940849538 | 1,730.3 |
-| HG008 | Northeastern-ONT-UL-20241216 | ont | 9 | 576381644407 | 536.8 |
-| HG008 | Northeastern_ONT-std_20240422 | ont | 61 | 2957621904648 | 2,754.5 |
-| HG008 | PacBio_Onso_20240415 | other | 18 | 1305499239051 | 1,215.8 |
-| HG008 | PacBio_Revio_20240125 | pacbio_hifi | 17 | 684260969954 | 637.3 |
-| HG008 | UCSC_ONT-UL_20231207 | ont | 12 | 468938869860 | 436.7 |
-| HG008 | UCSC_ONT_20231003 | ont | 11 | 547741921555 | 510.1 |
-| HG008 | Ultima-ppmSeq-UG100-20241028 | other | 7 | 481463325068 | 448.4 |
-| HG008 | Ultima_UG100-WGS_20240530 | other | 14 | 1561546827897 | 1,454.3 |
-| HG008 | analysis | other | 979 | 1775184906138 | 1,653.3 |
-| HG008 | superseded-2022-data | other | 163 | 1895227684823 | 1,765.1 |
+| manifest | top dir | files | bytes | GiB |
+|---|---|---|---|---|
+| release_truthsets | release/AshkenazimTrio | 1180 | 128308749695 | 119.5 |
+| release_truthsets | release/ChineseTrio | 620 | 87152917251 | 81.2 |
+| release_truthsets | release/NA12878_HG001 | 319 | 24217143965 | 22.6 |
+| release_truthsets | release/genome-stratifications | 5780 | 87278991554 | 81.3 |
+| release_truthsets | release/references | 90 | 14723175859 | 13.7 |
+| rnaseq_all | data_RNAseq/AshkenazimTrio | 250 | 5715521657718 | 5,323.0 |
+| rnaseq_all | data_RNAseq/ChineseTrio | 74 | 1478063609297 | 1,376.6 |
+| rnaseq_all | data_somatic/HG008 | 47 | 69845792637 | 65.0 |
+| rnaseq_all | data_somatic/HG009 | 76 | 189772084201 | 176.7 |
+| trio_analysis | data/AshkenazimTrio | 403 | 77566717628 | 72.2 |
+| trio_analysis | data/ChineseTrio | 12 | 599990202 | 0.6 |
 
-release/ (truth sets + stratifications + references): 4110 files, 240.8 GiB
+## 외부 유래 (GIAB FTP 밖)
 
-## External (non-GIAB) short reads added 2026-09-17 — source: HTTP HEAD / GCS metadata, exact byte sums
+| 출처 | dsid | files | bytes | GiB |
+|---|---|---|---|---|
+| ENA (phase1) | HG001.PacBio_SequelII_CCS_11kb | 6 | 69345083216 | 64.6 |
+| ENA (phase1) | HG005.PacBio_SequelII_CCS_11kb | 6 | 75867657967 | 70.7 |
+| Google/HPRC (phase3) | HG002.NovaSeqX_30x | 2 | 44513333177 | 41.5 |
+| Google/HPRC (phase3) | HG002.NovaSeq_PCRfree_30x | 2 | 52298379117 | 48.7 |
+| Google/HPRC (phase3) | HG003.Illumina_PCRfree_30x | 2 | 93137242657 | 86.7 |
+| Google/HPRC (phase3) | HG003.NovaSeq_PCRfree_30x | 2 | 52988283623 | 49.3 |
+| Google/HPRC (phase3) | HG004.Illumina_PCRfree_30x | 2 | 89386939502 | 83.2 |
+| Google/HPRC (phase3) | HG004.NovaSeq_PCRfree_30x | 2 | 52849271785 | 49.2 |
+| ONT 공개 (phase2) | HG001.Ultralong_OxfordNanopore | 2 | 147337581556 | 137.2 |
+| ONT 공개 (phase2) | HG002.ONT-R10_giab2025.01_PAW70337 | 2 | 171812103620 | 160.0 |
 
-| sample | local dir under /BiO/scratch/ehojune/GIAB_benchmark | category | files | bytes | GiB | source |
-|---|---|---|---|---|---|---|
-| HG002 | external/google_novaseq_pcrfree_30x (HG002.*) | illumina_wgs | 2 | 52298379117 | 48.7 | gs://brain-genomics-public/research/sequencing/fastq/novaseq/wgs_pcr_free/30x/ |
-| HG003 | external/google_novaseq_pcrfree_30x (HG003.*) | illumina_wgs | 2 | 52988283623 | 49.3 | same |
-| HG004 | external/google_novaseq_pcrfree_30x (HG004.*) | illumina_wgs | 2 | 52849271785 | 49.2 | same |
-| HG002 | external/google_novaseqx_hg002_30x | illumina_wgs | 2 | 44513333177 | 41.5 | gs://brain-genomics-public/research/sequencing/fastq/novaseqx/ |
-| HG003 | external/hprc_hiseq30x_subsampled/HG003 | illumina_wgs | 2 | 93137242657 | 86.7 | s3://human-pangenomics/working/HPRC_PLUS/HG002/raw_data/Illumina/parents/HG003/ |
-| HG004 | external/hprc_hiseq30x_subsampled/HG004 | illumina_wgs | 2 | 89386939502 | 83.2 | s3://human-pangenomics/working/HPRC_PLUS/HG002/raw_data/Illumina/parents/HG004/ |
+**합계 81,330 files / 125,950,688,867,801 bytes = 117,300.7 GiB = 114.55 TiB = 126.0 TB** (4경로 전체)

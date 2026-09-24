@@ -626,6 +626,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-23 — md5 전수 검증 재개 준비: 2026-09-09 결과(PASS 73,485 / FAIL 110 / NOREF 3,000)에 2026-09 신규 4,759 files가 빠져 있었고, FAIL의 원인이 낡은 current.tree(FTP 원본 2025-02-28 이후 정지)임을 확인. sidecar 2차 판정과 checksums.md5 등 누락 패턴을 넣어 SGE로 재제출. docs/SIZES.md를 매니페스트 생성기(`build_sizes.py`)로 재생성(HG009·외부 유래 포함). HG008 BioSkryb×UG100 4.4 TiB는 받지 않는 쪽으로 기록(사용자 결정 대기).
 - 2026-09-24 — MGISEQ HG002 정렬 실패의 원인을 찾아 고쳤다: bwa-mem2 2.2.1이 poly-T 150 bp 리드가 몰린 배치에서 SMEM 버퍼를 넘친다(세 실행이 같은 946,145,492 리드에서 죽었다). 리드를 버리지 않고 입력을 4구간 교차로 섞어 끝까지 통과(1,428,410,152 리드, fastp 출력과 일치). 파이프라인이 bwa 실패를 삼키므로 다른 MGI/BGI set도 끝나면 BAM 리드 수 검사를 돌릴 것. [기록](docs/runs/2026-09-24-mgiseq-hg002-bwa-mem2-smem.md)
 - 2026-09-24 — [PacBio] #8 9/9 완료. QC 거짓 경고 39건의 원인 둘(ts/tv 하한, 종양 판정 목록)을 고쳤고, 카탈로그 category 가 other 라 빠져 있던 HG008-T bulk p21·p41 을 등록했다(49 실행 단위). 구간별 hap.py 시험: Revio Clair3 의 INDEL 열세는 90% 가 12bp+ 호모폴리머.
 - 2026-09-24 — [ONT] HG002 R9 두 런(guppy 3.4.5, 3.2.x)을 R10 과 같은 v5.0q 층으로 채점했다. **옛 베이스콜러일수록 v4.2.1 밖 어려운 영역에서 더 무너진다** — SNP F1 R10 0.895 / 3.4.5 0.857 / 3.2.x 0.802, 겹침 층에선 셋 다 0.987 이상이라 안 보이던 차이다. R9 INDEL 은 겹침 층에서도 0.554 이하. [docs/reference/2026-09-24-ont-r10-v5q-stratified.md](docs/reference/2026-09-24-ont-r10-v5q-stratified.md) §6
