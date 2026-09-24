@@ -9,7 +9,7 @@
 | GIAB 숏리드 미완료 기본 run | **155526–155529, 156690 유지**. MGISEQ HG002 복구 BAM 교체·quickcheck 완료, 이전 BAM 보관. 2차 20 set·53샘플은 준비됨, 미제출 | 기존 잡 완료 시 `__DONE__`·`error_list.txt`·BAM 수 확인. 이후 고정 명세의 필요한 기본 run만 이어감 |
 | GIAB PacBio·ONT | 담당자 보고상 PacBio verify **49/49**, 소변이 19런·SV 5런. ONT HG002/3/4 기본 run·QC·채점 완료 | 기존 결과를 비교표에 연결. **업체 롱리드는 수령 대기**(사용자 확인); 받으면 기존 파이프라인 적용 |
 | 다운로드 | 담당자는 phase0 확보 100%와 MD5 잡 **156685 완료**를 보고. 후속 결과는 **draft PR #69**, 검토·머지 보류. `NOREF` **3,752개**는 checksum 검증 성공이 아님 | 확보율과 checksum 판정을 구분해 고정 명세의 gap만 기록. `NOREF`를 검증 성공으로 쓰지 않음 |
-| 범용 bioinfo 개발 / GIAB somatic | bioinfo `f2de95e`: CPU 구현·stub·4 Mb 실행 검증 완료 보고. 전장 검증은 미완. **전장 진행은 사용자 승인**, Desktop PacBio에 직접 시작 지시 예정. 기존 채점 시험 **156691**은 이 표에서 완료 미확인 | PacBio가 bioinfo와 인계·범위를 맞춰 실행. 관리자의 정리 지시로 먼저 전장 제출하지 않음 |
+| 범용 bioinfo 개발 / GIAB somatic | bioinfo `f2de95e`(DeepSomatic 1.10.0 PACBIO tumor-normal, CPU)를 GIAB 에 별도 사본으로 고정 vendor(#70, germline 사본 불변). **HG008 13쌍 전장 실행 중** — 156747–156759, 쌍마다 노드 1대·60슬롯(휴일 지시로 노드 제한 해제), 07:44 전부 `r`·60 shard 확인. 채점 경로는 156691(공개 UCSC 콜셋)로 검증됨. bioinfo 쪽 PR ehojune/bioinfo-agent#57 은 Codex 리뷰 중 | 잡 종료 시 qacct·VCF·`70_submit_somatic.sh --qc` → 쌍별 `62_benchmark_somatic.sh` → 채점표. 기록: [runs/2026-09-25-somatic-wgs.md](runs/2026-09-25-somatic-wgs.md) |
 
 승인된 정리 3건은 06:55 담당 보고상 commit·push 완료: PacBio `e43ca77`, ONT `6a18594`, 다운로드 `5b2c18b`. 각각의 작업 브랜치 결과이며 main 반영과 구분한다. 새 대규모 계산은 없었다. ONT poller 둘은 종료됐다. PR #67은 이미 merge, **#68·#69는 merge 보류**이며 반복 리뷰는 하지 않는다.
 
