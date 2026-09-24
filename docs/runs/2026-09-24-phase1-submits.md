@@ -12,3 +12,15 @@
 - 층 파일은 ONT 세션이 09-23 23:26 에 만든 것(`64_v5q_strata.py`) 그대로다.
 - 서버 conda env(`nfcore312`) python 에는 openpyxl 이 없다. 카탈로그 갱신은 시스템 `python3`(3.14.6)로 돌렸다.
 - 쓰고 버린 서버 worktree 두 개(`~/giab_wt_cat`, `~/giab_wt_cat2`)와 로컬 브랜치는 지웠다.
+
+## 이후 (같은 날)
+
+| 시각 | jobid | 무엇 | 결과 |
+|---|---|---|---|
+| 03:55 | (qalter) | p21·p41 `-p -100`, v5.0q 5잡 `-pe pe_slots 4` (스레드=NSLOTS 라 안전) | 5잡이 숏리드 잡 옆 노드별 빈 4슬롯에서 바로 떴다 |
+| 06:51 | 156674~156684 | 대기 층화 11잡을 qdel 후 `BENCH_STRAT_THREADS=4 BENCH_STRAT_SLOTS=4` 로 재제출 (16스레드 고정이라 qalter 로는 못 줄인다) | 45~80분 · 14.1~14.6 GB, 전부 exit 0 |
+| 15:47 | 156686 | p21·p41 뒤 verify + QC + MultiQC (`qsub_task.sh -w 156667,156668`) | 22:0x exit 0, verify 49/49 |
+| 22:10 | — | 카탈로그 UMD 2행 — 서버 worktree 에서 갱신 → 브랜치 push → #63 | 엑셀 바뀐 행 = 2 |
+
+p21 156667: 5.7h · 54.3 GB. p41 156668: 5.2h · 51.7 GB. 둘 다 shepherd-1-8.
+

@@ -14,7 +14,7 @@
 
 잡이 끝나거나 결정이 바뀌면 **여기부터** 고친다. 고친 내용은 맨 아래 `## 이력` 에 한 줄.
 
-갱신: 2026-09-24 새벽 (PacBio 세션)
+갱신: 2026-09-24 밤 (PacBio 세션)
 
 ## 한눈에 보기 (nbb2 로그인 노드)
 
@@ -36,7 +36,7 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 | 5d | **phase1 v5.0q 층화 채점** (HG002 5런) — v4.2.1 밖을 truth 로. ONT 가 R10 에서 한 것과 같은 층·같은 인터페이스 | **완료** — 겹침 층 대조 0.0007 안. v4.2.1 밖 SNP 는 5런 전부 **DV 우세**(FP 절반), INDEL 은 Revio 에서 DV +0.137. ts/tv 순차분의 DV 초과 SNP 는 **두 truth 가 모두 없는 구간**에 있다 ([수치](reference/2026-09-24-phase1-tstv-regions-and-strat.md#4-v50q-층화--v421-밖을-truth-로-hg002-5런-잡-156669156673)) | 156669~156673, 4 slots, 35~47분, 12.6~13.0 GB | — | — |
 | 6 | phase3 Hiseq-subsampled-30x | **완료** (Success) | — | #7에 포함 | — |
 | 7 | **phase3 평가 설계** — 업체 4곳(gd1~4) + 공개 raw 22 샘플의 VCF를 v4.2.1(+HG002 CMRG·v5.0q)로 hap.py | 미착수 | — | 결과 디렉토리 구조 받으면 phase1·2 `60_benchmark.sh` 모양으로 스크립트 | #1·#3 완료 |
-| 8 | **phase1 HG008-T NIST** — uBAM → BAM → VCF ([상세](backlog.md#8-상세--phase1-hg008-t-9-실행단위-2026-09-22-등록-완료)) | **9/9 완료** (exit 0, wall 4.9~7.0h, maxvmem 49.4~58.3 GB). 전 런 verify 47/47, QC 재판정 끝. **p21·p41 bulk 2런 추가 등록**(카탈로그 category 가 other 라 목록에서 빠져 있었다) — **제출 156667·156668** (qw). 카탈로그 NIST 9행 반영(#54) | 156064~156072 · QC 156592 · p21/p41 156667~8 | p21·p41 제출 → 끝나면 verify·QC → 카탈로그(50_update_catalog, NIST 행 매칭 수정 포함). 채점은 #9 | — |
+| 8 | **phase1 HG008-T NIST** — uBAM → BAM → VCF ([상세](backlog.md#8-상세--phase1-hg008-t-9-실행단위-2026-09-22-등록-완료)) | **완료 — 11/11** (NIST 9 + bulk p21·p41). 전부 exit 0, wall 4.9~7.0h, maxvmem 49.4~58.3 GB. 전 런 verify **49/49**, QC 재판정 끝, 카탈로그 11행 반영(#54·#63) | 156064~156072 · 156667~8 · QC 156592·156686 | 채점은 #9 | — |
 | 9 | **HG008-T somatic 평가** — germline truth가 없는 HG008/HG009를 채점할 유일한 길 ([상세](backlog.md#9-상세--somatic-평가-방법-b-결정-2026-09-22)) | **방법 B 결정**(somatic caller 추가). 구현은 bioinfo-agent 쪽에 위임 — 프롬프트 [runs/2026-09-23-bioinfo-agent-somatic-handoff.md](runs/2026-09-23-bioinfo-agent-somatic-handoff.md) | — | 받은 커밋을 재-vendor → 쌍 11개 제출 → smvar V0.3 기준 `62_benchmark_somatic.sh`(가칭) | bioinfo-agent 커밋 해시. CPU 로 2주를 넘기면 외부 H100 요청 |
 | 10 | **phase1↔phase2 표준화 잔여** — phase2 에 있고 phase1 에 없는 것 7개 ([상세](backlog.md#표준화-백로그-10)) | 부분 완료 — 09-23 `62_tstv_regions.sh` phase1 이식. 거꾸로 phase1 에만 있는 것 2개가 생겼다(`STRAT=1`, `qsub_task.sh`) | — | phase3까지 같은 모양으로 | 급하지 않음 |
 | 11 | **phase3 2차 입력 준비** — 1차 밖 숏리드 WGS 전부(HG001·HG005~HG009 + HG002 잔여 2) 53 샘플 / 20 set ([표](../phase3_shortread_wgs/README.md#2차-입력-2026-09-23--나머지-숏리드-전부)) | **적용함** 09-23 22:42 — 20 set·53 샘플 dir, 링크 14, sampleinfo 53행(백업 `.bak-20260923-224239`). 병합 23:29 기준 8/46 완료, READY 6 set | cat 156594~156639 (`--lanes 8`, 큰 것부터) | README 2차 절의 READY 한 줄로 set별 확인 → READY인 set부터 사용자가 국통바빅 실행. germline 11 set 먼저 권장 | 병합 약 11 TiB. somatic 9 set은 국통바빅으로 정렬·QC까지 — 채점은 #9(방법 B) 몫이고, 같은 배치 안 숏리드 T/N 쌍(BCM-2024·NYGC-2023 등)을 그 입력으로 쓸 수 있다 |
@@ -52,6 +52,7 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 
 ## 이력
 
+- 2026-09-24 밤 — [PacBio] **#8 닫음 — HG008-T NIST 11런 전부 처리**(p21 5.7h·54.3 GB, p41 5.2h·51.7 GB, 둘 다 29x·평균 리드 22~25 kb). 전 런 verify 49/49. QC 에 마지막으로 남은 종양 `N50미산출` 은 원인이 확인됐다 — whatshap `block_n50` 은 NG50 이라 LOH 로 블록이 유전체 절반을 못 덮으면 정의상 0(ONT 세션이 09-18 에 찾은 것, phase1 문구를 맞춤 #62). 카탈로그 UMD 2행 반영(#63). PacBio 쪽 남은 일은 #9(bioinfo-agent 위임 대기)와 최종 보고.
 - 2026-09-24 — [다운로드 세션] md5 전수 검증 재제출 **잡 156685**(`sge_md5_verify.sh`, 8슬롯; 옛 스크립트 잡 156589는 qdel). 대상 ≈ 7,870 files(신규 4,759 + FAIL 110 + NOREF 3,000 재검사). 판정은 tree+sidecar 2단(#40). 끝나면 `SUMMARY=1 bash phase0_download/scripts/md5_verify_all.sh all`. #37·#40 머지, Yuan에 다운로드 세션 교훈 11건 수확(ehojune/Yuan#6) — HARVEST 15행에 표시.
 - 2026-09-24 오전 — [PacBio] **구간별 hap.py 19런 완료, 중간 보고서의 열린 질문 둘이 닫혔다.** Sequel I 의 INDEL 격차는 거의 전부 12bp+ 호모폴리머다(호모폴리머 밖에서는 Sequel I 도 0.995 로 같다, 오류의 83~87% 가 그 안). Revio 에서 Clair3 가 지는 곳도 같다(C3 오류의 80~91%). CCS_15kb 의 INDEL↔SV 순위 역전은 모순이 아니다 — 긴 호모폴리머 1~2bp indel 은 SV 와 다른 오류 유형이다. 27x 이하 다섯 런은 호모폴리머 밖에서도 떨어진다(심도). 대기 11잡을 4스레드로 다시 넣어 반나절 걸릴 것을 3시간에 끝냈다.
 - 2026-09-24 07:50 — [숏리드 세션] MGISEQ HG002 정렬 BAM **VALIDATED**(primary 1,428,410,152 = fastp, 156648 exit 0, 3h28m, maxvmem 27.2 GB). `09_swap_sorted_bam.sh` dry-run을 실제 set에 돌려 계획만 확인했다 — 교체와 MGISEQ set 재개는 사용자 몫.
