@@ -31,7 +31,8 @@ RT="$HERE/../run_table.tsv"
 # 61_benchmark_sv.sh 와 같은 방식 — 파이프라인이 실제로 쓴 판을 그대로 쓴다.
 BT_IMG="$(p2_img_path "$(p2_container_uris | grep '/bcftools:')")"
 [ -s "$BT_IMG" ] || { echo "ERROR: bcftools 컨테이너가 없다 ($BT_IMG) — 01_prepare_login_node.sh 먼저" >&2; exit 1; }
-bt() { singularity exec -B "$GIAB_ROOT:$GIAB_ROOT" "$BT_IMG" bcftools "$@"; }
+# RUN_BASE 도 따로 바인드한다 — env.local.sh 로 GIAB_ROOT 밖에 두면 안 보인다 (phase1 판과 맞춤, PR #38 Codex).
+bt() { singularity exec -B "$GIAB_ROOT:$GIAB_ROOT" -B "$RUN_BASE:$RUN_BASE" "$BT_IMG" bcftools "$@"; }
 
 # 60_benchmark.sh 의 bench_truth 와 같은 해석. BED 만 쓴다.
 truth_bed() {
@@ -79,12 +80,16 @@ run_one() {  # dsid sample dataset dv_model
 
         local a_snp a_ind a_ts a_tv i_snp i_ind i_ts i_tv o_snp o_ind o_ts o_tv
         IFS=$'\t' read -r a_snp a_ind a_ts a_tv < <(count_region "$vcf")
-        IFS=$'\t' read -r i_snp i_ind i_ts i_tv < <(count_region -R "$bed" "$vcf")
-        IFS=$'\t' read -r o_snp o_ind o_ts o_tv < <(count_region -T "^$bed" "$vcf")
+        # 겹침 규칙을 둘 다 POS 로 못박는다. bcftools 기본값은 -R 이 레코드 겹침, -T 가 POS 라서
+        # 구간 밖에서 시작해 안으로 걸치는 결실이 안·밖 양쪽에 세어진다. SNP 는 길이 1 이라 영향이
+        # 없지만 INDEL 은 틀린다 (phase1 판과 맞춤, PR #38 Codex). 2026-09-25 전 phase2 INDEL 열은 이 오류를 안고 있었다.
+        IFS=$'\t' read -r i_snp i_ind i_ts i_tv < <(count_region -R "$bed" --regions-overlap pos "$vcf")
+        IFS=$'\t' read -r o_snp o_ind o_ts o_tv < <(count_region -T "^$bed" --targets-overlap pos "$vcf")
 
         # count_region 이 죽어도 read 는 성공한다 (빈 값). 빈 문자열은 $(( )) 에서 0 이 되므로
         # 세 번 다 실패하면 0+0==0 으로 아래 대조를 통과해 버린다 — 먼저 값이 왔는지 본다.
-        for v in "$a_snp" "$a_ts" "$a_tv" "$i_snp" "$i_ts" "$i_tv" "$o_snp" "$o_ts" "$o_tv"; do
+        for v in "$a_snp" "$a_ind" "$a_ts" "$a_tv" "$i_snp" "$i_ind" "$i_ts" "$i_tv" \
+                 "$o_snp" "$o_ind" "$o_ts" "$o_tv"; do
             [ -n "$v" ] || { echo "ERROR: $dsid/$c bcftools stats 가 값을 안 냈다" >&2; return 1; }
         done
         [ "$a_snp" -gt 0 ] || { echo "ERROR: $dsid/$c PASS SNP 가 0 이다 — VCF 를 확인할 것" >&2; return 1; }
@@ -92,11 +97,12 @@ run_one() {  # dsid sample dataset dv_model
         # 여기서 막는다. 합이 안 맞으면 구간 분할이 우리 생각과 다르게 된 것이고,
         # 그 상태의 숫자는 쓰면 안 된다 (조용히 틀린 값이 문서에 박히는 경로다).
         if [ $((i_snp + o_snp)) -ne "$a_snp" ] || [ $((i_ts + o_ts)) -ne "$a_ts" ] \
-           || [ $((i_tv + o_tv)) -ne "$a_tv" ]; then
+           || [ $((i_tv + o_tv)) -ne "$a_tv" ] || [ $((i_ind + o_ind)) -ne "$a_ind" ]; then
             echo "ERROR: $dsid/$c 구간 분할 불일치 — 안+밖 != 전체" >&2
             echo "  SNP  안 $i_snp + 밖 $o_snp = $((i_snp + o_snp))  vs 전체 $a_snp" >&2
             echo "  ts   안 $i_ts + 밖 $o_ts = $((i_ts + o_ts))  vs 전체 $a_ts" >&2
             echo "  tv   안 $i_tv + 밖 $o_tv = $((i_tv + o_tv))  vs 전체 $a_tv" >&2
+            echo "  INDEL 안 $i_ind + 밖 $o_ind = $((i_ind + o_ind))  vs 전체 $a_ind" >&2
             return 1
         fi
 
@@ -110,14 +116,17 @@ want=("$@")
 n=0
 # 열 위치를 손으로 세지 않는다 — awk 가 필요한 넷만 골라 넘긴다.
 # (dsid 1 / sample 2 / dataset 3 / dv_model 10 / dup_of 12. 헤더가 정본이다.)
-while IFS=$'\t' read -r dsid sample dataset dv; do
+# dup 런(dup_of 있음)은 인자 없이 돌 때 뺀다. dsid 로 콕 집으면 센다 — 같은 플로우셀 베이스콜러 비교용.
+while IFS=$'\t' read -r dsid sample dataset dv dup; do
     [ -n "$dsid" ] || continue
     if [ ${#want[@]} -gt 0 ]; then
         printf '%s\n' "${want[@]}" | grep -qxF "$dsid" || continue
+    elif [ -n "$dup" ]; then
+        continue
     fi
     run_one "$dsid" "$sample" "$dataset" "$dv" || exit 1
     n=$((n + 1))
-done < <(awk -F'\t' 'NR>1 && NF && $12=="" {print $1"\t"$2"\t"$3"\t"$10}' "$RT")
+done < <(awk -F'\t' 'NR>1 && NF {print $1"\t"$2"\t"$3"\t"$10"\t"$12}' "$RT")
 
 [ "$n" -gt 0 ] || { echo "대상이 없다 — dsid 를 확인할 것"; exit 1; }
 
