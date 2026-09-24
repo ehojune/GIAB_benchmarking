@@ -34,3 +34,5 @@ tstv_regions.tsv
 # 편집 중 백업
 *.bak
 phase*/phase*_somatic_summary.tsv
+# 70_submit_somatic.sh --qc 산출
+phase*/phase*_somatic_qc.tsv
