@@ -203,7 +203,7 @@ SV는 실측 최대 136 GB라 노드당 1잡(33슬롯)으로 두었다.
 | | 상태 |
 |---|---|
 | HG008-T NIST 11런 (bulk p21·p41·p100 + 클론 8) | 기본처리·QC **완료**(09-24). germline truth 없음(`no-truth`) — 정확도는 말하지 않는다 |
-| HG008-T somatic 평가 | 범위 밖(2026-09-25 [SCOPE](../SCOPE.md)). 쌍 표 `phase1_pacbio_hifi/somatic_pairs.tsv` 와 채점 스크립트 `62_benchmark_somatic.sh` 만 준비됐고, 스크립트 검증 잡 156691(공개 UCSC DeepSomatic 콜셋)은 09-25 확인 시 qw — 결과 없음 |
+| HG008-T somatic 평가 | 기본 비교와 별도이며 **전장 진행은 사용자 승인**. Claude Desktop PacBio 담당에게 직접 시작 지시 예정([SCOPE](../SCOPE.md)). 쌍 표 `phase1_pacbio_hifi/somatic_pairs.tsv` 와 채점 스크립트 `62_benchmark_somatic.sh` 만 준비됐고, 스크립트 검증 잡 156691(공개 UCSC DeepSomatic 콜셋)은 09-25 확인 시 qw — 결과 없음 |
 | 업체 롱리드 | raw 미수령. 들어오면 같은 파이프라인·같은 조건으로 위 기준표에 추가 |
 
 미확인으로 남은 것(추가 분석 안 함): SV recall 이 낮은 이유가 v5.0q 어려운 영역 때문인지, `CCS_15kb` 의 CCS pass 수.
