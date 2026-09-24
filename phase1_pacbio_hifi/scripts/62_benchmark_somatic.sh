@@ -30,7 +30,9 @@ source "$HERE/lib.sh"
 TRUTH_VCF="$SOMATIC_TRUTH_DIR/HG008-T_somatic_smvar_benchmark_v0.3_tumorvariants.vcf.gz"
 TIERS="${SOMATIC_BED_TIERS:-nogermlineinterference all}"
 BT_IMG="$(p1_img_path "$(p1_container_uris | grep '/bcftools:')")"
-bt() { singularity exec -B "$GIAB_ROOT:$GIAB_ROOT" -B "$RUN_BASE:$RUN_BASE" -B "$INFRA:$INFRA" "$BT_IMG" "$@"; }
+# 입력 VCF 폴더와 산출 폴더도 따로 바인드한다 — 숏리드 콜셋은 /BiO/scratch/dyl/... 처럼 세 루트 밖에 있다 (PR #67 Codex).
+EXTRA_B=()
+bt() { singularity exec -B "$GIAB_ROOT:$GIAB_ROOT" -B "$RUN_BASE:$RUN_BASE" -B "$INFRA:$INFRA" ${EXTRA_B[@]+"${EXTRA_B[@]}"} "$BT_IMG" "$@"; }
 
 collect() {
     local out="${1:-$P1_DIR/phase1_somatic_summary.tsv}" f n=0
@@ -67,7 +69,11 @@ for t in $TIERS; do
     [ -s "$SOMATIC_TRUTH_DIR/HG008-T_somatic_smvar_benchmark_v0.3_$t.bed" ] \
         || { echo "ERROR: truth BED 없음 — $t (zip 을 풀었는지 확인)"; exit 1; }
 done
-bt bcftools view -h "$vcf" | grep -q '^##FORMAT=<ID=VAF,' \
+vdir=$(cd "$(dirname "$vcf")" && pwd); vcf="$vdir/$(basename "$vcf")"
+mkdir -p "$SOMATIC_BENCH_DIR"; odir=$(cd "$SOMATIC_BENCH_DIR" && pwd)
+EXTRA_B=(-B "$vdir:$vdir" -B "$odir:$odir")
+# grep -q 는 찾자마자 끝나 bcftools 가 SIGPIPE 를 받고, pipefail 이 그걸 "VAF 없음" 으로 만든다 — 끝까지 읽는다
+bt bcftools view -h "$vcf" | grep '^##FORMAT=<ID=VAF,' > /dev/null \
     || { echo "ERROR: $vcf 에 FORMAT/VAF 가 없다 — VAF 필터를 적용할 수 없다"; exit 1; }
 
 out="$SOMATIC_BENCH_DIR/$label"
