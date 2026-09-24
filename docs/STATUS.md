@@ -51,6 +51,7 @@ qstat | awk 'NR>2{n[$3" "$5]++} END{for(k in n) print n[k], k}' | sort -k2; echo
 
 ## 이력
 
+- 2026-09-24 — [다운로드 세션] md5 전수 검증 재제출 **잡 156685**(`sge_md5_verify.sh`, 8슬롯; 옛 스크립트 잡 156589는 qdel). 대상 ≈ 7,870 files(신규 4,759 + FAIL 110 + NOREF 3,000 재검사). 판정은 tree+sidecar 2단(#40). 끝나면 `SUMMARY=1 bash phase0_download/scripts/md5_verify_all.sh all`. #37·#40 머지, Yuan에 다운로드 세션 교훈 11건 수확(ehojune/Yuan#6) — HARVEST 15행에 표시.
 - 2026-09-24 오전 — [PacBio] **구간별 hap.py 19런 완료, 중간 보고서의 열린 질문 둘이 닫혔다.** Sequel I 의 INDEL 격차는 거의 전부 12bp+ 호모폴리머다(호모폴리머 밖에서는 Sequel I 도 0.995 로 같다, 오류의 83~87% 가 그 안). Revio 에서 Clair3 가 지는 곳도 같다(C3 오류의 80~91%). CCS_15kb 의 INDEL↔SV 순위 역전은 모순이 아니다 — 긴 호모폴리머 1~2bp indel 은 SV 와 다른 오류 유형이다. 27x 이하 다섯 런은 호모폴리머 밖에서도 떨어진다(심도). 대기 11잡을 4스레드로 다시 넣어 반나절 걸릴 것을 3시간에 끝냈다.
 - 2026-09-24 07:50 — [숏리드 세션] MGISEQ HG002 정렬 BAM **VALIDATED**(primary 1,428,410,152 = fastp, 156648 exit 0, 3h28m, maxvmem 27.2 GB). `09_swap_sorted_bam.sh` dry-run을 실제 set에 돌려 계획만 확인했다 — 교체와 MGISEQ set 재개는 사용자 몫.
 - 2026-09-24 07:22 — [숏리드 세션] **MGISEQ HG002 해결.** bwa-mem2 2.2.1 segfault의 원인은 SMEM 버퍼 한도(배치 총 염기 수로 잡히는데 150 bp poly-T 리드가 몰린 L04 구역에서 넘친다 — master도 같은 검사로 멈춘다). 리드 빼기·레인 순서 바꾸기로는 안 풀렸고, 병합 입력을 4구간 교차로 섞자(리드 손실 0) 1,428,410,152 리드 끝까지 통과, primary 수 = fastp 출력. 진단 잡 7개(156584~156648) 기록: [runs/2026-09-24-mgiseq-hg002-bwa-mem2-smem.md](runs/2026-09-24-mgiseq-hg002-bwa-mem2-smem.md).
