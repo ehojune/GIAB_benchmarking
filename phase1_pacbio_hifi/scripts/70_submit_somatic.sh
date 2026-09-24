@@ -122,6 +122,7 @@ cat "$csv"
 nextflow run "$PIPE" \\
     -profile singularity \\
     -c "$P1_DIR/conf/kobic.config" \\
+    -c "$P1_DIR/conf/somatic.config" \\
     -work-dir "$INFRA/work/$key" \\
     -resume -ansi-log false \\
     --somatic_input "$csv" \\
