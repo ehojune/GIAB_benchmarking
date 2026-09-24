@@ -1,4 +1,4 @@
-data/NA12878/Garvan_NA12878_HG001_HiSeq_Exome/Garvan_NA12878_HG001_HiSeq_Exome.README	1376
+data/NA12878/Garvan_NA12878_HG001_HiSeq_Exome/Garvan_NA12878_HG001_HiSeq_Exome.README	1089
 data/NA12878/Garvan_NA12878_HG001_HiSeq_Exome/NIST7035_TAAGGCGA_L001_R1_001.fastq.gz	1914722761
 data/NA12878/Garvan_NA12878_HG001_HiSeq_Exome/NIST7035_TAAGGCGA_L001_R1_001_trimmed.fastq.gz	1553400192
 data/NA12878/Garvan_NA12878_HG001_HiSeq_Exome/NIST7035_TAAGGCGA_L001_R2_001.fastq.gz	1954935121
@@ -44,5 +44,5 @@ data/NA12878/ion_exome/IonXpress_020_rawlib.b37.bam	26964896443
 data/NA12878/ion_exome/IonXpress_020_rawlib.b37.bam.bai	5967272
 data/NA12878/ion_exome/IonXpress_020_rawlib.hg19.bam	26964896404
 data/NA12878/ion_exome/IonXpress_020_rawlib.hg19.bam.bai	5967272
-data/NA12878/ion_exome/README.txt	1259
+data/NA12878/ion_exome/README.txt	799
 data/NA12878/ion_exome/bb17523_PSP4_BC20.fastq	15986585353

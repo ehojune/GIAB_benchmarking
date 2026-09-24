@@ -626,6 +626,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-25 — md5 전수 검증 잡 156685 집계·마감: phase0 본체 81,302 files 중 실질검증(PASS*) 77,561, FAIL 39건 전수를 라이브 FTP와 대조해 실손상 0건 확정(5건은 GIAB README 갱신 반영, 원본은 `.bak-20260925` 보존). 매니페스트 바이트 5줄·`docs/SIZES.md` 재생성. 기록: [docs/runs/2026-09-25-md5-verification-followup.md](docs/runs/2026-09-25-md5-verification-followup.md).
 - 2026-09-24 — md5 전수 검증을 SGE 잡 156685로 재제출(sidecar 2차 판정, #40). 다운로드 세션 교훈 11건을 Yuan에 수확(ehojune/Yuan#6) — HARVEST.md 해당 15행에 자산 id 표시. Codex 리뷰 원칙: #37 3라운드·#40 3라운드 반영 후 머지.
 - 2026-09-23 — md5 전수 검증 재개 준비: 2026-09-09 결과(PASS 73,485 / FAIL 110 / NOREF 3,000)에 2026-09 신규 4,759 files가 빠져 있었고, FAIL의 원인이 낡은 current.tree(FTP 원본 2025-02-28 이후 정지)임을 확인. sidecar 2차 판정과 checksums.md5 등 누락 패턴을 넣어 SGE로 재제출. docs/SIZES.md를 매니페스트 생성기(`build_sizes.py`)로 재생성(HG009·외부 유래 포함). HG008 BioSkryb×UG100 4.4 TiB는 받지 않는 쪽으로 기록(사용자 결정 대기).
 - 2026-09-24 — MGISEQ HG002 정렬 실패의 원인을 찾아 고쳤다: bwa-mem2 2.2.1이 poly-T 150 bp 리드가 몰린 배치에서 SMEM 버퍼를 넘친다(세 실행이 같은 946,145,492 리드에서 죽었다). 리드를 버리지 않고 입력을 4구간 교차로 섞어 끝까지 통과(1,428,410,152 리드, fastp 출력과 일치). 파이프라인이 bwa 실패를 삼키므로 다른 MGI/BGI set도 끝나면 BAM 리드 수 검사를 돌릴 것. [기록](docs/runs/2026-09-24-mgiseq-hg002-bwa-mem2-smem.md)
