@@ -1,6 +1,6 @@
 # #7 숏리드 최소 비교 — 회사 gd001~004 vs 공개 NovaSeq 30x (NIST v4.2.1, hap.py)
 
-상태: **채점 0/13 (2026-09-25 07:1x KST).** hap.py preflight 잡 156733이 대기(qw) 중이라 재제출 안 함. gd2 교정 run 156732 실행 중. 비교가 끝난 것이 아니다.
+상태: **채점 0/13 (2026-09-25 07:1x KST).** hap.py preflight 잡 156733이 대기(qw) 중이라 재제출 안 함. gd2 교정 run 156732는 사용자 방침(원래 경로에 준비 후 직접 제출)에 따라 qdel. 비교가 끝난 것이 아니다.
 
 ## 방법 (한 줄씩)
 - 입력: 국통바빅 `outcome/<s>/<s>_v1.1.0.g.vcf.gz`. **gVCF뿐이라**(`<NON_REF>` 블록, 확인함) 그대로 채점하지 않는다.
@@ -50,18 +50,38 @@ sampleinfo는 C…001/002/003 = HG002/3/4, C…004/005/006 = KOR-101/102/103이�
 - 결론: `G000-gd2-20260819`의 결과(VCF·CRAM SM = C…40xx)는 **gd4 원자료로 만든 것**이다. 그대로 보존하고 비교에 쓰지 않는다.
 - jslink 원자료 = gd2 회사 자료(사용자 확인). DNA_ID C…2001–2006이 sampleinfo gd2 행, 업체 Summary(`20260729_KRIBB_Josoobok_WGS_1_Summary.txt`, lane 5, S67–S72)와 일치한다. mate는 R1→`_1`, R2→`_2`이고 첫 read 이름이 R1/R2 쌍으로 맞는다.
 
-**교정 run**
-| 항목 | 값 |
-|---|---|
-| set | `/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819-jslink-20260925` (`PROVENANCE.txt`) |
-| 입력 | `outcome/C…200{1..6}00000G0x1/<id>_{1,2}.fastq.gz` → `data/jslink/<id>_S67…S72_L005_R{1,2}_001.fastq.gz` 심볼릭 링크 12개. 원자료는 손대지 않음 |
-| 성별 | sampleinfo Sheet2 기존 gd2 행(DNA_ID로 조회, `FILTER_BY_SET_ID=false`). 행 추가·수정 없음 |
-| ref | 파이프라인 기본(GATK bundle `Homo_sapiens_assembly38.fasta`, alt-aware) |
-| 실행 | `10_submit_java17.sh`(PR #68 판, Java 17 래퍼) → **job 156732**. 제출 직후 `r`, Snakemake 6/265 steps |
-| 로그 | `…/G000-gd2-20260819-jslink-20260925/log/regermline_java17_G000-gd2-20260819-jslink-20260925.o156732` |
-| 중복 확인 | G000 안 gd2 set은 원래 것 하나뿐, 큐에 gd2/jslink 잡 없었음 |
+**사용자 정본 대응 (이미지1, 2026-09-25)** — 네 회사 모두 순번 1–3 = KOR-101~103 (19375725·19261049·19510479), 4–6 = HG002~004 (NA24385·NA24149·NA24143). 서버 sampleinfo(1–3 = HG, 4–6 = KOR)와 반대다.
 
-- **truth 대응은 추정:** jslink 파일·Summary에 HG/Coriell ID가 없다. HG002/3/4 = C…2001/2002/2003은 sampleinfo에만 기댄다. gd1·gd3에서 sampleinfo 순서가 틀렸으므로 run이 끝나면 chrX/Y 깊이로 먼저 확인하고, 그 뒤에 3개 채점 잡을 낸다(성별만으로 확정하지 않고 recall로 한 번 더 본다).
+| gd2 ID | 실제 샘플 | R1 / R2 원본 (`data/jslink/`) | 성별 · 근거 |
+|---|---|---|---|
+| C000000200100000G0x1 | KOR-101 (19375725) | `…_S67_L005_R1_001` / `R2` | male · sampleinfo의 KOR-101 성별(4회사 공통), gd1·gd3 19375725 chrY 깊이 |
+| C000000200200000G0x1 | KOR-102 (19261049) | `…_S68_…` | female · 같음 |
+| C000000200300000G0x1 | KOR-103 (19510479) | `…_S69_…` | male · 같음 |
+| C000000200400000G0x1 | HG002 (NA24385) | `…_S70_…` | male · GIAB son |
+| C000000200500000G0x1 | HG003 (NA24149) | `…_S71_…` | male · GIAB father |
+| C000000200600000G0x1 | HG004 (NA24143) | `…_S72_…` | female · GIAB mother |
+
+**진행 상태**
+- 교정 set `G000-gd2-20260819-jslink-20260925`: job **156732 qdel**(exit 137, 6/265 steps). 자식 SGE 잡 없음(Snakemake가 잡 안에서 로컬 실행). 준비 이력으로 보존한다. `.snakemake/locks`가 남아 있다.
+- 원래 경로 정리·sampleinfo 수정은 **실행 안 됨**: 서버 쓰기 명령이 이 세션 권한 분류기에 막혔다. 같은 작업을 `scripts/12_prepare_gd2_jslink.sh`로 남겼다(기본 dry-run, `APPLY=1`이면 적용).
+  - 옛 gd2 → `G000-gd2-20260819-bak-gd4input-20260925` rename(삭제 없음, `BACKUP_NOTE.txt`)
+  - 원래 경로에 `outcome/<ID>/<ID>_{1,2}.fastq.gz` → jslink 절대경로 링크 12개만 (이미지2 구조, gd1↔macrogen과 같은 방식). 검사: 12개, 대상이 jslink의 같은 ID·mate, dangling 없음, outcome 밖 항목 0
+  - sampleinfo: `.lock`(03과 같은 lock), 백업 `*.bak-<시각>-gd2fix`, gd2 6행 SEX/note만 바꾼다. 수식 0·표 없음은 확인했다. 대상 밖 칸 불변·행 수·중복 ID를 확인한 뒤 교체한다
+  - 바뀔 값: 2002 male→female, 2003 female→male, 2005 female→male, 2006 male→female. note는 6행 모두 이미지대로 바뀐다
+- **READY 아님**: 위 스크립트가 적용돼야 한다.
+
+**사용자 실행 (적용 뒤)**
+```bash
+source /BiO/scratch/dyl/kbb/bashrc.txt
+cd /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819
+germline /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819
+```
+- `germline`은 bashrc의 alias다(`qsub … germline.sh`). germline.sh 헤더는 `-q shepherd.q`, 60 slot, 300G이고 호스트 제한이 없다.
+- bashrc는 `JAVA_HOME=$CONDA_PREFIX`다. 내 로그인 환경에서는 openjdk 17.0.18이었다. 제출 셸에서 `java -version`이 17인지 먼저 본다(GATK 4.6.1 MarkDuplicatesSpark가 17을 요구). 아니면 `10_submit_java17.sh`를 쓴다.
+
+**발견사항 (보고만)**
+- gd1·gd3: 링크(C…001–003 → 19xxxx, 004–006 → NA24xxx)는 이미지와 맞는다. sampleinfo note·SEX가 반대다.
+- gd4: sampleinfo와 **링크도** 이미지와 반대다. C…4001 → cginvites `HG002_1.fastq.gz`인데, 이미지는 C…4001 = KOR-101이다. hap.py manifest의 gd004 행(C…4001–4003 = HG002–004)은 cginvites 파일명 기준이라 이미지와 다르다. 결과 해석 전에 사용자 확인이 필요하다.
 
 ## 표 (채점 미수집)
 QC는 국통바빅 `analyze_meta/<s>/` (mosdepth 평균 깊이, flagstat mapped%).
@@ -69,7 +89,7 @@ QC는 국통바빅 `analyze_meta/<s>/` (mosdepth 평균 깊이, flagstat mapped%
 | source | label | DNA_ID | 기술 | 깊이 | mapped% | SNP P/R/F1 | INDEL P/R/F1 | 상태 |
 |---|---|---|---|---|---|---|---|---|
 | gd | gd001-HG002 / 3 / 4 | C…1004 / 1005 / 1006 | N/A | 35.84 / 36.59 / 39.72 | 99.99 / 99.99 / 99.98 | — | — | 대기(singularity) |
-| gd | gd002-HG002~4 | C…2001–2003 (추정) | N/A | N/A | N/A | — | — | 교정 run 156732 실행 중 |
+| gd | gd002-HG002~4 | C…2004–2006 (이미지1) | N/A | N/A | N/A | — | — | gd2 준비 스크립트 적용·사용자 제출 대기 |
 | gd | gd003-HG002 / 3 / 4 | C…3004 / 3005 / 3006 | N/A | 29.89 / 30.87 / 30.17 | 99.99 / 99.98 / 99.99 | — | — | 대기 |
 | gd | gd004-HG002 / 3 / 4 | C…4001 / 4002 / 4003 | N/A | 39.86 / 45.98 / 34.73 | 99.97 / 99.98 / 99.98 | — | — | 대기 |
 | public | NovaSeq6000 PCR-free 30x HG002 / 3 / 4 | — | NovaSeq6000 | 29.53 / 29.58 / 29.80 | 99.92 / 99.87 / 99.93 | — | — | 대기 |
