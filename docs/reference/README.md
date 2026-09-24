@@ -4,6 +4,7 @@
 
 | 문서 | 내용 |
 |---|---|
+| [2026-09-25-shortread-happy-before-company-reset.md](2026-09-25-shortread-happy-before-company-reset.md) | 회사 4set 재구성 전 보고서 원문. 옛 QC·명령은 현황이나 실행 지시가 아님 |
 | [server-and-infra.md](server-and-infra.md) | nbb2 클러스터의 안 변하는 사실(노드 스펙·GPU 없음), `_infra` 에 미리 받아 둔 실행 자산(레퍼런스·clair3 모델·컨테이너 16개), 매니페스트 밖에서 받은 것, 자주 쓰는 점검 명령 |
 | [2026-09-24-phase1-tstv-regions-and-strat.md](2026-09-24-phase1-tstv-regions-and-strat.md) | phase1 ts/tv 구간 분할 19런, 구간별 hap.py(시험 1런 → 18런 추가 예정), QC 재판정 — 거짓 경고 39건의 원인 둘 |
 | [catalog_evidence.md](catalog_evidence.md) | master_catalog.tsv의 각 값이 정해진 근거, 검증에서 잡힌 오류, 인용한 GIAB 공식 문서 목록 |
