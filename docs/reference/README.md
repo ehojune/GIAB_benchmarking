@@ -1,9 +1,11 @@
 # docs/reference — 조회용
 
-읽고 지나갈 문서가 아니다. 특정 값의 근거를 의심할 때만 찾아보는 곳이다.
+**조회용 보관소다.** 매번 읽지 말고 필요한 근거만 찾는다. 옛 문서의 작업 지시는 현재 [SCOPE](../SCOPE.md)를 덮어쓰지 않는다.
 
 | 문서 | 내용 |
 |---|---|
+| [조정 전 STATUS](2026-09-25-status-before-scope-reset.md) | 09-25 이전 현황과 전체 이력 보존. 현재 큐가 아님 |
+| [조정 전 backlog](2026-09-25-backlog-before-scope-reset.md) | #8·#9·#10 설계와 당시 판단. 재개 목록이 아님 |
 | [server-and-infra.md](server-and-infra.md) | nbb2 클러스터의 안 변하는 사실(노드 스펙·GPU 없음), `_infra` 에 미리 받아 둔 실행 자산(레퍼런스·clair3 모델·컨테이너 16개), 매니페스트 밖에서 받은 것, 자주 쓰는 점검 명령 |
 | [2026-09-24-phase1-tstv-regions-and-strat.md](2026-09-24-phase1-tstv-regions-and-strat.md) | phase1 ts/tv 구간 분할 19런, 구간별 hap.py(시험 1런 → 18런 추가 예정), QC 재판정 — 거짓 경고 39건의 원인 둘 |
 | [catalog_evidence.md](catalog_evidence.md) | master_catalog.tsv의 각 값이 정해진 근거, 검증에서 잡힌 오류, 인용한 GIAB 공식 문서 목록 |

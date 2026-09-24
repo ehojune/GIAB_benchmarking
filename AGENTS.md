@@ -1,5 +1,9 @@
 # Project agent contract
 
+## 2026-09-25 사용자 방침 — 먼저 읽기
+
+[docs/SCOPE.md](docs/SCOPE.md)가 작업 범위·완료 기준의 정본이다. **이 방침이 아래의 Harvest/Yuan 작업, 문서 동기화, 리뷰 지침보다 우선한다.** GIAB 담당 한 명과 독립된 bioinfo 범용개발 담당 한 명만 진행한다. 자동 리뷰·새 에이전트·범위 확장은 중단하고, 필요한 기본 run·간단 QC·업체 비교를 닫는다. 이력은 `docs/reference/`에 보존하며 STATUS에 다시 쌓지 않는다. 생성 README나 여러 phase의 모양을 맞추려고 일을 늘리지 않는다.
+
 이 repo는 [Yuan](https://github.com/ehojune/Yuan)의 templates/project에서 찍어낸 프로젝트다.
 Yuan의 AGENTS.md가 상위 규약이다.
 
@@ -54,8 +58,8 @@ phase1·phase2 스크립트는 일부러 같은 모양이라 한쪽 교훈이 �
 
 | 파일 | 규칙 |
 |---|---|
-| `docs/STATUS.md` | **현황만 담는다**(2026-09-23 재편). `## 이력`은 맨 아래에 있고 **그 절 맨 위에 한 줄 추가만**. 작업 흐름 표는 **자기 행만** 고친다. 표 구조를 바꿔야 하면 그 PR 하나만 그것을 한다. 안 변하는 것은 [reference/server-and-infra.md](docs/reference/server-and-infra.md), 아직 안 한 일의 상세는 [backlog.md](docs/backlog.md) 로 — **STATUS 에 다시 쌓지 않는다** |
-| `docs/backlog.md` | 자기 phase 의 절만. 일이 끝나면 그 절을 지우고 STATUS 이력에 결과 한 줄 |
+| `docs/STATUS.md` | **현황만 담는다.** 진행 담당이 바뀐 행만 고치고 과거 이력은 다시 쌓지 않는다. 이전 기록은 [reference](docs/reference/README.md), 남은 일은 [backlog.md](docs/backlog.md)에 둔다. 표 구조 변경은 한 담당이 맡는다 |
+| `docs/backlog.md` | 현재 담당의 남은 일만. 일이 끝나면 STATUS 해당 행을 갱신하고 상세 근거는 reference에 둔다 |
 | `docs/decisions.md` | **append only.** 남의 항목을 고치지 않는다. 남의 판단을 뒤집을 때는 새 항목에 "정정" 으로 쓴다 |
 | `HARVEST.md` | 표 끝에 행 추가. 남의 행을 고칠 때는 그 사실을 PR 본문에 쓴다 |
 | `README.md ## Journal` | 맨 위에 한 줄 추가만 |

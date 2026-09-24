@@ -1,8 +1,8 @@
 # phase1 PacBio HiFi 벤치마킹 중간 보고 (2026-09-22, 09-24 갱신)
 
 채점 가능한 것을 전량 채점한 시점의 보고다. 09-24 에 구간별 채점(GIAB strat 25구간)과 v4.2.1 밖 채점(v5.0q, HG002)을
-더했다 — 수치는 [2026-09-24 reference](../reference/2026-09-24-phase1-tstv-regions-and-strat.md). 남은 HG008/HG009는 somatic 평가가 서야
-채점되므로(STATUS #8·#9), 그것까지 끝나면 이 문서를 바탕으로 최종 보고를 다시 쓴다.
+더했다 — 수치는 [2026-09-24 reference](../reference/2026-09-24-phase1-tstv-regions-and-strat.md). 2026-09-25 [범위 조정](../SCOPE.md)에 따라
+HG008/HG009는 기본처리·QC로 닫으며 somatic 평가를 최종 보고의 조건으로 삼지 않는다.
 
 수치 원본은 [소변이·SV 실측 기록](../reference/2026-09-22-pacbio-hifi-benchmark-first-results.md),
 현재 진행 상황은 [STATUS.md](../STATUS.md).
