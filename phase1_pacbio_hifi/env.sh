@@ -89,6 +89,13 @@ export BENCH_STRAT_THREADS="${BENCH_STRAT_THREADS:-16}"
 export BENCH_STRAT_SLOTS="${BENCH_STRAT_SLOTS:-32}"
 export BENCH_STRAT_VMEM="${BENCH_STRAT_VMEM:-120G}"   # 표시용이고 강제되지 않는다
 
+# ── somatic 채점 (62_benchmark_somatic.sh) ───────────────────────────────────
+# NIST HG008-T smvar DraftBenchmark V0.3. BED 셋은 원래 zip 안에만 있어 풀어 둔 것을 쓴다.
+export SOMATIC_TRUTH_DIR="${SOMATIC_TRUTH_DIR:-$GIAB_ROOT/data_somatic/HG008/Liss_lab/analysis/NIST_HG008-T_somatic-smvar_DraftBenchmark_V0.3-20260425}"
+export SOMATIC_MIN_VAF="${SOMATIC_MIN_VAF:-0.05}"     # truth README: VAF 5~10% 미만은 걸러서 비교
+export SOMATIC_BENCH_DIR="${SOMATIC_BENCH_DIR:-$RUN_BASE/_somatic_bench}"
+export AARDVARK="${AARDVARK:-$INFRA/tools/aardvark-v1.0.0/aardvark}"   # PacBio 공식 릴리스 정적 바이너리 (README 권장 도구)
+
 # ── SV 정확도 평가 (61_benchmark_sv.sh) ───────────────────────────────────────
 # **실측 (2026-09-22, phase1 HG002 5런, -t 8)**: maxvmem 91.6 / 96.5 / 99.5 / 121.0 / 136.2 GB,
 # wall 247~257초. 전 런 exit 0.

@@ -1,0 +1,14 @@
+pair_id	tumor_dsid	normal_dsid	tumor_batch	normal_relation	truth_scope	order	note
+T-BCM	HG008-T.BCM_Revio_20240313	HG008-N-D.BCM_Revio_20240313	0823p23	matched	full	1	pilot. README Batch ID 0823p23 = truth 배치. 같은 센터·같은 날짜
+T-PB	HG008-T.PacBio_Revio_20240125	HG008-N-P.PacBio_Revio_20240125	0823p23	matched	full	2	README Batch ID 0823p23. normal 35x 로 얕다
+p21	HG008T-p21.HG008-T_bulk	HG008-N-D.BCM_Revio_20240313	20240508p21	borrowed	recall_only	3	truth 배치와 계대가 가장 가깝다. 센터 UMD
+p41	HG008T-p41.HG008-T_bulk	HG008-N-D.BCM_Revio_20240313	20240508p41	borrowed	recall_only	4	센터 UMD
+p100	HG008T-p100.HG008-T_bulk	HG008-N-D.BCM_Revio_20240313	20240508p100	borrowed	recall_only	5	장기 계대 — 고유 변이가 많을 것
+2D6	HG008T-2D6.HG008-T_clones	HG008-N-D.BCM_Revio_20240313	20240718p14	borrowed	recall_only	6	클론
+2E6	HG008T-2E6.HG008-T_clones	HG008-N-D.BCM_Revio_20240313	20240718p14	borrowed	recall_only	6	클론
+3E4	HG008T-3E4.HG008-T_clones	HG008-N-D.BCM_Revio_20240313	20240718p14	borrowed	recall_only	6	클론
+SC6	HG008T-SC6.HG008-T_clones	HG008-N-D.BCM_Revio_20240313	20240805p19	borrowed	recall_only	6	클론
+SC9	HG008T-SC9.HG008-T_clones	HG008-N-D.BCM_Revio_20240313	20240805p19	borrowed	recall_only	6	클론
+SC14	HG008T-SC14.HG008-T_clones	HG008-N-D.BCM_Revio_20240313	20240805p19	borrowed	recall_only	6	클론
+SC24	HG008T-SC24.HG008-T_clones	HG008-N-D.BCM_Revio_20240313	20240805p19	borrowed	recall_only	6	클론
+SC28	HG008T-SC28.HG008-T_clones	HG008-N-D.BCM_Revio_20240313	20240805p19	borrowed	recall_only	6	클론
