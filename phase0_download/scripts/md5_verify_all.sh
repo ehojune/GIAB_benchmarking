@@ -90,27 +90,28 @@ echo "[$(date '+%F %T')] 검사 대상 $total_todo files (JOBS=$JOBS, 결과: $R
 # 같은 디렉토리의 md5 목록 파일에서 basename에 해당하는 32자리 해시를 찾는다.
 # 매니페스트 실측(2026-09-23): checksums.md5 132 · md5sum 59 · md5.in 56 · md5sum.txt 16 · md5sum.chk 4 · *.md5sum 등.
 sidecar_md5() {
-    local f="$1" base dir sc v
-    base=$(basename "$f"); dir=$(dirname "$f")
-    # 파일별 사이드카(<name>.md5 등)를 먼저, 그 다음 이름에 md5/MD5/checksum 이 들어간 목록 파일 전부.
-    # 매니페스트 실측: md5.in · md5s.in · MD5 · MD5.txt · md5sum · md5sum.txt · md5sum.chk · checksums.md5 ·
-    # *-genome-stratifications-md5s.txt · *.md5sum · <file>.md5 … — 열거하면 또 빠진다.
-    for sc in "$dir/$base.md5" "$dir/${base}.md5sum" "$dir/${base}_md5sum" \
-              "$dir"/*md5* "$dir"/*MD5* "$dir"/*checksum* "$dir"/*CHECKSUM*; do
-        [ -f "$sc" ] || continue
-        [ "$sc" = "$f" ] && continue
-        # basename을 토큰 단위로 정확히 맞춘다 — 부분 문자열(grep -F)은 a.bam 을 찾다가 a.bam.bai 줄을 물 수 있다.
-        # 지원 형식: "hash  name" / "hash *name" / "hash ./dir/name" / "name hash"
-        v=$(awk -v b="$base" '{
-                for (i = 1; i <= NF; i++) {
-                    f = $i; if (substr(f, 1, 1) == "*") f = substr(f, 2)
-                    n = split(f, pp, "/")
-                    if (pp[n] == b) {
-                        for (j = 1; j <= NF; j++) if (length($j) == 32 && $j ~ /^[0-9a-f]+$/) { print $j; exit }
+    # 같은 디렉토리에서는 basename 으로, 상위 디렉토리(최대 4단계, DEST 안)에서는 그 디렉토리 기준 상대경로로 찍는다.
+    # HG009 NIST 트리처럼 checksums.md5 가 상위에 하나 있고 파일은 biomarkers/ 같은 하위에 있는 경우가 있다.
+    local f="$1" d rel sc v depth=0
+    d=$(dirname "$f"); rel=$(basename "$f")
+    while [ "$depth" -le 4 ]; do
+        for sc in "$d/$rel.md5" "$d/${rel}.md5sum" "$d/${rel}_md5sum" "$d"/*md5* "$d"/*MD5* "$d"/*checksum* "$d"/*CHECKSUM*; do
+            [ -f "$sc" ] || continue
+            [ "$sc" = "$f" ] && continue
+            # 토큰 정확 일치. 지원 형식: "hash  name" / "hash *name" / "hash ./dir/name" / "name hash".
+            # 같은 디렉토리(depth 0)에서는 basename 만, 상위에서는 상대경로 전체가 맞아야 한다 — 하위 디렉토리 간 동명 충돌 방지.
+            v=$(awk -v want="$rel" -v depth="$depth" '{
+                    for (i = 1; i <= NF; i++) {
+                        t = $i; if (substr(t, 1, 1) == "*") t = substr(t, 2); sub(/^\.\//, "", t)
+                        if (t == want || (depth == 0 && t ~ ("(^|/)" want "$"))) {
+                            for (j = 1; j <= NF; j++) if (length($j) == 32 && $j ~ /^[0-9a-f]+$/) { print $j; exit }
+                        }
                     }
-                }
-            }' "$sc" 2>/dev/null)
-        [ -n "$v" ] && { printf '%s' "$v"; return 0; }
+                }' "$sc" 2>/dev/null)
+            [ -n "$v" ] && { printf '%s' "$v"; return 0; }
+        done
+        [ "$d" = "$DEST" ] || [ "$d" = "/" ] || [ "$d" = "." ] && break
+        rel="$(basename "$d")/$rel"; d=$(dirname "$d"); depth=$((depth + 1))
     done
     return 1
 }
