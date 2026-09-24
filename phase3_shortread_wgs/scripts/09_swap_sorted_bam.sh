@@ -16,12 +16,16 @@ if [ -d "$SET/.snakemake/locks" ] && [ -n "$(ls -A "$SET/.snakemake/locks" 2>/de
 fi
 OLD=$SET/tmp/04.sort/${S}_sort.bam
 [ -e "$OLD" ] || { echo "ERROR: 옛 BAM이 없다: $OLD" >&2; exit 1; }
-TAG=pre-rebuild-$(date +%Y%m%d)
+TAG=pre-rebuild-$(date +%Y%m%d-%H%M%S)   # 초 단위 — 같은 날 두 번 바꿔도 앞 백업을 덮지 않게
+for f in "$OLD.$TAG" "$OLD.bai.$TAG"; do
+  [ -e "$f" ] && { echo "ERROR: 백업 이름 $f 가 이미 있다 — 덮어쓰지 않는다" >&2; exit 1; }
+done
 echo "새 BAM : $NEW  (primary $N, $(du -h "$NEW" | cut -f1))"
 echo "옛 BAM : $OLD  ($(du -h "$OLD" | cut -f1)) → ${OLD}.$TAG"
 echo "옛 인덱스: $OLD.bai → $OLD.bai.$TAG"
 if [ "${APPLY:-0}" != 1 ]; then echo "DRY-RUN — 실제로 바꾸려면 APPLY=1"; exit 0; fi
-mv "$OLD" "$OLD.$TAG"; [ -e "$OLD.bai" ] && mv "$OLD.bai" "$OLD.bai.$TAG"
+mv -n "$OLD" "$OLD.$TAG"; [ -e "$OLD.bai" ] && mv -n "$OLD.bai" "$OLD.bai.$TAG"
+[ -e "$OLD" ] && { echo "ERROR: 옛 BAM을 백업으로 옮기지 못했다" >&2; exit 1; }
 mv "$NEW" "$OLD"; mv "$NEW.bai" "$OLD.bai"
 printf 'SWAPPED_AT=%s\nINTO=%s\nOLD_KEPT=%s.%s\n' "$(date '+%F %T')" "$OLD" "$OLD" "$TAG" >> "$V"
 echo "바꿨다. 되돌리기: mv $OLD.$TAG $OLD && mv $OLD.bai.$TAG $OLD.bai"
