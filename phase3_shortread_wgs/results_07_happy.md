@@ -1,6 +1,6 @@
 # #7 숏리드 최소 비교 — 회사 gd001~004 vs 공개 NovaSeq 30x (NIST v4.2.1, hap.py)
 
-상태: **2차 제출(13잡), 채점 미수집 (2026-09-26).** 비교가 끝난 것이 아니다.
+상태: **2차 제출(13잡), 채점 미수집 (2026-09-25 KST).** 비교가 끝난 것이 아니다.
 
 ## 방법 (한 줄씩)
 - 입력: 국통바빅 `outcome/<s>/<s>_v1.1.0.g.vcf.gz`. **gVCF뿐이라**(`<NON_REF>` 블록, 확인함) 그대로 채점하지 않는다.
@@ -9,7 +9,7 @@
 - HGID는 `sample_information_nbb2.xlsx` Sheet2 (SET_ID·DNA_ID·note)로 대응. 회사 이름은 gd001~004 유지.
 - 스크립트 `scripts/11_happy_submit.sh`, manifest `happy_manifest.csv`. 산출 `processed_data_ehojune/phase3_shortread_wgs/07_happy/<label>/`.
 
-## 제출 잡 (2차, 2026-09-26 01:3x, 16 slots)
+## 제출 잡 (2차, 2026-09-25 KST, 16 slots)
 1차 156692–156704는 13개 전부 1–4초 만에 exit 1로 끝났다(qacct). `bashrc.txt` 5행이 `LD_LIBRARY_PATH` unset인데 잡이 `set -u`였다. `set -u`를 source 뒤로 옮겨 재제출했다. 1차 로그는 `07_happy/logs/failed-156692-156704/`에 있다(156700–704 로그 5개는 `logs/`에 남아 있다).
 
 | label | job |
@@ -23,13 +23,13 @@
 
 제출 90초 뒤 4잡 r(GenotypeGVCFs chr1 진행 확인), 9잡 qw.
 
-## gd002 판정 (2026-09-26): 올바른 gd2 산출물이 없다
+## gd002 확인 (2026-09-25): 조회 범위에서 올바른 결과 미확인
 - `G000-gd2-20260819/outcome/C00000040{01..06}…_{1,2}.fastq.gz`는 `readlink -f` 결과가 **`data/cginvites/G000-gd4-20260819/HG00x·KOR-10x`**다. gd4 set 링크와 같은 파일이다(inode 동일, 12/12).
 - FASTQ 첫 read 이름(`@LH00677:246:23V3NWLT4…`)도 두 set이 같다. mosdepth·flagstat 총량도 같다.
 - VCF `#CHROM`, CRAM `@RG SM`는 둘 다 C00000040…(gd4 DNA_ID)다.
 - sampleinfo에서 gd2 DNA_ID는 C00000020{01..06}…이다. 이 ID를 쓴 set·링크·결과는 G000 어디에도 없다. `data/cginvites/G000-gd2-20260819/`도 없다.
-- 결론: gd2 set은 **gd4 raw를 한 번 더 돌린 것**이다. gd2 원자료가 지정 위치에 없다.
-- 필요 정보: gd2 원자료(FASTQ)의 실제 위치. 받기 전에는 gd002를 N/A로 둔다.
+- 확인한 gd2 set은 **gd4 raw와 결과를 가리킨다**. 이 경로를 gd002 비교에 쓰지 않는다. 회사 숏리드 처리 완료라는 사용자 확인을 유지하되, 다른 위치의 정상 gd002 결과 유무는 이 조회로 단정하지 않는다.
+- 필요한 정보: 올바른 gd002 기존 결과와 원자료의 위치·대응. 확인 전에는 gd002를 N/A로 둔다.
 
 ## 표 (수집 후 채움)
 QC는 국통바빅 `analyze_meta/<s>/` 재사용 (mosdepth 평균 깊이, flagstat mapped%). 없으면 N/A.
@@ -37,7 +37,7 @@ QC는 국통바빅 `analyze_meta/<s>/` 재사용 (mosdepth 평균 깊이, flagst
 | source | label | HGID | 기술 | 파이프라인/ref | 깊이 | mapped% | SNP P/R/F1 | INDEL P/R/F1 | 상태 |
 |---|---|---|---|---|---|---|---|---|---|
 | gd | gd001-HG002 | HG002 | N/A | biko GATK4.6.1 / GRCh38 bundle | | | | | 제출 |
-| gd | gd002-HG002~4 | — | N/A | — | N/A | N/A | N/A | N/A | gd2 원자료 없음 (set은 gd4 중복) |
+| gd | gd002-HG002~4 | — | N/A | — | N/A | N/A | N/A | N/A | 정상 결과 경로 미확인 (조회한 set은 gd4 입력) |
 | gd | gd004-HG002 | HG002 | N/A | 〃 | 39.86 | 99.97 | | | 제출 |
 | gd | gd004-HG003 | HG003 | N/A | 〃 | 45.98 | 99.98 | | | 제출 |
 | gd | gd004-HG004 | HG004 | N/A | 〃 | 34.73 | 99.98 | | | 제출 |
