@@ -33,3 +33,4 @@ tstv_regions.tsv
 
 # 편집 중 백업
 *.bak
+phase*/phase*_somatic_summary.tsv
