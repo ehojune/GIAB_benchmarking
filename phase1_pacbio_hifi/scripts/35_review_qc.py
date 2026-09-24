@@ -409,10 +409,13 @@ def one(dsid, sample, dataset, entry, dup, run_base, ref, want_pass=False):
             F.append(f"위상{row['wh_phased_pct']:.0f}%")
         n50 = row.get("wh_n50")
         if n50 == 0:
-            # whatshap ALL 행에서 N50 이 0 으로 나오는 경우가 있다. 실측상 종양 중
-            # 위상률 최하위권에서만 발생 → 지표 미산출로 보고 경고에서 제외한다.
+            # whatshap 의 block_n50 열은 사실 **NG50** 이다 (유전체 길이 기준, stats.py compute_ng50).
+            # 블록 span 합이 유전체 길이의 절반에 못 미치면 정의상 0 이다 — 미산출이 아니라 진짜 측정값이다.
+            # phase2 판(2026-09-18 ONT 세션)과 같은 판정·문구로 맞췄다. 앞서 여기엔 "미산출" 이라 적혀 있었다.
+            # phase1 실측(2026-09-24): 종양 15/19 런이 0, 정상 28 런은 전부 양수. 종양은 LOH 로 het 자리가
+            # 긴 구간째 없어 블록이 절반을 못 덮는다 — HG008T-SC6 은 블록 470개인 chr1 도 0 이다.
             row["wh_n50"] = None
-            F.append("N50미산출")
+            F.append("위상블록 NG50=0 (블록 총합이 유전체 절반 미만)")
         elif n50 and n50 < TH["n50_min"]:
             F.append(f"blockN50 {n50/1e3:.0f}kb")
 
