@@ -19,7 +19,11 @@ qstat -u "$USER" -r 2>/dev/null | grep -q "Full jobname: *$NAME\$" && no "같은
 n=0; bad=""
 for sd in "$SET"/outcome/*/; do
   b=$(basename "$sd"); n=$((n + 1))
-  [ -L "$sd/${b}_1.fastq.gz" ] || { [ -f "$sd/${b}_2.fastq.gz" ] && [ ! -d "$sd/.concat.lock" ] && [ ! -e "$sd/${b}_2.fastq.gz.part" ]; } || bad="$bad $b"
+  [ -d "$sd/.concat.lock" ] && { bad="$bad $b(병합중)"; continue; }
+  for m in 1 2; do   # mate마다 따로: 살아 있는 링크이거나 완성된 파일이어야 하고 .part가 없어야 한다(Codex 리뷰)
+    f="$sd/${b}_$m.fastq.gz"
+    { [ -s "$f" ] && [ ! -e "$f.part" ]; } || bad="$bad $b(_$m)"
+  done
 done
 [ "$n" -gt 0 ] || no "outcome/ 아래 샘플이 없다"
 [ -z "$bad" ] || no "준비 안 된 샘플:$bad"
