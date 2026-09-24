@@ -43,8 +43,10 @@ flowchart TD
 ONT 쪽 같은 그림은 [phase2_ont/pipeline/ont-wgs/README.md](../phase2_ont/pipeline/ont-wgs/README.md).
 차이는 정렬(pbmm2→minimap2), SV(pbsv→Sniffles2), 위상(WhatsHap→LongPhase), 그리고 R9.4.1에서 DeepVariant가 빠지는 것이다.
 
-- 실행 단위: **38개** ([run_table.tsv](run_table.tsv)) = 카탈로그 HiFi 28행을 (sample, dataset)로 분해
+- 실행 단위: **49개** ([run_table.tsv](run_table.tsv)) = 카탈로그 HiFi 행을 (sample, dataset)로 분해
   (HG008 T/N 분리, HG009 passage·클론 11개 분리). 잡 1개 = 실행 단위 1개.
+  2026-09-22 HG008-T NIST 9개(bulk p100 + 클론 8), 2026-09-24 HG008-T bulk p21·p41(UMD Revio)을 더했다 —
+  둘 다 생성기 스펙 누락이었다.
 - 진입점: fastq 17 / HiFi uBAM 21. **aligned BAM 진입은 없다** — HG001·HG005 SequelII 11kb도
   SRA에서 리드를 받아 fastq부터 돈다 (아래 SRA 항목).
 - 이 중 4개는 `dup_of` 표시 — HG001·HG003·HG004·HG005의 chemistry2는 HudsonAlpha와 **movie가 동일**
@@ -87,6 +89,7 @@ bash phase1_pacbio_hifi/scripts/60_benchmark.sh --list     # 정확도 평가 �
 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --ready    # hap.py 제출 (HG001~HG007)
 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --collect  # 결과를 한 TSV로 모음
 STRAT=1 bash phase1_pacbio_hifi/scripts/60_benchmark.sh --ready    # 구간별(층화) hap.py
+BENCH_TRUTH_VER=v5.0q BENCH_STRAT_TSV=$INFRA/reference/v5q_strata/strata.tsv bash phase1_pacbio_hifi/scripts/60_benchmark.sh --ready  # HG002: v4.2.1 밖을 v5.0q truth 로 (phase2 와 같은 인터페이스)
 bash phase1_pacbio_hifi/scripts/62_tstv_regions.sh         # ts/tv 를 benchmark 구간 안/밖으로 갈라 셈
 bash phase1_pacbio_hifi/scripts/qsub_task.sh <이름> -- <명령>  # 위 로그인 노드용 점검을 SGE 잡으로 (전 런이면 한두 시간)
 ```

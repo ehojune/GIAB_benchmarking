@@ -6,7 +6,7 @@
     python .../03_make_pipeline_dirs.py --prune                                        # 1쌍짜리는 링크, 여러 쌍은 concat.sh 작성 (옛 링크 정리)
     python .../03_make_pipeline_dirs.py --prune --run-concat --jobs 4                  # + 병합을 여기서 4개씩 병렬로 전부 실행하고 기다린다 (nohup 권장)
     python .../03_make_pipeline_dirs.py --prune --qsub                                 # + 병합을 샘플별 SGE 잡으로 제출 (shepherd.q)
-    python .../03_make_pipeline_dirs.py --only Hiseq_300x --only Illumina_250PE        # 일부 데이터셋만
+    python .../03_make_pipeline_dirs.py --only Hiseq-300x --only Illumina-250PE        # 일부 데이터셋만(set 이름 뒷부분)
     python .../03_make_pipeline_dirs.py --prefix GIAB-publicdata                       # 접두 변경 (기본 GIAB-publicData)
 
 만드는 구조 (업체 디렉토리 G000-gd?-*/outcome/<sample>/<sample>_1.fastq.gz 와 같은 모양, **샘플당 R1/R2 한 쌍**).
@@ -24,14 +24,26 @@
 - 원본은 samplesheets/<dsid>.csv 의 절대경로 그대로다(DATA_ROOT=/BiO/scratch/ehojune/GIAB_benchmark).
 - 멱등: 같은 대상을 가리키는 링크는 건너뛰고, 다른 대상을 가리키면 멈춘다. `--prune`은 관리하는 샘플 dir 안의 계획에 없는 심볼릭 링크만 지운다
   (병합 결과·일반 파일은 안 건드림). 이름 규칙이 바뀐 뒤 재실행할 때 쓴다.
+
+2차(2026-09-23, HG001·HG005~HG009 + HG002 잔여): more_run_table.tsv(make_more_samplesheets.py 생성)에 있는 dsid는 DIRNAME 대신
+그 표의 set/label로 간다 — `<prefix>-<set>/outcome/<prefix>-<set>-<label>/…`. 예: GIAB-publicData-Hiseq-100x/outcome/GIAB-publicData-Hiseq-100x-HG006/.
+    python .../03_make_pipeline_dirs.py --tier germline --dry-run                     # 2차 germline만 계획
+    python .../03_make_pipeline_dirs.py --qsub --sampleinfo sampleinfo/sample_information_nbb2.xlsx   # 전부 + 병합 잡 + sampleinfo 행 추가
+- **파이프라인이 이미 손댄 set dir(__DONE__·error_list.txt·tmp/·.snakemake/·analyze_meta/ 중 하나라도 있음)에 새 샘플 dir을 만들려 하면
+  아무것도 만들지 않고 멈춘다.** 돌고 있거나 끝난 세트의 의미를 바꾸지 않기 위해서다. 이미 있는 샘플 dir의 재실행은 괜찮다.
+- 병합은 샘플 dir의 `.concat.lock/`으로 한 번에 하나만 돈다(두 cat이 같은 .part에 쓰면 크기는 맞는데 내용이 섞인다). `--qsub`은 lock이 있거나
+  `concat.jobid`의 잡이 아직 qstat에 있으면 다시 내지 않는다.
+- `--sampleinfo <xlsx>`: 파이프라인이 읽는 샘플 정보 표(SET_ID/DNA_ID/SEX/note)에 계획된 샘플 중 없는 DNA_ID만 덧붙인다. 먼저
+  `<xlsx>.bak-<시각>`으로 복사하고, 같은 DNA_ID가 다른 SET_ID·SEX로 이미 있으면 쓰지 않고 멈춘다. `--dry-run`이면 추가할 행만 보여준다.
 """
-import argparse, csv, os, re, subprocess, sys, time
+import argparse, csv, os, re, shutil, subprocess, sys, time
 from collections import Counter, defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
 SHEETS = os.path.join(ROOT, "samplesheets")
 
-# samplesheet dataset -> 디렉토리 이름 뒷부분 (2026-09-18 사용자 지정, 2026-09-19 `_`→`-`). 여기 없는 dataset(NIST_BGIseq_2x150_100x, Element_AVITI_20231018)은 만들지 않는다.
+# samplesheet dataset -> 디렉토리 이름 뒷부분 (2026-09-18 사용자 지정, 2026-09-19 `_`→`-`). 1차 22 샘플 전용.
+# more_run_table.tsv에 있는 dsid(2차, HG002 NIST_BGIseq·Element_AVITI_20231018 포함)는 이 표보다 먼저 그 표의 set/label을 따른다.
 DIRNAME = {
     "NovaSeq_PCRfree_30x":    "Novaseq6000-PCRfree-30x",
     "NovaSeqX_30x":           "NovaseqX-30x",
@@ -43,6 +55,11 @@ DIRNAME = {
     "Element_AVITI_20240920": "Element-AVITI",
 }
 SEP = "-"   # 이름 구분자. `_`는 mate 접미에만
+MORE_TABLE = os.path.join(ROOT, "more_run_table.tsv")   # 2차 set/label 배정 (make_more_samplesheets.py)
+# 이 중 하나라도 set dir에 있으면 파이프라인이 그 set을 이미 돌렸거나 돌리는 중이다
+PIPELINE_MARKERS = ("__DONE__", "error_list.txt", "tmp", ".snakemake", "analyze_meta")
+# 1차 22 샘플(HG002~4)은 more_run_table에 없어 성별을 여기서 준다
+SEX_FIRST = {"HG002": "male", "HG003": "male", "HG004": "female"}
 
 CONCAT_SH = r"""#!/bin/bash
 # {name}: FASTQ {n}쌍을 R1/R2 각각 하나로 cat 병합한다 (03_make_pipeline_dirs.py 생성, 2026-09-18 결정).
@@ -50,6 +67,13 @@ CONCAT_SH = r"""#!/bin/bash
 # 재실행 안전: 출력 크기가 입력 합과 같으면 건너뛴다. 단독 실행: nohup bash concat.sh > concat.log 2>&1 &
 set -euo pipefail
 cd "$(dirname "$0")"
+# 한 번에 하나만: 두 cat이 같은 .part에 쓰면 크기는 맞는데 내용이 섞여 크기 검증을 통과한다. mkdir은 Lustre에서도 원자적이다(flock은 마운트 옵션 따라 안 됨)
+lock=".concat.lock"
+if ! mkdir "$lock" 2>/dev/null; then
+    echo "LOCKED: $(cat "$lock/owner" 2>/dev/null || echo '?') — 다른 병합이 도는 중. 그 잡이 죽었으면 rm -r $PWD/$lock 후 재실행"; exit 3
+fi
+echo "$(hostname) pid=$$ job=${{JOB_ID:-none}} $(date '+%F %T')" > "$lock/owner"
+trap 'rm -rf "$lock"' EXIT
 for m in 1 2; do
     out="{name}_${{m}}.fastq.gz"; list="concat_R${{m}}.list"
     want=$(xargs -d '\n' stat -c%s < "$list" | awk '{{s+=$1}} END{{print s}}')
@@ -88,14 +112,20 @@ ap.add_argument("--hard", action="store_true", help="1쌍짜리를 심볼릭 링
 ap.add_argument("--run-concat", action="store_true", help="concat.sh 전부를 여기서 실행하고 끝날 때까지 기다린다 (--jobs 병렬)")
 ap.add_argument("--jobs", type=int, default=3, help="--run-concat 동시 실행 수 (기본 3; 로그인 노드 I/O 고려)")
 ap.add_argument("--qsub", action="store_true", help="concat.sh 를 샘플별 SGE 잡으로 제출 (이미 완료된 샘플은 건너뜀)")
+ap.add_argument("--lanes", type=int, default=0, help="--qsub 동시 실행 상한: 큰 샘플부터 N줄로 세우고 k번째 잡이 k-N번째를 -hold_jid로 기다린다 "
+                "(0=제한 없음). 병합은 Lustre I/O라 한꺼번에 수십 개를 띄우지 않는다")
 # 쓸 수 있는 노드 집합은 고정이 아니다 — 2026-09-22에 shepherd 3대에서 octopus 2 + shepherd 2로 바뀌었고
 # 큐도 둘로 갈렸다. phase1/2 의 env.sh 와 같은 값을 기본으로 두되, 환경변수로 덮는 쪽이 정상 경로다.
 # 큐 x 노드가 안 겹치면 잡은 에러 없이 qw 로 영원히 남는다 — 제출 뒤 qstat 로 상태를 확인할 것.
 ap.add_argument("--queue", default=os.environ.get("SGE_QUEUE", "shepherd.q,octopus.q"))
 ap.add_argument("--hosts", default=os.environ.get("SGE_HOSTS", "(octopus-2-8|octopus-2-9|shepherd-1-8|shepherd-1-9)"))
 ap.add_argument("--prune", action="store_true", help="관리하는 샘플 dir 안에서 계획에 없는 심볼릭 링크를 지운다(일반 파일·병합 결과는 안 건드림)")
+ap.add_argument("--tier", choices=("all", "germline", "somatic"), default="all",
+                help="germline = 정답셋 있는 HG001~7(1차 22 샘플 포함), somatic = HG008/HG009 (기본 all)")
+ap.add_argument("--sampleinfo", metavar="XLSX", help="이 샘플 정보 xlsx에 없는 DNA_ID 행을 덧붙인다(백업 후). --dry-run이면 보여주기만")
 ap.add_argument("--dry-run", action="store_true", help="만들지 않고 계획만 출력")
 ap.add_argument("--sheets", default=SHEETS, help=argparse.SUPPRESS)   # 테스트용: samplesheet 디렉토리 바꿔치기
+ap.add_argument("--more-table", default=MORE_TABLE, help=argparse.SUPPRESS)   # 테스트용
 a = ap.parse_args()
 SHEETS = a.sheets
 if "_" in a.prefix:
@@ -125,21 +155,50 @@ def concat_done(sdir, name, pairs):
     return True
 
 
+def read_more(path):
+    """more_run_table.tsv -> {dsid: row}. set/label에 `_`·`.`가 있으면 멈춘다(파이프라인이 `_`로 자른다)"""
+    if not os.path.exists(path):
+        return {}
+    out = {}
+    for r in csv.DictReader(open(path, encoding="utf-8"), delimiter="\t"):
+        for k in ("set", "label"):
+            if "_" in r[k] or "." in r[k]:
+                sys.exit(f"ERROR: {path}: {r['dsid']} 의 {k}='{r[k]}' 에 '_' 또는 '.'")
+        out[r["dsid"]] = r
+    return out
+
+
+def is_touched(set_dir):
+    """파이프라인이 이 set을 이미 돌렸거나 돌리는 중인가"""
+    return any(os.path.lexists(os.path.join(set_dir, m)) for m in PIPELINE_MARKERS)
+
+
+MORE = read_more(a.more_table)
 plan = []      # (link_path, target)          — 1쌍짜리
 concat = []    # (sample_dir, name, [(r1, r2), ...] 고정 순서) — 여러 쌍
 missing = []
+samples = []   # (set dir 이름, 샘플 이름, 성별, note) — sampleinfo 행
 for fn in sorted(os.listdir(SHEETS)):
     if not fn.endswith(".csv"):
         continue
-    sample, dataset = fn[:-4].split(".", 1)
-    if dataset not in DIRNAME:
+    dsid = fn[:-4]
+    sample, dataset = dsid.split(".", 1)
+    if dsid in MORE:
+        m = MORE[dsid]
+        dname, tier, sex, note = f"{a.prefix}{SEP}{m['set']}", m["tier"], m["sex"], m["label"]
+        short, name = m["set"], f"{a.prefix}{SEP}{m['set']}{SEP}{m['label']}"
+    elif dataset in DIRNAME:
+        dname, tier, sex, note = f"{a.prefix}{SEP}{DIRNAME[dataset]}", "germline", SEX_FIRST.get(sample, ""), sample
+        short, name = DIRNAME[dataset], f"{a.prefix}{SEP}{DIRNAME[dataset]}{SEP}{sample}"
+    else:
         continue
-    dname = f"{a.prefix}{SEP}{DIRNAME[dataset]}"
-    if a.only and DIRNAME[dataset] not in a.only and dname not in a.only:
+    if a.tier != "all" and tier != a.tier:
+        continue
+    if a.only and short not in a.only and dname not in a.only:
         continue
     rows = read_sheet(os.path.join(SHEETS, fn))
-    name = f"{dname}{SEP}{sample}"
     sdir = os.path.join(a.dest, dname, "outcome", name)
+    samples.append((dname, name, sex, note, sdir))
     if len(rows) > 1:
         pairs = [(r["fastq_1"], r["fastq_2"]) for r in sorted(rows, key=lambda r: (r["unit"], r["fastq_1"]))]
         concat.append((sdir, name, pairs))
@@ -154,11 +213,94 @@ for fn in sorted(os.listdir(SHEETS)):
             missing.append(src)
 
 dups = [l for l, c in Counter(l for l, _ in plan).items() if c > 1]
+dups += [d for d, c in Counter(s[4] for s in samples).items() if c > 1]
 if dups:
-    print(f"ERROR: 링크 이름이 겹친다 {len(dups)}개. 처음 5개:", *dups[:5], sep="\n  "); sys.exit(1)
+    print(f"ERROR: 링크·샘플 dir 이름이 겹친다 {len(dups)}개. 처음 5개:", *dups[:5], sep="\n  "); sys.exit(1)
 if missing:
     print(f"ERROR: 원본 FASTQ {len(missing)}개가 없다 (DATA_ROOT 확인). 처음 5개:", *missing[:5], sep="\n  ")
     sys.exit(1)
+# 새 샘플 dir을 파이프라인이 이미 손댄 set에 만들려는가 — dry-run에서도 알린다(만들기 전에 멈추는 것이 목적)
+def has_inputs(sdir, name):
+    """샘플 dir이 '이미 만든 샘플'인가 — 입력(링크·병합 결과·concat.sh)이 있어야 한다. 빈 dir(손으로 mkdir 등)은 아니다"""
+    return any(os.path.lexists(os.path.join(sdir, f)) for f in (f"{name}_1.fastq.gz", "concat.sh"))
+
+
+intrude = [s[4] for s in samples if not has_inputs(s[4], s[1]) and is_touched(os.path.join(a.dest, s[0]))]
+if intrude:
+    print(f"ERROR: 파이프라인이 이미 돌았거나 도는 set에 새 샘플 {len(intrude)}개를 넣으려 한다 — 아무것도 만들지 않았다.",
+          "more_run_table.tsv에서 새 set 이름을 줄 것. 처음 5개:", *intrude[:5], sep="\n  ")
+    sys.exit(1)
+
+
+def update_sampleinfo(xlsx, samples, dry):
+    """xlsx의 SET_ID/DNA_ID 표에 없는 DNA_ID만 덧붙인다. 충돌(같은 DNA_ID, 다른 SET_ID·SEX)이면 쓰지 않고 멈춘다.
+    두 실행이 동시에 읽고 각자 저장하면 나중 것이 앞 것의 행을 지운다 — `<xlsx>.lock` dir로 한 번에 하나만, 읽기부터 교체까지 잡는다.
+    저장은 옆 임시 파일에 한 뒤 os.replace로 바꿔, 중간에 끊겨도 파이프라인이 반쯤 쓴 xlsx를 읽지 않게 한다(Codex 리뷰)"""
+    if dry:
+        return _update_sampleinfo(xlsx, samples, True)
+    lock = xlsx + ".lock"
+    try:
+        os.mkdir(lock)
+    except FileExistsError:
+        sys.exit(f"ERROR: {lock} 가 있다 — 다른 03이 sampleinfo를 고치는 중. 죽은 실행의 흔적이면 rmdir 후 재실행")
+    try:
+        return _update_sampleinfo(xlsx, samples, False)
+    finally:
+        shutil.rmtree(lock, ignore_errors=True)
+
+
+def _update_sampleinfo(xlsx, samples, dry):
+    import openpyxl
+    wb = openpyxl.load_workbook(xlsx)
+    for ws in wb.worksheets:   # 머리행 이름은 대소문자·앞뒤 공백 무시
+        col = {str(c.value).strip().upper(): i for i, c in enumerate(ws[1]) if c.value is not None}
+        if "SET_ID" in col and "DNA_ID" in col:
+            break
+    else:
+        sys.exit(f"ERROR: {xlsx}에 SET_ID/DNA_ID 머리행이 있는 시트가 없다")
+    if ws.tables:   # Excel 표(ListObject)는 범위를 같이 고쳐야 해서 자동으로 건드리지 않는다
+        sys.exit(f"ERROR: {xlsx} 시트 {ws.title}에 Excel 표 {list(ws.tables)}가 있다 — 손으로 추가할 것")
+    have = {r[col["DNA_ID"]]: r for r in ws.iter_rows(min_row=2, values_only=True) if r[col["DNA_ID"]]}
+    # ws.append는 max_row 뒤(서식만 남은 빈 행 뒤)에 붙을 수 있어 마지막으로 값이 있는 행 바로 다음을 직접 준다
+    last = max((i for i, r in enumerate(ws.iter_rows(values_only=True), 1) if any(v not in (None, "") for v in r)), default=1)
+    add, bad = [], []
+    for dname, name, sex, note, _ in samples:
+        if name in have:
+            e = have[name]
+            if e[col["SET_ID"]] != dname or ("SEX" in col and str(e[col["SEX"]] or "").lower() != sex):
+                bad.append(f"{name}: 표에는 SET_ID={e[col['SET_ID']]} SEX={e[col['SEX']] if 'SEX' in col else '?'}, 계획은 {dname} {sex}")
+        elif not sex:
+            bad.append(f"{name}: 성별을 모른다 — more_run_table.tsv에 sex를 채울 것")
+        else:
+            add.append({"SET_ID": dname, "DNA_ID": name, "SEX": sex, "NOTE": note})
+    if bad:
+        print("ERROR: sampleinfo 충돌 — xlsx를 건드리지 않았다:", *bad[:10], sep="\n  "); sys.exit(1)
+    print(f"sampleinfo {xlsx}: 이미 있음 {len(samples) - len(add)}, 추가 {len(add)}{' (dry-run, 안 씀)' if dry else ''}")
+    for r in add[:60]:
+        print(f"  + {r['SET_ID']}\t{r['DNA_ID']}\t{r['SEX']}\t{r['NOTE']}")
+    if dry or not add:
+        return
+    bak = f"{xlsx}.bak-{time.strftime('%Y%m%d-%H%M%S')}-{os.getpid()}"
+    shutil.copy2(xlsx, bak)
+    for n, r in enumerate(add, last + 1):
+        for k, c in col.items():
+            if k in r:
+                ws.cell(row=n, column=c + 1, value=r[k])
+    root, ext = os.path.splitext(xlsx)
+    tmp = f"{root}.tmp-{os.getpid()}{ext}"   # openpyxl은 확장자로 형식을 가리므로 .xlsx를 유지한다
+    try:
+        wb.save(tmp)
+        openpyxl.load_workbook(tmp, read_only=True).close()   # 다시 열리는지 — 깨진 zip이면 여기서 예외, 원본은 그대로
+        shutil.copymode(xlsx, tmp)
+        os.replace(tmp, xlsx)
+    finally:
+        if os.path.exists(tmp):
+            os.remove(tmp)
+    print(f"  저장함 (백업 {bak})")
+
+
+if a.sampleinfo and a.dry_run:   # 실제 쓰기는 링크·concat.sh를 다 만든 뒤(아래) — 중간에 멈추면 표에 반쪽 샘플이 남지 않게
+    update_sampleinfo(a.sampleinfo, samples, True)
 
 # ---- 1쌍짜리: 링크 ------------------------------------------------------------------
 made = skipped = pruned = 0
@@ -172,10 +314,18 @@ if a.prune and not a.dry_run:
             f = os.path.join(d, fn)
             if os.path.islink(f) and os.path.abspath(f) not in planned:
                 os.remove(f); pruned += 1; print(f"PRUNE {os.path.relpath(f, a.dest)}")
+def ensure_sample_dir(sdir):
+    """새 샘플 dir을 만들기 직전에 set을 다시 본다 — 앞의 검사와 만드는 사이에 파이프라인이 그 set을 시작했을 수 있다(Codex 리뷰).
+    파이프라인과 lock을 나눌 방법이 없어 틈을 없애지는 못하고 샘플 하나 크기로 줄인다 — 파이프라인을 띄우는 동안 03을 돌리지 말 것"""
+    if not os.path.isdir(sdir) and is_touched(os.path.dirname(os.path.dirname(sdir))):
+        sys.exit(f"ERROR: {sdir} 를 만들려는 사이 그 set에 파이프라인 흔적이 생겼다 — 여기서 멈춘다(이미 만든 것은 그대로)")
+    os.makedirs(sdir, exist_ok=True)
+
+
 for link, src in plan:
     if a.dry_run:
         continue
-    os.makedirs(os.path.dirname(link), exist_ok=True)
+    ensure_sample_dir(os.path.dirname(link))
     if os.path.lexists(link):
         cur = os.readlink(link) if os.path.islink(link) else (link if a.hard and os.path.samefile(link, src) else None)
         if cur == src or (a.hard and cur == link):
@@ -188,19 +338,45 @@ for link, src in plan:
     made += 1
 
 # ---- 여러 쌍: concat.sh 작성 ------------------------------------------------------------
+def write_if_changed(path, text):
+    """내용이 같으면 건드리지 않는다. 도는 bash는 스크립트를 조금씩 읽어서, 실행 중에 덮어쓰면 엉뚱한 곳부터 읽을 수 있다"""
+    try:
+        if open(path, encoding="utf-8").read() == text:
+            return False
+    except OSError:
+        pass
+    with open(path, "w", newline="\n", encoding="utf-8") as f:   # 로케일이 UTF-8이 아니어도(LANG=C 잡 환경 등) 한글·기호가 안 깨지게
+        f.write(text)
+    return True
+
+
+held = 0
 for sdir, name, pairs in concat:
     if a.dry_run:
         continue
-    os.makedirs(sdir, exist_ok=True)
-    with open(os.path.join(sdir, "concat_R1.list"), "w", newline="\n") as f1, \
-         open(os.path.join(sdir, "concat_R2.list"), "w", newline="\n") as f2:
-        for r1, r2 in pairs:
-            f1.write(r1 + "\n"); f2.write(r2 + "\n")
-    sh = os.path.join(sdir, "concat.sh")
-    with open(sh, "w", newline="\n") as f:
-        f.write(CONCAT_SH.format(name=name, n=len(pairs)))
-    os.chmod(sh, 0o755)
+    ensure_sample_dir(sdir)
+    # 병합과 같은 lock을 잡고 쓴다 — 확인만 하고 쓰면 그 사이 병합 잡이 시작해 R1은 옛 list, R2는 새 list로 이어 붙일 수 있다(Codex 리뷰)
+    lock = os.path.join(sdir, ".concat.lock")
+    try:
+        os.mkdir(lock)
+    except FileExistsError:
+        held += 1   # 병합이 도는 중 — concat.sh·list를 바꾸지 않는다
+        continue
+    try:
+        with open(os.path.join(lock, "owner"), "w", encoding="utf-8") as f:
+            f.write(f"03_make_pipeline_dirs pid={os.getpid()} {time.strftime('%F %T')}\n")
+        write_if_changed(os.path.join(sdir, "concat_R1.list"), "".join(r1 + "\n" for r1, _ in pairs))
+        write_if_changed(os.path.join(sdir, "concat_R2.list"), "".join(r2 + "\n" for _, r2 in pairs))
+        sh = os.path.join(sdir, "concat.sh")
+        write_if_changed(sh, CONCAT_SH.format(name=name, n=len(pairs)))
+        os.chmod(sh, 0o755)
+    finally:
+        shutil.rmtree(lock, ignore_errors=True)
+if held:
+    print(f"병합 중(.concat.lock)인 샘플 {held}개는 concat.sh·list를 그대로 뒀다")
 
+if a.sampleinfo and not a.dry_run:   # 링크·concat.sh를 다 만든 뒤
+    update_sampleinfo(a.sampleinfo, samples, False)
 n_ds = len({os.path.dirname(os.path.dirname(d)) for d in managed})
 print(f"{'DRY-RUN ' if a.dry_run else ''}링크 {len(plan)}개({made} 생성, {skipped} 기존, {pruned} 정리) · 병합 {len(concat)} 샘플 · "
       f"데이터셋 dir {n_ds}개 under {os.path.abspath(a.dest)}")
@@ -214,19 +390,60 @@ for sdir, name, pairs in concat:
 if a.dry_run or not concat:
     sys.exit(0)
 todo = [(sdir, name) for sdir, name, pairs in concat if not concat_done(sdir, name, pairs)]
+size = {sdir: sum(os.path.getsize(p) for pr in pairs for p in pr) for sdir, name, pairs in concat}
+todo.sort(key=lambda t: -size[t[0]])   # 큰 것부터 — 꼬리에 800 GiB짜리가 혼자 남지 않게
 
 # ---- 병합 실행 -------------------------------------------------------------------------
+def job_alive(sdir):
+    """concat.jobid 의 잡이 아직 qstat 에 있으면 그 번호"""
+    p = os.path.join(sdir, "concat.jobid")
+    if not os.path.exists(p):
+        return None
+    jid = open(p).read().strip()
+    if not jid.isdigit():
+        return None
+    r = subprocess.run(["qstat", "-j", jid], capture_output=True, text=True, stdin=subprocess.DEVNULL)
+    return jid if r.returncode == 0 else None
+
+
 if a.qsub:
+    n_sub = 0
+    lane_last = [None] * max(a.lanes, 1)   # 줄마다 마지막으로 낸 잡 번호
+    slot = 0                               # 줄 배정 순번 — 재실행 때 살아 있는 잡도 한 줄을 차지해야 상한이 안 깨진다
+    try:   # 살아 있는 잡을 먼저 전부 줄에 앉힌다 — 목록 순서대로 보며 앉히면 앞쪽 재제출이 hold 없이 떠 상한을 넘는다(Codex 리뷰)
+        alive_of = {sdir: job_alive(sdir) for sdir, _ in todo}
+    except FileNotFoundError:
+        sys.exit("ERROR: qstat/qsub 을 찾을 수 없다 (로그인 노드에서 실행할 것)")
+    for sdir, _ in todo:
+        if alive_of[sdir]:
+            lane_last[slot % len(lane_last)] = alive_of[sdir]; slot += 1
     for sdir, name in todo:
+        alive = alive_of[sdir]
+        if os.path.isdir(os.path.join(sdir, ".concat.lock")):
+            op = os.path.join(sdir, ".concat.lock", "owner")
+            owner = open(op).read().strip() if os.path.exists(op) else "?"
+            hint = "" if alive else f" — concat.jobid의 잡이 큐에 없다. 그 잡이 죽은 것이 확실하면 rm -r {os.path.abspath(sdir)}/.concat.lock 후 재실행"
+            print(f"SKIP {name}: .concat.lock 있음 (owner: {owner}){hint}")
+            continue
+        if alive:
+            print(f"SKIP {name}: 잡 {alive} 가 아직 큐에 있다")
+            continue
         job = os.path.join(sdir, "concat.qsub.sh")
-        with open(job, "w", newline="\n") as f:
+        with open(job, "w", newline="\n", encoding="utf-8") as f:
             f.write(QSUB_SH.format(name=name, sdir=os.path.abspath(sdir), queue=a.queue, hosts=a.hosts))
-        try:
-            out = subprocess.run(["qsub", job], capture_output=True, text=True, stdin=subprocess.DEVNULL)
-        except FileNotFoundError:
-            sys.exit(f"ERROR: qsub 을 찾을 수 없다 (로그인 노드에서 실행할 것). 잡 스크립트는 썼다: {job}")
-        print(f"QSUB {name}: {(out.stdout or out.stderr).strip()}")
-    print(f"{len(todo)} 잡 제출. 상태: qstat  · 결과: <샘플 dir>/concat.<JOB_ID>.log 마지막 줄이 'DONE'")
+        lane = slot % len(lane_last)
+        hold = ["-hold_jid", lane_last[lane]] if a.lanes and lane_last[lane] else []
+        out = subprocess.run(["qsub"] + hold + [job], capture_output=True, text=True, stdin=subprocess.DEVNULL)
+        msg = (out.stdout or out.stderr).strip()
+        m = re.search(r"Your job (\d+)", msg)
+        if out.returncode != 0 or not m:
+            print(f"FAIL qsub {name}: {msg}"); continue
+        with open(os.path.join(sdir, "concat.jobid"), "w", encoding="utf-8") as f:
+            f.write(m.group(1) + "\n")
+        lane_last[lane] = m.group(1)
+        n_sub += 1; slot += 1
+        print(f"QSUB {name}: {msg}{' (hold ' + hold[1] + ')' if hold else ''}")
+    print(f"{n_sub}/{len(todo)} 잡 제출. 상태: qstat  · 결과: <샘플 dir>/concat.<JOB_ID>.log 마지막 줄이 'DONE'")
 elif a.run_concat:
     running = {}   # name -> (Popen, sdir, log)
     failed = []

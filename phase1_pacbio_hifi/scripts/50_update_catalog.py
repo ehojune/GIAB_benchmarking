@@ -97,6 +97,32 @@ def load_runs():
     return [dict(zip(hdr, r)) for r in rows[1:]]
 
 
+def load_inputs():
+    """inputs_manifest.tsv -> {dsid: [GIAB 상대경로, ...]}. 카탈로그 행을 입력 경로로 찾을 때 쓴다."""
+    by = {}
+    for r in read_tsv(PHASE1 / "inputs_manifest.tsv"):
+        if len(r) >= 2:
+            by.setdefault(r[0], []).append(r[1])
+    return by
+
+
+def runs_under(giab_path, runs, inputs):
+    """입력 파일이 전부 giab_path 아래에 있는 실행 단위들.
+
+    (HG샘플, basename) key 가 안 맞는 행을 위한 두 번째 길이다. HG008-T NIST 트리는 카탈로그가
+    시료 디렉토리마다 한 행(basename BCM_Revio_HG008T-p100_20260313)인데 run_table dataset 은
+    그 위 HG008-T_bulk/_clones 라서 key 로는 영영 못 만났다(2026-09-24, 9행이 경고만 내고 빠짐).
+    '전부' 로 거는 이유: 입력 일부만 걸치는 런을 그 행의 완료로 셀 수는 없다.
+    """
+    pre = giab_path.rstrip("/") + "/"
+    out = []
+    for r in runs:
+        paths = inputs.get(f"{r['sample']}.{r['dataset']}", [])
+        if paths and all(p.startswith(pre) for p in paths):
+            out.append(r)
+    return out
+
+
 def verified(run, run_base, ref_name):
     """30_verify_outputs.sh와 같은 기준: 핵심 산출물 존재 + 비어있지 않음."""
     sample, dataset, entry = run["sample"], run["dataset"], run["entry_type"]
@@ -134,6 +160,7 @@ def main():
     var_tool = f"DeepVariant v{ver['deepvariant']} + Clair3 {ver['clair3']} + pbsv v{ver['pbsv']}"
 
     runs = load_runs()
+    inputs = load_inputs()
     # 카탈로그 행 key = (HG샘플, GIAB 디렉토리 basename). run sample 은 HG009T-1C3 처럼 파생형.
     groups = {}
     for r in runs:
@@ -155,7 +182,7 @@ def main():
         if row[ix["category"]] != "pacbio_hifi":
             continue
         key = (row[ix["sample"]], row[ix["giab_path"]].rstrip("/").rsplit("/", 1)[-1])
-        ds_runs = groups.get(key)
+        ds_runs = groups.get(key) or runs_under(row[ix["giab_path"]], runs, inputs)
         if not ds_runs:
             missing_rows.append(f"{key[0]} {key[1]}")
             continue
@@ -166,7 +193,11 @@ def main():
             continue
 
         samples = sorted({r["sample"] for r in ds_runs})
-        mid = f"{args.run_base}/{samples[0] if len(samples) == 1 else '*'}/PacBio/{key[1]}"
+        datasets = sorted({r["dataset"] for r in ds_runs})
+        # 산출 경로는 run 의 dataset 으로 짓는다. 카탈로그 basename 과 같을 때가 대부분이지만
+        # 경로로 찾은 행(runs_under)은 다르다 — basename 을 쓰면 없는 디렉토리를 가리킨다.
+        mid = (f"{args.run_base}/{samples[0] if len(samples) == 1 else '*'}/PacBio/"
+               f"{datasets[0] if len(datasets) == 1 else '*'}")
         changes = []
         if any(r["entry_type"] != "aligned_bam" for r in ds_runs):
             set_cell(row, "aligned", "TRUE", changes)

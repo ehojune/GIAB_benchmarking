@@ -35,6 +35,8 @@ HG008T-SC9.HG008-T_clones	HG008T-SC9	HG008-T_clones	hifi_bam	1	hifi_revio	64.8
 HG008T-SC14.HG008-T_clones	HG008T-SC14	HG008-T_clones	hifi_bam	1	hifi_revio	67.2		
 HG008T-SC24.HG008-T_clones	HG008T-SC24	HG008-T_clones	hifi_bam	1	hifi_revio	50.8		
 HG008T-SC28.HG008-T_clones	HG008T-SC28	HG008-T_clones	hifi_bam	1	hifi_revio	60.2		
+HG008T-p21.HG008-T_bulk	HG008T-p21	HG008-T_bulk	hifi_bam	1	hifi_revio	43.7		
+HG008T-p41.HG008-T_bulk	HG008T-p41	HG008-T_bulk	hifi_bam	1	hifi_revio	46.4		
 HG009N-WT-p25.HG009-N_bulk	HG009N-WT-p25	HG009-N_bulk	hifi_bam	1	hifi_revio	47.0		
 HG009N-WT-p4.HG009-N_bulk	HG009N-WT-p4	HG009-N_bulk	hifi_bam	2	hifi_revio	129.2		
 HG009N-LVTert-p23.HG009-N_bulk	HG009N-LVTert-p23	HG009-N_bulk	hifi_bam	1	hifi_revio	46.4		

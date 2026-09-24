@@ -198,6 +198,7 @@ GIAB truth set 대비 hap.py. phase1의 같은 스크립트와 구조가 같고 
 | caller | 런마다 `dv_model` 열로 정한다 — R9는 Clair3 단독, R10은 Clair3+DeepVariant |
 | 입력 | `03_VCF/<caller>/*.vcf.gz` **원본**. hap.py가 FILTER를 자체 처리해 ALL/PASS 행을 둘 다 내므로 재실행이 필요 없다 |
 | 산출 | `<dataset>/05_BENCH/happy/<id>.<caller>.summary.csv` → `--collect`가 `phase2_bench_summary.tsv`로 모은다 |
+| v5.0q | `BENCH_TRUTH_VER=v5.0q` + `BENCH_STRAT_TSV` 로 HG002 를 T2T-Q100 유래 truth 로 채점하고 **v4.2.1 밖 구간**을 따로 센다. 층 BED 는 [`64_v5q_strata.py`](scripts/64_v5q_strata.py). 결과는 `05_BENCH/happy_v5.0q/`, 모음은 `--collect-strata` |
 | 잡 크기 | `BENCH_SLOTS=8` / `BENCH_VMEM=32G` (hap.py는 병렬성이 낮다). 실측 maxvmem 23.7~24.6 GB — **caller 두 개짜리 잡도 같다**(순차로 돌아 누적되지 않는다) |
 
 **HG002 R10 런이 들어오기 전까지 DeepVariant는 한 번도 채점되지 않았다.** DV가 도는 것은 R10 런인데
@@ -230,8 +231,12 @@ ONT 정렬을 버리고 우리 minimap2 로 재정렬한 결과다 — 재정렬
 결함도 없다는 뜻이다. corpus 15런 중 외부 대조군이 있는 런은 이것뿐이라 **나머지 14런의 신뢰도도
 이 한 점에 얹힌다.**
 
+**v4.2.1 밖에서도 DV 가 이긴다** (2026-09-24, v5.0q smvar 층화). v4.2.1 이 빼놓은 상염색체 83 Mb 에서 DV 가
+FN SNP −17% · INDEL −10%, FP 절반 이하다. 그 구간은 정말 어렵다 — DV INDEL F1 이 0.94 → 0.62 로 떨어진다.
+
 전체 수치: [2026-09-18 R9 8런](../docs/reference/2026-09-18-ont-benchmark-first-results.md) ·
-[2026-09-22 R10 + DV](../docs/reference/2026-09-22-ont-r10-benchmark.md).
+[2026-09-22 R10 + DV](../docs/reference/2026-09-22-ont-r10-benchmark.md) ·
+[2026-09-24 v5.0q 층화](../docs/reference/2026-09-24-ont-r10-v5q-stratified.md).
 
 ## SV 정확도 평가 ([61_benchmark_sv.sh](scripts/61_benchmark_sv.sh))
 
