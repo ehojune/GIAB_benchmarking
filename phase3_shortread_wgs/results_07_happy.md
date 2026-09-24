@@ -13,11 +13,19 @@
 | label | job | 비고 |
 |---|---|---|
 | gd001-HG002 / HG003 / HG004 | 156692 / 156693 / 156694 | |
-| gd002-HG002~4 | — | **미제출**: `outcome/`에 C00000020… 샘플 dir 없음, `tmp/10.haplo`엔 C00000040…(gd4 ID)만 있다. `__DONE__`은 Success. 입력 대응 확인 필요 |
+| gd002-HG002~4 | — | **미제출** — 아래 gd002 절 |
 | gd003-HG002 / HG003 / HG004 | 156695 / 156696 / 156697 | |
 | gd004-HG002 / HG003 / HG004 | 156698 / 156699 / 156700 | |
 | public NovaSeq6000 PCR-free 30x HG002 / HG003 / HG004 | 156701 / 156702 / 156703 | |
 | public NovaSeqX 30x HG002 | 156704 | |
+
+## gd002 조회 (2026-09-25, read-only 1회)
+- G000 안의 gd2 set은 `G000-gd2-20260819` 하나. `__DONE__` Success (09-06), `error_list.txt` 없음.
+- 그런데 그 set의 `outcome/`·`analyze_meta/`·`tmp/03.bwa…14.mosdepth`·`10.haplo` 샘플 이름이 **전부 C00000040…(gd4 DNA_ID) 6개**다. C00000020…은 어디에도 없다.
+- gd4 set의 같은 이름 gVCF와 크기가 같다(C…4001 3,872,802,812 B). 다른 파일(inode가 다르다)이고, 09-06에 1분 반 차이로 만들어졌다. sha256은 다르지만 헤더에 set 경로가 들어가므로 증거가 되지 않는다.
+- 원인 후보: ① gd2 set을 만들 때 gd4 DNA_ID로 dir을 만들었다(내용은 gd2 raw) ② gd4 raw를 gd2 set에 잘못 걸었다(gd4 중복).
+- 판별에 필요한 것: `G000-gd2-20260819/outcome/C…4001/*_1.fastq.gz` 링크 대상. `data/cginvites/G000-gd2-20260819/`를 가리키면 ①, `G000-gd4-…`를 가리키면 ②다. 조회 1회 제한 때문에 이번에는 보지 않았다.
+- ①로 확인되면 gd2 set의 C…4001/4002/4003을 HG002/3/4로 manifest에 추가해 3잡을 제출한다. 기존 데이터는 수정하지 않는다.
 
 ## 표 (수집 후 채움)
 QC는 국통바빅 `analyze_meta/<s>/` 재사용 (mosdepth 평균 깊이, flagstat mapped%). 없으면 N/A.
