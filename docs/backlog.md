@@ -4,9 +4,9 @@
 
 | 순서 | 남은 일 | 완료 표시 |
 |---|---|---|
-| 1 | 회사 gd1~4 숏리드와 완료된 공개 NovaSeq6000 trio·NovaSeqX HG002의 VCF/조건 확인 → 기존 hap.py/v4.2.1 비교 | 샘플별 SNP·INDEL precision/recall/F1와 간단 QC 표 |
+| 1 | gd2 원래 set을 jslink·사용자 정본 표로 준비하고 서버 엑셀 확인 후 인계. 회사 gd1~4와 공개 NovaSeq6000 trio·NovaSeqX HG002를 기존 hap.py/v4.2.1로 비교 | 올바른 입력·샘플 대응, SNP·INDEL precision/recall/F1와 간단 QC 표 |
 | 2 | 유지한 GIAB 기본 잡 완료 확인. 고정 카탈로그에서 미처리 기본 run만 식별 | 산출물·완료 로그·QC 또는 `gap` 사유. 추가 20 set을 무조건 한꺼번에 제출하지 않음 |
-| 3 | 승인된 가벼운 정리: PacBio 기존 결과 요약, ONT 완료 비교 초안, 다운로드 집계 | 새 계산 없이 기존 수치·조건 확인. checksum은 활성 목록/과거분과 `NOREF`를 구분 |
+| 3 | 가벼운 정리 완료: PacBio 요약, ONT 초안, 다운로드 집계 | 담당 브랜치에 commit·push; main 병합과 구분. checksum은 활성 목록/과거분과 `NOREF`를 구분 |
 | 4 | 업체 롱리드 수령 뒤 같은 플랫폼의 기존 pipeline/QC/truth 비교 적용 | 현재는 **수령 대기**; GIAB 자료와 업체 자료를 혼동하지 않음 |
 | 5 | somatic 전장 분석: 사용자가 Desktop PacBio 담당에게 직접 시작 지시 예정 | bioinfo 코드·검증을 확인해 통합. 정리 담당은 먼저 제출하지 않음. 본래 비교와 완료 조건 분리 |
 
