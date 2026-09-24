@@ -32,6 +32,7 @@ tail -n +2 "$MAN" | while IFS=, read -r label src hg plat set s; do
     -S /bin/bash -V -j y -o "$OUT/logs/$label.\$JOB_ID.log" -wd "$d" <<JOB 2>&1
 #!/bin/bash
 set -eo pipefail
+export APPTAINER_TMPDIR=$INFRA/tmp SINGULARITY_TMPDIR=$INFRA/tmp   # phase1 env.sh와 같게(SIF 풀기용)
 SING=/home/ehojune/anaconda3/envs/nfcore312/bin/singularity   # phase1 env.sh의 conda env(apptainer+singularity 심링크). 잡 PATH엔 없다(156705–730 실패)
 test -x \$SING || { echo "ERROR: \$SING 없음" >&2; exit 2; }
 source /BiO/scratch/dyl/kbb/bashrc.txt   # bashrc가 unset 변수를 읽으므로 set -u는 그 뒤에

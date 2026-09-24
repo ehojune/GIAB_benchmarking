@@ -1,6 +1,6 @@
 # #7 숏리드 최소 비교 — 회사 gd001~004 vs 공개 NovaSeq 30x (NIST v4.2.1, hap.py)
 
-상태: **채점 0/13, 멈춤 (2026-09-25 KST).** hap.py 단계가 세 번 같은 원인(singularity 경로)으로 실패했다. 비교가 끝난 것이 아니다.
+상태: **채점 0/13 (2026-09-25 07:1x KST).** hap.py preflight 잡 156733이 대기(qw) 중이라 재제출 안 함. gd2 교정 run 156732 실행 중. 비교가 끝난 것이 아니다.
 
 ## 방법 (한 줄씩)
 - 입력: 국통바빅 `outcome/<s>/<s>_v1.1.0.g.vcf.gz`. **gVCF뿐이라**(`<NON_REF>` 블록, 확인함) 그대로 채점하지 않는다.
@@ -19,7 +19,10 @@
 - **원인 (확정):** singularity는 `/home/ehojune/anaconda3/envs/nfcore312/bin`(conda env의 apptainer 심링크)에만 있다. phase1 잡은 `env.sh`가 이 경로를 PATH에 넣어서 돌았다. 로그인·계산 노드 기본 PATH엔 없다.
 - **수정 (커밋만, 미제출):** `11_happy_submit.sh`가 잡 안에서 그 절대경로를 쓰고 `test -x`로 확인한다.
 - **재개 (1명령):** `cd /BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy && <repo의 11_happy_submit.sh 복사> && bash 11_happy_submit.sh happy_manifest.csv`. gd004·공개 7개는 genotyped VCF가 있어 hap.py만 돈다. gd001·gd003 6개는 GenotypeGVCFs부터 다시 돈다(아래 샘플 교정).
-- 같은 문제가 반복돼 지시대로 여기서 멈췄다.
+- 같은 문제가 반복돼 멈췄다가 사용자 지시(09-25)로 preflight 후 재개하기로 했다.
+- preflight 1 (1 slot, 4G): singularity는 찾았으나 SIF를 sandbox로 풀다 `unsquashfs: Out of memory in cache_get`. phase1 env.sh의 `APPTAINER_TMPDIR`도 빠져 있었다 → 잡에 추가.
+- preflight 2 = **job 156733** (16 slot, 56G, 실제 잡과 같은 조건): 노드가 차서 qw. 로그 `07_happy/logs/preflight2.156733.log`.
+- **재개 조건:** 그 로그에 `PREFLIGHT_OK`가 있으면 `cd …/07_happy && bash 11_happy_submit.sh happy_manifest.csv` (서버 사본은 최신). 없으면 로그의 오류를 먼저 본다.
 
 ## gd001·gd003 샘플 대응 교정 (2026-09-25)
 sampleinfo는 C…001/002/003 = HG002/3/4, C…004/005/006 = KOR-101/102/103이다. 원자료 링크와 성별 깊이는 반대를 가리킨다.
@@ -36,12 +39,29 @@ sampleinfo는 C…001/002/003 = HG002/3/4, C…004/005/006 = KOR-101/102/103이�
 - **정본 sampleinfo(G000/sampleinfo/*.xlsx) 교정은 사용자·관리자 몫이다.** gd4(cginvites `HG002_1.fastq.gz` 등)는 파일명과 sampleinfo가 맞는다.
 - hap.py가 돌면 recall로 교정이 맞는지 한 번 더 확인된다(잘못된 샘플이면 크게 낮게 나온다).
 
-## gd002 (2026-09-25)
-- 확정: `G000-gd2-20260819`의 12 mate 링크는 `data/cginvites/G000-gd4-20260819/`를 가리킨다. VCF `#CHROM`, CRAM `@RG SM`는 C00000040…(gd4 ID)다.
-- **후보 (근거 있음):** `/BiO/scratch/dyl/kbb/data/jslink/`에 `C00000020{01..06}00000G0x1_S6{7..9}/S7{0..2}_L005_R{1,2}_001.fastq.gz` 12개가 있다. 정본 sampleinfo의 gd2 DNA_ID와 정확히 같다. `20260729_KRIBB_Josoobok_WGS_1_Summary.txt`에 같은 6 Sample_ID(lane 5, 샘플당 4.1–4.9억 read)가 있다.
-- 조회한 경로(G000 set 목록, `G000/*/outcome/C0000002*`, `G000/*/analyze_meta/C0000002*`, `data/*/`)에서 이 FASTQ로 만든 VCF·CRAM은 없다. 그래서 채점할 gd2 결과가 없다. gd2 원자료는 jslink에 있다.
-- 파일명에 HG ID가 없어서 HG002/3/4 대응은 sampleinfo(C…2001/2002/2003 = HG002/3/4)에만 기댄다. gd1·gd3에서 sampleinfo 순서가 틀렸으니 처리 후 성별로 확인해야 한다.
-- 다음 필요 정보: jslink FASTQ를 국통바빅으로 돌린 set이 G000 밖에 따로 있는지(사용자 확인). 없으면 gd2는 기본 run이 필요하다(사용자 결정, 이 턴에 실행 안 함).
+## gd002 입력 대조와 교정 run (2026-09-25)
+| 비교 | 판정 | 근거 |
+|---|---|---|
+| gd2 outcome ↔ gd4 outcome | **같은 파일** (내용 동일) | 12/12 mate가 같은 device·inode·크기로 `data/cginvites/G000-gd4-20260819/{HG002…KOR-103}_{1,2}.fastq.gz`에 닿는다. hash 불필요 |
+| jslink ↔ gd2 outcome | **다른 read set** | 12/12 inode·크기 다름(jslink C…2001 R1 32.78 GB vs 43.65 GB). 첫 read flowcell/lane `LH00842:226:25333MLT4:5` vs `LH00677:246:23V3NWLT4:1`, index도 다름. 업체 Summary read 수(C…2001 4.11억/mate)와 gd2 flagstat(primary 10.05억 = gd4 HG002)도 다름 |
+| jslink ↔ gd4 | **다른 read set** | 위와 같음(gd2 outcome = gd4) |
+
+- 판정 범위: 파일 전체 hash는 하지 않았다. "다름"은 크기·inode·flowcell·read 수 차이로 충분하다. "같음"은 같은 inode라 확정이다.
+- 결론: `G000-gd2-20260819`의 결과(VCF·CRAM SM = C…40xx)는 **gd4 원자료로 만든 것**이다. 그대로 보존하고 비교에 쓰지 않는다.
+- jslink 원자료 = gd2 회사 자료(사용자 확인). DNA_ID C…2001–2006이 sampleinfo gd2 행, 업체 Summary(`20260729_KRIBB_Josoobok_WGS_1_Summary.txt`, lane 5, S67–S72)와 일치한다. mate는 R1→`_1`, R2→`_2`이고 첫 read 이름이 R1/R2 쌍으로 맞는다.
+
+**교정 run**
+| 항목 | 값 |
+|---|---|
+| set | `/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819-jslink-20260925` (`PROVENANCE.txt`) |
+| 입력 | `outcome/C…200{1..6}00000G0x1/<id>_{1,2}.fastq.gz` → `data/jslink/<id>_S67…S72_L005_R{1,2}_001.fastq.gz` 심볼릭 링크 12개. 원자료는 손대지 않음 |
+| 성별 | sampleinfo Sheet2 기존 gd2 행(DNA_ID로 조회, `FILTER_BY_SET_ID=false`). 행 추가·수정 없음 |
+| ref | 파이프라인 기본(GATK bundle `Homo_sapiens_assembly38.fasta`, alt-aware) |
+| 실행 | `10_submit_java17.sh`(PR #68 판, Java 17 래퍼) → **job 156732**. 제출 직후 `r`, Snakemake 6/265 steps |
+| 로그 | `…/G000-gd2-20260819-jslink-20260925/log/regermline_java17_G000-gd2-20260819-jslink-20260925.o156732` |
+| 중복 확인 | G000 안 gd2 set은 원래 것 하나뿐, 큐에 gd2/jslink 잡 없었음 |
+
+- **truth 대응은 추정:** jslink 파일·Summary에 HG/Coriell ID가 없다. HG002/3/4 = C…2001/2002/2003은 sampleinfo에만 기댄다. gd1·gd3에서 sampleinfo 순서가 틀렸으므로 run이 끝나면 chrX/Y 깊이로 먼저 확인하고, 그 뒤에 3개 채점 잡을 낸다(성별만으로 확정하지 않고 recall로 한 번 더 본다).
 
 ## 표 (채점 미수집)
 QC는 국통바빅 `analyze_meta/<s>/` (mosdepth 평균 깊이, flagstat mapped%).
@@ -49,7 +69,7 @@ QC는 국통바빅 `analyze_meta/<s>/` (mosdepth 평균 깊이, flagstat mapped%
 | source | label | DNA_ID | 기술 | 깊이 | mapped% | SNP P/R/F1 | INDEL P/R/F1 | 상태 |
 |---|---|---|---|---|---|---|---|---|
 | gd | gd001-HG002 / 3 / 4 | C…1004 / 1005 / 1006 | N/A | 35.84 / 36.59 / 39.72 | 99.99 / 99.99 / 99.98 | — | — | 대기(singularity) |
-| gd | gd002-HG002~4 | C…2001–2003 | N/A | N/A | N/A | N/A | N/A | 처리된 결과 없음, raw는 jslink |
+| gd | gd002-HG002~4 | C…2001–2003 (추정) | N/A | N/A | N/A | — | — | 교정 run 156732 실행 중 |
 | gd | gd003-HG002 / 3 / 4 | C…3004 / 3005 / 3006 | N/A | 29.89 / 30.87 / 30.17 | 99.99 / 99.98 / 99.99 | — | — | 대기 |
 | gd | gd004-HG002 / 3 / 4 | C…4001 / 4002 / 4003 | N/A | 39.86 / 45.98 / 34.73 | 99.97 / 99.98 / 99.98 | — | — | 대기 |
 | public | NovaSeq6000 PCR-free 30x HG002 / 3 / 4 | — | NovaSeq6000 | 29.53 / 29.58 / 29.80 | 99.92 / 99.87 / 99.93 | — | — | 대기 |
