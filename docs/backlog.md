@@ -4,15 +4,15 @@
 
 | 순서 | 남은 일 | 완료 표시 |
 |---|---|---|
-| 1 | gd2 원래 set을 jslink·사용자 정본 표로 준비하고 서버 엑셀 확인 후 인계. 회사 gd1~4와 공개 NovaSeq6000 trio·NovaSeqX HG002를 기존 hap.py/v4.2.1로 비교 | 올바른 입력·샘플 대응, SNP·INDEL precision/recall/F1와 간단 QC 표 |
+| 1 | 재구성한 회사 gd1~4 germline **156760–156763** 완료·간단 QC 확인 후 공개 NovaSeq6000 trio·NovaSeqX HG002와 기존 hap.py/v4.2.1 비교 | 정본 순번 1–3 KOR·4–6 HG, 새 산출물 확인, SNP·INDEL precision/recall/F1 표. 이전 업체 결과·비교 캐시 재사용 금지 |
 | 2 | 유지한 GIAB 기본 잡 완료 확인. 고정 카탈로그에서 미처리 기본 run만 식별 | 산출물·완료 로그·QC 또는 `gap` 사유. 추가 20 set을 무조건 한꺼번에 제출하지 않음 |
 | 3 | 가벼운 정리 완료: PacBio 요약, ONT 초안, 다운로드 집계 | 담당 브랜치에 commit·push; main 병합과 구분. checksum은 활성 목록/과거분과 `NOREF`를 구분 |
 | 4 | 업체 롱리드 수령 뒤 같은 플랫폼의 기존 pipeline/QC/truth 비교 적용 | 현재는 **수령 대기**; GIAB 자료와 업체 자료를 혼동하지 않음 |
-| 5 | somatic 전장 분석: 사용자가 Desktop PacBio 담당에게 직접 시작 지시 예정 | bioinfo 코드·검증을 확인해 통합. 정리 담당은 먼저 제출하지 않음. 본래 비교와 완료 조건 분리 |
+| 5 | PacBio 담당이 제출한 somatic 전장 **156747–156759** 결과 확인·채점 | [STATUS](STATUS.md)의 담당·절차 유지. 본래 HG002/3/4 비교와 완료 조건 분리 |
 
 ## 보류 — 자동으로 다시 시작하지 않음
 
-- 추가 truth/구간·원인 연구, 동일 원본 중복 run, phase 간 구조 통일. somatic 전장은 위 사용자 지시 경로에서만 시작.
+- 추가 truth/구간·원인 연구, 동일 원본 중복 run, phase 간 구조 통일. somatic은 이미 승인·제출한 범위만 진행.
 - 반복 PR 리뷰, 새 에이전트 위임, 상시 감시, 신규 release 전수 추적, 자동 HARVEST/Yuan PR.
 - PR #68·#69의 merge는 보류. 승인된 문구 정리와 ONT 초안 마무리는 진행하되 새 리뷰 반복은 하지 않음.
 
