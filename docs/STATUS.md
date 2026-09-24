@@ -1,6 +1,6 @@
 # GIAB 현황
 
-2026-09-25 범위 조정. 완료 기준은 [SCOPE](SCOPE.md). 담당자의 01:18 회신·사용자 확인에 숏리드 01:36 보고를 반영했다. 실시간 큐가 아니다.
+2026-09-25 범위 조정. 완료 기준은 [SCOPE](SCOPE.md). 숏리드 상태는 01:36 보고, bioinfo는 02:48 완료 보고 기준. 06:53 승인된 정리 지시를 전달했다. 실시간 큐가 아니다.
 
 | 작업 | 현재 상태 | 다음 한 번의 행동 |
 |---|---|---|
@@ -8,9 +8,9 @@
 | GIAB 숏리드 미완료 기본 run | **155526–155529, 156690 유지**. MGISEQ HG002 복구 BAM 교체·quickcheck 완료, 이전 BAM 보관. 2차 20 set·53샘플은 준비됨, 미제출 | 기존 잡 완료 시 `__DONE__`·`error_list.txt`·BAM 수 확인. 이후 고정 명세의 필요한 기본 run만 이어감 |
 | GIAB PacBio·ONT | 담당자 보고상 PacBio verify **49/49**, 소변이 19런·SV 5런. ONT HG002/3/4 기본 run·QC·채점 완료 | 기존 결과를 비교표에 연결. **업체 롱리드는 수령 대기**(사용자 확인); 받으면 기존 파이프라인 적용 |
 | 다운로드 | 담당자는 phase0 확보 100%와 MD5 잡 **156685 완료**를 보고. 후속 결과는 **draft PR #69**, 검토·머지 보류. `NOREF` **3,752개**는 checksum 검증 성공이 아님 | 확보율과 checksum 판정을 구분해 고정 명세의 gap만 기록. `NOREF`를 검증 성공으로 쓰지 않음 |
-| 범용 bioinfo 개발 / GIAB somatic | 범용 개발은 별도로 계속 허용. GIAB somatic 통합·pilot·전장 확장은 보류. 짧은 채점 잡 **156691**은 이미 제출됨, 이 표에서 완료 여부 미확인 | 새 GIAB 후속 잡 없음. bioinfo 결과는 GIAB 완료 조건과 분리 |
+| 범용 bioinfo 개발 / GIAB somatic | bioinfo `f2de95e`: CPU 구현·stub·4 Mb 실행 검증 완료 보고. 전장 검증은 미완. **전장 진행은 사용자 승인**, Desktop PacBio에 직접 시작 지시 예정. 기존 채점 시험 **156691**은 이 표에서 완료 미확인 | PacBio가 bioinfo와 인계·범위를 맞춰 실행. 관리자의 정리 지시로 먼저 전장 제출하지 않음 |
 
-숏리드 최소 비교 외 PacBio·ONT·다운로드 GIAB 후속 CLI는 중지하고 작업 트리를 보존했다. ONT poller 둘은 담당자 확인상 이미 종료했고, 제출한 156687–156689는 exit 0이다. PR #67은 이미 merge, **#68·#69는 draft로 전환해 보류**한다. 자동 리뷰나 재개 명령이 아니다.
+승인된 정리 3건은 06:55 담당 보고상 commit·push 완료: PacBio `e43ca77`, ONT `6a18594`, 다운로드 `5b2c18b`. 각각의 작업 브랜치 결과이며 main 반영과 구분한다. 새 대규모 계산은 없었다. ONT poller 둘은 종료됐다. PR #67은 이미 merge, **#68·#69는 merge 보류**이며 반복 리뷰는 하지 않는다.
 
 근거: [숏리드 입력·truth](../phase3_shortread_wgs/README.md), [PacBio 기존 결과](reference/2026-09-22-pacbio-hifi-benchmark-first-results.md), [ONT 기존 결과](reference/2026-09-22-ont-r10-benchmark.md), [PR #69](https://github.com/ehojune/GIAB_benchmarking/pull/69).
 

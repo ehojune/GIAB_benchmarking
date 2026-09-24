@@ -6,14 +6,15 @@
 |---|---|---|
 | 1 | 회사 gd1~4 숏리드와 완료된 공개 NovaSeq6000 trio·NovaSeqX HG002의 VCF/조건 확인 → 기존 hap.py/v4.2.1 비교 | 샘플별 SNP·INDEL precision/recall/F1와 간단 QC 표 |
 | 2 | 유지한 GIAB 기본 잡 완료 확인. 고정 카탈로그에서 미처리 기본 run만 식별 | 산출물·완료 로그·QC 또는 `gap` 사유. 추가 20 set을 무조건 한꺼번에 제출하지 않음 |
-| 3 | 다운로드 목록과 기존 checksum 결과의 잔여 표시 정리 | `PASS`/실패/`NOREF` 구분. 실제 필요한 입력의 실패만 복구 |
+| 3 | 승인된 가벼운 정리: PacBio 기존 결과 요약, ONT 완료 비교 초안, 다운로드 집계 | 새 계산 없이 기존 수치·조건 확인. checksum은 활성 목록/과거분과 `NOREF`를 구분 |
 | 4 | 업체 롱리드 수령 뒤 같은 플랫폼의 기존 pipeline/QC/truth 비교 적용 | 현재는 **수령 대기**; GIAB 자료와 업체 자료를 혼동하지 않음 |
+| 5 | somatic 전장 분석: 사용자가 Desktop PacBio 담당에게 직접 시작 지시 예정 | bioinfo 코드·검증을 확인해 통합. 정리 담당은 먼저 제출하지 않음. 본래 비교와 완료 조건 분리 |
 
 ## 보류 — 자동으로 다시 시작하지 않음
 
-- GIAB HG008/HG009 somatic 통합·pilot·전장 배치, 추가 truth/구간 연구, 동일 원본 중복 run, phase 간 구조 통일.
+- 추가 truth/구간·원인 연구, 동일 원본 중복 run, phase 간 구조 통일. somatic 전장은 위 사용자 지시 경로에서만 시작.
 - 반복 PR 리뷰, 새 에이전트 위임, 상시 감시, 신규 release 전수 추적, 자동 HARVEST/Yuan PR.
-- PR #68·#69는 draft로 보류하고 미커밋 ONT 해석 문서는 보존. 다음 실행의 필수 조건으로 만들지 않음.
+- PR #68·#69의 merge는 보류. 승인된 문구 정리와 ONT 초안 마무리는 진행하되 새 리뷰 반복은 하지 않음.
 
 bioinfo-agent 범용 개발은 별도 계속 진행한다. 이 개발·검증·vendor 완료를 GIAB 기본 작업의 의존성으로 걸지 않는다.
 

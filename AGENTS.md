@@ -2,7 +2,7 @@
 
 ## 2026-09-25 사용자 방침 — 먼저 읽기
 
-[docs/SCOPE.md](docs/SCOPE.md)가 작업 범위·완료 기준의 정본이다. **이 방침이 아래의 Harvest/Yuan 작업, 문서 동기화, 리뷰 지침보다 우선한다.** GIAB 담당 한 명과 독립된 bioinfo 범용개발 담당 한 명만 진행한다. 자동 리뷰·새 에이전트·범위 확장은 중단하고, 필요한 기본 run·간단 QC·업체 비교를 닫는다. 이력은 `docs/reference/`에 보존하며 STATUS에 다시 쌓지 않는다. 생성 README나 여러 phase의 모양을 맞추려고 일을 늘리지 않는다.
+[docs/SCOPE.md](docs/SCOPE.md)가 작업 범위·완료 기준의 정본이다. **이 방침이 아래의 Harvest/Yuan 작업, 문서 동기화, 리뷰 지침보다 우선한다.** 데이터 타입별 기존 담당이 승인된 기본 작업과 짧은 결과 정리를 맡고, 같은 코드·잡의 실행 담당은 한 명으로 둔다. 자동 리뷰·새 에이전트·임의 범위 확장은 하지 않는다. somatic 전장은 사용자가 Claude Desktop PacBio 담당에게 직접 시작 지시한다. 이력은 `docs/reference/`에 보존하며 STATUS에 다시 쌓지 않는다. 생성 README나 여러 phase의 모양을 맞추려고 일을 늘리지 않는다.
 
 이 repo는 [Yuan](https://github.com/ehojune/Yuan)의 templates/project에서 찍어낸 프로젝트다.
 Yuan의 AGENTS.md가 상위 규약이다.
