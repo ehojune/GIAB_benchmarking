@@ -31,8 +31,9 @@ tail -n +2 "$MAN" | while IFS=, read -r label src hg plat set s; do
   jid=$(qsub -terse -N "$name" -q octopus.q,shepherd.q -pe pe_slots 16 -l h_vmem=56G -l "h=$HOSTS" \
     -S /bin/bash -V -j y -o "$OUT/logs/$label.\$JOB_ID.log" -wd "$d" <<JOB 2>&1
 #!/bin/bash
-set -euo pipefail
-source /BiO/scratch/dyl/kbb/bashrc.txt
+set -eo pipefail
+source /BiO/scratch/dyl/kbb/bashrc.txt   # bashrc가 unset 변수를 읽으므로 set -u는 그 뒤에
+set -u
 export JAVA_HOME=/BiO/scratch/dyl/apps/miniconda3/lib/jvm PATH=/BiO/scratch/dyl/apps/miniconda3/lib/jvm/bin:\$PATH
 vcf=$d/$label.genotyped.vcf.gz
 if [ ! -s "\$vcf.tbi" ]; then
