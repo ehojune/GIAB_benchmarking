@@ -32,6 +32,8 @@ tail -n +2 "$MAN" | while IFS=, read -r label src hg plat set s; do
     -S /bin/bash -V -j y -o "$OUT/logs/$label.\$JOB_ID.log" -wd "$d" <<JOB 2>&1
 #!/bin/bash
 set -eo pipefail
+SING=/home/ehojune/anaconda3/envs/nfcore312/bin/singularity   # phase1 env.sh의 conda env(apptainer+singularity 심링크). 잡 PATH엔 없다(156705–730 실패)
+test -x \$SING || { echo "ERROR: \$SING 없음" >&2; exit 2; }
 source /BiO/scratch/dyl/kbb/bashrc.txt   # bashrc가 unset 변수를 읽으므로 set -u는 그 뒤에
 set -u
 export JAVA_HOME=/BiO/scratch/dyl/apps/miniconda3/lib/jvm PATH=/BiO/scratch/dyl/apps/miniconda3/lib/jvm/bin:\$PATH
@@ -41,7 +43,7 @@ if [ ! -s "\$vcf.tbi" ]; then
   mv \$vcf.part.vcf.gz \$vcf; mv \$vcf.part.vcf.gz.tbi \$vcf.tbi
 fi
 mkdir -p $d/tmp
-singularity exec -B $GIAB:$GIAB -B /BiO/scratch/dyl/kbb:/BiO/scratch/dyl/kbb $IMG /opt/hap.py/bin/hap.py \
+\$SING exec -B $GIAB:$GIAB -B /BiO/scratch/dyl/kbb:/BiO/scratch/dyl/kbb $IMG /opt/hap.py/bin/hap.py \
   $t.vcf.gz \$vcf -f ${t}_noinconsistent.bed -r $REF -o $d/$label --threads \${NSLOTS:-16} \
   --scratch-prefix $d/tmp --logfile $d/$label.hap.py.log
 echo "ALL DONE $label"
