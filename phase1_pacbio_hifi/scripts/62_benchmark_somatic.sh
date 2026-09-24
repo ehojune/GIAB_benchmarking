@@ -74,11 +74,26 @@ out="$SOMATIC_BENCH_DIR/$label"
 mkdir -p "$out"
 q="$out/query.pass_vaf.vcf.gz"
 sarg=(); [ -n "$sample" ] && sarg=(-s "$sample")
-# PASS/. + VAF 필터 → GT 0/1 통일 → bgzip + index. awk 는 FORMAT 의 GT 위치를 줄마다 찾는다.
-bt bcftools view -f 'PASS,.' ${sarg[@]+"${sarg[@]}"} -i "FORMAT/VAF[0:0]>=$SOMATIC_MIN_VAF" "$vcf" \
+ns=$(bt bcftools query -l "$vcf" | wc -l)
+if [ "$ns" -gt 1 ] && [ -z "$sample" ]; then
+    echo "ERROR: $vcf 는 샘플이 $ns 개다 — 세 번째 인자로 tumor 샘플 이름을 준다 ($(bt bcftools query -l "$vcf" | paste -sd, -))"; exit 1
+fi
+# 순서가 중요하다 (PR #67 Codex 지적):
+#   1) 샘플을 먼저 고른다 — bcftools 는 -i 를 -s 보다 먼저 평가해, 한 명령에 두면 첫 샘플(normal 일 수 있다)의 VAF 로 거른다
+#   2) PASS/.
+#   3) 다중 대립유전자를 나눈다 — VAF 는 Number=A 라 norm -m 이 대립유전자별로 나눠 준다. 그래야 둘째 ALT 만 기준을
+#      넘는 기록도 남고, GT 1/2 를 통째로 0/1 로 바꿔 G 콜을 잃는 일이 없다
+#   4) 대립유전자별 VAF 필터
+#   5) 이 기록의 ALT 를 실제로 부른 것(GT 에 0 아닌 대립유전자)만 남기고 GT 를 0/1 로 통일
+bt bcftools view ${sarg[@]+"${sarg[@]}"} "$vcf" \
+  | bt bcftools view -f 'PASS,.' \
+  | bt bcftools norm -m -any \
+  | bt bcftools view -i "FORMAT/VAF[0:0]>=$SOMATIC_MIN_VAF" \
   | awk -F'\t' 'BEGIN{OFS="\t"} /^#/ {print; next} {
         n=split($9, f, ":"); gi=0; for (i=1;i<=n;i++) if (f[i]=="GT") gi=i
-        if (gi) { m=split($10, v, ":"); v[gi]="0/1"; s=v[1]; for (i=2;i<=m;i++) s=s":"v[i]; $10=s }
+        if (!gi) next
+        m=split($10, v, ":"); if (v[gi] !~ /[1-9]/) next
+        v[gi]="0/1"; s=v[1]; for (i=2;i<=m;i++) s=s":"v[i]; $10=s
         print }' \
   | bt bcftools view -Oz -o "$q"
 bt bcftools index -f -t "$q"
