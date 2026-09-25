@@ -20,10 +20,12 @@
 
 - 원본: https://github.com/ehojune/bioinfo-agent `pipelines/pacbio-hifi-wgs`, 브랜치 `worktree-pacbio-somatic-cpu`
 - 커밋: `f2de95ea8f2fad81ecc18ead798146e95829f06f` (pacbio-hifi-wgs 0.2.0 — run_label + DeepSomatic tumor-normal CPU).
-  bioinfo-agent main(`dd9262b`)에는 아직 안 들어간 후보 구현이다.
+  같은 기능이 bioinfo-agent PR #57 로 main 에 들어갔다(09-25, `7b56957`). 이 사본은 merge 전 커밋 그대로라 그 뒤 수정
+  (표본표 검증, 실행 조건 분기, 사용자 모델 경로)은 없다 — 이번 배치는 기본 모델·직접 만든 표본표라 영향이 없다.
 - 꺼낸 방법: `git archive f2de95e pipelines/pacbio-hifi-wgs` (작업 트리가 아니라 커밋에서). **이 사본은 한 글자도 고치지 않았다.**
-- 검증 기록(bioinfo-agent 쪽): `docs/examples/20260925-pacbio-somatic-cpu-validation/handoff.md` — stub 회귀 + 음성 7건,
-  실데이터는 HG008-T/N-P chr13:82–86 Mb 한 조각(16코어 1분 46초, peak RSS 17.8 GB). **전장·정확도 검증은 아직 없다.**
+- 검증 기록(bioinfo-agent 쪽): `docs/examples/20260925-pacbio-somatic-cpu-validation/handoff.md` — 이 커밋 기준 stub 회귀 +
+  음성 7건, 실데이터는 HG008-T/N-P chr13:82–86 Mb 한 조각(16코어 1분 46초, peak RSS 17.8 GB). 전장·정확도는 이 저장소에서
+  09-25 에 13쌍으로 쟀다 — [실행 기록](../../docs/runs/2026-09-25-somatic-wgs.md).
 
 **왜 germline 사본(`pacbio-hifi-wgs`)을 교체하지 않고 따로 두나.** 0.2.0 은 48ec4638 이후 5커밋(CLR 진입, .bai 이름 강제,
 preset 별 pbmm2 인덱스)을 함께 담는다. 업체 롱리드(수령 대기)는 공개 비교군과 같은 판으로 돌려야 하므로 germline 사본은
