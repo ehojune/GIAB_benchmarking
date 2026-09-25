@@ -41,12 +41,13 @@ SV `s1.*` 156048~156052. 런별 원본 수치·Clair3 값은 [실측 기록](../
 | HG002.PacBio_CCS_15kb | Sequel I | 0.9988 | 0.9282 | 0.8333 |
 | HG003.PacBio_HiFi-Revio_20231031 | Revio | 0.9991 | 0.9916 | — |
 | HG003.PacBio_CCS_HudsonAlpha_14kb_15kb_19kb | Sequel II | 0.9992 | 0.9950 | — |
-| HG003.PacBio_CCS_Google_15kb | Sequel II | 0.9987 | 0.9855 | — |
+| HG003.PacBio_CCS_Google_15kb | Sequel I+II 혼합 | 0.9987 | 0.9855 | — |
 | HG004.PacBio_HiFi-Revio_20231031 | Revio | 0.9991 | 0.9920 | — |
 | HG004.PacBio_CCS_HudsonAlpha_15kb_21kb | Sequel II | 0.9992 | 0.9933 | — |
 | HG004.PacBio_CCS_Google_15kb | Sequel II | 0.9986 | 0.9860 | — |
 
-SV 는 HG003·HG004 에 GRCh38 truth 가 없어 채점하지 않았다. 업체 롱리드가 들어오면 같은 조건으로 이 표에 행을 더한다.
+HG003 Google 15kb 는 movie 3개 중 1개가 Sequel I(`m54262U`), 2개가 Sequel II(`m64017`)라 세대 비교의 근거로 쓰지 않는다
+(빼도 세대별 범위는 같다). SV 는 HG003·HG004 에 GRCh38 truth 가 없어 채점하지 않았다. 업체 롱리드가 들어오면 같은 조건으로 이 표에 행을 더한다.
 
 **실행 완료와 정확도는 다른 것이다.** 49 실행단위 전부 파이프라인 완료·산출물 검증(49/49)·QC 를 마쳤다 — 이것은 "돌았다"는 뜻이다.
 정확도(truth 대비)를 말할 수 있는 것은 위 11런을 포함한 germline 19런(소변이)과 HG002 5런(SV)뿐이다.
