@@ -123,6 +123,43 @@ def runs_under(giab_path, runs, inputs):
     return out
 
 
+def recorded_somatic_keys(rows, ix, runs, inputs, run_base):
+    """이미 기록한 쌍별 somatic 완료 문구를 germline 갱신으로 되돌리지 않는다.
+
+    실행 성공을 새로 판정하지 않는다. 입력으로 정확히 매칭한 행의 기존 출처·VCF
+    기록만 확인한다. T-BCM은 GIAB Severus SV 칸을 보존해 자체 SNV/INDEL이 notes에 있다.
+    """
+    run_base = str(run_base).rstrip("/")
+    pair_rows = read_tsv(PHASE1 / "somatic_pairs.tsv")
+    pairs = [dict(zip(pair_rows[0], row)) for row in pair_rows[1:]]
+    by_dsid = {r["dsid"]: r for r in runs}
+    keep = set()
+    for pair in pairs:
+        run = by_dsid.get(pair["tumor_dsid"])
+        paths = inputs.get(pair["tumor_dsid"], [])
+        if not run or not paths:
+            continue
+        matches = [row for row in rows
+                   if row[ix["category"]] == "pacbio_hifi"
+                   and all(p.startswith(row[ix["giab_path"]].rstrip("/") + "/") for p in paths)]
+        if len(matches) != 1:
+            continue
+        row = matches[0]
+        pid, sample = pair["pair_id"], run["sample"]
+        vcf = (f"{run_base}/{sample}/PacBio/somatic.{pid}/03_VCF/deepsomatic/"
+               f"{sample}.somatic.{pid}.GRCh38.deepsomatic.vcf.gz")
+        own = (row[ix["somatic_called"]] == "TRUE"
+               and row[ix["somatic_by"]] == "me"
+               and row[ix["somatic_local_path"]] == vcf
+               and row[ix["somatic_script"]] == "phase1_pacbio_hifi/scripts/70_submit_somatic.sh")
+        separate = (pid == "T-BCM" and row[ix["somatic_by"]] == "GIAB"
+                    and "별도 자체 somatic SNV/INDEL: T-BCM;" in row[ix["notes"]]
+                    and f"VCF={vcf};" in row[ix["notes"]])
+        if own or separate:
+            keep.add(row[ix["giab_path"]])
+    return keep
+
+
 def verified(run, run_base, ref_name):
     """30_verify_outputs.sh와 같은 기준: 핵심 산출물 존재 + 비어있지 않음."""
     sample, dataset, entry = run["sample"], run["dataset"], run["entry_type"]
@@ -170,6 +207,7 @@ def main():
     rows = read_tsv(CATALOG)
     hdr = rows[0]
     ix = {c: i for i, c in enumerate(hdr)}
+    somatic_recorded = recorded_somatic_keys(rows[1:], ix, runs, inputs, args.run_base)
 
     def set_cell(row, colname, value, changes):
         i = ix[colname]
@@ -218,7 +256,8 @@ def main():
         set_cell(row, "variant_script", SCRIPT_REF, changes)
         # next_step은 "정렬→변이 호출을 해야 한다" 같은 문구로 남아 있어 방금 채운 칸과 모순된다.
         # 날짜를 넣지 않아 재실행해도 같은 값이다(멱등).
-        set_cell(row, "next_step", next_step_done(row[ix["sample"]]), changes)
+        if row[ix["giab_path"]] not in somatic_recorded:
+            set_cell(row, "next_step", next_step_done(row[ix["sample"]]), changes)
         if changes:
             updated.append((label, changes))
 
