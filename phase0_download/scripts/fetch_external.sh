@@ -10,7 +10,8 @@
 #
 # wget -c 라서 중단 후 재실행하면 이어받는다. 판정: 크기 일치 필수, md5 는 매니페스트에 있는 행만(S3 단일 파트 ETag).
 # 멀티파트 업로드(큰 CRAM·VCF)는 ETag 가 md5 가 아니라 '-' 로 두었다 — 크기로만 본다.
-# md5 를 한 번 통과하면 <파일>.md5ok 를 남겨 다시 계산하지 않는다.
+# md5 를 한 번 통과하면 <파일>.md5ok(기대 md5 기록)를 남긴다. 마커의 md5 가 매니페스트와 다르거나 파일이 마커보다 새로우면
+# 무시하고 다시 계산한다 — 검증 모드(VERIFY_ONLY=1)에서도 같다.
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GIAB_ROOT="${GIAB_ROOT:-/BiO/scratch/ehojune/GIAB_benchmark}"
@@ -40,11 +41,20 @@ fetch_one() {   # relpath bytes url md5
         have=$(stat -c%s "$out" 2>/dev/null || echo -1)
         if [ "$have" != "$bytes" ]; then echo "  ERROR: 크기 불일치 $relpath (have=$have want=$bytes)"; return 1; fi
     fi
-    if [ "$md5" != "-" ] && [ -n "$md5" ] && [ ! -f "$out.md5ok" ]; then
-        if [ "${VERIFY_ONLY:-0}" = 1 ]; then printf 'SIZE_OK_MD5_UNCHECKED %s\n' "$relpath"; return 0; fi
-        got=$(md5sum "$out" | awk '{print $1}')
-        if [ "$got" != "$md5" ]; then echo "  ERROR: md5 불일치 $relpath (got=$got want=$md5)"; return 1; fi
-        printf '%s  %s\n' "$got" "$(basename "$out")" > "$out.md5ok"
+    if [ "$md5" != "-" ] && [ -n "$md5" ]; then
+        # 마커(.md5ok)는 "기대 md5 + 그 시점의 파일"에 묶인다. 첫 토큰이 기대값과 다르거나 파일이 마커보다
+        # 새로우면 낡은 마커다 — 그때는 검증 모드에서도 md5 를 다시 계산한다 (인덱스 파일이라 싸다).
+        local ok_marker=0
+        if [ -f "$out.md5ok" ] && [ "$(awk '{print $1; exit}' "$out.md5ok" 2>/dev/null)" = "$md5" ] && [ ! "$out" -nt "$out.md5ok" ]; then
+            ok_marker=1
+        fi
+        if [ "$ok_marker" -eq 0 ]; then
+            got=$(md5sum "$out" | awk '{print $1}')
+            if [ "$got" != "$md5" ]; then
+                echo "  ERROR: md5 불일치 $relpath (got=$got want=$md5)"; rm -f "$out.md5ok"; return 1
+            fi
+            printf '%s  %s\n' "$got" "$(basename "$out")" > "$out.md5ok"
+        fi
     fi
     printf 'OK   %s\n' "$relpath"
 }
