@@ -96,8 +96,8 @@ qdel 하고 위처럼 다시 냈다. 계산 손실은 파일럿 약 10분(4코�
 | 2D6 | shepherd-1-10 | 2.91 h | 205 GB | SC28 | shepherd-1-2 | 3.13 h | 213 GB |
 | 2E6 | shepherd-1-1 | 2.93 h | 204 GB | | | | |
 
-- maxvmem 은 가상메모리다. 60샤드에서 200~258 GB — shepherd 노드 실메모리(251 GB)에 가깝다. 다시 돌릴 때 shepherd 에서는
-  샤드를 줄인다(예: 40).
+- maxvmem 은 가상메모리다. 60샤드에서 200~258 GB 로 shepherd 노드 실메모리(251 GB)에 가깝지만, 실사용(RSS)은 재지 않았고
+  샤드 수를 바꿔 비교하지도 않았다.
 - p21 채점(11:04:29 시작)은 잡 종료(11:05:01)보다 먼저 들어갔다. VCF 는 11:03:41 에 이미 완성돼 있었고, 다시 채점한
   결과(156778)가 첫 결과와 byte 단위로 같다.
 
@@ -167,4 +167,4 @@ truth 는 SNV 9,454 · INDEL 8,752 (`all`), 9,078 · 4,934 (`nogermlineinterfere
    모은 뒤 `62_benchmark_somatic.sh --collect`. `recall_only` 쌍의 precision 은 읽지 않는다.
 3. 실패하면 같은 명령으로 재제출 — `-resume` 으로 이어서 돈다(`$INFRA/work/som.<pair>`). 코드 문제는 bioinfo-agent 에
    넘기고(범용 코드), 고친 커밋을 다시 vendor 한다 — 이 세션은 파이프라인 코드를 직접 고치지 않는다.
-4. shepherd 노드에서는 샤드를 줄인다 — `SOMATIC_SLOTS=40` 등. 60샤드 maxvmem 이 실메모리에 붙는다.
+4. shepherd 노드에서 60샤드로 다시 돌린다면 한 쌍을 먼저 돌려 RSS 를 잰다 — 이번 값은 가상메모리뿐이다.
