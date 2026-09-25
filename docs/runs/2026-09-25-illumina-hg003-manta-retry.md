@@ -1,6 +1,6 @@
 # Illumina-250PE Manta 미해결 기록
 
-2026-09-25 19:52 KST 확인. **HG003 재시도도 실패했다. 추가 재시도는 하지 않는다.** 기존 master `155529`는 나머지 분석을 진행 중이다.
+2026-09-25 19:52 KST 확인. **HG003 별도 재시도도 실패했다.** 21:44 사용자 지시로 이후에는 실패 중간 폴더를 정리하고 [native regermline156782](2026-09-25-illumina-regermline-cleanup.md)로 재개한다. 기존 master `155529`는 나머지 분석을 진행 중이다.
 
 | 실행 | 확인 결과 |
 |---|---|
@@ -14,4 +14,4 @@ HG003은 동일 Manta 1.6.0·BAM·GRCh38로 병렬도만 10→1로 낮췄다. SG
 
 근거 폴더: `/BiO/scratch/ehojune/GIAB_benchmark/repairs/manta-Illumina250PE-HG003-20260925`. `preflight.json`, `job.sh`, `submission-result.json`, `isolated_attempt.exitcode`, `ended_at.txt`, `run/workflow.error.log.txt`를 보존했다. 원 출력·오류 기록·공유 pipeline은 그대로다.
 
-두 샘플의 SV 결과는 미완료다. 전체 run 재시작이나 새 caller·원인 연구로 확대하지 않는다. 다른 단계가 끝나면 SNP/INDEL 비교 가능 여부를 해당 산출물과 QC로 따로 판단한다.
+두 샘플의 SV 결과는 미완료다. 기존 잡이 끝난 뒤 승인된 native 재개만 수행한다. 새 caller·원인 연구로 확대하지 않는다. 다른 단계가 끝나면 SNP/INDEL 비교 가능 여부를 해당 산출물과 QC로 따로 판단한다.

@@ -626,6 +626,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-25 21:51 — 사용자 지시에 따라 실패 Manta 중간산물 정리 후 native regermline156782를 대기 제출했다. 기존155529 종료 후 실행한다. [기록](docs/runs/2026-09-25-illumina-regermline-cleanup.md)
 - 2026-09-25 19:52 — 기본 9잡 진전 확인. Manta HG003 재시도도 실패해 반복 중지, HG002 QC만 156781로 한정 복구. 누락된 somatic 13쌍을 카탈로그에 반영했다. [현황](docs/STATUS.md)
 - 2026-09-25 16:05 — 공개 기본 5잡·회사 4잡 진행, somatic 13쌍 QC·채점 완료 확인. HG003 Manta 오류는 별도 복구 잡 156780으로 재시도하며 Codex 4시간 점검·보고를 시작했다. [현황](docs/STATUS.md)
 - 2026-09-25 — HG008 PacBio somatic 13쌍 전장(DeepSomatic 1.10.0 CPU) 완료·채점. matched T-BCM SNV recall 0.950·precision 0.953, borrowed 11쌍 SNV recall 0.89~0.93. [기록](docs/runs/2026-09-25-somatic-wgs.md)

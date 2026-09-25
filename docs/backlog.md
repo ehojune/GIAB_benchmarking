@@ -5,7 +5,7 @@
 | 순서 | 남은 일 | 완료 표시 |
 |---|---|---|
 | 1 | 재구성한 회사 gd1~4 germline **156760–156763** 완료·간단 QC 확인 후 공개 NovaSeq6000 trio·NovaSeqX HG002와 기존 hap.py/v4.2.1 비교 | 정본 순번 1–3 KOR·4–6 HG, 새 산출물 확인, SNP·INDEL precision/recall/F1 표. 이전 업체 결과·비교 캐시 재사용 금지 |
-| 2 | GIAB 기본 잡 5개 유지. HG002 QC 복구 **156781** 결과 확인. HG002/3 Manta는 미해결로 남김 | [QC 복구](runs/2026-09-25-illumina-hg002-verifybamid-retry.md)의 산출물·종료코드·입력 불변 확인 후 반영. [Manta 재시도도 실패](runs/2026-09-25-illumina-hg003-manta-retry.md): 같은 실행 반복 금지. 20 set 일괄 제출 금지 |
+| 2 | GIAB 기본 잡 5개 유지. **156782**는155529 종료 후 Manta 정리·`regermline` 재개 | [실행 기록](runs/2026-09-25-illumina-regermline-cleanup.md)의 정리 기록·종료코드·새 오류·VCF/QC 확인. 같은 세트 중복 실행·20 set 일괄 제출 금지 |
 | 3 | 가벼운 정리 3건 완료: PacBio 요약, ONT 비교 정리, 다운로드 집계 | [STATUS의 결과 링크](STATUS.md) 참조. 담당 브랜치 완료이며 main 미통합. checksum은 활성 목록/과거분과 `NOREF`를 구분 |
 | 4 | 업체 롱리드 수령 뒤 같은 플랫폼의 기존 pipeline/QC/truth 비교 적용 | 현재는 **수령 대기**; GIAB 자료와 업체 자료를 혼동하지 않음 |
 
