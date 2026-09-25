@@ -626,6 +626,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-25 16:05 — 공개 기본 5잡·회사 4잡 진행, somatic 13쌍 QC·채점 완료 확인. HG003 Manta 오류는 별도 복구 잡 156780으로 재시도하며 Codex 4시간 점검·보고를 시작했다. [현황](docs/STATUS.md)
 - 2026-09-25 — HG008 PacBio somatic 13쌍 전장(DeepSomatic 1.10.0 CPU) 완료·채점. matched T-BCM SNV recall 0.950·precision 0.953, borrowed 11쌍 SNV recall 0.89~0.93. [기록](docs/runs/2026-09-25-somatic-wgs.md)
 - 2026-09-25 — 카탈로그 TSV·Excel 442행 대조 차이 0. 회사 4개 재분석·GIAB 기본 5개·somatic 13쌍 실행은 [STATUS](docs/STATUS.md)에 분리해 기록했다.
 - 2026-09-24 — md5 전수 검증을 SGE 잡 156685로 재제출(sidecar 2차 판정, #40). 다운로드 세션 교훈 11건을 Yuan에 수확(ehojune/Yuan#6) — HARVEST.md 해당 15행에 자산 id 표시. Codex 리뷰 원칙: #37 3라운드·#40 3라운드 반영 후 머지.
