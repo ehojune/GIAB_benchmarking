@@ -18,12 +18,13 @@ screen -S giab
 JOBS=12 bash phase0_download/scripts/fetch_all.sh 2>&1 | tee logs/fetch_all.log
 ```
 
-**`fetch_all.sh`가 이 저장소의 다운로드 진입점이다.** 취득 경로가 네 군데로 갈라져 있어
+**`fetch_all.sh`가 이 저장소의 다운로드 진입점이다.** 취득 경로가 다섯 군데로 갈라져 있어
 (GIAB FTP/S3 · ENA · ONT 공개 데이터 · Google/HPRC 버킷) 어느 하나를 빼먹기 쉬웠다. 이 스크립트가 순서대로 부른다.
 
 | 단계 | 무엇을 | 하위 스크립트 | 규모 |
 |---|---|---|---|
 | phase0 | GIAB FTP/S3 본체 | `run_priority.sh` | 81,302 files / 113.8 TiB |
+| phase0ext | GIAB가 가리키는 외부 S3 — giab-aws HG008-T BioSkryb×UG100 단일세포 CRAM·VCF | `fetch_external.sh` ([ext_manifest.tsv](ext_manifest.tsv)) | 476 files / 4.75 TiB |
 | phase1 | HG001·HG005 SequelII 11kb (ENA PRJNA540705/540706) | `phase1_pacbio_hifi/scripts/02_fetch_sra_reads.sh` | 12 files / 135 GiB |
 | phase2 | HG001 rel6 + HG002 R10.4.1 (ONT 공개) | `phase2_ont/scripts/02_fetch_external_reads.sh` | 4 files / 297 GiB |
 | phase3 | 숏리드 업체 비교군 (Google GCS, HPRC S3) | `phase3_shortread_wgs/scripts/02_fetch_external_reads.sh` | 12 files / 359 GiB |

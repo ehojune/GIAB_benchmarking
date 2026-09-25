@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""phase0 manifest + 외부 매니페스트 3종 -> docs/SIZES.md (플랫폼 디렉토리 단위 정확 바이트, 조회용).
+"""phase0 manifest + 외부 매니페스트 4종(phase0 ext·phase1·phase2·phase3) -> docs/SIZES.md (플랫폼 디렉토리 단위 정확 바이트, 조회용).
 
     python phase0_download/scripts/build_sizes.py
 
@@ -50,7 +50,8 @@ for name in ('release_truthsets', 'rnaseq_all', 'trio_analysis'):
             top = '/'.join(p[0].split('/')[:2])
             a = special[(name, top)]; a[0] += 1; a[1] += int(p[1])
 ext = defaultdict(lambda: [0, 0])
-for label, rel, kcol, bcol in (('ENA (phase1)', 'phase1_pacbio_hifi/sra_manifest.tsv', 'dsid', 'bytes'),
+for label, rel, kcol, bcol in (('giab-aws (phase0 ext)', 'phase0_download/ext_manifest.tsv', 'dsid', 'bytes'),
+                               ('ENA (phase1)', 'phase1_pacbio_hifi/sra_manifest.tsv', 'dsid', 'bytes'),
                                ('ONT 공개 (phase2)', 'phase2_ont/ext_manifest.tsv', 'dsid', 'bytes'),
                                ('Google/HPRC (phase3)', 'phase3_shortread_wgs/ext_manifest.tsv', 'dsid', 'bytes')):
     for r in csv.DictReader(open(os.path.join(ROOT, rel), encoding='utf-8', newline=''), delimiter='\t'):
@@ -58,7 +59,7 @@ for label, rel, kcol, bcol in (('ENA (phase1)', 'phase1_pacbio_hifi/sra_manifest
 
 tf = tb = 0
 lines = ['# GIAB platform-level sizes (lookup-only reference)', '',
-         '생성: `python phase0_download/scripts/build_sizes.py` — 원본은 `phase0_download/manifests/**` + 외부 매니페스트 3종. 바이트는 정확한 합계. 손으로 고치지 말 것.', '',
+         '생성: `python phase0_download/scripts/build_sizes.py` — 원본은 `phase0_download/manifests/**` + 외부 매니페스트 4종. 바이트는 정확한 합계. 손으로 고치지 말 것.', '',
          '## GIAB FTP/S3 — 샘플 × 플랫폼 디렉토리', '',
          '| sample | platform dir | category | files | bytes | GiB |', '|---|---|---|---|---|---|']
 for (s, plat, cat), (n, b) in sorted(agg.items()):
@@ -69,6 +70,6 @@ for (name, top), (n, b) in sorted(special.items()):
 lines += ['', '## 외부 유래 (GIAB FTP 밖)', '', '| 출처 | dsid | files | bytes | GiB |', '|---|---|---|---|---|']
 for (label, d), (n, b) in sorted(ext.items()):
     lines.append(f'| {label} | {d} | {n} | {b} | {b/GIB:,.1f} |'); tf += n; tb += b
-lines += ['', f'**합계 {tf:,} files / {tb:,} bytes = {tb/GIB:,.1f} GiB = {tb/1024**4:.2f} TiB = {tb/1e12:.1f} TB** (4경로 전체)', '']
+lines += ['', f'**합계 {tf:,} files / {tb:,} bytes = {tb/GIB:,.1f} GiB = {tb/1024**4:.2f} TiB = {tb/1e12:.1f} TB** (5경로 전체). 카탈로그 합계(114.3 TiB)와의 차이: giab-aws 476 files(4.75 TiB), ENA 12 files(135 GiB), rel6 2 files(137 GiB)는 대응 GIAB 행의 `reads_format`에 출처만 적고 집계에 넣지 않는 관례 — [catalog/README.md](../catalog/README.md) "외부 유래 행".', '']
 open(OUT, 'w', encoding='utf-8', newline='\n').write('\n'.join(lines))
 print(f'{OUT}: {tf:,} files / {tb/1024**4:.2f} TiB, rows={len(agg)+len(special)+len(ext)}')

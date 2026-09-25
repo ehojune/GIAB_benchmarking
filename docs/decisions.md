@@ -1272,3 +1272,12 @@ Manta HG003은 1스레드 재시도156780도 같은 signal 11이라 반복하지
 ### 2026-09-25 21:44 — 정정: 실패 Manta 정리 후 native 재개
 
 사용자가 국통바빅 재시도는 `regermline`이며 반복 실패한 Manta 중간산물을 비운 뒤 다시 실행하도록 지시했다. 앞선 Manta 추가 재시도 보류를 이 범위에서 대체한다. 현재155529의 나머지 작업을 보존하기 위해156782를 선행 잡 종료 의존성으로 등록했다. 실패 폴더는 백업 이동하고 정상 입력·결과는 보존한다.
+
+## 2026-09-26 — [다운로드 세션] 사용자 결정 둘: stale release 52건은 보유 유지, HG008-T BioSkryb×UG100은 받는다
+
+- **stale 52건(8.4 GiB) 보유 유지** — 2026-09-22 항목의 '지우지 않는다'를 사용자가 확정했다. 활성 매니페스트 밖, `release_stale_ftp_removed.tsv`에 목록. 더 논의하지 않는다.
+- **BioSkryb×UG100 단일세포 CRAM·VCF를 받는다** — 2026-09-23 '받지 않는다' 항목을 사용자 결정으로 **정정**한다. 받기 전에 FTP 매니페스트를 HEAD로 다시 재니 `size_Gb` 열이 실제로는 **GiB**였고 인덱스(.crai/.tbi 238개)가 빠져 있었다: 정확한 규모는 **476 files, 4.75 TiB (5.22 TB)** (CRAM 119 + crai 119 + VCF 119 + tbi 119). 4.42는 틀린 수였다.
+- 매니페스트는 `phase0_download/ext_manifest.tsv`(phase3와 같은 스키마). md5는 S3 단일 파트 ETag가 있는 238건(인덱스)만, 멀티파트인 CRAM·VCF는 크기로만 검증한다. 받는 스크립트 `fetch_external.sh`, `fetch_all.sh`의 `phase0ext` 단계. 로컬 `ext/giab-aws/...`.
+- 카탈로그는 규칙대로 대응 GIAB 행(`HG008-T_bioskryb-libraries-UG100`)의 `reads_format`·정렬·인덱스 칸에 적고 파일 수·용량 집계에는 넣지 않는다 — 5 TB가 집계 밖에 있으므로 README 규모 문구와 `docs/SIZES.md`(5경로 합계)에 따로 명시한다. 정렬 주체가 Ultima라 `align_by=N/A`, VCF 콜러는 README에 없어 `N/A`.
+- 계산 노드는 외부망이 없어 다운로드는 로그인 노드 nohup(JOBS=6). 5.22 TB는 1 Gbit 회선에서 15~17시간.
+
