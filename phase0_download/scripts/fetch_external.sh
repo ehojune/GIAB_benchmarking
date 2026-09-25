@@ -45,7 +45,7 @@ fetch_one() {   # relpath bytes url md5
         # 마커(.md5ok)는 "기대 md5 + 그 시점의 파일"에 묶인다. 첫 토큰이 기대값과 다르거나 파일이 마커보다
         # 새로우면 낡은 마커다 — 그때는 검증 모드에서도 md5 를 다시 계산한다 (인덱스 파일이라 싸다).
         local ok_marker=0
-        if [ -f "$out.md5ok" ] && [ "$(awk '{print $1; exit}' "$out.md5ok" 2>/dev/null)" = "$md5" ] && [ ! "$out" -nt "$out.md5ok" ]; then
+        if [ -f "$out.md5ok" ] && [ "$(awk '{print $1; exit}' "$out.md5ok" 2>/dev/null)" = "$md5" ] && [ "$out.md5ok" -nt "$out" ]; then   # 마커가 파일보다 엄격히 새로워야 한다 (mtime 같으면 재계산)
             ok_marker=1
         fi
         if [ "$ok_marker" -eq 0 ]; then
