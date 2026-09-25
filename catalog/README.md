@@ -73,7 +73,7 @@ python catalog/build_readme.py      # master_catalog.tsv -> README.md 표 재생
 
 | 상황 | 방식 | 집계 | 예 |
 |---|---|---|---|
-| GIAB 디렉토리가 있고 리드만 밖에 있다 | 기존 행의 `reads_format`에 출처·로컬 경로 | 미포함 | HG001·HG005 SequelII 11kb(ENA), HG001 ONT-UL rel6 |
+| GIAB 디렉토리가 있고 리드만 밖에 있다 | 기존 행의 `reads_format`에 출처·로컬 경로 | 미포함 | HG001·HG005 SequelII 11kb(ENA), HG001 ONT-UL rel6, HG008-T BioSkryb×UG100(giab-aws, 4.75 TiB — 큰 용량이라 README 규모 문구·SIZES.md에 따로 명시) |
 | GIAB에 그 데이터가 아예 없다 | 자체 행 (`external/` 또는 `ext/` prefix) | 포함 | phase3 숏리드 6행, HG002 R10.4.1 ONT 1행 |
 
 `ext/` 행도 `external/` 행과 똑같이 크롤러·재계산 대상이 아니다 — `crawl_data.py`는 FTP 경로만 라우팅하므로 매치되지 않고,

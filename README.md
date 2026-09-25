@@ -6,14 +6,14 @@ GIAB 9개 샘플(HG001–HG007 germline, HG008·HG009 tumor-normal)의 **전체 
 
 | | |
 |---|---|
-| 데이터 규모 | **442 datasets / 81,316 files / 125.7 TB** · **다운로드 완료 — 2026-09-22 서버 전수 실측: 4경로(FTP/S3·ENA·ONT 공개·Google/HPRC) 81,330/81,330 files 크기 일치, 미수신 0, 매니페스트 밖 데이터 0** ([대조 기록](docs/runs/2026-09-22-disk-vs-manifest-reconciliation.md)); 그 외 FTP에서 삭제된 release 구버전 52 files / 8.4 GiB를 디스크에 보유 (2026-08-13 HEAD 검증 + 2026-09-16 FTP `release/`·`data/` 라이브 크롤: HG002 v5.0q·stratifications v3.6, HG008/HG009 신규 데이터셋 추가. GIAB FTP 밖 데이터 중 숏리드 6행 359 GiB(`external/`, 2026-09-17)와 HG002 R10.4.1 ONT 1행 160 GiB(`ext/`, 2026-09-22) 포함 — 아래 "외부 보충 리드". 2026-09-17에 받지 않기로 한 3건 12,423 files / 10.7 TiB는 [manifests/declined_by_decision.tsv](phase0_download/manifests/declined_by_decision.tsv)에 목록만 남기고 제외) |
+| 데이터 규모 | **442 datasets / 81,316 files / 125.7 TB** (+ 집계 밖 외부 리드: giab-aws BioSkryb×UG100 476 files 5.22 TB 수령 중, ENA 135 GiB, rel6 136 GiB — 5경로 전체는 [docs/SIZES.md](docs/SIZES.md)) · **다운로드 완료 — 2026-09-22 서버 전수 실측: 4경로(FTP/S3·ENA·ONT 공개·Google/HPRC) 81,330/81,330 files 크기 일치, 미수신 0, 매니페스트 밖 데이터 0** ([대조 기록](docs/runs/2026-09-22-disk-vs-manifest-reconciliation.md)); 그 외 FTP에서 삭제된 release 구버전 52 files / 8.4 GiB를 디스크에 보유 (2026-08-13 HEAD 검증 + 2026-09-16 FTP `release/`·`data/` 라이브 크롤: HG002 v5.0q·stratifications v3.6, HG008/HG009 신규 데이터셋 추가. GIAB FTP 밖 데이터 중 숏리드 6행 359 GiB(`external/`, 2026-09-17)와 HG002 R10.4.1 ONT 1행 160 GiB(`ext/`, 2026-09-22) 포함 — 아래 "외부 보충 리드". 2026-09-17에 받지 않기로 한 3건 12,423 files / 10.7 TiB는 [manifests/declined_by_decision.tsv](phase0_download/manifests/declined_by_decision.tsv)에 목록만 남기고 제외) |
 | **지금 돌고 있는 것** | [docs/STATUS.md](docs/STATUS.md) — 잡 ID, 끝나면 할 일, 막힌 것. 현황만 담는다 |
 | 아직 안 한 일 | [docs/backlog.md](docs/backlog.md) — 남은 기본 처리·비교와 보류 범위 |
 | 서버·자산·점검 명령 | [docs/reference/server-and-infra.md](docs/reference/server-and-infra.md) — 노드 스펙, `_infra` 자산, 매니페스트 밖에서 받은 것 (조회용) |
 | 다운로드 | [phase0_download/](phase0_download/) — 스크립트, 매니페스트, 속도·용량 계획 |
 | PacBio HiFi 처리 | [phase1_pacbio_hifi/](phase1_pacbio_hifi/) — 49개 실행 단위의 기본 처리·QC와 기존 소변이·SV 채점 결과. 별도 HG008 somatic 전장 13쌍은 09-25 완료·채점 — [결과](docs/runs/2026-09-25-somatic-wgs.md) |
 | ONT 처리 | [phase2_ont/](phase2_ont/) — 기본 처리·QC·기존 채점 완료. 후속 결과 정리는 담당 브랜치에 있으며 [현황·결과](docs/STATUS.md)에서 찾는다. HG008은 germline truth가 없어 해당 채점 대상이 아니다 |
-| 외부 보충 리드 | GIAB FTP에 없는 데이터는 외부에서 받는다. **집계 미포함** (대응 GIAB 행의 `reads_format`에 출처만 적는 관례) — PacBio: HG001·HG005 SequelII 11kb → ENA PRJNA540705/540706, 12 cell 135 GiB ([sra_manifest.tsv](phase1_pacbio_hifi/sra_manifest.tsv)); ONT: HG001 ultralong → nanopore-wgs-consortium rel6, 136 GiB ([ext_manifest.tsv](phase2_ont/ext_manifest.tsv)). **집계 포함** (대응 GIAB 디렉토리가 아예 없어 자체 행을 갖는다) — 숏리드: HG002/3/4 NovaSeq 6000 PCR-free 30x → Google brain-genomics-public(GCS), 6 files 147 GiB; HG002 NovaSeq X 30x → 같은 버킷, 2 files 41 GiB; HG003/4 HiSeq 30x 서브샘플 → HPRC S3, 4 files 170 GiB ([ext_manifest.tsv](phase3_shortread_wgs/ext_manifest.tsv), `external/` 6행, 2026-09-17); ONT: HG002 R10.4.1 → ONT 공개 데이터 `s3://ont-open-data/giab_2025.01/` 플로우셀 PAW70337, 2 files 160 GiB (`ext/` 1행, 2026-09-22. **CC BY-NC 4.0 — 비상업 연구 한정**). 넷을 한 번에 받는 진입점: [`fetch_all.sh`](phase0_download/scripts/fetch_all.sh) |
+| 외부 보충 리드 | GIAB FTP에 없는 데이터는 외부에서 받는다. **집계 미포함** (대응 GIAB 행의 `reads_format`에 출처만 적는 관례) — PacBio: HG001·HG005 SequelII 11kb → ENA PRJNA540705/540706, 12 cell 135 GiB ([sra_manifest.tsv](phase1_pacbio_hifi/sra_manifest.tsv)); ONT: HG001 ultralong → nanopore-wgs-consortium rel6, 136 GiB ([ext_manifest.tsv](phase2_ont/ext_manifest.tsv)); 단일세포: HG008-T BioSkryb×UG100 CRAM·VCF → giab-aws S3, **476 files 4.75 TiB (5.22 TB)**, 2026-09-26 수령 시작 ([ext_manifest.tsv](phase0_download/ext_manifest.tsv), `fetch_all.sh`의 `phase0ext`). **집계 포함** (대응 GIAB 디렉토리가 아예 없어 자체 행을 갖는다) — 숏리드: HG002/3/4 NovaSeq 6000 PCR-free 30x → Google brain-genomics-public(GCS), 6 files 147 GiB; HG002 NovaSeq X 30x → 같은 버킷, 2 files 41 GiB; HG003/4 HiSeq 30x 서브샘플 → HPRC S3, 4 files 170 GiB ([ext_manifest.tsv](phase3_shortread_wgs/ext_manifest.tsv), `external/` 6행, 2026-09-17); ONT: HG002 R10.4.1 → ONT 공개 데이터 `s3://ont-open-data/giab_2025.01/` 플로우셀 PAW70337, 2 files 160 GiB (`ext/` 1행, 2026-09-22. **CC BY-NC 4.0 — 비상업 연구 한정**). 넷을 한 번에 받는 진입점: [`fetch_all.sh`](phase0_download/scripts/fetch_all.sh) |
 | 표 원본 | [catalog/master_catalog.tsv](catalog/master_catalog.tsv) — 51개 컬럼. 필드 정의는 [catalog/README.md](catalog/README.md) |
 | 정확 바이트 | [docs/SIZES.md](docs/SIZES.md) — 플랫폼 디렉토리 단위 (조회용) |
 | 분류 근거 | [docs/reference/catalog_evidence.md](docs/reference/catalog_evidence.md) |
@@ -53,7 +53,7 @@ python catalog/build_readme.py
 | Exome | 11 | 977 | 11 | 0 | 2 | 0 | 0 | 0 | 0 |
 | Linked reads (10X, stLFR) | 18 | 5,038 | 13 | 6 | 3 | 0 | 0 | 0 | 13 |
 | Complete Genomics | 11 | 14,880 | 9 | 0 | 9 | 0 | 0 | 0 | 10 |
-| 기타 기술 (BioNano, Hi-C, AVITI, UG100, Strand-seq 등) | 163 | 20,175 | 39 | 15 | 51 | 22 | 57 | 11 | 31 |
+| 기타 기술 (BioNano, Hi-C, AVITI, UG100, Strand-seq 등) | 163 | 20,175 | 39 | 15 | 52 | 22 | 57 | 11 | 31 |
 | Release — truth set / stratification / reference | 60 | 318 | 22 | 14 | 48 | 0 | 2 | 9 | 57 |
 | RNA-seq | 31 | 6,941 | 17 | 0 | 0 | 0 | 0 | 0 | 19 |
 | Trio-level analysis | 11 | 73 | 6 | 1 | 9 | 1 | 0 | 0 | 11 |
@@ -428,7 +428,7 @@ python catalog/build_readme.py
 | 최상위 README | HG008 | 해당 없음 | 0 | – | – | – | – | – | – | – | – | 문서 | 처리 대상 아님. HG008 데이터 계획을 세울 때 가장 먼저 읽을 문서. 특히 세포주가 이질적 세포 집단 혼합이라는 점이 somatic VAF 해석의 전제다. |
 | N-P Dovetail LinkPrep | HG008 | Dovetail LinkPrep, Illumina(모델 미표기) | 210 | ✓ FASTQ (VLGLP20A/B/C R1/R2 6개) | ✓ | ✓ BWA-MEM v2.2.1 → pairtools (varilink Alignment and Proximity-Ligation QC) | ✗ | ✗ | – | ✗ | ✗ | 문서 | 근접결합 리드이므로 일반 WGS 변이 콜에는 쓰지 말고, GRCh38-GIABv3로 재정렬해 정상 게놈 장거리 페이징/스캐폴딩 입력으로 사용. |
 | T BioSkryb ResolveDNA 원자료 | HG008 | BioSkryb ResolveDNA 단일세포(시퀀서 미표기) | 41 | ✓ FASTQ tar.gz (120셀 QC1X, orig 포함 2개) | – | ✓ N/A (BioSkryb BJ-DNA-QC v1.8.2 파이프라인 내 정렬; 정렬 툴명 문서에 없음) | – | ✗ | – | ✗ | ✗ | 문서 | tar를 풀어 셀별 FASTQ로 자체 단일세포 CNV/서브클론 분석 재수행. 심도가 낮아 SNV 콜에는 부적합, 클론 구조 확인용으로 사용. |
-| T BioSkryb x UG100 매니페스트 | HG008 | BioSkryb ResolveDNA + Ultima UG100 | 0 | ✗ | – | ✓ Ultima 최적화 BWA-MEM (ultimagenomics/alignment 컨테이너, UG100 on-tool, APL 5.1.0.19) + Ultima Sorter | – | ✗ | – | ✗ | ✗ | 문서 | 먼저 AWS 매니페스트 TSV를 열어 단일세포 CRAM 위치와 총 용량을 확인하고 다운로드 계획을 세울 것. 이 디렉토리만으로는 처리할 데이터가 없다. |
+| T BioSkryb x UG100 매니페스트 | HG008 | BioSkryb ResolveDNA + Ultima UG100 | 0 | ✗ | ✓ | ✓ Ultima-optimized BWA-MEM (hub.docker.com/r/ultimagenomics/alignment; 기기 내 sorted·duplicate-marked CRAM) | – | ✓ N/A | – | ✗ | ✗ | 문서 | 수령 완료·크기/md5(단일파트 ETag 238건) 검증 후 reads_present=TRUE 로 갱신. 용도는 미정 — HG008-T 세포 이질성·WGD 근거(README) 검토용. 사용자 결정 2026-09-26(수령). |
 | T BioSkryb 단일세포 CNV 분석 | HG008 | BioSkryb ResolveDNA 단일세포(시퀀서 미표기) | 0 | ✗ | – | – | – | – | – | ✓ BJ-CNV workflow v1.1.4 (Ginkgo; 1Mb 윈도우, Min CN 1, Max CN 6, panel of normals 없음) | – | 문서 | 클론 구조/서브클론 판정 근거로 사용. 자체 벌크 CNV 콜의 서브클론 세그먼트가 단일세포 CNV와 일치하는지 확인. |
 | T Phase Genomics Hi-C 2022(대체됨) | HG008 | Phase Genomics Hi-C(시퀀서 미표기) | 97 | ✓ FASTQ (HG008-T Hi-C, 2 라이브러리 x PE = 4개) | ✓ | ✓ BWA-MEM (버전 미기재) — Phase Genomics 정렬·QC 절차, QC는 hic_qc.py | ✗ | ✗ | – | ✗ | – | 문서 | Arima Hi-C와 합쳐 HG008-T 어셈블리 스캐폴딩/페이징 입력으로 재사용. 일반 변이 콜에는 근접결합 특성상 부적합. |
 | T Phase Genomics 분석 리포트(대체됨) | HG008 | Phase Genomics Hi-C(시퀀서 미표기) | 0 | ✗ | – | – | – | – | – | ✓ Phase Genomics OncoTerra 분석 플랫폼 v2.3.0 (일부 수동 큐레이션 포함; DEL/DUP/PLN 영역 콜 + TRA/INV/CBD 브레이크포인트 콜) | – | 문서 | 처리 대상 아님. Hi-C 기반 파생 염색체/전좌 구조에 대한 직교 근거로만 참조하고, 좌표 기반 SV 비교에는 쓰지 말 것(CBD는 표준 SV 표기가 아님). |
@@ -626,6 +626,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-26 — 사용자 결정 둘 반영: stale release 52건 보유 유지, HG008-T BioSkryb×UG100 단일세포 CRAM·VCF 수령. HEAD 실측으로 규모를 476 files / 4.75 TiB(5.22 TB)로 정정(FTP 매니페스트 size_Gb는 GiB, 인덱스 누락). `fetch_external.sh`(범용 URL fetcher) + `fetch_all.sh` phase0ext 단계 + `ext_manifest.tsv`. 카탈로그 행·README·Excel·SIZES 갱신.
 - 2026-09-25 23:55 — 기본 9잡 진전·regermline156782 대기 확인. HG002/3/4 비교는 회사 완료·QC 뒤 Codex가 조율한다. PacBio 담당은 새 잡 없이 보류했다. [현황](docs/STATUS.md)
 - 2026-09-25 21:51 — 사용자 지시에 따라 실패 Manta 중간산물 정리 후 native regermline156782를 대기 제출했다. 기존155529 종료 후 실행한다. [기록](docs/runs/2026-09-25-illumina-regermline-cleanup.md)
 - 2026-09-25 19:52 — 기본 9잡 진전 확인. Manta HG003 재시도도 실패해 반복 중지, HG002 QC만 156781로 한정 복구. 누락된 somatic 13쌍을 카탈로그에 반영했다. [현황](docs/STATUS.md)
