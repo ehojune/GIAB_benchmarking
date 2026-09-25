@@ -80,7 +80,86 @@ qdel 하고 위처럼 다시 냈다. 계산 손실은 파일럿 약 10분(4코�
 우리 DeepSomatic 1.10.0 결과를 놓을 기준값이다. INDEL recall 이 낮은 이유는 이번 범위에서 파지 않는다.
 산출: `$RUN_BASE/_somatic_bench/UCSC-DS160-HiFi-TPB/{all,nogermlineinterference}/summary.tsv`.
 
-## 다음 (재개 방법)
+## 결과 (11:05 전부 종료, 11:08 채점·QC 수집)
+
+13쌍 모두 exit 0. 실패·제외 없음. 채점 잡 156764–156776, QC·수집 156777(p21 재채점 156778·재수집 156779).
+
+**실행** — 쌍마다 노드 1대, `--num_shards=60`:
+
+| pair | 노드 | wall | maxvmem | pair | 노드 | wall | maxvmem |
+|---|---|---:|---:|---|---|---:|---:|
+| T-BCM | octopus-2-2 | 2.53 h | 258 GB | 3E4 | octopus-2-3 | 2.65 h | 236 GB |
+| T-PB | octopus-2-1 | 2.40 h | 246 GB | SC6 | octopus-2-4 | 2.60 h | 228 GB |
+| p21 | shepherd-1-4 | 3.40 h | 206 GB | SC9 | shepherd-1-3 | 2.70 h | 223 GB |
+| p41 | octopus-2-5 | 3.20 h | 202 GB | SC14 | shepherd-1-14 | 2.94 h | 215 GB |
+| p100 | shepherd-1-11 | 3.09 h | 204 GB | SC24 | shepherd-1-5 | 3.18 h | 200 GB |
+| 2D6 | shepherd-1-10 | 2.91 h | 205 GB | SC28 | shepherd-1-2 | 3.13 h | 213 GB |
+| 2E6 | shepherd-1-1 | 2.93 h | 204 GB | | | | |
+
+- maxvmem 은 가상메모리다. 60샤드에서 200~258 GB 로 shepherd 노드 실메모리(251 GB)에 가깝지만, 실사용(RSS)은 재지 않았고
+  샤드 수를 바꿔 비교하지도 않았다.
+- p21 채점(11:04:29 시작)은 잡 종료(11:05:01)보다 먼저 들어갔다. VCF 는 11:03:41 에 이미 완성돼 있었고, 다시 채점한
+  결과(156778)가 첫 결과와 byte 단위로 같다.
+
+**간단 QC** (`70_submit_somatic.sh --qc`, PASS 기준):
+
+| pair | PASS | SNV | INDEL | VAF 중앙값 | GERMLINE | pair | PASS | SNV | INDEL | VAF 중앙값 | GERMLINE |
+|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|
+| T-BCM | 13,488 | 11,000 | 2,488 | 0.51 | 1,379,134 | 3E4 | 13,179 | 10,709 | 2,470 | 0.52 | 1,332,369 |
+| T-PB | 14,947 | 12,215 | 2,732 | 0.50 | 1,338,812 | SC6 | 13,226 | 10,687 | 2,539 | 0.53 | 1,320,894 |
+| p21 | 12,100 | 10,057 | 2,043 | 0.52 | 1,350,495 | SC9 | 12,682 | 10,164 | 2,518 | 0.52 | 1,367,509 |
+| p41 | 12,453 | 10,471 | 1,982 | 0.52 | 1,363,987 | SC14 | 13,251 | 10,779 | 2,472 | 0.51 | 1,376,003 |
+| p100 | 14,712 | 12,431 | 2,281 | 0.50 | 1,378,335 | SC24 | 12,466 | 10,089 | 2,377 | 0.53 | 1,386,457 |
+| 2D6 | 12,319 | 10,005 | 2,314 | 0.53 | 1,374,393 | SC28 | 12,750 | 10,374 | 2,376 | 0.53 | 1,358,802 |
+| 2E6 | 12,778 | 10,417 | 2,361 | 0.53 | 1,353,241 | | | | | | |
+
+LowQual 0건. PASS 중 VAF ≥ 0.05 비율은 matched 두 쌍이 98~99%(tumor 72~79x), 나머지는 99.5% 이상.
+
+**채점** (aardvark v1.0.0, truth smvar V0.3 tumorvariants, VAF ≥ 0.05). BED `all` 기준, 괄호는 `nogermlineinterference`:
+
+| pair | 조건 | SNV recall | SNV precision | INDEL recall | INDEL precision | truth 밖 PASS SNV |
+|---|---|---:|---:|---:|---:|---:|
+| **T-BCM** | matched, normal 68x | 0.950 (0.984) | **0.953** | 0.249 (0.430) | **0.986** | 447 |
+| **T-PB** | matched, normal 35x | 0.951 (0.984) | **0.864** | 0.255 (0.437) | **0.917** | 1,418 |
+| p21 | borrowed, 센터 다름 | 0.931 (0.966) | — | 0.202 (0.351) | — | 526 |
+| p41 | borrowed, 센터 다름 | 0.931 (0.965) | — | 0.199 (0.348) | — | 757 |
+| p100 | borrowed, 장기 계대 | 0.931 (0.965) | — | 0.217 (0.378) | — | 2,885 |
+| 2D6 | borrowed, 클론 p14 | 0.929 (0.964) | — | 0.226 (0.394) | — | 717 |
+| 2E6 | borrowed, 클론 p14 | 0.926 (0.960) | — | 0.231 (0.402) | — | 1,124 |
+| 3E4 | borrowed, 클론 p14 | 0.892 (0.923) | — | 0.223 (0.387) | — | 1,491 |
+| SC6 | borrowed, 클론 p19 | 0.894 (0.925) | — | 0.236 (0.409) | — | 1,672 |
+| SC9 | borrowed, 클론 p19 | 0.934 (0.968) | — | 0.246 (0.426) | — | 700 |
+| SC14 | borrowed, 클론 p19 | 0.934 (0.968) | — | 0.239 (0.415) | — | 1,194 |
+| SC24 | borrowed, 클론 p19 | 0.932 (0.966) | — | 0.225 (0.393) | — | 759 |
+| SC28 | borrowed, 클론 p19 | 0.934 (0.968) | — | 0.230 (0.400) | — | 859 |
+| 기준: UCSC DS 1.6.0 공개 콜셋 | | 0.948 (0.981) | 0.937 | 0.205 (0.353) | 0.921 | 607 |
+
+truth 는 SNV 9,454 · INDEL 8,752 (`all`), 9,078 · 4,934 (`nogermlineinterference`).
+
+읽는 법:
+
+- precision 은 matched 두 쌍만 읽는다. `recall_only` 쌍의 "truth 밖 PASS" 는 오류가 아니다 — truth 는 0823p23 bulk 의
+  truncal 변이만 담고, 클론·다른 계대의 고유 변이는 truth 에 없다. p100(장기 계대)이 가장 많은 것도 그 방향이다.
+- matched 두 쌍의 recall 은 같다(SNV 0.95). precision 차이(0.953 vs 0.864)는 normal 심도 차이(68x vs 35x)와 같은
+  방향이지만 원인은 이번 범위에서 확인하지 않았다.
+- DS 1.10.0 T-BCM 은 공개 DS 1.6.0 콜셋보다 SNV·INDEL 모두 recall·precision 이 같거나 높다. 입력 쌍이 같다고 확인하지
+  않았으므로 버전 차이로만 읽지 않는다. INDEL recall 이
+  0.2 대인 것은 공개 콜셋도 같다 — 우리 실행만의 문제가 아니다.
+- borrowed 쌍의 SNV recall 은 0.93 이 중심이다. 3E4·SC6 만 0.89 로 낮다(심도는 47x·42x 로 낮지 않다). 원인은 보지 않았다.
+
+산출:
+
+- VCF: `$RUN_BASE/<tumor_sample>/PacBio/somatic.<pair>/03_VCF/deepsomatic/<tumor_sample>.somatic.<pair>.GRCh38.deepsomatic.vcf.gz`
+- 채점: `$RUN_BASE/_somatic_bench/DS110-<pair>/{all,nogermlineinterference}/summary.tsv`
+- 모음: `$INFRA/adhoc/2026-09-25/phase1_somatic_{qc,summary}.tsv` (28 summary = 13쌍 + UCSC 기준 × BED 2)
+- 로그: `$INFRA/logs/som.<pair>.<jobid>.log`, 채점 `task.som.<pair>.<jobid>.log`
+
+이번 배치는 vendor `f2de95e` 로 돌렸다. bioinfo-agent 에서 뒤에 들어간 수정(PR #57: 사용자 모델 경로, 표본표 검증,
+실행 조건 분기)은 이 배치에 없다. 결과에는 영향이 없다 — 이 실행은 기본 모델을 쓰고 표본표를 직접 만들었다.
+
+## 다시 돌릴 때
+
+이번 배치는 1·2 까지 끝났다(위 결과). 아래는 다시 돌리거나 쌍을 더할 때의 절차다.
 
 1. 잡이 끝나면: `qacct -j <jobid>`(exit·wall·maxvmem), 로그 `$INFRA/logs/som.<pair>.<jobid>.log`, 산출 VCF,
    `bash phase1_pacbio_hifi/scripts/70_submit_somatic.sh --list` · `--qc`.
@@ -88,3 +167,4 @@ qdel 하고 위처럼 다시 냈다. 계산 손실은 파일럿 약 10분(4코�
    모은 뒤 `62_benchmark_somatic.sh --collect`. `recall_only` 쌍의 precision 은 읽지 않는다.
 3. 실패하면 같은 명령으로 재제출 — `-resume` 으로 이어서 돈다(`$INFRA/work/som.<pair>`). 코드 문제는 bioinfo-agent 에
    넘기고(범용 코드), 고친 커밋을 다시 vendor 한다 — 이 세션은 파이프라인 코드를 직접 고치지 않는다.
+4. shepherd 노드에서 60샤드로 다시 돌린다면 한 쌍을 먼저 돌려 RSS 를 잰다 — 이번 값은 가상메모리뿐이다.
