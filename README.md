@@ -11,7 +11,7 @@ GIAB 9개 샘플(HG001–HG007 germline, HG008·HG009 tumor-normal)의 **전체 
 | 아직 안 한 일 | [docs/backlog.md](docs/backlog.md) — 남은 기본 처리·비교와 보류 범위 |
 | 서버·자산·점검 명령 | [docs/reference/server-and-infra.md](docs/reference/server-and-infra.md) — 노드 스펙, `_infra` 자산, 매니페스트 밖에서 받은 것 (조회용) |
 | 다운로드 | [phase0_download/](phase0_download/) — 스크립트, 매니페스트, 속도·용량 계획 |
-| PacBio HiFi 처리 | [phase1_pacbio_hifi/](phase1_pacbio_hifi/) — 49개 실행 단위의 기본 처리·QC와 기존 소변이·SV 채점 결과. 별도 HG008 somatic 전장 13쌍은 실행 중 — [현황·결과](docs/STATUS.md) |
+| PacBio HiFi 처리 | [phase1_pacbio_hifi/](phase1_pacbio_hifi/) — 49개 실행 단위의 기본 처리·QC와 기존 소변이·SV 채점 결과. 별도 HG008 somatic 전장 13쌍은 09-25 완료·채점 — [결과](docs/runs/2026-09-25-somatic-wgs.md) |
 | ONT 처리 | [phase2_ont/](phase2_ont/) — 기본 처리·QC·기존 채점 완료. 후속 결과 정리는 담당 브랜치에 있으며 [현황·결과](docs/STATUS.md)에서 찾는다. HG008은 germline truth가 없어 해당 채점 대상이 아니다 |
 | 외부 보충 리드 | GIAB FTP에 없는 데이터는 외부에서 받는다. **집계 미포함** (대응 GIAB 행의 `reads_format`에 출처만 적는 관례) — PacBio: HG001·HG005 SequelII 11kb → ENA PRJNA540705/540706, 12 cell 135 GiB ([sra_manifest.tsv](phase1_pacbio_hifi/sra_manifest.tsv)); ONT: HG001 ultralong → nanopore-wgs-consortium rel6, 136 GiB ([ext_manifest.tsv](phase2_ont/ext_manifest.tsv)). **집계 포함** (대응 GIAB 디렉토리가 아예 없어 자체 행을 갖는다) — 숏리드: HG002/3/4 NovaSeq 6000 PCR-free 30x → Google brain-genomics-public(GCS), 6 files 147 GiB; HG002 NovaSeq X 30x → 같은 버킷, 2 files 41 GiB; HG003/4 HiSeq 30x 서브샘플 → HPRC S3, 4 files 170 GiB ([ext_manifest.tsv](phase3_shortread_wgs/ext_manifest.tsv), `external/` 6행, 2026-09-17); ONT: HG002 R10.4.1 → ONT 공개 데이터 `s3://ont-open-data/giab_2025.01/` 플로우셀 PAW70337, 2 files 160 GiB (`ext/` 1행, 2026-09-22. **CC BY-NC 4.0 — 비상업 연구 한정**). 넷을 한 번에 받는 진입점: [`fetch_all.sh`](phase0_download/scripts/fetch_all.sh) |
 | 표 원본 | [catalog/master_catalog.tsv](catalog/master_catalog.tsv) — 51개 컬럼. 필드 정의는 [catalog/README.md](catalog/README.md) |
@@ -626,6 +626,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-25 — HG008 PacBio somatic 13쌍 전장(DeepSomatic 1.10.0 CPU) 완료·채점. matched T-BCM SNV recall 0.950·precision 0.953, borrowed 11쌍 SNV recall 0.89~0.93. [기록](docs/runs/2026-09-25-somatic-wgs.md)
 - 2026-09-25 — 카탈로그 TSV·Excel 442행 대조 차이 0. 회사 4개 재분석·GIAB 기본 5개·somatic 13쌍 실행은 [STATUS](docs/STATUS.md)에 분리해 기록했다.
 - 2026-09-24 — md5 전수 검증을 SGE 잡 156685로 재제출(sidecar 2차 판정, #40). 다운로드 세션 교훈 11건을 Yuan에 수확(ehojune/Yuan#6) — HARVEST.md 해당 15행에 자산 id 표시. Codex 리뷰 원칙: #37 3라운드·#40 3라운드 반영 후 머지.
 - 2026-09-23 — md5 전수 검증 재개 준비: 2026-09-09 결과(PASS 73,485 / FAIL 110 / NOREF 3,000)에 2026-09 신규 4,759 files가 빠져 있었고, FAIL의 원인이 낡은 current.tree(FTP 원본 2025-02-28 이후 정지)임을 확인. sidecar 2차 판정과 checksums.md5 등 누락 패턴을 넣어 SGE로 재제출. docs/SIZES.md를 매니페스트 생성기(`build_sizes.py`)로 재생성(HG009·외부 유래 포함). HG008 BioSkryb×UG100 4.4 TiB는 받지 않는 쪽으로 기록(사용자 결정 대기).
