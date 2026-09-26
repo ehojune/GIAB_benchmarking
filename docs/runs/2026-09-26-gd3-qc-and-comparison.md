@@ -21,3 +21,5 @@
 gd3 옛 캐시는 백업에만 있고 새 gVCF부터 genotyping한다. 공개 4개는 기존 genotyped VCF의 샘플·reference·버전·입력 시간·인덱스를 확인해 재사용한다. 직전 Singularity 경로 오류는 수정본과 성공한 preflight 156733을 확인했다. 16:13 점검에서 gd3 genotyping은 chr2, 공개 4개 hap.py 로그도 증가했다. 아직 점수는 없다.
 
 서버 기준 경로는 `/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy`. 제출 명세 `ready_gd3_public_20260926.csv`, 상태·잡 번호 `submission_gd3_public_20260926.json`, 중복 방지 마커 `submission_gd3_public_20260926.attempt`. **제출 스크립트를 다시 실행하지 않는다.** 다음 점검에서 qacct·ALL DONE·summary를 함께 검증한다. gd1/2/4의 나머지 비교 9건은 기본 run 종료·최소 QC 뒤 진행한다.
+
+**후속 정정:** 사용자가 회사별 기본 잡 종료 후 일반 `regermline`, 같은 단계 재실패 시 실패 중간 디렉토리 정리 후 `regermline`을 지시했다. 위 253작업은 `--forcerun`을 추가한 dry-run이므로 일반 재개 범위와 동일시하지 않는다. gd3 비교 종료 뒤 이 순서로 재개한다.

@@ -4,7 +4,7 @@
 
 | 작업 | 현재 상태 | 다음 한 번의 행동 |
 |---|---|---|
-| 업체 gd1~4 재분석 | gd3 **156762 종료**, 265/265·qacct 0·Success지만 verifybamID **KOR-101/103·HG002 실패**. 6샘플 CRAM/gVCF·리드 수 검사 통과, 평균 깊이 29.24–30.87×. gd1/2/4 **156760/156761/156763 `r`**, 80/225/99 of 265 rule(시간 완료율 아님). 세 회사 verifybamID 오류 5건 | 진행 잡 유지. 종료 뒤 실제 산출물 QC 확인. gd3 QC 복구 dry-run은 원자료부터 253작업을 요구해 **실행하지 않음**. 실패 표를 성공으로 쓰지 않음 |
+| 업체 gd1~4 재분석 | gd3 **156762 종료**, 265/265·qacct 0·Success지만 verifybamID **KOR-101/103·HG002 실패**. 6샘플 CRAM/gVCF·리드 수 검사 통과, 평균 깊이 29.24–30.87×. gd1/2/4 **156760/156761/156763 `r`**, 80/225/99 of 265 rule(시간 완료율 아님). 세 회사 verifybamID 오류 5건 | 진행 잡 유지. **종료 뒤 일반 regermline → 같은 단계 재실패 시 해당 중간 디렉토리 정리 후 regermline**. gd3는 진행 중인 비교가 끝난 뒤 재개. 253작업은 강제 옵션 dry-run이며 일반 재개와 구분. 실패 표를 성공으로 쓰지 않음 |
 | 업체 + 공개 HG002/3/4 비교 | **156787–156793 `r`**: gd3 HG002/3/4 + 공개 NovaSeq6000 trio·NovaSeqX HG002. 기존 hap.py/v4.2.1. gd3 genotyping은 chr2까지 진행, 공개 4개 hap.py 로그 증가 | Codex 단일 담당. 종료코드·ALL DONE·SNP/INDEL summary 확인. **gd3 HG002는 오염 QC 미완료를 붙여 해석**. gd1/2/4 비교 9건은 기본 run·QC 대기. 옛 업체 캐시 미사용, PacBio 중복 제출 보류 |
 | GIAB 숏리드 기본 run | **155526–155528, 156690 `r`**, 활성 Mark 로그 12개 모두 증가. 추가 20 set·53샘플 미제출 | 현재 잡 유지, 종료·산출물·간단 QC 확인. 일괄 추가 제출하지 않음 |
 | Illumina-250PE 재시도 | **156786 exit 1·Error 유지**. Manta HG002/3/4 SV gap, HG002 verifybamID QC gap. HG004 verifybamID 성공. HG003 gather·변이 집계는 계산 후 기존 링크 충돌 | 추가 재시도 없음. SNP/INDEL 최소 QC 통과, **세트 전체 완료는 아님**. [판정·검증](runs/2026-09-26-illumina-regermline-retry.md#종료-결과와-판정-09391000) |
