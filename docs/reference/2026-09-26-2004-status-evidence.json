@@ -1,0 +1,211 @@
+{
+  "checked_at": "2026-09-26T20:03:54.678431+09:00",
+  "host": "nbbcluster2",
+  "user": "ehojune",
+  "basic_jobs": [
+    {
+      "job": "155526",
+      "name": "regermline_java17_BGISEQ500",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 56818,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-BGISEQ500\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155527",
+      "name": "regermline_java17_Element-AVITI",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 62971,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Element-AVITI\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155528",
+      "name": "regermline_java17_Hiseq-300x",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 23109,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Hiseq-300x\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "156690",
+      "name": "regermline_java17_GIAB-publicData-MGISEQ2000-PCRfree",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 18179,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-MGISEQ2000-PCRfree\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "156760",
+      "name": "germline_G000-gd1-20260819",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 341257,
+      "done": null,
+      "errors": "- Time: Sat Sep 26 14:43:30 KST 2026\n- Sample: {'C000000100400000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/tmp/13.verifybamID/C000000100400000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 18:41:42 KST 2026\n- Sample: {'C000000100600000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/tmp/13.verifybamID/C000000100600000G0x1_verifybamID.err'}\n"
+    },
+    {
+      "job": "156763",
+      "name": "germline_G000-gd4-20260819",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 159667,
+      "done": null,
+      "errors": "- Time: Sat Sep 26 15:51:14 JST 2026\n- Sample: {'C000000400200000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400200000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 17:06:37 JST 2026\n- Sample: {'C000000400600000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400600000G0x1_verifybamID.err'}\n"
+    }
+  ],
+  "company_mark": {
+    "before": 18,
+    "after": 19,
+    "total": 24,
+    "unfinished_all_grew": true
+  },
+  "public_mark": {
+    "active": 12,
+    "active_all_grew": true
+  },
+  "companies": [
+    {
+      "set": "G000-gd1-20260819",
+      "steps": [
+        "186",
+        "265"
+      ],
+      "done": null,
+      "errors": "- Time: Sat Sep 26 14:43:30 KST 2026\n- Sample: {'C000000100400000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/tmp/13.verifybamID/C000000100400000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 18:41:42 KST 2026\n- Sample: {'C000000100600000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/tmp/13.verifybamID/C000000100600000G0x1_verifybamID.err'}\n"
+    },
+    {
+      "set": "G000-gd2-20260819",
+      "steps": null,
+      "done": "- Cohort : G000\n- Batch name : G000-gd2-20260819\n- Message : Success\n",
+      "errors": null
+    },
+    {
+      "set": "G000-gd3-20260819",
+      "steps": null,
+      "done": "- Cohort : G000\n- Batch name : G000-gd3-20260819\n- Message : Success\n",
+      "errors": null
+    },
+    {
+      "set": "G000-gd4-20260819",
+      "steps": [
+        "147",
+        "265"
+      ],
+      "done": null,
+      "errors": "- Time: Sat Sep 26 15:51:14 JST 2026\n- Sample: {'C000000400200000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400200000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 17:06:37 JST 2026\n- Sample: {'C000000400600000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400600000G0x1_verifybamID.err'}\n"
+    }
+  ],
+  "somatic": {
+    "qacct_count": 29,
+    "all_success": true,
+    "qc_sha256_unchanged": true,
+    "qc_rows": 13,
+    "summary_count": 28
+  },
+  "illumina": {
+    "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Illumina-250PE\n- Message : Error\n",
+    "errors": "- Time: Sat Sep 26 09:10:29 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG004'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004_manta.err'}\n- Time: Sat Sep 26 09:12:14 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG002'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002_manta.err'}\n- Time: Sat Sep 26 09:12:29 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003_manta.err'}\n- Time: Sat Sep 26 09:20:39 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG002'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/13.verifybamID/GIAB-publicData-Illumina-250PE-HG002_verifybamID.err'}\n- Time: Sat Sep 26 09:38:33 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'haplo_gather'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/10.haplo/GIAB-publicData-Illumina-250PE-HG003_haplo.err'}\n- Time: Sat Sep 26 09:39:47 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'count_variants'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/15.countVariants/GIAB-publicData-Illumina-250PE-HG003_countVariants.err'}\n",
+    "qacct_fields": [
+      "jobnumber    156786",
+      "end_time     Sat Sep 26 09:39:49 2026",
+      "failed       0",
+      "exit_status  1"
+    ]
+  },
+  "report_restoration": [
+    {
+      "company": "gd2",
+      "job": "156796",
+      "state": "r",
+      "markers": {
+        "started.json": {
+          "at": "2026-09-26T19:58:44.659114+09:00",
+          "job": "156796"
+        }
+      },
+      "usage": [
+        "usage         1:            cpu=02:10:59, mem=14419.92405 GB s, io=67.45817 GB, vmem=11.655G, maxvmem=11.655G"
+      ]
+    },
+    {
+      "company": "gd3",
+      "job": "156797",
+      "state": "r",
+      "markers": {
+        "started.json": {
+          "at": "2026-09-26T19:58:44.698779+09:00",
+          "job": "156797"
+        }
+      },
+      "usage": [
+        "usage         1:            cpu=02:14:10, mem=15594.38043 GB s, io=72.68820 GB, vmem=12.810G, maxvmem=12.810G"
+      ]
+    }
+  ],
+  "download": {
+    "at": "2026-09-26T20:03:54.861017",
+    "counts": {
+      "size_match": 141,
+      "partial": 6,
+      "missing": 329,
+      "oversize": 0
+    },
+    "received_bytes": 3196651684739,
+    "target_bytes": 5220867898115,
+    "byte_percent": 61.22835794970324,
+    "current_md5_markers_read_only": 73,
+    "delta_since_1554": 1245770790280,
+    "wget_all_grew": true,
+    "growth_12s": 1087884546
+  },
+  "owners": [
+    {
+      "session": "f4f3cd33-069f-4618-9370-aeca65f756bd",
+      "state": "idle",
+      "last_activity": "2026-09-25T23:38:17.250Z"
+    },
+    {
+      "session": "febe25e4-aaad-40ef-b098-6762f7da433f",
+      "state": "idle",
+      "last_activity": "2026-09-24T23:23:09.702Z"
+    },
+    {
+      "session": "9fd8a804-eb9d-4050-85dc-351146d3fc7a",
+      "state": "idle",
+      "last_activity": "2026-09-26T00:25:31.588Z"
+    },
+    {
+      "session": "f9a76550-837f-4f82-b561-d0a7cbbacc74",
+      "state": "idle",
+      "last_activity": "2026-09-23T15:59:46.378Z"
+    },
+    {
+      "session": "148efde9-4992-4a4a-8412-73d5e5e8053e",
+      "state": "idle",
+      "last_activity": "2026-09-26T10:43:34.006Z"
+    }
+  ],
+  "actions": {
+    "new_jobs": 0,
+    "server_deletions": 0,
+    "claude_resume": false,
+    "completed_comparison_summarized": 7,
+    "catalog_or_workbook_mutation": false
+  },
+  "source_sha256": {
+    "live-jobs-20260926-2004.txt": "4de434bac9aa3d5d7b28dc04f4ab0f8e453a34214972e3616462c121f0b6f665",
+    "progress-snapshot-20260926-2004.txt": "003a65fa121daa16166156263f11e37e8619f5148c7d49e86c3def415217e38c",
+    "company-progress-20260926-2004.txt": "0821792d08f3d80a0a568bab05ab148611b78aa0b5eb8a53ddd107c115b98afd",
+    "somatic-current-20260926-2004.txt": "ca916004e245b6459946ec436adedc5da3eed8718cdfd305d80008c0f7a03aa1",
+    "fastp-report-restore-status-20260926-2004.txt": "2de6ee859042dde9a23e62d5f3175e045e727ac0aa2a749a1e89411b783192f9",
+    "company-errors-20260926-2004.txt": "e923a84bbe4a13a3eb36ed709cef3a8ab22d15f5db5716e8cfb72f12b101e2fd",
+    "download-status-20260926-2004.txt": "e03a63230c43c039b7cd0ceeeed54121baa6aef81810ac2226467fdf6d68489f",
+    "owner-status-20260926-2004.json": "25486e76907ea38a4fef8be2b811e61c529bef8912415bff62b7876db664ebef",
+    "gd23-preservation-and-happy-20260926-1958.txt": "e57109227292d64eb3d801e25d712158526a5ce86f78482a8fedf8d5f09ba690"
+  }
+}
