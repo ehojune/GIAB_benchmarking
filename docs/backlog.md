@@ -1,22 +1,18 @@
 # 남은 일과 보류한 일
 
-[SCOPE](SCOPE.md)가 완료 기준이다. 아래 순서로 필요한 기본 작업을 닫는다. 이미 있는 결과를 더 깊게 설명하려고 새 과제를 만들지 않는다.
+[SCOPE](SCOPE.md)가 완료 기준이다. Codex 한 담당이 비교 시점·실행을 관리한다.
 
 | 순서 | 남은 일 | 완료 표시 |
 |---|---|---|
-| 1 | **Codex가 비교 시점·실행 담당 관리**. 회사 gd1~4 **156760–156763** 종료 뒤 gd2 KOR-101 verifybamID 오류 등 실패 목록·최소 QC 확인, 필요한 재개 판단. 이어 공개 NovaSeq6000 trio·NovaSeqX HG002와 기존 hap.py/v4.2.1 비교 | 현재 잡·원자료 유지, 완료 전 비교 보류. 정본 1–3 KOR·4–6 HG와 새 산출물 확인, SNP·INDEL precision/recall/F1 표. 옛 업체 캐시 재사용 금지. 도구는 `claude/phase3-07-happy`(main 미통합) |
-| 2 | GIAB 기본 잡 4개(155526–155528, 156690) 유지. Illumina **156786 exit 1**은 추가 재시도 없이 실패 항목만 gap으로 기록 | Manta 3샘플·HG002 verifybamID gap, HG004 verifybamID 성공. HG003은 계산 성공·기존 링크 충돌. SNP/INDEL 최소 QC 통과지만 세트 전체 완료 아님. [검증](runs/2026-09-26-illumina-regermline-retry.md). 20 set 일괄 제출 금지 |
-| 3 | 가벼운 정리 3건 완료. BioSkryb×UG100 수령·검증 마무리 | PacBio 요약 **PR #74**, BioSkryb 수령 코드·명세 **PR #75**는 main 반영. ONT·MD5 정리 **PR #68·#69는 미통합·보류**. [STATUS](STATUS.md) 참조. 다운로드 완료와 `NOREF`를 구분 |
-| 4 | 업체 롱리드 수령 뒤 같은 플랫폼의 기존 pipeline/QC/truth 비교 적용 | 현재는 **수령 대기**; GIAB 자료와 업체 자료를 혼동하지 않음 |
+| 1 | **비교 156787–156793**(gd3 3개·공개 4개) 결과 회수. gd1/2/4 **156760/156761/156763** 종료·최소 QC 뒤 나머지 회사 비교 9건 | qacct·ALL DONE·summary를 함께 확인해 SNP/INDEL precision·recall·F1 표 작성. gd3 HG002 오염 QC gap 명시. 옛 회사 캐시 재사용 금지. [실행 기록](runs/2026-09-26-gd3-qc-and-comparison.md) |
+| 2 | 공개 기본 **155526–155528, 156690** 유지, 종료 후 리드 수·산출물·오류 확인 | Illumina **156786 exit 1**의 Manta 3건·HG002 verifybamID는 gap 유지. gd3 오염 QC 복구는 dry-run 253작업이라 실행하지 않음. 원자료 재처리·무조건 regermline 반복·추가 20 set 일괄 제출 금지 |
+| 3 | BioSkryb×UG100 수령·크기·제공 MD5 검증 마무리 | 현재 37.37% 수령. 완료 뒤 카탈로그·Excel 갱신. 가벼운 정리 3건은 완료 유지; **PR #68·#69 미통합·병합 보류** |
+| 4 | 업체 롱리드 수령 뒤 기존 pipeline/QC/truth 비교 | 현재 **수령 대기**. GIAB 자료와 업체 자료를 구분 |
 
 ## 보류 — 자동으로 다시 시작하지 않음
 
-- 추가 truth/구간·원인 연구, 동일 원본 중복 run, phase 간 구조 통일. somatic은 이미 승인·제출한 범위만 진행.
-- 반복 PR 리뷰, 새 에이전트 위임, 기존 Claude 타이머·상시 polling, 신규 release 전수 추적, 자동 HARVEST/Yuan PR.
-- PR #68·#69의 merge는 보류. 완료한 정리를 다시 실행하거나 새 리뷰를 반복하지 않음.
+- 추가 truth/구간·원인 연구, caller·도구 비교, 동일 원본 중복 run, 전체 구조 통일.
+- 반복 PR 리뷰, 새 Claude 위임·타이머·상시 polling, 신규 release 전수 추적, 자동 HARVEST/Yuan PR.
+- somatic 13쌍·29잡은 QC·채점까지 완료했으므로 같은 배치를 재제출하지 않는다. bioinfo-agent 범용 개발은 별도이며 기본 GIAB 완료 조건이 아니다.
 
-**09-26 인계·Claude 총괄 프로세스 중지 후 Codex가 단독으로 4시간 점검·보고와 승인된 후속 작업을 맡는다.** somatic 13쌍·29잡은 QC·채점까지 완료했으므로 다시 제출하지 않는다.
-
-bioinfo-agent 범용 개발은 별도 계속 진행한다. 이 개발·검증·vendor 완료를 GIAB 기본 작업의 의존성으로 걸지 않는다.
-
-기존 #8·#9·#10 설계와 상세는 [조정 전 백로그](reference/2026-09-25-backlog-before-scope-reset.md)에 보존했다. 옛 문서의 “QC만은 기각”, “somatic까지 해야 최종”은 09-25 지시로 대체됐다.
+현재 결과는 [STATUS](STATUS.md), 기존 #8·#9·#10 설계는 [이전 백로그](reference/2026-09-25-backlog-before-scope-reset.md)에 있다.

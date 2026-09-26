@@ -1294,3 +1294,7 @@ Manta HG003은 1스레드 재시도156780도 같은 signal 11이라 반복하지
 **Codex 부재 시 PR.** 문서만 바꾼 PR은 리뷰 없이 merge하고 본문에 그 사실을 적는다(사용자 자율 규칙 "Codex 3회 이내 후 merge"의 0회 판). 스크립트·서버 상태 가정을 바꾸는 PR은 열어 두고 사용자에게 넘긴다.
 
 근거: [실행 기록](runs/2026-09-26-illumina-regermline-retry.md), 서버 `G000/backup/20260926-illumina-regermline/`.
+
+## 2026-09-26 16:07 — gd3 오염 QC gap을 명시하고 기존 비교 진행
+
+Codex가 총괄을 다시 맡아 gd3 종료 결과를 검증했다. Success·exit 0에도 VerifyBamID 3건이 실패했지만 6샘플 변이 산출물·리드 수·최소 QC는 통과했다. QC 복구 dry-run이 원자료부터 253작업을 요구해 실행하지 않고 gap으로 보존한다. 사용자 비용·범위 방침에 따라 새 gd3 3개와 준비된 공개 4개의 기존 hap.py 비교만 제출했다. gd3 HG002는 오염 QC 미완료를 붙여 해석한다. [검증·잡 번호](runs/2026-09-26-gd3-qc-and-comparison.md).

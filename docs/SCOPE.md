@@ -11,7 +11,7 @@
 ## 여기까지 하면 완료
 
 - 자료별 입력·샘플·플랫폼·산출물·pipeline/reference 버전을 한 목록에 남긴다. 미처리 항목은 `gap`, 동일 원본은 `duplicate`, 목적상 불필요한 단계는 `not-needed`, truth 부재는 `no-truth`로 이유와 함께 표시한다. 빈칸을 성공으로 바꾸지 않는다.
-- 필요한 기본 run의 완료 로그, BAM/VCF 존재·읽기 가능 여부, coverage·mapping 등 간단 QC를 확인한다. 숏리드는 `__DONE__`와 `error_list.txt`, BAM 리드 수를 함께 본다.
+- 필요한 기본 run의 완료 로그, BAM/VCF 존재·읽기 가능 여부, coverage·mapping 등 간단 QC를 확인한다. 숏리드는 `__DONE__`·`error_list.txt` 외에 실제 단계 종료·BAM 리드 수도 본다. Success 표식만으로 QC 성공을 판단하지 않는다.
 - HG002/3/4 회사·공개 자료를 같은 플랫폼의 같은 파이프라인과 truth/영역으로 비교한다. 기존 hap.py/v4.2.1의 SNP·INDEL precision/recall/F1 표를 먼저 낸다. 이미 만든 SV 결과는 보존해 함께 요약한다.
 - 추가 자료는 기본처리·QC로 닫는다. `no-truth` 자료에 새 somatic caller를 붙이는 일은 완료 조건이 아니다. checksum의 `NOREF`는 참조값 없음이며 검증 성공과 구분한다.
 
@@ -23,7 +23,7 @@ bioinfo-agent 범용 개발은 별도로 진행한다. 사용자 직접 지시�
 
 국통바빅 최초 제출은 `germline`, 오류 뒤 재시도는 **`regermline`**이다. 승인된 Illumina 정리·재시도 156786은 종료했다. Manta 3샘플과 HG002 verifybamID만 `gap`으로 남기고 추가 재시도하지 않는다. 원자료·정상 산출물·실패 근거는 보존한다.
 
-09-26 최신 사용자 지시로 **Codex가 총괄에 복귀**했다. Claude 원본 총괄 세션에 통지·인계를 마치고 해당 총괄 프로세스도 중지했다. Codex 한 담당이 4시간 점검·보고와 승인된 후속 작업, 비교 시점을 관리한다. 회사 run 완료·QC 전에는 비교를 보류하고 Claude 중복 타이머·상시 polling은 켜지 않는다.
+09-26 최신 사용자 지시로 **Codex가 총괄에 복귀**했다. Claude 원본 총괄 세션에 통지·인계를 마치고 해당 총괄 프로세스도 중지했다. Codex 한 담당이 4시간 점검·보고와 승인된 후속 작업, 비교 시점을 관리한다. 회사 run 종료 뒤 변이 산출물·최소 QC를 확인해 비교한다. 남은 QC gap은 명시하며 전체 성공으로 표기하지 않는다. Claude 중복 타이머·상시 polling은 켜지 않는다.
 
 새 에이전트, 반복 리뷰봇 호출, 추가 caller·중복 run·원인 연구·구간별 연구·구조 통일·자동 HARVEST/Yuan PR은 시작하지 않는다. 실제 오류는 작게 고친다. 새 실험이나 큰 개발이 필요하면 범위와 비용을 사용자와 상의한다.
 
