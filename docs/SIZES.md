@@ -1,6 +1,6 @@
 # GIAB platform-level sizes (lookup-only reference)
 
-생성: `python phase0_download/scripts/build_sizes.py` — 원본은 `phase0_download/manifests/**` + 외부 매니페스트 3종. 바이트는 정확한 합계. 손으로 고치지 말 것.
+생성: `python phase0_download/scripts/build_sizes.py` — 원본은 `phase0_download/manifests/**` + 외부 매니페스트 4종. 바이트는 정확한 합계. 손으로 고치지 말 것.
 
 ## GIAB FTP/S3 — 샘플 × 플랫폼 디렉토리
 
@@ -223,5 +223,6 @@
 | Google/HPRC (phase3) | HG004.NovaSeq_PCRfree_30x | 2 | 52849271785 | 49.2 |
 | ONT 공개 (phase2) | HG001.Ultralong_OxfordNanopore | 2 | 147337581556 | 137.2 |
 | ONT 공개 (phase2) | HG002.ONT-R10_giab2025.01_PAW70337 | 2 | 171812103620 | 160.0 |
+| giab-aws (phase0 ext) | HG008-T.Bioskryb_UG100_singlecell | 476 | 5220867898115 | 4,862.3 |
 
-**합계 81,330 files / 125,950,688,867,280 bytes = 117,300.7 GiB = 114.55 TiB = 126.0 TB** (4경로 전체)
+**합계 81,806 files / 131,171,556,765,395 bytes = 122,163.0 GiB = 119.30 TiB = 131.2 TB** (5경로 전체). 카탈로그 합계(114.3 TiB)와의 차이: giab-aws 476 files(4.75 TiB), ENA 12 files(135 GiB), rel6 2 files(137 GiB)는 대응 GIAB 행의 `reads_format`에 출처만 적고 집계에 넣지 않는 관례 — [catalog/README.md](../catalog/README.md) "외부 유래 행".

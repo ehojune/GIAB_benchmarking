@@ -5,6 +5,7 @@
 # | 단계   | 무엇을                                   | 하위 스크립트                                        | 규모                |
 # |--------|------------------------------------------|------------------------------------------------------|---------------------|
 # | phase0 | GIAB FTP/S3 본체                         | phase0_download/scripts/run_priority.sh              | 81,302 files 113.8 TiB |
+# | phase0ext | GIAB 가 가리키는 외부 S3 (giab-aws: HG008-T BioSkryb×UG100) | phase0_download/scripts/fetch_external.sh | 476 files 4.75 TiB |
 # | phase1 | HG001·HG005 SequelII 11kb (ENA)          | phase1_pacbio_hifi/scripts/02_fetch_sra_reads.sh     | 12 files 135 GiB    |
 # | phase2 | HG001 rel6 + HG002 R10.4.1 (ONT 공개)    | phase2_ont/scripts/02_fetch_external_reads.sh        | 4 files 297 GiB     |
 # | phase3 | 숏리드 업체 비교군 (Google GCS, HPRC S3) | phase3_shortread_wgs/scripts/02_fetch_external_reads.sh | 12 files 359 GiB |
@@ -16,7 +17,7 @@
 # Env: GIAB_ROOT=/BiO/scratch/ehojune/GIAB_benchmark  저장 루트 (phase1~3이 쓰는 이름)
 #      DEST=$GIAB_ROOT                                phase0이 쓰는 이름. 비우면 GIAB_ROOT를 따라간다
 #      TOOL=s3  JOBS=8                                phase0에 전달
-#      STAGES="phase0 phase1 phase2 phase3"           실행할 단계와 순서
+#      STAGES="phase0 phase0ext phase1 phase2 phase3"  실행할 단계와 순서
 #      PHASE0_VERIFY_CAT=all                          VERIFY_ONLY=1 에서만 유효 — phase0이 볼 범위.
 #                                                     다운로드 모드의 사후 검증은 무조건 all 이다.
 #                                                     verify.sh는 파일당 stat 한 번이라 81,302개면 오래 걸린다 —
@@ -49,7 +50,7 @@ export GIAB_ROOT DEST
 export TOOL="${TOOL:-s3}"
 export JOBS="${JOBS:-8}"
 VERIFY_ONLY="${VERIFY_ONLY:-0}"
-STAGES="${STAGES:-phase0 phase1 phase2 phase3}"
+STAGES="${STAGES:-phase0 phase0ext phase1 phase2 phase3}"
 
 LOG_DIR="$REPO_ROOT/logs/fetch_all"
 mkdir -p "$LOG_DIR"
@@ -62,6 +63,7 @@ fi
 stage_script() {
     case "$1" in
         phase0) echo "phase0_download/scripts/run_priority.sh" ;;
+        phase0ext) echo "phase0_download/scripts/fetch_external.sh" ;;
         phase1) echo "phase1_pacbio_hifi/scripts/02_fetch_sra_reads.sh" ;;
         phase2) echo "phase2_ont/scripts/02_fetch_external_reads.sh" ;;
         phase3) echo "phase3_shortread_wgs/scripts/02_fetch_external_reads.sh" ;;
@@ -71,6 +73,7 @@ stage_script() {
 stage_label() {
     case "$1" in
         phase0) echo "GIAB FTP/S3 본체" ;;
+        phase0ext) echo "giab-aws 외부 (BioSkryb×UG100)" ;;
         phase1) echo "ENA PacBio SequelII 11kb" ;;
         phase2) echo "ONT 외부 (rel6 + R10.4.1)" ;;
         phase3) echo "숏리드 외부 (Google, HPRC)" ;;
@@ -95,7 +98,7 @@ phase0_complete() {
 run_stage() {
     local key="$1" rel log rc
     # 단계 이름 오타나 스크립트 부재는 조용히 넘기면 그 출처가 통째로 빠진다 — FAIL로 집계한다
-    rel="$(stage_script "$key")" || { record "$key" "FAIL(unknown)" "알 수 없는 단계 이름 (phase0~phase3)"; return; }
+    rel="$(stage_script "$key")" || { record "$key" "FAIL(unknown)" "알 수 없는 단계 이름 (phase0, phase0ext, phase1~phase3)"; return; }
     local abs="$REPO_ROOT/$rel"
     if [ ! -f "$abs" ]; then
         record "$key" "FAIL(missing)" "스크립트 없음: $rel"

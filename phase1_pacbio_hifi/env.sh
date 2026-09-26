@@ -96,6 +96,15 @@ export SOMATIC_MIN_VAF="${SOMATIC_MIN_VAF:-0.05}"     # truth README: VAF 5~10% 
 export SOMATIC_BENCH_DIR="${SOMATIC_BENCH_DIR:-$RUN_BASE/_somatic_bench}"
 export AARDVARK="${AARDVARK:-$INFRA/tools/aardvark-v1.0.0/aardvark}"   # PacBio 공식 릴리스 정적 바이너리 (README 권장 도구)
 
+# ── somatic 콜 (70_submit_somatic.sh, DeepSomatic 1.10.0 CPU) ───────────────────
+# 전장 실측 전 값이다. 4 Mb 조각(HG008-T 116x / N-P 35x, 16코어) peak RSS 17.8 GB 를 전장·30코어로 옮기는 근거는
+# 없으므로 germline 파이프라인 잡과 같은 크기(노드당 2잡)로 시작하고, 파일럿 qacct maxvmem 을 보고 고친다.
+export SOMATIC_SLOTS="${SOMATIC_SLOTS:-30}"
+export SOMATIC_MEM_GB="${SOMATIC_MEM_GB:-110}"   # Nextflow local executor 상한 (kobic.config)
+export SOMATIC_VMEM="${SOMATIC_VMEM:-115G}"      # 표시용. 강제되지 않는다
+# 같은 사용자의 HG002/3/4·업체 비교 잡이 먼저 뜨게 낮춘다 (2026-09-25 사용자 지시: 그쪽이 우선)
+export SOMATIC_PRIO="${SOMATIC_PRIO:--100}"
+
 # ── SV 정확도 평가 (61_benchmark_sv.sh) ───────────────────────────────────────
 # **실측 (2026-09-22, phase1 HG002 5런, -t 8)**: maxvmem 91.6 / 96.5 / 99.5 / 121.0 / 136.2 GB,
 # wall 247~257초. 전 런 exit 0.

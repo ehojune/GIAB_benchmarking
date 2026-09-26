@@ -1,8 +1,9 @@
-# phase1 PacBio HiFi 벤치마킹 중간 보고 (2026-09-22, 09-24 갱신)
+# phase1 PacBio HiFi 벤치마킹 보고 (2026-09-22 초판, 09-25 마무리)
 
 채점 가능한 것을 전량 채점한 시점의 보고다. 09-24 에 구간별 채점(GIAB strat 25구간)과 v4.2.1 밖 채점(v5.0q, HG002)을
-더했다 — 수치는 [2026-09-24 reference](../reference/2026-09-24-phase1-tstv-regions-and-strat.md). 남은 HG008/HG009는 somatic 평가가 서야
-채점되므로(STATUS #8·#9), 그것까지 끝나면 이 문서를 바탕으로 최종 보고를 다시 쓴다.
+더했다 — 수치는 [2026-09-24 reference](../reference/2026-09-24-phase1-tstv-regions-and-strat.md). 2026-09-25 [범위 조정](../SCOPE.md)에 따라
+HG008/HG009는 기본처리·QC로 닫으며 somatic 평가를 최종 보고의 조건으로 삼지 않는다. HG008 somatic 전장은 사용자 지시로
+09-25 별도로 돌려 채점까지 마쳤다(아래 [somatic](#hg008-somatic--deepsomatic-1100-13쌍) 절).
 
 수치 원본은 [소변이·SV 실측 기록](../reference/2026-09-22-pacbio-hifi-benchmark-first-results.md),
 현재 진행 상황은 [STATUS.md](../STATUS.md).
@@ -20,15 +21,45 @@
 - **SV는 recall이 약점이다.** precision 0.897~0.904로 고른데 recall 0.757~0.788.
   pbsv가 truth 28,123개 중 21,282~22,147개를 찾고 5,976~6,841개를 놓친다.
 - **SV에는 세대 단조성이 없고, 소변이 순위와 뒤집힌다.** 런을 하나의 "품질" 축으로 줄 세우면 안 된다.
+- **HG008 somatic(DeepSomatic 1.10.0): matched T-BCM(normal 68x) SNV recall 0.950·precision 0.953.** normal 이 35x 인 T-PB 는
+  precision 0.864. INDEL recall 은 두 쌍 모두 0.25 로 낮은데, 공개 DS 1.6.0 콜셋도 0.21 이다. normal 을 빌린 11쌍은
+  recall 만 읽는다.
+
+## HG002/3/4 기준표 — 기본 비교용
+
+조건: GRCh38 `GCA_000001405.15_GRCh38_no_alt_analysis_set` · pbmm2 정렬 · DeepVariant 1.10.0(기본 caller) ·
+hap.py 0.3.12 vs GIAB **v4.2.1** benchmark VCF/BED(HG002~HG004 는 `_noinconsistent.bed`) · **PASS 행**.
+SV 는 pbsv → Truvari 5.4.0 vs HG002 **v5.0q stvar**(README 지정 옵션, refine 후). 잡: 소변이 `b1.*` 155355~155373,
+SV `s1.*` 156048~156052. 런별 원본 수치·Clair3 값은 [실측 기록](../reference/2026-09-22-pacbio-hifi-benchmark-first-results.md).
+
+| 실행 단위 | 기기 | SNP F1 | INDEL F1 | SV F1 |
+|---|---|---:|---:|---:|
+| HG002.PacBio_HiFi-Revio_20231031 | Revio | 0.9992 | 0.9913 | 0.8418 |
+| HG002.PacBio_CCS_15kb_20kb_chemistry2 | Sequel II | 0.9993 | 0.9973 | 0.8362 |
+| HG002.PacBio_SequelII_CCS_11kb | Sequel II | 0.9992 | 0.9932 | 0.8275 |
+| HG002.PacBio_CCS_10kb | Sequel I | 0.9989 | 0.9646 | 0.8208 |
+| HG002.PacBio_CCS_15kb | Sequel I | 0.9988 | 0.9282 | 0.8333 |
+| HG003.PacBio_HiFi-Revio_20231031 | Revio | 0.9991 | 0.9916 | — |
+| HG003.PacBio_CCS_HudsonAlpha_14kb_15kb_19kb | Sequel II | 0.9992 | 0.9950 | — |
+| HG003.PacBio_CCS_Google_15kb | Sequel I+II 혼합 | 0.9987 | 0.9855 | — |
+| HG004.PacBio_HiFi-Revio_20231031 | Revio | 0.9991 | 0.9920 | — |
+| HG004.PacBio_CCS_HudsonAlpha_15kb_21kb | Sequel II | 0.9992 | 0.9933 | — |
+| HG004.PacBio_CCS_Google_15kb | Sequel II | 0.9986 | 0.9860 | — |
+
+HG003 Google 15kb 는 movie 3개 중 1개가 Sequel I(`m54262U`), 2개가 Sequel II(`m64017`)라 세대 비교의 근거로 쓰지 않는다
+(빼도 세대별 범위는 같다). SV 는 HG003·HG004 에 GRCh38 truth 가 없어 채점하지 않았다. 업체 롱리드가 들어오면 같은 조건으로 이 표에 행을 더한다.
+
+**실행 완료와 정확도는 다른 것이다.** 49 실행단위 전부 파이프라인 완료·산출물 검증(49/49)·QC 를 마쳤다 — 이것은 "돌았다"는 뜻이다.
+정확도(truth 대비)를 말할 수 있는 것은 위 11런을 포함한 germline 19런(소변이)과 HG002 5런(SV)뿐이다.
 
 ## 무엇을 채점했고 무엇을 못 했나
 
 | | 대상 | 채점됨 | 못 한 이유 |
 |---|---|---|---|
-| 소변이 (hap.py vs v4.2.1) | 34 실행단위 | **19** | HG008/HG009 15런에 germline truth가 없다 |
-| SV (Truvari vs v5.0q) | 34 실행단위 | **5** | GRCh38 germline SV truth를 가진 GIAB 샘플이 HG002 하나뿐 |
+| 소변이 (hap.py vs v4.2.1) | 45 실행단위 | **19** | HG008/HG009 26런에 germline truth가 없다(`no-truth`) |
+| SV (Truvari vs v5.0q) | 45 실행단위 | **5** | GRCh38 germline SV truth를 가진 GIAB 샘플이 HG002 하나뿐 |
 
-`run_table.tsv` 38 실행단위 중 4건은 동일 movie 세트(`dup_of`)라 기본 제출에서 빠진다.
+`run_table.tsv` 49 실행단위 중 4건은 동일 movie 세트(`dup_of`)라 기본 제출에서 빠진다(`duplicate`).
 
 **이건 파이프라인 한계가 아니라 정답셋 한계다.** HG008/HG009의 draft benchmark는
 somatic-stvar/CNV라 단일 샘플 germline VCF 평가에 못 쓴다. SV 쪽은 더 좁아서,
@@ -64,15 +95,8 @@ FP가 DV 49,962 · CL 64,273으로 다른 런의 10~20배다. recall도 0.946/0.
 DV는 기기별 모델이 없어 19런을 전부 같은 PACBIO 모델로 돌았는데도 같은 크기의 격차를 낸다.
 데이터 쪽 차이다.
 
-**구간별로 보면 격차의 위치가 하나다** (DV INDEL F1):
-
-| | 호모폴리머 밖 | HP 7~11bp | HP ≥12bp | 오류 중 HP ≥12 몫 |
-|---|---|---|---|---|
-| Sequel I (2런) | 0.9945 ~ 0.9951 | 0.963 ~ 0.983 | **0.737 ~ 0.871** | 83 ~ 87% |
-| Sequel II (29x+, 7런) | 0.9964 ~ 0.9985 | 0.995 ~ 0.998 | 0.974 ~ 0.993 | 21 ~ 71% |
-| Revio (3런) | 0.9978 ~ 0.9984 | 0.995 ~ 0.996 | 0.969 ~ 0.975 | 73 ~ 80% |
-
-27x 이하 Sequel II 다섯 런은 호모폴리머 밖에서도 0.986~0.995 로 떨어진다 — 기기가 아니라 심도로 보인다.
+**구간별 채점(GIAB strat v3.6, 25구간)으로 보면 이 격차는 거의 전부 12bp 이상 호모폴리머에 있다** — 호모폴리머 밖에서는
+Sequel I 도 0.995 로 다른 기기와 같다. 수치는 [2026-09-24 reference](../reference/2026-09-24-phase1-tstv-regions-and-strat.md) §2.
 
 세대는 dataset 이름이 아니라 `inputs_manifest.tsv`의 **movie ID**로 판정한다
 (m84=Revio, m64=Sequel II, m54=Sequel I). 이름 기반 판정은 `PacBio_CCS_10kb`/`_15kb`를
@@ -90,18 +114,8 @@ INDEL이 내려가고, **그 차이는 12bp 이상 호모폴리머에 몰려 있
 호모폴리머 밖에서는 차이 0.001 안팎이다. Clair3 v1.2.0 `hifi_revio` 모델의 약점이 긴 호모폴리머 INDEL 이라는 것까지 좁혀진다.
 (긴 호모폴리머 안 **SNP** 는 거꾸로 19런 전부 Clair3 가 낫지만, SNP 전체가 포화라 판정을 바꾸지 않는다.)
 
-**v4.2.1 밖에서도 같다.** HG002 5런을 T2T 유래 v5.0q truth 로 채점해 v4.2.1 이 빼 둔 83 Mb 를 따로 셌다
-(겹치는 구간은 두 truth 로 0.0007 안에서 같아 비교가 선다):
-
-| | SNP DV / C3 | INDEL DV / C3 |
-|---|---|---|
-| Revio | 0.954 / 0.922 | **0.870 / 0.733** |
-| Sequel II (2런) | 0.948~0.954 / 0.919~0.924 | 0.907~0.937 / 0.867~0.891 |
-| Sequel I (2런) | 0.938~0.941 / 0.908~0.913 | 0.604~0.728 / 0.603~0.747 |
-| (참고) ONT R10 | 0.930 / 0.895 | 0.619 / 0.519 |
-
-DV 의 SNP 우세는 FP 가 절반인 데서 온다. **어려운 영역 INDEL 에서 HiFi(Revio·Sequel II)가 ONT R10 보다 0.25~0.32 높다.**
-구간 밖에서 DV 가 C3 보다 8~18만 SNP 를 더 부르는데(ts/tv 0.1~0.3), 그 초과분은 v5.0q 도 덮지 않는 구간에 있어 채점할 수 없다.
+이 차이도 12bp 이상 호모폴리머에 몰려 있다(Clair3 INDEL 오류의 80~91%). HG002 5런을 v5.0q smvar 로 v4.2.1 밖 83 Mb 까지 채점해도
+DeepVariant 가 SNP 는 5런 전부, INDEL 은 Sequel II·Revio 에서 앞선다(같은 reference §4).
 
 **판정: PacBio 소변이 기본 caller는 DeepVariant.** Clair3는 버리지 않고 교차 확인용으로 둔다 —
 두 caller 합의는 여전히 쓸모가 있다.
@@ -189,15 +203,28 @@ SV는 실측 최대 136 GB라 노드당 1잡(33슬롯)으로 두었다.
 - **메타데이터를 디렉토리 이름으로 추정하면 비교축이 조용히 망가진다.** 권위 있는 토큰은
   리드 파일명의 movie ID다.
 
-## 다음
+## HG008 somatic — DeepSomatic 1.10.0, 13쌍
 
-| # | | 왜 |
-|---|---|---|
-| 8 | phase1 HG008-T NIST 실행단위 (uBAM → BAM → VCF) | **9런 완료**(09-23). 같은 누락으로 빠져 있던 bulk p21·p41 을 09-24 추가해 처리 중 — `run_table.tsv` 49 |
-| 9 | HG008-T somatic 평가 | **방법 B(somatic caller 추가)로 결정**, 구현은 bioinfo-agent 쪽에 위임. truth(smvar V0.3)가 truncal 변이만 담아 클론은 recall 만 해석된다 |
+기존 정렬 BAM(재정렬 없음), `google/deepsomatic:1.10.0` CPU `--model_type=PACBIO` tumor-normal, bioinfo-agent `f2de95e`.
+채점은 aardvark v1.0.0 vs NIST HG008-T smvar V0.3 `tumorvariants`, PASS·VAF ≥ 0.05, BED `all`.
 
-둘이 끝나면 이 문서 + 그 결과로 **최종 보고**를 다시 쓴다.
+| 쌍 | 조건 | SNV recall | SNV precision | INDEL recall | INDEL precision |
+|---|---|---:|---:|---:|---:|
+| T-BCM | matched, normal 68x | 0.950 | 0.953 | 0.249 | 0.986 |
+| T-PB | matched, normal 35x | 0.951 | 0.864 | 0.255 | 0.917 |
+| borrowed 11쌍 | bulk p21·p41·p100, 클론 8 | 0.892 ~ 0.934 | — | 0.199 ~ 0.246 | — |
+| (기준) 공개 UCSC DS 1.6.0 콜셋 | | 0.948 | 0.937 | 0.205 | 0.921 |
 
-미확인으로 남은 것:
-- SV recall이 낮은 것이 v5.0q의 어려운 영역 때문인지 (SV 도 구간별로 갈라 봐야 한다)
-- `CCS_15kb` 의 CCS pass 수(`np` 태그) — 역전 자체는 위에서 설명됐고, 원인 쪽 확인만 남았다
+- truth 는 0823p23 bulk 의 truncal 변이만 담는다. 클론·다른 계대의 고유 변이는 truth 밖이라 **borrowed 쌍의 precision 은 읽지 않는다.**
+- T-PB precision 이 낮은 것은 normal 심도(35x)와 같은 방향이지만 원인은 확인하지 않았다.
+- 13쌍 전부 exit 0, 쌍당 60 CPU 로 2.4~3.4 h. 쌍별 QC·채점·해석 한계: [실행 기록](../runs/2026-09-25-somatic-wgs.md).
+
+## 남은 것
+
+| | 상태 |
+|---|---|
+| HG008-T NIST 11런 (bulk p21·p41·p100 + 클론 8) | 기본처리·QC **완료**(09-24). germline truth 없음(`no-truth`) — 정확도는 말하지 않는다 |
+| HG008-T somatic 평가 | **완료**(09-25) — 13쌍 전장·채점, 위 절. 추가 실행 없음 |
+| 업체 롱리드 | raw 미수령. 들어오면 같은 파이프라인·같은 조건으로 위 기준표에 추가 |
+
+미확인으로 남은 것(추가 분석 안 함): SV recall 이 낮은 이유가 v5.0q 어려운 영역 때문인지, `CCS_15kb` 의 CCS pass 수.

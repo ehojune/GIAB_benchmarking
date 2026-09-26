@@ -1,0 +1,525 @@
+{
+  "compiled_at": "2026-09-26T16:19:35.272613+09:00",
+  "identity": {
+    "host": "nbbcluster2",
+    "user": "ehojune"
+  },
+  "basic_checked_at": "2026-09-26T15:53:35.383479+09:00",
+  "baseline": "2026-09-26T11:54:41.645691+09:00",
+  "basic_jobs": [
+    {
+      "job": "155526",
+      "name": "regermline_java17_BGISEQ500",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 54016,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-BGISEQ500\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155527",
+      "name": "regermline_java17_Element-AVITI",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 65422,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Element-AVITI\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155528",
+      "name": "regermline_java17_Hiseq-300x",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 21038,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Hiseq-300x\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "156690",
+      "name": "regermline_java17_GIAB-publicData-MGISEQ2000-PCRfree",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 16105,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-MGISEQ2000-PCRfree\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "156760",
+      "name": "germline_G000-gd1-20260819",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 184997,
+      "done": null,
+      "errors": "- Time: Sat Sep 26 14:43:30 KST 2026\n- Sample: {'C000000100400000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/tmp/13.verifybamID/C000000100400000G0x1_verifybamID.err'}\n"
+    },
+    {
+      "job": "156761",
+      "name": "germline_G000-gd2-20260819",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 442729,
+      "done": null,
+      "errors": "- Time: Sat Sep 26 10:54:36 KST 2026\n- Sample: {'C000000200100000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200100000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 13:25:48 KST 2026\n- Sample: {'C000000200400000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200400000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 14:45:08 KST 2026\n- Sample: {'C000000200600000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200600000G0x1_verifybamID.err'}\n"
+    },
+    {
+      "job": "156763",
+      "name": "germline_G000-gd4-20260819",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 259163,
+      "done": null,
+      "errors": "- Time: Sat Sep 26 15:51:14 JST 2026\n- Sample: {'C000000400200000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400200000G0x1_verifybamID.err'}\n"
+    }
+  ],
+  "companies": [
+    {
+      "set": "G000-gd1-20260819",
+      "steps": [
+        "80",
+        "265"
+      ],
+      "done": null,
+      "errors": "- Time: Sat Sep 26 14:43:30 KST 2026\n- Sample: {'C000000100400000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/tmp/13.verifybamID/C000000100400000G0x1_verifybamID.err'}\n",
+      "mark_done": 4,
+      "mark_total": 6,
+      "all_unfinished_logs_grew": true
+    },
+    {
+      "set": "G000-gd2-20260819",
+      "steps": [
+        "225",
+        "265"
+      ],
+      "done": null,
+      "errors": "- Time: Sat Sep 26 10:54:36 KST 2026\n- Sample: {'C000000200100000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200100000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 13:25:48 KST 2026\n- Sample: {'C000000200400000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200400000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 14:45:08 KST 2026\n- Sample: {'C000000200600000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200600000G0x1_verifybamID.err'}\n",
+      "mark_done": 5,
+      "mark_total": 6,
+      "all_unfinished_logs_grew": true
+    },
+    {
+      "set": "G000-gd3-20260819",
+      "steps": [
+        "265",
+        "265"
+      ],
+      "done": "- Cohort : G000\n- Batch name : G000-gd3-20260819\n- Message : Success\n",
+      "errors": null,
+      "mark_done": 6,
+      "mark_total": 6,
+      "all_unfinished_logs_grew": true
+    },
+    {
+      "set": "G000-gd4-20260819",
+      "steps": [
+        "99",
+        "265"
+      ],
+      "done": null,
+      "errors": "- Time: Sat Sep 26 15:51:14 JST 2026\n- Sample: {'C000000400200000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400200000G0x1_verifybamID.err'}\n",
+      "mark_done": 3,
+      "mark_total": 6,
+      "all_unfinished_logs_grew": true
+    }
+  ],
+  "public_active_mark_logs": 12,
+  "public_active_logs_all_grew": true,
+  "company_mark_before": 11,
+  "company_mark_after": 18,
+  "gd3": {
+    "job": "156762",
+    "ended_at": "2026-09-26T14:21:31+09:00",
+    "qacct_failed": 0,
+    "qacct_exit_status": 0,
+    "done": "- Cohort : G000\n- Batch name : G000-gd3-20260819\n- Message : Success\n",
+    "error_list_exists": false,
+    "assessment": "Outputs usable; 3 contamination QC gaps, not full QC success",
+    "samples": [
+      {
+        "sample": "C000000300100000G0x1",
+        "label": "KOR-101",
+        "fastp_reads": 710228924,
+        "bam_primary_reads": 710228924,
+        "read_counts_match": true,
+        "mean_depth": 30.82,
+        "primary_mapped_percent": 99.98,
+        "cram_quickcheck_exit": 0,
+        "gvcf_sample_matches": true,
+        "gvcf_index_contigs": 25,
+        "gvcf_bgzf_eof_ok": true,
+        "outcome_targets_all_present": true,
+        "verifybamID": "gap: segmentation fault; no checksum or QC link",
+        "raw_R1": "/BiO/scratch/dyl/kbb/data/theragen/19375725_1.fq.gz"
+      },
+      {
+        "sample": "C000000300200000G0x1",
+        "label": "KOR-102",
+        "fastp_reads": 668248994,
+        "bam_primary_reads": 668248994,
+        "read_counts_match": true,
+        "mean_depth": 29.24,
+        "primary_mapped_percent": 99.99,
+        "cram_quickcheck_exit": 0,
+        "gvcf_sample_matches": true,
+        "gvcf_index_contigs": 25,
+        "gvcf_bgzf_eof_ok": true,
+        "outcome_targets_all_present": true,
+        "verifybamID": "complete",
+        "raw_R1": "/BiO/scratch/dyl/kbb/data/theragen/19261049_1.fq.gz"
+      },
+      {
+        "sample": "C000000300300000G0x1",
+        "label": "KOR-103",
+        "fastp_reads": 699111904,
+        "bam_primary_reads": 699111904,
+        "read_counts_match": true,
+        "mean_depth": 30.24,
+        "primary_mapped_percent": 99.98,
+        "cram_quickcheck_exit": 0,
+        "gvcf_sample_matches": true,
+        "gvcf_index_contigs": 25,
+        "gvcf_bgzf_eof_ok": true,
+        "outcome_targets_all_present": true,
+        "verifybamID": "gap: segmentation fault; no checksum or QC link",
+        "raw_R1": "/BiO/scratch/dyl/kbb/data/theragen/19510479_1.fq.gz"
+      },
+      {
+        "sample": "C000000300400000G0x1",
+        "label": "HG002",
+        "fastp_reads": 688532668,
+        "bam_primary_reads": 688532668,
+        "read_counts_match": true,
+        "mean_depth": 29.89,
+        "primary_mapped_percent": 99.98,
+        "cram_quickcheck_exit": 0,
+        "gvcf_sample_matches": true,
+        "gvcf_index_contigs": 25,
+        "gvcf_bgzf_eof_ok": true,
+        "outcome_targets_all_present": true,
+        "verifybamID": "gap: segmentation fault; no checksum or QC link",
+        "raw_R1": "/BiO/scratch/dyl/kbb/data/theragen/NA24385_1.fq.gz"
+      },
+      {
+        "sample": "C000000300500000G0x1",
+        "label": "HG003",
+        "fastp_reads": 713031590,
+        "bam_primary_reads": 713031590,
+        "read_counts_match": true,
+        "mean_depth": 30.87,
+        "primary_mapped_percent": 99.98,
+        "cram_quickcheck_exit": 0,
+        "gvcf_sample_matches": true,
+        "gvcf_index_contigs": 25,
+        "gvcf_bgzf_eof_ok": true,
+        "outcome_targets_all_present": true,
+        "verifybamID": "complete",
+        "raw_R1": "/BiO/scratch/dyl/kbb/data/theragen/NA24149_1.fq.gz"
+      },
+      {
+        "sample": "C000000300600000G0x1",
+        "label": "HG004",
+        "fastp_reads": 692786782,
+        "bam_primary_reads": 692786782,
+        "read_counts_match": true,
+        "mean_depth": 30.17,
+        "primary_mapped_percent": 99.99,
+        "cram_quickcheck_exit": 0,
+        "gvcf_sample_matches": true,
+        "gvcf_index_contigs": 25,
+        "gvcf_bgzf_eof_ok": true,
+        "outcome_targets_all_present": true,
+        "verifybamID": "complete",
+        "raw_R1": "/BiO/scratch/dyl/kbb/data/theragen/NA24143_1.fq.gz"
+      }
+    ],
+    "failure_evidence": {
+      "master_log": "G000-gd3-20260819/log/germline_G000-gd3-20260819.o156762",
+      "segfault_lines": {
+        "KOR-101": 142294,
+        "HG002": 142443,
+        "KOR-103": 142502
+      }
+    },
+    "retry_decision": {
+      "native_equivalent_forced_dryrun_jobs": 253,
+      "includes": [
+        "fastp",
+        "bwa",
+        "sort",
+        "MarkDuplicates",
+        "BQSR",
+        "HaplotypeCaller"
+      ],
+      "executed": false,
+      "failed_outputs_moved_or_deleted": false,
+      "reason": "Cleaned temporary BAMs would cause raw reprocessing; preserve bounded scope and explicit QC gap."
+    }
+  },
+  "comparison": {
+    "submitted_at": "2026-09-26T16:07:36.655362+09:00",
+    "owner": "Codex",
+    "checked_at": "2026-09-26T16:12:49.381575+09:00",
+    "jobs": [
+      {
+        "label": "gd003-HG002",
+        "job": "156787",
+        "state": "r",
+        "queue": "octopus.q@octopus-2-10.kobic.re.kr",
+        "start": "2026-09-26T16:07:44",
+        "log_bytes": 6166,
+        "previous_log_bytes": 3142,
+        "genotyping_last_coordinate": "chr2:185252777",
+        "files": [
+          {
+            "name": "gd003-HG002.genotyped.vcf.gz.part.vcf.gz",
+            "bytes": 29843096
+          }
+        ],
+        "scores_complete": false
+      },
+      {
+        "label": "gd003-HG003",
+        "job": "156788",
+        "state": "r",
+        "queue": "octopus.q@octopus-2-11.kobic.re.kr",
+        "start": "2026-09-26T16:07:44",
+        "log_bytes": 6166,
+        "previous_log_bytes": 3142,
+        "genotyping_last_coordinate": "chr2:218359249",
+        "files": [
+          {
+            "name": "gd003-HG003.genotyped.vcf.gz.part.vcf.gz",
+            "bytes": 32157044
+          }
+        ],
+        "scores_complete": false
+      },
+      {
+        "label": "gd003-HG004",
+        "job": "156789",
+        "state": "r",
+        "queue": "octopus.q@octopus-2-10.kobic.re.kr",
+        "start": "2026-09-26T16:07:44",
+        "log_bytes": 6166,
+        "previous_log_bytes": 3142,
+        "genotyping_last_coordinate": "chr2:183777052",
+        "files": [
+          {
+            "name": "gd003-HG004.genotyped.vcf.gz.part.vcf.gz",
+            "bytes": 30340108
+          }
+        ],
+        "scores_complete": false
+      },
+      {
+        "label": "public-NovaSeq6000-30x-HG002",
+        "job": "156790",
+        "state": "r",
+        "queue": "octopus.q@octopus-2-11.kobic.re.kr",
+        "start": "2026-09-26T16:07:44",
+        "log_bytes": 750,
+        "previous_log_bytes": 425,
+        "genotyping_last_coordinate": null,
+        "files": [
+          {
+            "name": "public-NovaSeq6000-30x-HG002.genotyped.vcf.gz",
+            "bytes": 209810548
+          },
+          {
+            "name": "public-NovaSeq6000-30x-HG002.runinfo.json",
+            "bytes": 10841
+          },
+          {
+            "name": "public-NovaSeq6000-30x-HG002.hap.py.log",
+            "bytes": 206185
+          },
+          {
+            "name": "public-NovaSeq6000-30x-HG002.genotyped.vcf.gz.tbi",
+            "bytes": 1596098
+          }
+        ],
+        "scores_complete": false
+      },
+      {
+        "label": "public-NovaSeq6000-30x-HG003",
+        "job": "156791",
+        "state": "r",
+        "queue": "octopus.q@octopus-2-10.kobic.re.kr",
+        "start": "2026-09-26T16:07:44",
+        "log_bytes": 751,
+        "previous_log_bytes": 425,
+        "genotyping_last_coordinate": null,
+        "files": [
+          {
+            "name": "public-NovaSeq6000-30x-HG003.hap.py.log",
+            "bytes": 210735
+          },
+          {
+            "name": "public-NovaSeq6000-30x-HG003.genotyped.vcf.gz.tbi",
+            "bytes": 1595861
+          },
+          {
+            "name": "public-NovaSeq6000-30x-HG003.runinfo.json",
+            "bytes": 10861
+          },
+          {
+            "name": "public-NovaSeq6000-30x-HG003.genotyped.vcf.gz",
+            "bytes": 209057548
+          }
+        ],
+        "scores_complete": false
+      },
+      {
+        "label": "public-NovaSeq6000-30x-HG004",
+        "job": "156792",
+        "state": "r",
+        "queue": "octopus.q@octopus-2-11.kobic.re.kr",
+        "start": "2026-09-26T16:07:44",
+        "log_bytes": 749,
+        "previous_log_bytes": 425,
+        "genotyping_last_coordinate": null,
+        "files": [
+          {
+            "name": "public-NovaSeq6000-30x-HG004.genotyped.vcf.gz",
+            "bytes": 215111640
+          },
+          {
+            "name": "public-NovaSeq6000-30x-HG004.runinfo.json",
+            "bytes": 10862
+          },
+          {
+            "name": "public-NovaSeq6000-30x-HG004.hap.py.log",
+            "bytes": 199742
+          },
+          {
+            "name": "public-NovaSeq6000-30x-HG004.genotyped.vcf.gz.tbi",
+            "bytes": 1597956
+          }
+        ],
+        "scores_complete": false
+      },
+      {
+        "label": "public-NovaSeqX-30x-HG002",
+        "job": "156793",
+        "state": "r",
+        "queue": "octopus.q@octopus-2-10.kobic.re.kr",
+        "start": "2026-09-26T16:07:44",
+        "log_bytes": 751,
+        "previous_log_bytes": 425,
+        "genotyping_last_coordinate": null,
+        "files": [
+          {
+            "name": "public-NovaSeqX-30x-HG002.genotyped.vcf.gz",
+            "bytes": 202898700
+          },
+          {
+            "name": "public-NovaSeqX-30x-HG002.genotyped.vcf.gz.tbi",
+            "bytes": 1594589
+          },
+          {
+            "name": "public-NovaSeqX-30x-HG002.hap.py.log",
+            "bytes": 199881
+          },
+          {
+            "name": "public-NovaSeqX-30x-HG002.runinfo.json",
+            "bytes": 10758
+          }
+        ],
+        "scores_complete": false
+      }
+    ],
+    "script_sha256": "08e2d6df17f2e4c41d0279761e15dadd3507857e8f783d206d540ed50934d659",
+    "company_input_policy": "New corrected gd3 gVCFs; old company caches stay in backup.",
+    "public_cache_policy": "Reused only after identity, header provenance, reference, mtime and index checks.",
+    "interpretation_limit": "gd003-HG002 contamination QC incomplete; do not claim clean contamination QC.",
+    "submission_record": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/submission_gd3_public_20260926.json"
+  },
+  "illumina": {
+    "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Illumina-250PE\n- Message : Error\n",
+    "errors": "- Time: Sat Sep 26 09:10:29 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG004'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004_manta.err'}\n- Time: Sat Sep 26 09:12:14 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG002'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002_manta.err'}\n- Time: Sat Sep 26 09:12:29 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003_manta.err'}\n- Time: Sat Sep 26 09:20:39 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG002'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/13.verifybamID/GIAB-publicData-Illumina-250PE-HG002_verifybamID.err'}\n- Time: Sat Sep 26 09:38:33 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'haplo_gather'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/10.haplo/GIAB-publicData-Illumina-250PE-HG003_haplo.err'}\n- Time: Sat Sep 26 09:39:47 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'count_variants'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/15.countVariants/GIAB-publicData-Illumina-250PE-HG003_countVariants.err'}\n",
+    "qacct_fields": [
+      "jobnumber    156786",
+      "end_time     Sat Sep 26 09:39:49 2026",
+      "failed       0",
+      "exit_status  1"
+    ]
+  },
+  "somatic": {
+    "qacct_count": 29,
+    "all_success": true,
+    "qc_sha256_unchanged": true,
+    "qc_rows": 13,
+    "summary_count": 28
+  },
+  "download": {
+    "at": "2026-09-26T15:54:25.210606",
+    "manifest": {
+      "path": "/home/ehojune/GIAB_benchmarking/phase0_download/ext_manifest.tsv",
+      "rows": 476,
+      "target_bytes": 5220867898115,
+      "provided_md5": 238
+    },
+    "comparison": {
+      "previous_at": "2026-09-26T11:55:55.459239",
+      "previous_received_bytes": 781871110997,
+      "received_bytes_increase": 1169009783462,
+      "previous_counts": {
+        "size_match": 37,
+        "partial": 6,
+        "missing": 433,
+        "oversize": 0
+      },
+      "counts_change": {
+        "size_match": 58,
+        "partial": 0,
+        "missing": -58,
+        "oversize": 0
+      },
+      "previous_md5_markers": 21,
+      "marker_increase": 29
+    },
+    "snapshot": {
+      "at": "2026-09-26T15:54:25.926465",
+      "counts": {
+        "size_match": 95,
+        "partial": 6,
+        "missing": 375,
+        "oversize": 0
+      },
+      "received_bytes": 1950880894459,
+      "target_bytes": 5220867898115,
+      "byte_percent": 37.36698442730887,
+      "current_md5_markers_read_only": 50
+    },
+    "all_six_wget_grew": true
+  },
+  "claude": "Four original owners idle; former coordinator absent; no activity since 11:53; no resume.",
+  "actions": {
+    "new_comparison_jobs": 7,
+    "raw_pipeline_retry": false,
+    "raw_or_failed_output_deletion": false,
+    "shared_pipeline_edit": false,
+    "claude_resume": false,
+    "new_automation": false
+  },
+  "sources_sha256": {
+    "live-jobs-20260926-1553.txt": "53c716dc67d51b42d1177b9822ae4cdfeccb04cc31d0453b2e2f97395535a4a2",
+    "progress-snapshot-20260926-1553.txt": "cc53d0111e5543e99a91f0465179e58f953c91f7ed2991fb6548365c588cc051",
+    "company-progress-20260926-1553.txt": "55988939bbb707068e6a2eb7c29f9ccfa3389f94f0563c33db02115819dc2060",
+    "somatic-current-20260926-1553.txt": "98b8ad3bf6b82a6fe4c8109c41274d6fd9fcc553806e26c77d0167574847b2cb",
+    "company-errors-20260926-1553.txt": "e78bbe6b068b6192cdd2d0834b9922b855cfb4e4f914c4632193182de5e27d70",
+    "gd3-completion-20260926-1557.txt": "70d34cfcbb07ec5036fb25aa4e1e457f30a496020dcf67d3c2e5740851e0cc8a",
+    "gd3-qc-summary-20260926-1559.txt": "610fef6f99e03eaf44651817cf4c40f654bb0ae1fcd679c40b6941933a6409d1",
+    "company-verify-rule-20260926-1600.txt": "aa1f27ba0c00ff45452289c0cba9173cf3378de5e2093aff2f973cd1aadc872b",
+    "gd3-native-config-20260926-1603.txt": "24beeeb09872a779d9f49f7b415683a4c272ef6551ba7abd84f3939203a0a75f",
+    "gd3-forced-dryrun-20260926-1606.txt": "0124783536fab47f42fca764e50480e6bd1f6c73293886f7de67a1f780af5d02",
+    "download-status-20260926-1552.json": "c983eb6756d2471e97e821a63dbba40077501b3a1846cdb3083579b782ddae4c",
+    "owner-status-20260926-1552.md": "d087e92591ee00dc648c955c99e855bf4014257a039bf532265774d1d7a70e75",
+    "happy-readiness-20260926-1555.json": "2842ff829d0ac0689f0f524a38616e05ac875fc023a643ffdfc99c1cdb452317",
+    "happy-readiness-public-20260926-1555.json": "7ee95dea194d907a6c07153c8d9f0feebf7a58bef5802e101afb4bbef2198387",
+    "happy-prepared-20260926-1607.txt": "08172d8e0410b1a8af979f03436481aa8e0f83d08454d7c92c8f954945e38e76",
+    "happy-dryrun-20260926-1607.txt": "501a5e11c979cbec4f44f45489ddf732f6c0b7528c01835f1545c70b519e50ec",
+    "happy-submitted-20260926-1609.txt": "be1a6bf455dc65a5925832c72f0062b35a117c4bd85c3c82f4d299adbac25e02",
+    "happy-status-20260926-1609.txt": "c2b193aa8ee83672793268d5873e47535a1d4362c2d160b3fdd88c27872bf8b8",
+    "happy-status-20260926-1615.txt": "65c1e3e1793befebd763d5086210811c2dade836ef38ebbce125c7d187c862a4"
+  }
+}

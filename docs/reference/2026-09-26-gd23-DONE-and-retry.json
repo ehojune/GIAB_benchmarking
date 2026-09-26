@@ -1,0 +1,471 @@
+{
+  "at": "2026-09-26T20:01:48.022771+09:00",
+  "identity": [
+    "nbbcluster2",
+    "ehojune"
+  ],
+  "original_jobs": [
+    {
+      "set": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819",
+      "job": "156761",
+      "qacct": "==============================================================\nqname        shepherd.q          \nhostname     shepherd-1-12.kobic.re.kr\ngroup        kobic               \nowner        ehojune             \nproject      NONE                \ndepartment   defaultdepartment   \njobname      germline_G000-gd2-20260819\njobnumber    156761              \ntaskid       undefined\naccount      sge                 \npriority     0                   \nqsub_time    Fri Sep 25 07:49:38 2026\nstart_time   Fri Sep 25 07:49:44 2026\nend_time     Sat Sep 26 19:06:10 2026\ngranted_pe   pe_slots            \nslots        60                  \nfailed       0    \nexit_status  0                   \nru_wallclock 126986s\nru_utime     2180616.655s\nru_stime     250087.086s\nru_maxrss    27.256MB\nru_ixrss     0.000B\nru_ismrss    0.000B\nru_idrss     0.000B\nru_isrss     0.000B\nru_minflt    23439350911         \nru_majflt    17895260            \nru_nswap     0                   \nru_inblock   128958864720        \nru_oublock   10081824112         \nru_msgsnd    0                   \nru_msgrcv    0                   \nru_nsignals  0                   \nru_nvcsw     6488147160          \nru_nivcsw    816034693           \ncpu          2430703.741s\nmem          36657.292TBs\nio           71.263TB\niow          0.000s\nmaxvmem      202.740GB\narid         undefined\nar_sub_time  undefined\ncategory     -q shepherd.q -l h_vmem=300G -pe pe_slots 60\n",
+      "done": "- Cohort : G000\n- Batch name : G000-gd2-20260819\n- Message : Success\n",
+      "error_list": null,
+      "segfaults": "205152:/usr/bin/bash: line 1: 1333629 Segmentation fault      (core dumped) /BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/bin/VerifyBamID --BamFile /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/09.bqsr/C000000200100000G0x1_v1.1.0.bam --Output /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200100000G0x1 --Reference /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --SVDPrefix /BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/resource/1000g.phase3.100k.b38.vcf.gz.dat --NumThread 4 > /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200100000G0x1_verifybamID.err 2> /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200100000G0x1_verifybamID.log\n206830:/usr/bin/bash: line 1: 1480593 Segmentation fault      (core dumped) /BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/bin/VerifyBamID --BamFile /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/09.bqsr/C000000200400000G0x1_v1.1.0.bam --Output /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200400000G0x1 --Reference /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --SVDPrefix /BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/resource/1000g.phase3.100k.b38.vcf.gz.dat --NumThread 4 > /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200400000G0x1_verifybamID.err 2> /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200400000G0x1_verifybamID.log\n208364:/usr/bin/bash: line 1: 1587848 Segmentation fault      (core dumped) /BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/bin/VerifyBamID --BamFile /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/09.bqsr/C000000200600000G0x1_v1.1.0.bam --Output /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200600000G0x1 --Reference /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --SVDPrefix /BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/resource/1000g.phase3.100k.b38.vcf.gz.dat --NumThread 4 > /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200600000G0x1_verifybamID.err 2> /BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/tmp/13.verifybamID/C000000200600000G0x1_verifybamID.log\n",
+      "missing_success_checks": [
+        "C000000200100000G0x1",
+        "C000000200400000G0x1",
+        "C000000200600000G0x1"
+      ]
+    },
+    {
+      "set": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819",
+      "job": "156762",
+      "qacct": "==============================================================\nqname        shepherd.q          \nhostname     shepherd-1-3.kobic.re.kr\ngroup        kobic               \nowner        ehojune             \nproject      NONE                \ndepartment   defaultdepartment   \njobname      germline_G000-gd3-20260819\njobnumber    156762              \ntaskid       undefined\naccount      sge                 \npriority     0                   \nqsub_time    Fri Sep 25 07:49:38 2026\nstart_time   Fri Sep 25 10:23:29 2026\nend_time     Sat Sep 26 14:21:31 2026\ngranted_pe   pe_slots            \nslots        60                  \nfailed       0    \nexit_status  0                   \nru_wallclock 100682s\nru_utime     1668709.053s\nru_stime     222043.887s\nru_maxrss    27.293MB\nru_ixrss     0.000B\nru_ismrss    0.000B\nru_idrss     0.000B\nru_isrss     0.000B\nru_minflt    23494177772         \nru_majflt    23861905            \nru_nswap     0                   \nru_inblock   247342938024        \nru_oublock   8289930912          \nru_msgsnd    0                   \nru_msgrcv    0                   \nru_nsignals  0                   \nru_nvcsw     4742682932          \nru_nivcsw    1104799332          \ncpu          1890752.940s\nmem          28555.160TBs\nio           56.559TB\niow          0.000s\nmaxvmem      213.974GB\narid         undefined\nar_sub_time  undefined\ncategory     -q shepherd.q -l h_vmem=300G -pe pe_slots 60\n",
+      "done": "- Cohort : G000\n- Batch name : G000-gd3-20260819\n- Message : Success\n",
+      "error_list": null,
+      "segfaults": "142294:/usr/bin/bash: line 1: 2392076 Segmentation fault      (core dumped) /BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/bin/VerifyBamID --BamFile /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/09.bqsr/C000000300100000G0x1_v1.1.0.bam --Output /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/13.verifybamID/C000000300100000G0x1 --Reference /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --SVDPrefix /BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/resource/1000g.phase3.100k.b38.vcf.gz.dat --NumThread 4 > /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/13.verifybamID/C000000300100000G0x1_verifybamID.err 2> /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/13.verifybamID/C000000300100000G0x1_verifybamID.log\n142443:/usr/bin/bash: line 1: 2393528 Segmentation fault      (core dumped) /BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/bin/VerifyBamID --BamFile /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/09.bqsr/C000000300400000G0x1_v1.1.0.bam --Output /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/13.verifybamID/C000000300400000G0x1 --Reference /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --SVDPrefix /BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/resource/1000g.phase3.100k.b38.vcf.gz.dat --NumThread 4 > /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/13.verifybamID/C000000300400000G0x1_verifybamID.err 2> /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/13.verifybamID/C000000300400000G0x1_verifybamID.log\n142502:/usr/bin/bash: line 1: 2393707 Segmentation fault      (core dumped) /BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/bin/VerifyBamID --BamFile /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/09.bqsr/C000000300300000G0x1_v1.1.0.bam --Output /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/13.verifybamID/C000000300300000G0x1 --Reference /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --SVDPrefix /BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/resource/1000g.phase3.100k.b38.vcf.gz.dat --NumThread 4 > /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/13.verifybamID/C000000300300000G0x1_verifybamID.err 2> /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/13.verifybamID/C000000300300000G0x1_verifybamID.log\n",
+      "missing_success_checks": [
+        "C000000300100000G0x1",
+        "C000000300300000G0x1",
+        "C000000300400000G0x1"
+      ]
+    }
+  ],
+  "ordinary_regermline": [
+    {
+      "job": "156794",
+      "set": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819",
+      "qacct": "==============================================================\nqname        shepherd.q          \nhostname     shepherd-1-12.kobic.re.kr\ngroup        kobic               \nowner        ehojune             \nproject      NONE                \ndepartment   defaultdepartment   \njobname      regermline_G000-gd2-20260819\njobnumber    156794              \ntaskid       undefined\naccount      sge                 \npriority     0                   \nqsub_time    Sat Sep 26 19:52:26 2026\nstart_time   Sat Sep 26 19:52:29 2026\nend_time     Sat Sep 26 19:53:40 2026\ngranted_pe   pe_slots            \nslots        60                  \nfailed       100 : assumedly after job\nexit_status  137                  (Killed)\nru_wallclock 71s\nru_utime     0.557s\nru_stime     0.309s\nru_maxrss    50.465KB\nru_ixrss     0.000B\nru_ismrss    0.000B\nru_idrss     0.000B\nru_isrss     0.000B\nru_minflt    62598               \nru_majflt    289                 \nru_nswap     0                   \nru_inblock   76016               \nru_oublock   184                 \nru_msgsnd    0                   \nru_msgrcv    0                   \nru_nsignals  0                   \nru_nvcsw     6737                \nru_nivcsw    4                   \ncpu          1705.340s\nmem          2.958TBs\nio           21.268GB\niow          0.000s\nmaxvmem      11.903GB\narid         undefined\nar_sub_time  undefined\ncategory     -q shepherd.q -l h_vmem=300G -pe pe_slots 60\n",
+      "protected_outcomes_changed": [],
+      "reason_stopped": "No force option; actual 253-job DAG started fastp for all six samples."
+    },
+    {
+      "job": "156795",
+      "set": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819",
+      "qacct": "==============================================================\nqname        shepherd.q          \nhostname     shepherd-1-1.kobic.re.kr\ngroup        kobic               \nowner        ehojune             \nproject      NONE                \ndepartment   defaultdepartment   \njobname      regermline_G000-gd3-20260819\njobnumber    156795              \ntaskid       undefined\naccount      sge                 \npriority     0                   \nqsub_time    Sat Sep 26 19:52:26 2026\nstart_time   Sat Sep 26 19:52:29 2026\nend_time     Sat Sep 26 19:53:40 2026\ngranted_pe   pe_slots            \nslots        60                  \nfailed       100 : assumedly after job\nexit_status  137                  (Killed)\nru_wallclock 71s\nru_utime     0.552s\nru_stime     0.313s\nru_maxrss    50.484KB\nru_ixrss     0.000B\nru_ismrss    0.000B\nru_idrss     0.000B\nru_isrss     0.000B\nru_minflt    61947               \nru_majflt    250                 \nru_nswap     0                   \nru_inblock   64000               \nru_oublock   184                 \nru_msgsnd    0                   \nru_msgrcv    0                   \nru_nsignals  0                   \nru_nvcsw     6618                \nru_nivcsw    5                   \ncpu          1732.600s\nmem          3.075TBs\nio           22.023GB\niow          0.000s\nmaxvmem      12.311GB\narid         undefined\nar_sub_time  undefined\ncategory     -q shepherd.q -l h_vmem=300G -pe pe_slots 60\n",
+      "protected_outcomes_changed": [],
+      "reason_stopped": "No force option; actual 253-job DAG started fastp for all six samples."
+    }
+  ],
+  "repair": {
+    "reason": "Interrupted regermline removed 12 samples fastp JSON/HTML; original CRAM/gVCF/SV/CNV/raw targets unchanged by recorded stats.",
+    "jobs": [
+      {
+        "company": "gd2",
+        "job": "156796",
+        "state": "r",
+        "markers": {
+          "started.json": {
+            "at": "2026-09-26T19:58:44.659114+09:00",
+            "job": "156796"
+          }
+        }
+      },
+      {
+        "company": "gd3",
+        "job": "156797",
+        "state": "r",
+        "markers": {
+          "started.json": {
+            "at": "2026-09-26T19:58:44.698779+09:00",
+            "job": "156797"
+          }
+        }
+      }
+    ],
+    "mode": "Same fastp 0.23.2/settings, raw input read once; no FASTQ outputs. Stage reports, check filtered reads against existing BAM primary counts, publish only missing JSON/HTML."
+  },
+  "happy": [
+    {
+      "label": "gd003-HG002",
+      "job": "156787",
+      "qacct": "==============================================================\nqname        octopus.q           \nhostname     octopus-2-10.kobic.re.kr\ngroup        kobic               \nowner        ehojune             \nproject      NONE                \ndepartment   defaultdepartment   \njobname      happy7.gd003-HG002  \njobnumber    156787              \ntaskid       undefined\naccount      sge                 \npriority     0                   \nqsub_time    Sat Sep 26 16:07:36 2026\nstart_time   Sat Sep 26 16:07:44 2026\nend_time     Sat Sep 26 17:24:00 2026\ngranted_pe   pe_slots            \nslots        16                  \nfailed       0    \nexit_status  0                   \nru_wallclock 4576s\nru_utime     4181.225s\nru_stime     18008.963s\nru_maxrss    7.105MB\nru_ixrss     0.000B\nru_ismrss    0.000B\nru_idrss     0.000B\nru_isrss     0.000B\nru_minflt    873594316           \nru_majflt    5970                \nru_nswap     0                   \nru_inblock   4055504             \nru_oublock   12212088            \nru_msgsnd    0                   \nru_msgrcv    0                   \nru_nsignals  0                   \nru_nvcsw     4252158             \nru_nivcsw    139202              \ncpu          22190.187s\nmem          31.051TBs\nio           105.584GB\niow          0.000s\nmaxvmem      50.518GB\narid         undefined\nar_sub_time  undefined\ncategory     -q octopus.q,shepherd.q -l h_vmem=56G,hostname=(octopus-2-8|octopus-2-9|octopus-2-10|octopus-2-11|shepherd-1-8|shepherd-1-9) -pe pe_slots 16\n",
+      "summaries": [
+        {
+          "path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd003-HG002/gd003-HG002.summary.csv",
+          "sha256": "267685d99377d83730d52b8dfee0eea1eb30af32821aa40f4740a9a6e1a90c32",
+          "rows": [
+            {
+              "Type": "INDEL",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "525466",
+              "TRUTH.TP": "505483",
+              "TRUTH.FN": "19983",
+              "QUERY.TOTAL": "920775",
+              "QUERY.FP": "6850",
+              "QUERY.UNK": "388452",
+              "FP.gt": "1380",
+              "FP.al": "3923",
+              "METRIC.Recall": "0.961971",
+              "METRIC.Precision": "0.987132",
+              "METRIC.Frac_NA": "0.421875",
+              "METRIC.F1_Score": "0.974389",
+              "TRUTH.TOTAL.TiTv_ratio": "",
+              "QUERY.TOTAL.TiTv_ratio": "",
+              "TRUTH.TOTAL.het_hom_ratio": "1.52827573414",
+              "QUERY.TOTAL.het_hom_ratio": "1.89617639841"
+            },
+            {
+              "Type": "SNP",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "3365115",
+              "TRUTH.TP": "3256818",
+              "TRUTH.FN": "108297",
+              "QUERY.TOTAL": "3804685",
+              "QUERY.FP": "48091",
+              "QUERY.UNK": "498767",
+              "FP.gt": "3925",
+              "FP.al": "2304",
+              "METRIC.Recall": "0.967818",
+              "METRIC.Precision": "0.985453",
+              "METRIC.Frac_NA": "0.131093",
+              "METRIC.F1_Score": "0.976556",
+              "TRUTH.TOTAL.TiTv_ratio": "2.10012885565",
+              "QUERY.TOTAL.TiTv_ratio": "1.97543438014",
+              "TRUTH.TOTAL.het_hom_ratio": "1.58119585325",
+              "QUERY.TOTAL.het_hom_ratio": "1.69727452101"
+            }
+          ]
+        }
+      ],
+      "ALL_DONE": true
+    },
+    {
+      "label": "gd003-HG003",
+      "job": "156788",
+      "qacct": "==============================================================\nqname        octopus.q           \nhostname     octopus-2-11.kobic.re.kr\ngroup        kobic               \nowner        ehojune             \nproject      NONE                \ndepartment   defaultdepartment   \njobname      happy7.gd003-HG003  \njobnumber    156788              \ntaskid       undefined\naccount      sge                 \npriority     0                   \nqsub_time    Sat Sep 26 16:07:36 2026\nstart_time   Sat Sep 26 16:07:44 2026\nend_time     Sat Sep 26 17:13:18 2026\ngranted_pe   pe_slots            \nslots        16                  \nfailed       0    \nexit_status  0                   \nru_wallclock 3934s\nru_utime     4011.064s\nru_stime     10459.951s\nru_maxrss    7.338MB\nru_ixrss     0.000B\nru_ismrss    0.000B\nru_idrss     0.000B\nru_isrss     0.000B\nru_minflt    867536293           \nru_majflt    6356                \nru_nswap     0                   \nru_inblock   6018696             \nru_oublock   12044896            \nru_msgsnd    0                   \nru_msgrcv    0                   \nru_nsignals  0                   \nru_nvcsw     4230237             \nru_nivcsw    98628               \ncpu          14471.016s\nmem          19.504TBs\nio           103.613GB\niow          0.000s\nmaxvmem      50.543GB\narid         undefined\nar_sub_time  undefined\ncategory     -q octopus.q,shepherd.q -l h_vmem=56G,hostname=(octopus-2-8|octopus-2-9|octopus-2-10|octopus-2-11|shepherd-1-8|shepherd-1-9) -pe pe_slots 16\n",
+      "summaries": [
+        {
+          "path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd003-HG003/gd003-HG003.summary.csv",
+          "sha256": "0907501405a4092f073398cf1d0feb0b5027ca6305a85eed533c1d9e0e5830fb",
+          "rows": [
+            {
+              "Type": "INDEL",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "504497",
+              "TRUTH.TP": "486624",
+              "TRUTH.FN": "17873",
+              "QUERY.TOTAL": "923523",
+              "QUERY.FP": "6189",
+              "QUERY.UNK": "411345",
+              "FP.gt": "1307",
+              "FP.al": "3347",
+              "METRIC.Recall": "0.964573",
+              "METRIC.Precision": "0.987916",
+              "METRIC.Frac_NA": "0.445409",
+              "METRIC.F1_Score": "0.976105",
+              "TRUTH.TOTAL.TiTv_ratio": "",
+              "QUERY.TOTAL.TiTv_ratio": "",
+              "TRUTH.TOTAL.het_hom_ratio": "1.48975928106",
+              "QUERY.TOTAL.het_hom_ratio": "1.87654253856"
+            },
+            {
+              "Type": "SNP",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "3327481",
+              "TRUTH.TP": "3222356",
+              "TRUTH.FN": "105125",
+              "QUERY.TOTAL": "3791518",
+              "QUERY.FP": "48835",
+              "QUERY.UNK": "519374",
+              "FP.gt": "3676",
+              "FP.al": "2220",
+              "METRIC.Recall": "0.968407",
+              "METRIC.Precision": "0.985076",
+              "METRIC.Frac_NA": "0.136983",
+              "METRIC.F1_Score": "0.97667",
+              "TRUTH.TOTAL.TiTv_ratio": "2.10258504162",
+              "QUERY.TOTAL.TiTv_ratio": "1.97355808245",
+              "TRUTH.TOTAL.het_hom_ratio": "1.53513777165",
+              "QUERY.TOTAL.het_hom_ratio": "1.66299973791"
+            }
+          ]
+        }
+      ],
+      "ALL_DONE": true
+    },
+    {
+      "label": "gd003-HG004",
+      "job": "156789",
+      "qacct": "==============================================================\nqname        octopus.q           \nhostname     octopus-2-10.kobic.re.kr\ngroup        kobic               \nowner        ehojune             \nproject      NONE                \ndepartment   defaultdepartment   \njobname      happy7.gd003-HG004  \njobnumber    156789              \ntaskid       undefined\naccount      sge                 \npriority     0                   \nqsub_time    Sat Sep 26 16:07:36 2026\nstart_time   Sat Sep 26 16:07:44 2026\nend_time     Sat Sep 26 17:24:42 2026\ngranted_pe   pe_slots            \nslots        16                  \nfailed       0    \nexit_status  0                   \nru_wallclock 4618s\nru_utime     4276.820s\nru_stime     17986.793s\nru_maxrss    6.715MB\nru_ixrss     0.000B\nru_ismrss    0.000B\nru_idrss     0.000B\nru_isrss     0.000B\nru_minflt    872447370           \nru_majflt    6033                \nru_nswap     0                   \nru_inblock   4031592             \nru_oublock   12116888            \nru_msgsnd    0                   \nru_msgrcv    0                   \nru_nsignals  0                   \nru_nvcsw     4436702             \nru_nivcsw    135630              \ncpu          22263.613s\nmem          31.007TBs\nio           99.804GB\niow          0.000s\nmaxvmem      49.730GB\narid         undefined\nar_sub_time  undefined\ncategory     -q octopus.q,shepherd.q -l h_vmem=56G,hostname=(octopus-2-8|octopus-2-9|octopus-2-10|octopus-2-11|shepherd-1-8|shepherd-1-9) -pe pe_slots 16\n",
+      "summaries": [
+        {
+          "path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd003-HG004/gd003-HG004.summary.csv",
+          "sha256": "4808b32db9350799f9a44a2c84e312c6e43dec7c430402eddef4da05bc64700c",
+          "rows": [
+            {
+              "Type": "INDEL",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "510516",
+              "TRUTH.TP": "491468",
+              "TRUTH.FN": "19048",
+              "QUERY.TOTAL": "921623",
+              "QUERY.FP": "6838",
+              "QUERY.UNK": "403419",
+              "FP.gt": "1495",
+              "FP.al": "3824",
+              "METRIC.Recall": "0.962689",
+              "METRIC.Precision": "0.986804",
+              "METRIC.Frac_NA": "0.437727",
+              "METRIC.F1_Score": "0.974597",
+              "TRUTH.TOTAL.TiTv_ratio": "",
+              "QUERY.TOTAL.TiTv_ratio": "",
+              "TRUTH.TOTAL.het_hom_ratio": "1.51613073552",
+              "QUERY.TOTAL.het_hom_ratio": "1.89777232913"
+            },
+            {
+              "Type": "SNP",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "3346598",
+              "TRUTH.TP": "3241482",
+              "TRUTH.FN": "105116",
+              "QUERY.TOTAL": "3824139",
+              "QUERY.FP": "51877",
+              "QUERY.UNK": "529899",
+              "FP.gt": "3891",
+              "FP.al": "2528",
+              "METRIC.Recall": "0.96859",
+              "METRIC.Precision": "0.984252",
+              "METRIC.Frac_NA": "0.138567",
+              "METRIC.F1_Score": "0.976358",
+              "TRUTH.TOTAL.TiTv_ratio": "2.10078083097",
+              "QUERY.TOTAL.TiTv_ratio": "1.97585045048",
+              "TRUTH.TOTAL.het_hom_ratio": "1.58687160169",
+              "QUERY.TOTAL.het_hom_ratio": "1.71413315762"
+            }
+          ]
+        }
+      ],
+      "ALL_DONE": true
+    },
+    {
+      "label": "public-NovaSeq6000-30x-HG002",
+      "job": "156790",
+      "qacct": "==============================================================\nqname        octopus.q           \nhostname     octopus-2-11.kobic.re.kr\ngroup        kobic               \nowner        ehojune             \nproject      NONE                \ndepartment   defaultdepartment   \njobname      happy7.public-NovaSeq6000-30x-HG002\njobnumber    156790              \ntaskid       undefined\naccount      sge                 \npriority     0                   \nqsub_time    Sat Sep 26 16:07:36 2026\nstart_time   Sat Sep 26 16:07:44 2026\nend_time     Sat Sep 26 16:55:42 2026\ngranted_pe   pe_slots            \nslots        16                  \nfailed       0    \nexit_status  0                   \nru_wallclock 2878s\nru_utime     2277.039s\nru_stime     20500.966s\nru_maxrss    6.910MB\nru_ixrss     0.000B\nru_ismrss    0.000B\nru_idrss     0.000B\nru_isrss     0.000B\nru_minflt    878025790           \nru_majflt    3233                \nru_nswap     0                   \nru_inblock   8118912             \nru_oublock   11727968            \nru_msgsnd    0                   \nru_msgrcv    0                   \nru_nsignals  0                   \nru_nvcsw     5926193             \nru_nivcsw    135559              \ncpu          22778.005s\nmem          32.027TBs\nio           78.637GB\niow          0.000s\nmaxvmem      50.045GB\narid         undefined\nar_sub_time  undefined\ncategory     -q octopus.q,shepherd.q -l h_vmem=56G,hostname=(octopus-2-8|octopus-2-9|octopus-2-10|octopus-2-11|shepherd-1-8|shepherd-1-9) -pe pe_slots 16\n",
+      "summaries": [
+        {
+          "path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-NovaSeq6000-30x-HG002/public-NovaSeq6000-30x-HG002.summary.csv",
+          "sha256": "bce5181e14ccdf96ea6b2eb317a9019f08e14bf33f5321150759f796584ac8e5",
+          "rows": [
+            {
+              "Type": "INDEL",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "525466",
+              "TRUTH.TP": "509250",
+              "TRUTH.FN": "16216",
+              "QUERY.TOTAL": "910603",
+              "QUERY.FP": "4675",
+              "QUERY.UNK": "375458",
+              "FP.gt": "1524",
+              "FP.al": "2000",
+              "METRIC.Recall": "0.96914",
+              "METRIC.Precision": "0.991264",
+              "METRIC.Frac_NA": "0.412318",
+              "METRIC.F1_Score": "0.980077",
+              "TRUTH.TOTAL.TiTv_ratio": "",
+              "QUERY.TOTAL.TiTv_ratio": "",
+              "TRUTH.TOTAL.het_hom_ratio": "1.52827573414",
+              "QUERY.TOTAL.het_hom_ratio": "1.89234152778"
+            },
+            {
+              "Type": "SNP",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "3365115",
+              "TRUTH.TP": "3260169",
+              "TRUTH.FN": "104946",
+              "QUERY.TOTAL": "3790495",
+              "QUERY.FP": "22798",
+              "QUERY.UNK": "506460",
+              "FP.gt": "4574",
+              "FP.al": "906",
+              "METRIC.Recall": "0.968814",
+              "METRIC.Precision": "0.993058",
+              "METRIC.Frac_NA": "0.133613",
+              "METRIC.F1_Score": "0.980786",
+              "TRUTH.TOTAL.TiTv_ratio": "2.10012885565",
+              "QUERY.TOTAL.TiTv_ratio": "1.96076269426",
+              "TRUTH.TOTAL.het_hom_ratio": "1.58119585325",
+              "QUERY.TOTAL.het_hom_ratio": "1.68448592012"
+            }
+          ]
+        }
+      ],
+      "ALL_DONE": true
+    },
+    {
+      "label": "public-NovaSeq6000-30x-HG003",
+      "job": "156791",
+      "qacct": "==============================================================\nqname        octopus.q           \nhostname     octopus-2-10.kobic.re.kr\ngroup        kobic               \nowner        ehojune             \nproject      NONE                \ndepartment   defaultdepartment   \njobname      happy7.public-NovaSeq6000-30x-HG003\njobnumber    156791              \ntaskid       undefined\naccount      sge                 \npriority     0                   \nqsub_time    Sat Sep 26 16:07:36 2026\nstart_time   Sat Sep 26 16:07:44 2026\nend_time     Sat Sep 26 16:55:22 2026\ngranted_pe   pe_slots            \nslots        16                  \nfailed       0    \nexit_status  0                   \nru_wallclock 2858s\nru_utime     2280.038s\nru_stime     20073.868s\nru_maxrss    7.196MB\nru_ixrss     0.000B\nru_ismrss    0.000B\nru_idrss     0.000B\nru_isrss     0.000B\nru_minflt    872347724           \nru_majflt    1939                \nru_nswap     0                   \nru_inblock   7379208             \nru_oublock   11551520            \nru_msgsnd    0                   \nru_msgrcv    0                   \nru_nsignals  0                   \nru_nvcsw     4503221             \nru_nivcsw    126969              \ncpu          22353.906s\nmem          31.446TBs\nio           84.959GB\niow          0.000s\nmaxvmem      50.475GB\narid         undefined\nar_sub_time  undefined\ncategory     -q octopus.q,shepherd.q -l h_vmem=56G,hostname=(octopus-2-8|octopus-2-9|octopus-2-10|octopus-2-11|shepherd-1-8|shepherd-1-9) -pe pe_slots 16\n",
+      "summaries": [
+        {
+          "path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-NovaSeq6000-30x-HG003/public-NovaSeq6000-30x-HG003.summary.csv",
+          "sha256": "193094ecd5366245d958d99b2ba5b972d4f52879348b306c658794ac4706bde5",
+          "rows": [
+            {
+              "Type": "INDEL",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "504497",
+              "TRUTH.TP": "489219",
+              "TRUTH.FN": "15278",
+              "QUERY.TOTAL": "907978",
+              "QUERY.FP": "4688",
+              "QUERY.UNK": "393864",
+              "FP.gt": "1550",
+              "FP.al": "1982",
+              "METRIC.Recall": "0.969716",
+              "METRIC.Precision": "0.990881",
+              "METRIC.Frac_NA": "0.433781",
+              "METRIC.F1_Score": "0.980185",
+              "TRUTH.TOTAL.TiTv_ratio": "",
+              "QUERY.TOTAL.TiTv_ratio": "",
+              "TRUTH.TOTAL.het_hom_ratio": "1.48975928106",
+              "QUERY.TOTAL.het_hom_ratio": "1.85692201937"
+            },
+            {
+              "Type": "SNP",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "3327481",
+              "TRUTH.TP": "3224986",
+              "TRUTH.FN": "102495",
+              "QUERY.TOTAL": "3774097",
+              "QUERY.FP": "23868",
+              "QUERY.UNK": "524261",
+              "FP.gt": "4674",
+              "FP.al": "900",
+              "METRIC.Recall": "0.969197",
+              "METRIC.Precision": "0.992656",
+              "METRIC.Frac_NA": "0.13891",
+              "METRIC.F1_Score": "0.980786",
+              "TRUTH.TOTAL.TiTv_ratio": "2.10258504162",
+              "QUERY.TOTAL.TiTv_ratio": "1.95968665648",
+              "TRUTH.TOTAL.het_hom_ratio": "1.53513777165",
+              "QUERY.TOTAL.het_hom_ratio": "1.65017942147"
+            }
+          ]
+        }
+      ],
+      "ALL_DONE": true
+    },
+    {
+      "label": "public-NovaSeq6000-30x-HG004",
+      "job": "156792",
+      "qacct": "==============================================================\nqname        octopus.q           \nhostname     octopus-2-11.kobic.re.kr\ngroup        kobic               \nowner        ehojune             \nproject      NONE                \ndepartment   defaultdepartment   \njobname      happy7.public-NovaSeq6000-30x-HG004\njobnumber    156792              \ntaskid       undefined\naccount      sge                 \npriority     0                   \nqsub_time    Sat Sep 26 16:07:36 2026\nstart_time   Sat Sep 26 16:07:44 2026\nend_time     Sat Sep 26 16:55:28 2026\ngranted_pe   pe_slots            \nslots        16                  \nfailed       0    \nexit_status  0                   \nru_wallclock 2864s\nru_utime     2268.685s\nru_stime     20510.621s\nru_maxrss    6.896MB\nru_ixrss     0.000B\nru_ismrss    0.000B\nru_idrss     0.000B\nru_isrss     0.000B\nru_minflt    876463961           \nru_majflt    2588                \nru_nswap     0                   \nru_inblock   7733640             \nru_oublock   11629288            \nru_msgsnd    0                   \nru_msgrcv    0                   \nru_nsignals  0                   \nru_nvcsw     5603942             \nru_nivcsw    148234              \ncpu          22779.306s\nmem          32.039TBs\nio           84.035GB\niow          0.000s\nmaxvmem      50.032GB\narid         undefined\nar_sub_time  undefined\ncategory     -q octopus.q,shepherd.q -l h_vmem=56G,hostname=(octopus-2-8|octopus-2-9|octopus-2-10|octopus-2-11|shepherd-1-8|shepherd-1-9) -pe pe_slots 16\n",
+      "summaries": [
+        {
+          "path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-NovaSeq6000-30x-HG004/public-NovaSeq6000-30x-HG004.summary.csv",
+          "sha256": "788c20dbf9ed468a3060439c20e3e814555fbfa0b1177b6a703fc77584a4ca32",
+          "rows": [
+            {
+              "Type": "INDEL",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "510516",
+              "TRUTH.TP": "495077",
+              "TRUTH.FN": "15439",
+              "QUERY.TOTAL": "913588",
+              "QUERY.FP": "4874",
+              "QUERY.UNK": "392659",
+              "FP.gt": "1573",
+              "FP.al": "2129",
+              "METRIC.Recall": "0.969758",
+              "METRIC.Precision": "0.990644",
+              "METRIC.Frac_NA": "0.429799",
+              "METRIC.F1_Score": "0.98009",
+              "TRUTH.TOTAL.TiTv_ratio": "",
+              "QUERY.TOTAL.TiTv_ratio": "",
+              "TRUTH.TOTAL.het_hom_ratio": "1.51613073552",
+              "QUERY.TOTAL.het_hom_ratio": "1.90398815908"
+            },
+            {
+              "Type": "SNP",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "3346598",
+              "TRUTH.TP": "3244403",
+              "TRUTH.FN": "102195",
+              "QUERY.TOTAL": "3809112",
+              "QUERY.FP": "24800",
+              "QUERY.UNK": "538982",
+              "FP.gt": "4697",
+              "FP.al": "1018",
+              "METRIC.Recall": "0.969463",
+              "METRIC.Precision": "0.992416",
+              "METRIC.Frac_NA": "0.141498",
+              "METRIC.F1_Score": "0.980805",
+              "TRUTH.TOTAL.TiTv_ratio": "2.10078083097",
+              "QUERY.TOTAL.TiTv_ratio": "1.95763784796",
+              "TRUTH.TOTAL.het_hom_ratio": "1.58687160169",
+              "QUERY.TOTAL.het_hom_ratio": "1.70225735845"
+            }
+          ]
+        }
+      ],
+      "ALL_DONE": true
+    },
+    {
+      "label": "public-NovaSeqX-30x-HG002",
+      "job": "156793",
+      "qacct": "==============================================================\nqname        octopus.q           \nhostname     octopus-2-10.kobic.re.kr\ngroup        kobic               \nowner        ehojune             \nproject      NONE                \ndepartment   defaultdepartment   \njobname      happy7.public-NovaSeqX-30x-HG002\njobnumber    156793              \ntaskid       undefined\naccount      sge                 \npriority     0                   \nqsub_time    Sat Sep 26 16:07:36 2026\nstart_time   Sat Sep 26 16:07:44 2026\nend_time     Sat Sep 26 16:55:25 2026\ngranted_pe   pe_slots            \nslots        16                  \nfailed       0    \nexit_status  0                   \nru_wallclock 2861s\nru_utime     2291.132s\nru_stime     20215.205s\nru_maxrss    7.180MB\nru_ixrss     0.000B\nru_ismrss    0.000B\nru_idrss     0.000B\nru_isrss     0.000B\nru_minflt    877118604           \nru_majflt    2853                \nru_nswap     0                   \nru_inblock   9123704             \nru_oublock   11544568            \nru_msgsnd    0                   \nru_msgrcv    0                   \nru_nsignals  0                   \nru_nvcsw     5784910             \nru_nivcsw    141119              \ncpu          22506.338s\nmem          31.572TBs\nio           83.832GB\niow          0.000s\nmaxvmem      50.487GB\narid         undefined\nar_sub_time  undefined\ncategory     -q octopus.q,shepherd.q -l h_vmem=56G,hostname=(octopus-2-8|octopus-2-9|octopus-2-10|octopus-2-11|shepherd-1-8|shepherd-1-9) -pe pe_slots 16\n",
+      "summaries": [
+        {
+          "path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-NovaSeqX-30x-HG002/public-NovaSeqX-30x-HG002.summary.csv",
+          "sha256": "d8ebb080ff4926d3bc9ad1ffc027371e52f45a4518c728201adabaefbfcea1a6",
+          "rows": [
+            {
+              "Type": "INDEL",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "525466",
+              "TRUTH.TP": "508298",
+              "TRUTH.FN": "17168",
+              "QUERY.TOTAL": "908868",
+              "QUERY.FP": "4766",
+              "QUERY.UNK": "374980",
+              "FP.gt": "1208",
+              "FP.al": "2499",
+              "METRIC.Recall": "0.967328",
+              "METRIC.Precision": "0.991073",
+              "METRIC.Frac_NA": "0.412579",
+              "METRIC.F1_Score": "0.979057",
+              "TRUTH.TOTAL.TiTv_ratio": "",
+              "QUERY.TOTAL.TiTv_ratio": "",
+              "TRUTH.TOTAL.het_hom_ratio": "1.52827573414",
+              "QUERY.TOTAL.het_hom_ratio": "1.86599832429"
+            },
+            {
+              "Type": "SNP",
+              "Filter": "PASS",
+              "TRUTH.TOTAL": "3365115",
+              "TRUTH.TP": "3261031",
+              "TRUTH.FN": "104084",
+              "QUERY.TOTAL": "3798468",
+              "QUERY.FP": "38341",
+              "QUERY.UNK": "498052",
+              "FP.gt": "3189",
+              "FP.al": "1717",
+              "METRIC.Recall": "0.96907",
+              "METRIC.Precision": "0.988383",
+              "METRIC.Frac_NA": "0.131119",
+              "METRIC.F1_Score": "0.978631",
+              "TRUTH.TOTAL.TiTv_ratio": "2.10012885565",
+              "QUERY.TOTAL.TiTv_ratio": "1.97876300314",
+              "TRUTH.TOTAL.het_hom_ratio": "1.58119585325",
+              "QUERY.TOTAL.het_hom_ratio": "1.68939948802"
+            }
+          ]
+        }
+      ],
+      "ALL_DONE": true
+    }
+  ],
+  "sources_sha256": {
+    "gd23-retry-preflight-20260926-1951.txt": "e3bd2f59caa15e5e4b7cf3908aedac32bddc561924c764194605e32c19bffc23",
+    "gd23-regermline-submitted-20260926-1953.txt": "86f01c5f0f8952f0d5db7a75d54e6c42010bfe02be0881c88152e4b278af4e81",
+    "gd23-ordinary-status-20260926-1954.txt": "28abc2afed7cb084a6dd6a8256f1283881dba29e9c75b0bb018dc6ae918c5438",
+    "gd23-stop-unexpected-recompute-20260926-1955.txt": "86f6c900e3dec6cd945864315d5a96fe73e4158166cd8cf749b373aa093e68e9",
+    "gd23-ordinary-stopped-20260926-1956.txt": "7bb92ed47cffec63db042edc3876bd23e5308542f513db4c500ca8e8bdbfeb1f",
+    "gd23-resume-cause-20260926-1956.txt": "305c6f5a107563f24e39ff4a0f9fba6a13489863bde85f208e9eb939b33b1de9",
+    "gd23-preservation-and-happy-20260926-1958.txt": "e57109227292d64eb3d801e25d712158526a5ce86f78482a8fedf8d5f09ba690",
+    "fastp-report-restore-submitted-20260926.txt": "2d940f918609fa5c3aee2cdead0b8f749ddae48cf3ffdb476cfe8d6c4838acca",
+    "fastp-report-restore-status-20260926-2000.txt": "38533dec2b4593a4fdfd6cd30f1beea8bafd9b363bf2169ccdc454f16340e9d2",
+    "happy-status-20260926-1950.txt": "8063bde7709b32eb2a97329de11e7102687b0136aae80405124253170731f8ad"
+  }
+}

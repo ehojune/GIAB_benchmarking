@@ -1,0 +1,1038 @@
+{
+  "audit": "2026-09-25 23:49 heartbeat evidence comparison",
+  "mode": "Live server read-only snapshots compared locally; original Claude transcript verified separately",
+  "sources": {
+    "jobs_before": {
+      "file": "live-jobs-20260925-1948.txt",
+      "at": "2026-09-25T19:52:53.284277+09:00"
+    },
+    "jobs_after": {
+      "file": "live-jobs-20260925-2349.txt",
+      "at": "2026-09-25T23:50:32.106626+09:00"
+    },
+    "company_before": {
+      "file": "company-verify-20260925-2000.txt",
+      "at": "2026-09-25T19:56:41.509893+09:00"
+    },
+    "company_after": {
+      "file": "company-progress-20260925-2352.txt",
+      "at": "2026-09-25T23:51:40.136669+09:00"
+    },
+    "somatic_before": {
+      "file": "somatic-current-20260925-2008.txt",
+      "at": "2026-09-25T20:05:49.148876+09:00"
+    },
+    "somatic_after": {
+      "file": "somatic-current-20260925-2352.txt",
+      "at": "2026-09-25T23:51:40.142350+09:00"
+    }
+  },
+  "running_jobs": {
+    "expected_count": 9,
+    "all_still_running": true,
+    "all_cpu_increased": true,
+    "all_start_times_unchanged": true,
+    "jobs": [
+      {
+        "job": "155526",
+        "name": "regermline_java17_BGISEQ500",
+        "before_state": "r",
+        "after_state": "r",
+        "before_cpu": "202:52:21",
+        "after_cpu": "218:41:52",
+        "cpu_delta_seconds": 56971,
+        "increased": true,
+        "same_start_time": true
+      },
+      {
+        "job": "155527",
+        "name": "regermline_java17_Element-AVITI",
+        "before_state": "r",
+        "after_state": "r",
+        "before_cpu": "171:16:34",
+        "after_cpu": "184:28:49",
+        "cpu_delta_seconds": 47535,
+        "increased": true,
+        "same_start_time": true
+      },
+      {
+        "job": "155528",
+        "name": "regermline_java17_Hiseq-300x",
+        "before_state": "r",
+        "after_state": "r",
+        "before_cpu": "151:16:58",
+        "after_cpu": "156:24:24",
+        "cpu_delta_seconds": 18446,
+        "increased": true,
+        "same_start_time": true
+      },
+      {
+        "job": "155529",
+        "name": "regermline_java17_Illumina-250PE",
+        "before_state": "r",
+        "after_state": "r",
+        "before_cpu": "328:13:15",
+        "after_cpu": "335:57:14",
+        "cpu_delta_seconds": 27839,
+        "increased": true,
+        "same_start_time": true
+      },
+      {
+        "job": "156690",
+        "name": "regermline_java17_GIAB-publicData-MGISEQ2000-PCRfree",
+        "before_state": "r",
+        "after_state": "r",
+        "before_cpu": "25:19:09",
+        "after_cpu": "28:37:33",
+        "cpu_delta_seconds": 11904,
+        "increased": true,
+        "same_start_time": true
+      },
+      {
+        "job": "156760",
+        "name": "germline_G000-gd1-20260819",
+        "before_state": "r",
+        "after_state": "r",
+        "before_cpu": "351:53:55",
+        "after_cpu": "376:51:31",
+        "cpu_delta_seconds": 89856,
+        "increased": true,
+        "same_start_time": true
+      },
+      {
+        "job": "156761",
+        "name": "germline_G000-gd2-20260819",
+        "before_state": "r",
+        "after_state": "r",
+        "before_cpu": "369:39:54",
+        "after_cpu": "394:48:37",
+        "cpu_delta_seconds": 90523,
+        "increased": true,
+        "same_start_time": true
+      },
+      {
+        "job": "156762",
+        "name": "germline_G000-gd3-20260819",
+        "before_state": "r",
+        "after_state": "r",
+        "before_cpu": "263:18:25",
+        "after_cpu": "293:39:20",
+        "cpu_delta_seconds": 109255,
+        "increased": true,
+        "same_start_time": true
+      },
+      {
+        "job": "156763",
+        "name": "germline_G000-gd4-20260819",
+        "before_state": "r",
+        "after_state": "r",
+        "before_cpu": "347:51:37",
+        "after_cpu": "374:30:10",
+        "cpu_delta_seconds": 95913,
+        "increased": true,
+        "same_start_time": true
+      }
+    ],
+    "newly_present_jobs": [
+      {
+        "JB_job_number": "156782",
+        "JB_name": "regermline_clean_Illumina250PE",
+        "state": "hqw",
+        "slots": "60",
+        "JAT_start_time": null,
+        "JB_submission_time": "2026-09-25T21:51:09"
+      }
+    ]
+  },
+  "company_mark": {
+    "count": 24,
+    "all_log_bytes_and_mtimes_increased": true,
+    "all_progress_advanced": true,
+    "progress_relation_counts": {
+      "stage_advanced": 22,
+      "same_stage_tasks_increased": 2
+    },
+    "completed_count": 0,
+    "interpretation": "Spark stage/task counters and log growth indicate activity; these are not whole-analysis completion percentages.",
+    "by_company": [
+      {
+        "set": "G000-gd1-20260819",
+        "logs": 6,
+        "byte_and_mtime_increased": 6,
+        "progress_advanced": 6,
+        "done": 0
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "logs": 6,
+        "byte_and_mtime_increased": 6,
+        "progress_advanced": 6,
+        "done": 0
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "logs": 6,
+        "byte_and_mtime_increased": 6,
+        "progress_advanced": 6,
+        "done": 0
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "logs": 6,
+        "byte_and_mtime_increased": 6,
+        "progress_advanced": 6,
+        "done": 0
+      }
+    ],
+    "logs": [
+      {
+        "set": "G000-gd1-20260819",
+        "sample_log": "C000000100100000G0x1_mark.log",
+        "before_bytes": 13256709,
+        "after_bytes": 15277817,
+        "bytes_delta": 2021108,
+        "before_mtime": "2026-09-25T19:56:26",
+        "after_mtime": "2026-09-25T23:50:18",
+        "mtime_advanced": true,
+        "before_progress": [
+          "5.0",
+          "4677",
+          "4757"
+        ],
+        "after_progress": [
+          "6.0",
+          "1795",
+          "4757"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample_log": "C000000100200000G0x1_mark.log",
+        "before_bytes": 12657365,
+        "after_bytes": 15110244,
+        "bytes_delta": 2452879,
+        "before_mtime": "2026-09-25T19:56:33",
+        "after_mtime": "2026-09-25T23:50:20",
+        "mtime_advanced": true,
+        "before_progress": [
+          "5.0",
+          "3743",
+          "4830"
+        ],
+        "after_progress": [
+          "6.0",
+          "1453",
+          "4830"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample_log": "C000000100300000G0x1_mark.log",
+        "before_bytes": 13850338,
+        "after_bytes": 20320508,
+        "bytes_delta": 6470170,
+        "before_mtime": "2026-09-25T19:56:15",
+        "after_mtime": "2026-09-25T23:51:23",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "1655",
+          "4303"
+        ],
+        "after_progress": [
+          "11.0",
+          "204",
+          "4303"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample_log": "C000000100400000G0x1_mark.log",
+        "before_bytes": 19312145,
+        "after_bytes": 23770185,
+        "bytes_delta": 4458040,
+        "before_mtime": "2026-09-25T19:56:15",
+        "after_mtime": "2026-09-25T23:51:11",
+        "mtime_advanced": true,
+        "before_progress": [
+          "11.0",
+          "481",
+          "4024"
+        ],
+        "after_progress": [
+          "15.0",
+          "531",
+          "4024"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample_log": "C000000100500000G0x1_mark.log",
+        "before_bytes": 14531053,
+        "after_bytes": 20328470,
+        "bytes_delta": 5797417,
+        "before_mtime": "2026-09-25T19:56:36",
+        "after_mtime": "2026-09-25T23:51:08",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "2507",
+          "4219"
+        ],
+        "after_progress": [
+          "11.0",
+          "581",
+          "4219"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample_log": "C000000100600000G0x1_mark.log",
+        "before_bytes": 14250379,
+        "after_bytes": 20119395,
+        "bytes_delta": 5869016,
+        "before_mtime": "2026-09-25T19:55:34",
+        "after_mtime": "2026-09-25T23:51:34",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "2085",
+          "4278"
+        ],
+        "after_progress": [
+          "11.0",
+          "123",
+          "4278"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample_log": "C000000200100000G0x1_mark.log",
+        "before_bytes": 23287702,
+        "after_bytes": 28871340,
+        "bytes_delta": 5583638,
+        "before_mtime": "2026-09-25T19:56:36",
+        "after_mtime": "2026-09-25T23:51:30",
+        "mtime_advanced": true,
+        "before_progress": [
+          "11.0",
+          "3813",
+          "4093"
+        ],
+        "after_progress": [
+          "16.0",
+          "410",
+          "4093"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample_log": "C000000200200000G0x1_mark.log",
+        "before_bytes": 19710605,
+        "after_bytes": 23948551,
+        "bytes_delta": 4237946,
+        "before_mtime": "2026-09-25T19:55:11",
+        "after_mtime": "2026-09-25T23:51:16",
+        "mtime_advanced": true,
+        "before_progress": [
+          "7.0",
+          "4220",
+          "4221"
+        ],
+        "after_progress": [
+          "11.0",
+          "3863",
+          "4221"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample_log": "C000000200300000G0x1_mark.log",
+        "before_bytes": 14292576,
+        "after_bytes": 20968779,
+        "bytes_delta": 6676203,
+        "before_mtime": "2026-09-25T19:56:29",
+        "after_mtime": "2026-09-25T23:51:24",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "2047",
+          "4304"
+        ],
+        "after_progress": [
+          "11.0",
+          "781",
+          "4304"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample_log": "C000000200400000G0x1_mark.log",
+        "before_bytes": 20380291,
+        "after_bytes": 25217317,
+        "bytes_delta": 4837026,
+        "before_mtime": "2026-09-25T19:56:34",
+        "after_mtime": "2026-09-25T23:51:38",
+        "mtime_advanced": true,
+        "before_progress": [
+          "11.0",
+          "921",
+          "4146"
+        ],
+        "after_progress": [
+          "15.0",
+          "1193",
+          "4146"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample_log": "C000000200500000G0x1_mark.log",
+        "before_bytes": 13684246,
+        "after_bytes": 15669953,
+        "bytes_delta": 1985707,
+        "before_mtime": "2026-09-25T19:54:57",
+        "after_mtime": "2026-09-25T23:51:09",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "60",
+          "4861"
+        ],
+        "after_progress": [
+          "6.0",
+          "1885",
+          "4861"
+        ],
+        "progress_relation": "same_stage_tasks_increased",
+        "done": false
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample_log": "C000000200600000G0x1_mark.log",
+        "before_bytes": 14603626,
+        "after_bytes": 21254619,
+        "bytes_delta": 6650993,
+        "before_mtime": "2026-09-25T19:56:41",
+        "after_mtime": "2026-09-25T23:51:21",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "2337",
+          "4301"
+        ],
+        "after_progress": [
+          "11.0",
+          "1053",
+          "4301"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample_log": "C000000300100000G0x1_mark.log",
+        "before_bytes": 11633099,
+        "after_bytes": 17176308,
+        "bytes_delta": 5543209,
+        "before_mtime": "2026-09-25T19:56:27",
+        "after_mtime": "2026-09-25T23:49:56",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "1302",
+          "3662"
+        ],
+        "after_progress": [
+          "11.0",
+          "110",
+          "3662"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample_log": "C000000300200000G0x1_mark.log",
+        "before_bytes": 10198649,
+        "after_bytes": 18137917,
+        "bytes_delta": 7939268,
+        "before_mtime": "2026-09-25T19:55:10",
+        "after_mtime": "2026-09-25T23:51:24",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "480",
+          "3468"
+        ],
+        "after_progress": [
+          "11.0",
+          "1825",
+          "3468"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample_log": "C000000300300000G0x1_mark.log",
+        "before_bytes": 10318095,
+        "after_bytes": 17372238,
+        "bytes_delta": 7054143,
+        "before_mtime": "2026-09-25T19:56:20",
+        "after_mtime": "2026-09-25T23:51:30",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "420",
+          "3531"
+        ],
+        "after_progress": [
+          "11.0",
+          "842",
+          "3531"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample_log": "C000000300400000G0x1_mark.log",
+        "before_bytes": 11172794,
+        "after_bytes": 16710162,
+        "bytes_delta": 5537368,
+        "before_mtime": "2026-09-25T19:56:27",
+        "after_mtime": "2026-09-25T23:50:52",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "1101",
+          "3575"
+        ],
+        "after_progress": [
+          "11.0",
+          "50",
+          "3575"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample_log": "C000000300500000G0x1_mark.log",
+        "before_bytes": 11326562,
+        "after_bytes": 17058133,
+        "bytes_delta": 5731571,
+        "before_mtime": "2026-09-25T19:55:55",
+        "after_mtime": "2026-09-25T23:51:18",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "1085",
+          "3638"
+        ],
+        "after_progress": [
+          "11.0",
+          "110",
+          "3638"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample_log": "C000000300600000G0x1_mark.log",
+        "before_bytes": 10555574,
+        "after_bytes": 16928118,
+        "bytes_delta": 6372544,
+        "before_mtime": "2026-09-25T19:56:32",
+        "after_mtime": "2026-09-25T23:51:00",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "570",
+          "3557"
+        ],
+        "after_progress": [
+          "11.0",
+          "320",
+          "3557"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample_log": "C000000400100000G0x1_mark.log",
+        "before_bytes": 5264128,
+        "after_bytes": 9873356,
+        "bytes_delta": 4609228,
+        "before_mtime": "2026-09-25T19:56:23",
+        "after_mtime": "2026-09-25T23:51:07",
+        "mtime_advanced": true,
+        "before_progress": [
+          "2.0",
+          "3841",
+          "5360"
+        ],
+        "after_progress": [
+          "4.0",
+          "4275",
+          "5360"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample_log": "C000000400200000G0x1_mark.log",
+        "before_bytes": 12025150,
+        "after_bytes": 19025452,
+        "bytes_delta": 7000302,
+        "before_mtime": "2026-09-25T19:55:13",
+        "after_mtime": "2026-09-25T23:51:32",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "571",
+          "4073"
+        ],
+        "after_progress": [
+          "7.0",
+          "4073",
+          "4073"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample_log": "C000000400300000G0x1_mark.log",
+        "before_bytes": 13544927,
+        "after_bytes": 22527408,
+        "bytes_delta": 8982481,
+        "before_mtime": "2026-09-25T19:56:38",
+        "after_mtime": "2026-09-25T23:50:49",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "2390",
+          "3906"
+        ],
+        "after_progress": [
+          "11.0",
+          "3906",
+          "3906"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample_log": "C000000400400000G0x1_mark.log",
+        "before_bytes": 10773718,
+        "after_bytes": 14107548,
+        "bytes_delta": 3333830,
+        "before_mtime": "2026-09-25T19:56:41",
+        "after_mtime": "2026-09-25T23:51:13",
+        "mtime_advanced": true,
+        "before_progress": [
+          "5.0",
+          "1263",
+          "4880"
+        ],
+        "after_progress": [
+          "6.0",
+          "390",
+          "4880"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample_log": "C000000400500000G0x1_mark.log",
+        "before_bytes": 4815671,
+        "after_bytes": 8779736,
+        "bytes_delta": 3964065,
+        "before_mtime": "2026-09-25T19:56:22",
+        "after_mtime": "2026-09-25T23:51:08",
+        "mtime_advanced": true,
+        "before_progress": [
+          "2.0",
+          "3039",
+          "5814"
+        ],
+        "after_progress": [
+          "4.0",
+          "2213",
+          "5814"
+        ],
+        "progress_relation": "stage_advanced",
+        "done": false
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample_log": "C000000400600000G0x1_mark.log",
+        "before_bytes": 12345621,
+        "after_bytes": 15583421,
+        "bytes_delta": 3237800,
+        "before_mtime": "2026-09-25T19:56:41",
+        "after_mtime": "2026-09-25T23:50:48",
+        "mtime_advanced": true,
+        "before_progress": [
+          "6.0",
+          "412",
+          "4243"
+        ],
+        "after_progress": [
+          "6.0",
+          "3382",
+          "4243"
+        ],
+        "progress_relation": "same_stage_tasks_increased",
+        "done": false
+      }
+    ]
+  },
+  "somatic": {
+    "accounting_jobs": 29,
+    "all_qacct_return0_failed0_exit0": true,
+    "accounting_unchanged": true,
+    "qc_rows": 13,
+    "all_vcf_OK": true,
+    "qc_rows_unchanged": true,
+    "qc_sha256": "20bb7dd34f63f17d200bb9f4a742b4e79483810c42ae894d3517317ab7cfe1d1",
+    "qc_sha256_unchanged": true,
+    "qc_mtime": "2026-09-25T11:08:21",
+    "qc_mtime_unchanged": true,
+    "summary_count": 28,
+    "summary_count_unchanged": true,
+    "summary_content_hash_available": false
+  },
+  "identity_and_native_retry": {
+    "at": "2026-09-25T23:50:31.221176+09:00",
+    "host": "nbbcluster2",
+    "user": "ehojune",
+    "files": [],
+    "qstat": "job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID \n-----------------------------------------------------------------------------------------------------------------\n 155526 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-8.kobic.re    60        \n 155527 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-9.kobic.re    60        \n 155528 0.75000 regermline ehojune      r     09/21/2026 16:36:14 shepherd.q@shepherd-1-9.kobic.    60        \n 155529 0.75000 regermline ehojune      r     09/21/2026 17:26:29 octopus.q@octopus-2-11.kobic.r    60        \n 156690 0.28850 regermline ehojune      r     09/25/2026 01:06:44 shepherd.q@shepherd-1-8.kobic.    60        \n 156760 0.25000 germline_G ehojune      r     09/25/2026 07:49:44 shepherd.q@shepherd-1-13.kobic    60        \n 156761 0.25000 germline_G ehojune      r     09/25/2026 07:49:44 shepherd.q@shepherd-1-12.kobic    60        \n 156762 0.25000 germline_G ehojune      r     09/25/2026 10:23:29 shepherd.q@shepherd-1-3.kobic.    60        \n 156763 0.25000 germline_G ehojune      r     09/25/2026 10:35:44 shepherd.q@shepherd-1-10.kobic    60        \n 156782 0.00000 regermline ehojune      hqw   09/25/2026 21:51:09                                   60        \n",
+    "job_details": [
+      {
+        "job": "155529",
+        "qstat_rc": 0,
+        "lines": [
+          "cwd:                        /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE",
+          "job_name:                   regermline_java17_Illumina-250PE",
+          "hard_queue_list:            octopus.q,shepherd.q",
+          "script_file:                STDIN",
+          "usage         1:            cpu=335:57:14, mem=20322171.57069 GB s, io=41285.90963 GB, vmem=25.889G, maxvmem=206.668G"
+        ]
+      },
+      {
+        "job": "156782",
+        "qstat_rc": 0,
+        "lines": [
+          "cwd:                        /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE",
+          "job_name:                   regermline_clean_Illumina250PE",
+          "hard_queue_list:            shepherd.q",
+          "script_file:                /BiO/scratch/dyl/kbb/G000/backup/20260925-illumina-regermline/job.sh",
+          "jid_predecessor_list:       155529"
+        ]
+      }
+    ]
+  },
+  "public_mark_comparison": [
+    {
+      "set": "BGISEQ500",
+      "sample": "HG002",
+      "before": [
+        "5.0",
+        "15250",
+        "17901"
+      ],
+      "after": [
+        "6.0",
+        "1345",
+        "17901"
+      ],
+      "mark_finished": false,
+      "bytes_increased": true,
+      "mtime": "2026-09-25T23:50:31"
+    },
+    {
+      "set": "BGISEQ500",
+      "sample": "HG003",
+      "before": [
+        "6.0",
+        "15369",
+        "18330"
+      ],
+      "after": [
+        "6.0",
+        "16623",
+        "18330"
+      ],
+      "mark_finished": false,
+      "bytes_increased": true,
+      "mtime": "2026-09-25T23:49:19"
+    },
+    {
+      "set": "BGISEQ500",
+      "sample": "HG004",
+      "before": [
+        "6.0",
+        "4226",
+        "18074"
+      ],
+      "after": [
+        "6.0",
+        "5751",
+        "18074"
+      ],
+      "mark_finished": false,
+      "bytes_increased": true,
+      "mtime": "2026-09-25T23:50:20"
+    },
+    {
+      "set": "Element-AVITI",
+      "sample": "HG002",
+      "before": [
+        "6.0",
+        "9074",
+        "19836"
+      ],
+      "after": [
+        "6.0",
+        "10520",
+        "19836"
+      ],
+      "mark_finished": false,
+      "bytes_increased": true,
+      "mtime": "2026-09-25T23:49:44"
+    },
+    {
+      "set": "Element-AVITI",
+      "sample": "HG003",
+      "before": [
+        "6.0",
+        "511",
+        "19051"
+      ],
+      "after": [
+        "6.0",
+        "3021",
+        "19051"
+      ],
+      "mark_finished": false,
+      "bytes_increased": true,
+      "mtime": "2026-09-25T23:50:31"
+    },
+    {
+      "set": "Element-AVITI",
+      "sample": "HG004",
+      "before": [
+        "4.0",
+        "19433",
+        "21167"
+      ],
+      "after": [
+        "5.0",
+        "198",
+        "21167"
+      ],
+      "mark_finished": false,
+      "bytes_increased": true,
+      "mtime": "2026-09-25T23:50:28"
+    },
+    {
+      "set": "Hiseq-300x",
+      "sample": "HG002",
+      "before": [
+        "2.0",
+        "30390",
+        "52839"
+      ],
+      "after": [
+        "2.0",
+        "31935",
+        "52839"
+      ],
+      "mark_finished": false,
+      "bytes_increased": true,
+      "mtime": "2026-09-25T23:50:30"
+    },
+    {
+      "set": "Hiseq-300x",
+      "sample": "HG003",
+      "before": [
+        "2.0",
+        "29238",
+        "53467"
+      ],
+      "after": [
+        "2.0",
+        "30729",
+        "53467"
+      ],
+      "mark_finished": false,
+      "bytes_increased": true,
+      "mtime": "2026-09-25T23:49:27"
+    },
+    {
+      "set": "Hiseq-300x",
+      "sample": "HG004",
+      "before": [
+        "2.0",
+        "29981",
+        "61287"
+      ],
+      "after": [
+        "2.0",
+        "31416",
+        "61287"
+      ],
+      "mark_finished": false,
+      "bytes_increased": true,
+      "mtime": "2026-09-25T23:50:14"
+    },
+    {
+      "set": "Illumina-250PE",
+      "sample": "HG002",
+      "before": [
+        "16.0",
+        "12618",
+        "12618"
+      ],
+      "after": [
+        "16.0",
+        "12618",
+        "12618"
+      ],
+      "mark_finished": true,
+      "bytes_increased": false,
+      "mtime": "2026-09-25T16:35:14"
+    },
+    {
+      "set": "Illumina-250PE",
+      "sample": "HG003",
+      "before": [
+        "16.0",
+        "11393",
+        "11393"
+      ],
+      "after": [
+        "16.0",
+        "11393",
+        "11393"
+      ],
+      "mark_finished": true,
+      "bytes_increased": false,
+      "mtime": "2026-09-25T05:28:57"
+    },
+    {
+      "set": "Illumina-250PE",
+      "sample": "HG004",
+      "before": [
+        "16.0",
+        "2258",
+        "12474"
+      ],
+      "after": [
+        "16.0",
+        "10088",
+        "12474"
+      ],
+      "mark_finished": false,
+      "bytes_increased": true,
+      "mtime": "2026-09-25T23:50:31"
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "sample": "HG002",
+      "before": [
+        "2.0",
+        "12787",
+        "15160"
+      ],
+      "after": [
+        "2.0",
+        "15160",
+        "15160"
+      ],
+      "mark_finished": false,
+      "bytes_increased": true,
+      "mtime": "2026-09-25T23:49:25"
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "sample": "HG003",
+      "before": [
+        "2.0",
+        "13099",
+        "14631"
+      ],
+      "after": [
+        "4.0",
+        "1223",
+        "14631"
+      ],
+      "mark_finished": false,
+      "bytes_increased": true,
+      "mtime": "2026-09-25T23:50:21"
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "sample": "HG004",
+      "before": [
+        "2.0",
+        "9947",
+        "29656"
+      ],
+      "after": [
+        "2.0",
+        "11785",
+        "29656"
+      ],
+      "mark_finished": false,
+      "bytes_increased": true,
+      "mtime": "2026-09-25T23:49:49"
+    }
+  ],
+  "pacbio_comparison": {
+    "user_paused_at": "2026-09-25T23:52:22+09:00",
+    "owner_acknowledged_at": "2026-09-25T23:52:40+09:00",
+    "new_jobs_submitted": false,
+    "source": "Original PacBio transcript, user/assistant visible messages, lines 7139 and 7143",
+    "scope": "12 company shortread samples plus 4 public controls; later summarize existing PacBio/ONT results",
+    "next_owner": "Codex coordinates timing and a single execution owner after company completion and QC",
+    "separate_work": "At 23:56 user requested completion-report updates; PacBio is handling that document work",
+    "root_action": "Read only; no message, forced stop, duplicated session, or new comparison submission"
+  },
+  "snapshot_hashes": {
+    "live-jobs-20260925-2349.txt": "ba747f2ad44a1dc9554b5137366038d3aab1adf69d4592e6663882085c553597",
+    "progress-snapshot-20260925-2349.txt": "9aa44262b93dd7e641dd8ba5ba53dc6040b6d3fd20836c4556cbb22e63789fef",
+    "company-progress-20260925-2352.txt": "3487b8e691d1ba96fba2e77763996efb3e500d5b8fcd3086318ea5906a521bfc",
+    "somatic-current-20260925-2352.txt": "7bba54e87720c13690f1b9f2b4b0c5015c093992cd99da2dd597de406efaff4c",
+    "native-retry-state-20260925-2349.txt": "cac696f0a438650776f9cc35bc11a1a118e9d4f9df489a08875a32c30101d113"
+  }
+}
