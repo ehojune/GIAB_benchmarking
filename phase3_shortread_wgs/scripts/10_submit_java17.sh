@@ -15,7 +15,10 @@ NAME="regermline_java17_$(basename "$SET")"
 no() { echo "SKIP $(basename "$SET"): $*" >&2; exit 3; }
 grep -q "Success" "$SET/__DONE__" 2>/dev/null && no "__DONE__ 가 이미 Success — 다시 돌리지 않는다"
 [ -n "$(ls -A "$SET/.snakemake/locks" 2>/dev/null)" ] && no "Snakemake lock 있음(도는 중이거나 죽은 실행의 흔적)"
-qstat -u "$USER" -r 2>/dev/null | grep -q "Full jobname: *$NAME\$" && no "같은 이름 잡($NAME)이 이미 큐에 있다"
+# qstat 출력을 먼저 받고 찾는다 — 파이프로 grep -q 에 물리면 일치 즉시 grep 이 끝나 qstat 이 SIGPIPE 를 받고,
+# pipefail 때문에 파이프가 141 로 실패해 "있다"가 "없다"로 뒤집힌다(Codex 리뷰). qstat 자체가 실패하면 검사를 못 하므로 멈춘다.
+queue=$(qstat -u "$USER" -r 2>&1) || no "qstat 실패 — 중복 잡 검사를 못 했다: $queue"
+grep -q "Full jobname: *$NAME\$" <<<"$queue" && no "같은 이름 잡($NAME)이 이미 큐에 있다"
 n=0; bad=""
 for sd in "$SET"/outcome/*/; do
   b=$(basename "$sd"); n=$((n + 1))
