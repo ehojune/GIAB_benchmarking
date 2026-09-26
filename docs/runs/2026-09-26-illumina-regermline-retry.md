@@ -1,6 +1,6 @@
-# Illumina-250PE: 155529 Error 종료 → 정리잡 156782 6초 실패 → 정리 후 native regermline 156786
+# Illumina-250PE: 정리·regermline 156786 종료, 실패 항목만 gap
 
-2026-09-26 08:37–09:05 KST, 총괄(Claude, Codex 장애로 09-26 인계). 사용자 09-25 21:44 지시(실패 Manta 중간 폴더를 비우고 `regermline` 1회 재개)와 09-26 지시(오류 뒤 재시도는 `regermline`)의 첫 실제 실행이다.
+2026-09-26 10:00 KST 갱신. Claude가 08:37–09:05 정리·제출했고, 사용자 지시로 복귀한 Codex가 종료·산출물을 확인했다. 원본 Claude 총괄 세션 통지·인계·프로세스 중지를 마쳤다. **156786은 exit 1, 세트 전체 Error이며 추가 재시도하지 않는다.**
 
 ## 155529 종료 (05:05)
 
@@ -54,20 +54,27 @@ cd "$G" && test -f "$R/cleanup-complete.json" && test ! -e "$R/native-regermline
   && qsub -e "$G/log" -o "$G/log" -N "regermline_$(basename "$G")" /BiO/scratch/dyl/kbb/zz.code/regermline.sh "$G"   # = bashrc.txt의 regermline alias 본문 그대로
 ```
 
-→ **156786 `regermline_GIAB-publicData-Illumina-250PE`**, 60슬롯 shepherd.q, 09:04:27 `qw`. 마커 `native-regermline-started.txt`.
+→ **156786 `regermline_GIAB-publicData-Illumina-250PE`**, 60슬롯 shepherd.q, 09:04:27 제출·09:04:29 시작·09:39:49 종료. 마커 `native-regermline-started.txt`.
 
 제출 직전 실제 Snakefile로 `snakemake -n` (onstart는 dry-run에서 안 돈다): **manta 3 · verifybamID 2 · all 1 · haplo_interval 12 = 18잡**. haplo_interval 12건은 `sampleinfo/sample_information_nbb2.xlsx`가 09-25 07:45(회사 교정)에 바뀌어 그보다 오래된 HaplotypeCaller 구간 출력이 `--rerun-triggers mtime`에 걸린 것이다. GIAB 행의 성별은 그때 바뀌지 않았으므로 결과는 같아야 하고, 이것은 `regermline`의 고정 옵션이라 156782가 돌았어도 같았다.
 
-## 기대와 판정 기준
+## 종료 결과와 판정 (09:39–10:00)
 
-Manta signal 11은 3샘플 + 단독 재시도(156780, 1스레드)까지 4/4, verifybamID segfault도 3회 + 단독(156781)이라 **또 실패할 가능성이 높다.** 그래도 사용자가 지시한 단일 재시도이고 비용은 노드 1대 수 시간이다.
+qacct `failed=0 / exit_status=1`(35분 20초), `__DONE__=Message : Error`. 새 `error_list.txt` 6건을 산출물과 대조했다.
 
-- 성공: `__DONE__` `Message : Success`, `error_list.txt` 없음, Manta `conInv_filtered.vcf` 3개 + outcome 링크, verifybamID `.selfSM.sha256sum` HG002/HG004.
-- 다시 실패: **재시도하지 않는다.** 이 세트의 SV(Manta)와 HG002/HG004 오염 QC(verifybamID)를 `gap`으로 기록하고, 이미 있는 gVCF·CRAM으로 SNP/INDEL 비교를 진행한다(CRAM `samtools quickcheck`, gVCF `tabix -l`, BAM primary 리드 수 확인 후). 원인 연구·새 caller는 범위 밖.
-- 큐 등록·exit 0만으로 완료 처리하지 않는다. qacct 156786, 새 `error_list.txt`, `preserved/`와 원 경로 대조.
+| 단계 | 최종 판정 |
+|---|---|
+| Manta HG002/3/4 | 재시도에도 실패. **SV gap**, 추가 재시도 없음 |
+| verifybamID HG002 | 표는 있지만 성공 status·checksum·결과 링크 없음. **오염 QC gap** |
+| verifybamID HG004 | **성공**. 09:18:20 결과·checksum·링크, `Success!`·status 0. HG003의 기존 성공 결과도 유지 |
+| HG003 haplo_gather·count_variants | **계산 성공, 기존 링크 생성 충돌**. 코드가 계산→checksum 뒤 `ln -s`를 실행해 `File exists`를 기록. 기존 링크는 올바른 실파일을 가리키므로 수정·재계산 불필요 |
+
+10:00 최소 QC: HG002/3/4 gVCF 샘플명 일치·tabix 25 contig·정상 BGZF EOF, CRAM `samtools quickcheck` 3/3 통과. HG003 gVCF(2,124,718,754 B)·tbi·변이 집계는 재계산 SHA256이 새 sidecar와 **3/3 일치**했고 chrM 인덱스 조회도 성공했다. outcome의 gVCF·tbi 및 analyze_meta의 집계 링크는 각각 해당 실파일을 정확히 가리킨다. HG003 CRAM·crai·Canvas도 유지됐다.
+
+**SNP/INDEL 산출물 사용 가능성과 세트 전체 성공은 별개다.** HG003 gVCF는 이번에 다시 생성됐으며 예전 파일과 바이트 동일성까지 확인한 것은 아니다. 정상 결과와 error_list를 보존한다. 회사 run 완료·QC 전 비교는 보류하고 기존 비교 범위를 유지한다. Illumina 추가 재시도·원인 연구·새 caller는 시작하지 않는다.
 
 ## 그 밖에 확인한 것
 
-- 로그인 노드에서 다운로드 담당의 BioSkryb×UG100 `fetch_external.sh`(PR #75, 08:58 merge)가 wget 6개로 돌고 있다. 4시간 점검에 포함한다.
-- 공개 4세트(155526/27/28, 156690)는 여전히 markdup 단계, 회사 gd1~4는 30·38·32·30/265. 오류 기록 없음.
+- 09:56 BioSkryb×UG100 `fetch_external.sh`(PR #75 main 반영)는 wget 6개로 수령 중. 수령 완료 아님.
+- 09:56 공개 4잡(155526–155528, 156690)과 회사 4잡(156760–156763)은 모두 `r`. Codex의 단일 4시간 점검을 유지한다.
 - HIWARE 게이트웨이로 파일을 올릴 때 한 번에 보내는 입력은 3 KB 이내로 나눠야 한다(긴 base64 한 줄은 유실됐다). gzip+base64 700자 청크, 호출당 3청크로 성공.
