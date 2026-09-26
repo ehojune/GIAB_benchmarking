@@ -6,7 +6,7 @@
 |---|---|---|
 | 1 | **fastp 복원 156796/156797** 종료·RESTORED.json·12샘플 리드 수 검증. **Verify 단독 156798** exit 0·VERIFIED.json 확인 후 나머지 5샘플 적용 | CRAM/gVCF·원자료 보존. pilot 실패 시 로그를 남기고 전체 재실행으로 우회하지 않음. [실행·검증 기준](runs/2026-09-26-verify-only-pilot.md) |
 | 2 | gd1/4·공개 기본 4잡 유지. gd2를 포함한 나머지 회사 비교 9건은 복구·최소 QC 뒤 진행 | 기존 비교 7건 qacct·ALL DONE·summary 완료 확인. gd3 HG002 QC gap 명시. Illumina 156786의 기존 gap 유지, 추가 20 set 일괄 제출 금지 |
-| 3 | BioSkryb×UG100 수령·크기·제공 MD5 검증 마무리 | 현재 61.23% 수령. 완료 뒤 카탈로그·Excel 갱신. 가벼운 정리 3건은 완료 유지; MD5 후속 대조 #69·Java 17 제출 래퍼 #68은 09-26 사용자 승인으로 main 반영 |
+| 3 | BioSkryb×UG100 수령·크기·제공 MD5 검증 마무리 | 현재 61.23% 수령. 완료 뒤 카탈로그·Excel 갱신. |
 | 4 | 업체 롱리드 수령 뒤 기존 pipeline/QC/truth 비교 | 현재 **수령 대기**. GIAB 자료와 업체 자료를 구분 |
 
 ## 보류 — 자동으로 다시 시작하지 않음
