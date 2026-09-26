@@ -4,7 +4,7 @@
 
 | 순서 | 남은 일 | 완료 표시 |
 |---|---|---|
-| 1 | **복귀한 Codex가 비교 시점·실행 담당 관리**. 회사 gd1~4 **156760–156763** 완료·간단 QC 후 공개 NovaSeq6000 trio·NovaSeqX HG002와 기존 hap.py/v4.2.1 비교 | 그전에는 비교 보류. 정본 1–3 KOR·4–6 HG와 새 산출물 확인, SNP·INDEL precision/recall/F1 표. 옛 업체 캐시 재사용 금지. 도구는 브랜치 `claude/phase3-07-happy`(main 미통합) |
+| 1 | **Codex가 비교 시점·실행 담당 관리**. 회사 gd1~4 **156760–156763** 종료 뒤 gd2 KOR-101 verifybamID 오류 등 실패 목록·최소 QC 확인, 필요한 재개 판단. 이어 공개 NovaSeq6000 trio·NovaSeqX HG002와 기존 hap.py/v4.2.1 비교 | 현재 잡·원자료 유지, 완료 전 비교 보류. 정본 1–3 KOR·4–6 HG와 새 산출물 확인, SNP·INDEL precision/recall/F1 표. 옛 업체 캐시 재사용 금지. 도구는 `claude/phase3-07-happy`(main 미통합) |
 | 2 | GIAB 기본 잡 4개(155526–155528, 156690) 유지. Illumina **156786 exit 1**은 추가 재시도 없이 실패 항목만 gap으로 기록 | Manta 3샘플·HG002 verifybamID gap, HG004 verifybamID 성공. HG003은 계산 성공·기존 링크 충돌. SNP/INDEL 최소 QC 통과지만 세트 전체 완료 아님. [검증](runs/2026-09-26-illumina-regermline-retry.md). 20 set 일괄 제출 금지 |
 | 3 | 가벼운 정리 3건 완료. BioSkryb×UG100 수령·검증 마무리 | PacBio 요약 **PR #74**, BioSkryb 수령 코드·명세 **PR #75**는 main 반영. ONT·MD5 정리 **PR #68·#69는 미통합·보류**. [STATUS](STATUS.md) 참조. 다운로드 완료와 `NOREF`를 구분 |
 | 4 | 업체 롱리드 수령 뒤 같은 플랫폼의 기존 pipeline/QC/truth 비교 적용 | 현재는 **수령 대기**; GIAB 자료와 업체 자료를 혼동하지 않음 |
