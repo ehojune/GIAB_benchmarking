@@ -1,0 +1,229 @@
+{
+  "preflight": {
+    "at": "2026-09-26T20:10:25.321974+09:00",
+    "host": "nbbcluster2",
+    "user": "ehojune",
+    "paths": {
+      "VerifyBamID": {
+        "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/bin/VerifyBamID",
+        "resolved": "/BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/bin/VerifyBamID",
+        "bytes": 6759392,
+        "mtime_ns": 1787718253000000000,
+        "inode": 144115946691260748,
+        "sha256": "f1ba29bf518e307157e96bc5b56e8cccc8dc53b9cd0f83d63ebd87a1081ad04e"
+      },
+      "samtools": {
+        "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/samtools/samtools-1.20/bin/samtools",
+        "resolved": "/BiO/scratch/dyl/kbb/UTILS/Tools/samtools/samtools-1.20/bin/samtools",
+        "bytes": 9045376,
+        "mtime_ns": 1787709288000000000,
+        "inode": 144115946641018594,
+        "sha256": "4a7b04647de3c4ee3401c7f67ffc234d610e8588a54c070475b7160a99034cd0"
+      },
+      "cram": {
+        "path": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/09.bqsr/C000000300400000G0x1_v1.1.0.cram",
+        "resolved": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/09.bqsr/C000000300400000G0x1_v1.1.0.cram",
+        "bytes": 12593658103,
+        "mtime_ns": 1790397755000000000,
+        "inode": 144115950919125450
+      },
+      "crai": {
+        "path": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/09.bqsr/C000000300400000G0x1_v1.1.0.cram.crai",
+        "resolved": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/09.bqsr/C000000300400000G0x1_v1.1.0.cram.crai",
+        "bytes": 1182985,
+        "mtime_ns": 1790397755000000000,
+        "inode": 144115950919125451
+      },
+      "ref": {
+        "path": "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+        "resolved": "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+        "bytes": 3249912778,
+        "mtime_ns": 1715142994000000000,
+        "inode": 144115946691259418
+      }
+    },
+    "commands": {
+      "verify_help": {
+        "rc": 1,
+        "out": "",
+        "err": "[INT: 4]            : [Int] Set number of threads in likelihood calculation[default:4]\n  --Seed               [INT: 12345]        : [Int] Random number seed[default:12345]\n  --Epsilon            [FLT: 1.0e-08]      : [Double] Minimization procedure convergence threshold, usually a trade-off bettween accuracy and running time[default:1e-10]\n  --OutputPileup       [FLG: OFF]          : [Bool] If output temp pileup file\n  --Verbose            [FLG: OFF]          : [Bool] If print the progress of the method on the screen\n\nConstruction of SVD Auxiliary Files - Use these options when generating SVDPrefix files\n  --RefVCF             [STR: Empty]        : [String] VCF file from which to extract reference panel's genotype matrix[Required if no SVD files available]\n\nPileup Options - Arguments for pileup info extraction\n  --min-BQ             [INT: 13]           : [Int] skip bases with baseQ/BAQ smaller than min-BQ\n  --min-MQ             [INT: 2]            : [Int] skip alignments with mapQ smaller than min-MQ\n  --adjust-MQ          [INT: 40]           : [Int] adjust mapping quality; recommended:50, disable:0\n  --max-depth          [INT: 8000]         : [Int] max per-file depth\n  --no-orphans         [FLG: OFF]          : [Bool] do not use anomalous read pairs\n  --incl-flags         [INT: 1040]         : [Int] required flags: skip reads with mask bits unset\n  --excl-flags         [INT: 1796]         : [Int] filter flags: skip reads with mask bits set\n\nDeprecated Options - These options still are available but not recommended\n  --UDPath             [STR: Empty]        : [String] UD matrix file from SVD result of genotype matrix\n  --MeanPath           [STR: Empty]        : [String] Mean matrix file of genotype matrix\n  --BedPath            [STR: Empty]        : [String] Bed file for markers used in this analysis,1 based pos(chr\tpos-1\tpos\trefAllele\taltAllele)[Required]\n\n\nNOTES:\nWhen --help was included in the argument. The program prints the help message but do not actually run\n"
+      },
+      "samtools_version": {
+        "rc": 0,
+        "out": "samtools 1.20\nUsing htslib 1.20\nCopyright (C) 2024 Genome Research Ltd.\n\nSamtools compilation details:\n    Features:       build=configure curses=no \n    CC:             gcc\n    CPPFLAGS:       \n    CFLAGS:         -Wall -g -O2\n    LDFLAGS:        \n    HTSDIR:         htslib-1.20\n    LIBS:           \n    CURSES_LIB:     \n\nHTSlib compilation details:\n    Features:       build=configure libcurl=no S3=no GCS=no libdeflate=yes lzma=yes bzip2=yes plugins=no htscodecs=1.6.0\n    CC:             gcc\n    CPPFLAGS:       \n    CFLAGS:         -g -Wall -O2 -fvisibility=hidden\n    LDFLAGS:        -fvisibility=hidden\n\nHTSlib URL scheme handlers present:\n    built-in:\t preload, data, file\n    crypt4gh-needed:\t crypt4gh\n    mem:\t mem\n",
+        "err": ""
+      },
+      "cram_quickcheck": {
+        "rc": 0,
+        "out": "",
+        "err": ""
+      },
+      "header": {
+        "rc": 0,
+        "out": "@HD\tVN:1.6\tGO:none\tSO:coordinate\n@RG\tID:C000000300400000G0x1\tSM:C000000300400000G0x1\tPL:ILLUMINA\tLB:UNKNOWN\n@PG\tID:bwa-mem2\tPN:bwa-mem2\tVN:2.2.1\tCL:/BiO/scratch/dyl/kbb/UTILS/Tools/bwa-mem2_amd/bwa-mem2-2.2.1/bwa-mem2 mem -Y -R @RG\tSM:C000000300400000G0x1\tPL:ILLUMINA\tLB:UNKNOWN -v 3 -t 10 -K 100000000 /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/02.trimmed/C000000300400000G0x1_1_trimmed.fastq.gz /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/02.trimmed/C000000300400000G0x1_2_trimmed.fastq.gz\n@PG\tID:samtools\tPN:samtools\tPP:bwa-mem2\tVN:1.20\tCL:/BiO/scratch/dyl/kbb/UTILS/Tools/samtools/samtools-1.20/bin/samtools view -bS -h -o /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/03.bwa/C000000300400000G0x1_bwa.bam\n@PG\tID:samtools.1\tPN:samtools\tPP:samtools\tVN:1.20\tCL:/BiO/scratch/dyl/kbb/UTILS/Tools/samtools/samtools-1.20/bin/samtools sort -m 2500M -T /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/.tmp/C000000300400000G0x1/04.sort -@ 10 -O bam --write-index -o /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/04.sort/C000000300400000G0x1_sort.bam##idx##/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/04.sort/C000000300400000G0x1_sort.bam.bai /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/03.bwa/C000000300400000G0x1_bwa.bam\n@PG\tID:samtools.2\tPN:samtools\tPP:samtools.1\tVN:1.20\tCL:/BiO/scratch/dyl/kbb/UTILS/Tools/samtools/samtools-1.20/bin/samtools view -@ 5 -C -T /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --write-index -o /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/09.bqsr/C000000300400000G0x1_v1.1.0.cram##idx##/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/09.bqsr/C000000300400000G0x1_v1.1.0.cram.crai /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/09.bqsr/C000000300400000G0x1_v1.1.0.bam\n@PG\tID:samtools.3\tPN:samtools\tPP:samtools.2\tVN:1.20\tCL:/BiO/scratch/dyl/kbb/UTILS/Tools/samtools/samtools-1.20/bin/samtools view -H /BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/09.bqsr/C000000300400000G0x1_v1.1.0.cram",
+        "err": ""
+      },
+      "queue": {
+        "rc": 0,
+        "out": "job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID \n-----------------------------------------------------------------------------------------------------------------\n 155526 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-8.kobic.re    60        \n 155527 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-9.kobic.re    60        \n 155528 0.75000 regermline ehojune      r     09/21/2026 16:36:14 shepherd.q@shepherd-1-9.kobic.    60        \n 156690 0.49738 regermline ehojune      r     09/25/2026 01:06:44 shepherd.q@shepherd-1-8.kobic.    60        \n 156760 0.47630 germline_G ehojune      r     09/25/2026 07:49:44 shepherd.q@shepherd-1-13.kobic    60        \n 156763 0.47630 germline_G ehojune      r     09/25/2026 10:35:44 shepherd.q@shepherd-1-10.kobic    60        \n 156796 0.25000 restore_fa ehojune      r     09/26/2026 19:58:44 shepherd.q@shepherd-1-2.kobic.    24        \n 156797 0.25000 restore_fa ehojune      r     09/26/2026 19:58:44 shepherd.q@shepherd-1-3.kobic.    24        \n",
+        "err": ""
+      },
+      "df": {
+        "rc": 0,
+        "out": "Filesystem                                      1024-blocks         Used     Available Capacity Mounted on\n200.9.10.117@o2ib,200.9.10.118@o2ib:/bxlustre 2695144051456 780266158660 1778834382928      31% /BiO\n",
+        "err": ""
+      }
+    },
+    "sample": "C000000300400000G0x1",
+    "SVD_files": [
+      {
+        "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/resource/1000g.phase3.100k.b38.vcf.gz.dat.bed",
+        "bytes": 2785762
+      },
+      {
+        "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/resource/1000g.phase3.100k.b38.vcf.gz.dat.mu",
+        "bytes": 3757973
+      },
+      {
+        "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/resource/1000g.phase3.100k.b38.vcf.gz.dat.V",
+        "bytes": 130367
+      },
+      {
+        "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/resource/1000g.phase3.100k.b38.vcf.gz.dat.UD",
+        "bytes": 3455114
+      }
+    ],
+    "verifybamID": "1055:rule verifybamID:\n1056:    input:\n1057:        bqsr_bam = f\"{BQSR_DIR}/{{sample}}_{SCRIPT_VERSION}.bam\",\n1058:        bqsr_bam_bai = f\"{BQSR_DIR}/{{sample}}_{SCRIPT_VERSION}.bam.bai\"\n1059:    output:\n1060:        verify_ancestry = f\"{VERIFYBAMID_DIR}/{{sample}}.Ancestry\",\n1061:        verify_selfsm =   f\"{VERIFYBAMID_DIR}/{{sample}}.selfSM\"\n1062:    log:\n1063:        out = f\"{VERIFYBAMID_DIR}/{{sample}}_verifybamID.log\",\n1064:        err = f\"{VERIFYBAMID_DIR}/{{sample}}_verifybamID.err\"\n1065:    params:\n1066:        verify_out_prefix = f\"{VERIFYBAMID_DIR}/{{sample}}\"\n1067:    benchmark:\n1068:        f\"{BENCHMARK_DIR}/{{sample}}.verifybamID.benchmark\"\n1069:    resources:\n1070:        mem_mb=config[\"memory\"][\"mem-5g\"]\n1071:    threads:\n1072:        config['threads']['verifybamid']\n1073:    priority:\n1074:        config[\"PRIORITY\"][\"verifybamid\"]\n1075:    run:\n1076:        try:\n1077:            shell(\"\"\"\n1078:                {VerifyBamID2} \\\n1079:                    --BamFile {input.bqsr_bam} \\\n1080:                    --Output {params.verify_out_prefix} \\\n1081:                    --Reference {REF} \\\n1082:                    --SVDPrefix {VerifyBamID2_SVD} \\\n1083:                    --NumThread {threads} 1> {log.err} 2> {log.out}\n1084:                \n1085:                exit_code=$?\n1086:                # exit_code 출력\n1087:                echo \"[#status code] {rule} {wildcards.sample} $exit_code\" >> {log.err}\n1088:                # status code 검사\n1089:                if [ \"$exit_code\" -ne 0 ];then\n1090:                    echo \"Error detected, status code is non-zero\" >> {log.err}\n1091:                    rm -rf {output.verify_ancestry} {output.verify_selfsm}\n1092:                    exit 1\n1093:                fi\n1094:                \n1095:                sha256sum {output.verify_selfsm} >  {output.verify_selfsm}.sha256sum\n1096:                \n1097:                ln -s {output.verify_selfsm} {ANALYSIS_DIR}/{wildcards.sample}/{wildcards.sample}.selfSM\n1098:            \"\"\")   \n1099:        except:\n1100:            sample_id = {wildcards.sample}\n1101:            step = {rule}\n1102:            err_message = {log.err}\n1103:            send_alarm(sample_id, step, err_message, INPUT_DIR)\n1104:\n1105:#14.mosdepth",
+    "bam2cram": "1314:rule bam2cram:\n1315:    input:\n1316:        bqsr_bam =     f\"{BQSR_DIR}/{{sample}}_{SCRIPT_VERSION}.bam\",\n1317:        bqsr_bam_bai = f\"{BQSR_DIR}/{{sample}}_{SCRIPT_VERSION}.bam.bai\"\n1318:    output:\n1319:        cram =         f\"{BQSR_DIR}/{{sample}}_{SCRIPT_VERSION}.cram\",\n1320:        crai =         f\"{BQSR_DIR}/{{sample}}_{SCRIPT_VERSION}.cram.crai\"\n1321:    log:\n1322:        out =          f\"{BQSR_DIR}/{{sample}}_cram.log\",\n1323:        err =          f\"{BQSR_DIR}/{{sample}}_cram.err\"\n1324:    benchmark:\n1325:        f\"{BENCHMARK_DIR}/{{sample}}.cram.benchmark\"\n1326:    resources:\n1327:        mem_mb=config[\"memory\"][\"mem-5g\"]\n1328:    threads:\n1329:        config['threads']['bam2cram']\n1330:    priority:\n1331:        config[\"PRIORITY\"][\"bam2cram\"]\n1332:    run:\n1333:        try:\n1334:            shell(\"\"\"\n1335:                {SAMTOOLS} view \\\n1336:                    {input.bqsr_bam} \\\n1337:                    -@ {threads} -C -T {REF} \\\n1338:                    --write-index -o {output.cram}##idx##{output.crai} \\\n1339:                    2> {log.err} \\\n1340:                    1> {log.out}\n1341:                \n1342:                sha256sum {output.cram} > {output.cram}.sha256sum\n1343:                sha256sum {output.crai} > {output.crai}.sha256sum\n1344:                \n1345:                ln -s {output.cram} {INPUT_DIR}/outcome/{wildcards.sample}/{wildcards.sample}_{SCRIPT_VERSION}.cram\n1346:                ln -s {output.crai} {INPUT_DIR}/outcome/{wildcards.sample}/{wildcards.sample}_{SCRIPT_VERSION}.cram.crai\n1347:            \"\"\")\n1348:        except:\n1349:            sample_id = {wildcards.sample}\n1350:            step = {rule}\n1351:            err_message = {log.err}\n1352:            send_alarm(sample_id, step, err_message, INPUT_DIR)\n1353:\n1354:# stats (ALT-contig aware mapping 결과 확인)",
+    "original_flagstat": "690182459 + 0 in total (QC-passed reads + QC-failed reads)\n688532668 + 0 primary\n0 + 0 secondary\n1649791 + 0 supplementary\n35989513 + 0 duplicates\n35839560 + 0 primary duplicates\n690078978 + 0 mapped (99.99% : N/A)\n688429187 + 0 primary mapped (99.98% : N/A)\n688532668 + 0 paired in sequencing\n344266334 + 0 read1\n344266334 + 0 read2\n682338904 + 0 properly paired (99.10% : N/A)\n688362980 + 0 with itself and mate mapped\n66207 + 0 singletons (0.01% : N/A)\n3749444 + 0 with mate mapped to a different chr\n1961949 + 0 with mate mapped to a different chr (mapQ>=5)\n",
+    "failed_log": "Estimation from OptimizeHeter:\nContaminating Sample PC1:-0.127479\tPC2:-0.0640353\t\nIntended Sample PC1:-0.00837197\tPC2:0.0229047\t\nFREEMIX(Alpha):8.33497e-06\n"
+  },
+  "submission": {
+    "at": "2026-09-26T20:15:23.462752+09:00",
+    "job": "156798",
+    "sample": "C000000300400000G0x1",
+    "owner": "Codex"
+  },
+  "status": {
+    "at": "2026-09-26T20:16:02.200603+09:00",
+    "host": "nbbcluster2",
+    "user": "ehojune",
+    "root": "/BiO/scratch/dyl/kbb/G000/backup/20260926-verify-only-pilot",
+    "markers": {
+      "job.json": {
+        "at": "2026-09-26T20:15:23.462752+09:00",
+        "job": "156798",
+        "sample": "C000000300400000G0x1",
+        "owner": "Codex"
+      },
+      "started.json": {
+        "at": "2026-09-26T20:15:29.741064+09:00",
+        "job": "156798",
+        "host": "shepherd-1-4"
+      },
+      "stage.json": {
+        "at": "2026-09-26T20:15:30.072320+09:00",
+        "stage": "restore_bam",
+        "command": [
+          "/BiO/scratch/dyl/kbb/UTILS/Tools/samtools/samtools-1.20/bin/samtools",
+          "view",
+          "-@",
+          "4",
+          "-T",
+          "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+          "-b",
+          "-o",
+          "/BiO/scratch/dyl/kbb/G000/backup/20260926-verify-only-pilot/C000000300400000G0x1_v1.1.0.bam",
+          "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/tmp/09.bqsr/C000000300400000G0x1_v1.1.0.cram"
+        ]
+      }
+    },
+    "qstat": "job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID \n-----------------------------------------------------------------------------------------------------------------\n 155526 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-8.kobic.re    60        \n 155527 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-9.kobic.re    60        \n 155528 0.75000 regermline ehojune      r     09/21/2026 16:36:14 shepherd.q@shepherd-1-9.kobic.    60        \n 156690 0.52078 regermline ehojune      r     09/25/2026 01:06:44 shepherd.q@shepherd-1-8.kobic.    60        \n 156760 0.50165 germline_G ehojune      r     09/25/2026 07:49:44 shepherd.q@shepherd-1-13.kobic    60        \n 156763 0.50165 germline_G ehojune      r     09/25/2026 10:35:44 shepherd.q@shepherd-1-10.kobic    60        \n 156796 0.29631 restore_fa ehojune      r     09/26/2026 19:58:44 shepherd.q@shepherd-1-2.kobic.    24        \n 156797 0.29631 restore_fa ehojune      r     09/26/2026 19:58:44 shepherd.q@shepherd-1-3.kobic.    24        \n 156798 0.25000 verify_onl ehojune      r     09/26/2026 20:15:29 shepherd.q@shepherd-1-4.kobic.     8        \n",
+    "state": "r",
+    "job_usage": [
+      "sge_o_workdir:              /BiO/scratch/dyl/kbb/G000/backup/20260926-verify-only-pilot",
+      "hard resource_list:         h_vmem=16G,h_rt=14400",
+      "job_name:                   verify_only_gd3_HG002",
+      "usage         1:            cpu=00:00:00, mem=0.00067 GB s, io=0.01608 GB, vmem=20.395M, maxvmem=20.395M"
+    ],
+    "outputs": [
+      {
+        "name": "restore_bam.stdout",
+        "bytes": 0,
+        "mtime": 1790421330.0
+      },
+      {
+        "name": "C000000300400000G0x1_v1.1.0.bam",
+        "bytes": 1525768431,
+        "mtime": 1790421362.0
+      },
+      {
+        "name": "stage.json",
+        "bytes": 510,
+        "mtime": 1790421330.0
+      },
+      {
+        "name": "job.json",
+        "bytes": 122,
+        "mtime": 1790421323.0
+      },
+      {
+        "name": "started.json",
+        "bytes": 92,
+        "mtime": 1790421329.0
+      },
+      {
+        "name": "cram_quickcheck.exit.json",
+        "bytes": 66,
+        "mtime": 1790421330.0
+      },
+      {
+        "name": "cluster.log",
+        "bytes": 0,
+        "mtime": 1790421329.0
+      },
+      {
+        "name": "cram_quickcheck.stdout",
+        "bytes": 0,
+        "mtime": 1790421329.0
+      },
+      {
+        "name": "manifest.json",
+        "bytes": 17715,
+        "mtime": 1790421323.0
+      },
+      {
+        "name": "restore_bam.stderr",
+        "bytes": 0,
+        "mtime": 1790421330.0
+      },
+      {
+        "name": "submission.json",
+        "bytes": 586,
+        "mtime": 1790421323.0
+      },
+      {
+        "name": "cram_quickcheck.stderr",
+        "bytes": 0,
+        "mtime": 1790421329.0
+      },
+      {
+        "name": "pilot.py",
+        "bytes": 7037,
+        "mtime": 1790421323.0
+      },
+      {
+        "name": "submit-attempt.json",
+        "bytes": 103,
+        "mtime": 1790421323.0
+      }
+    ],
+    "logs": {
+      "restore_bam.stdout": "",
+      "cluster.log": "",
+      "cram_quickcheck.stdout": "",
+      "restore_bam.stderr": "",
+      "cram_quickcheck.stderr": ""
+    }
+  }
+}

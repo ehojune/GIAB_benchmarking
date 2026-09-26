@@ -626,6 +626,8 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-26 20:15 — 사용자 요청으로 gd3 HG002의 VerifyBamID만 개별 재시도(156798). 완료 CRAM에서 임시 BAM을 복원하며 정렬·변이는 재계산하지 않는다. [실행 기록](docs/runs/2026-09-26-verify-only-pilot.md)
+
 - 2026-09-26 20:00 — gd3·공개 비교 7건 완료 확인. gd2·gd3 일반 regermline은 253작업을 재계산해 중지했고 제거된 fastp 보고서만 복원 중이다. DONE과 개별 VerifyBamID 실패의 근거를 남겼다. [기록](docs/runs/2026-09-26-gd23-regermline-and-DONE.md)
 - 2026-09-26 16:07 — Codex 총괄로 gd3·공개 truth 비교 7건(156787–156793) 시작. gd3 주요 산출물·리드 수 검사 통과, 오염 QC 3건은 gap으로 보존하고 원자료 재처리는 하지 않았다. [기록](docs/runs/2026-09-26-gd3-qc-and-comparison.md)
 - 2026-09-26 09:05 — Codex 장애로 총괄을 Claude 세션이 인계(사용자 지시). Illumina-250PE 155529가 05:05 Error 종료(Manta 3샘플·verifybamID 2샘플 segfault), 정리잡 156782는 검사문에 걸려 6초 만에 종료. 실패 산출물 19건 보존 후 native `regermline` 156786 제출. 나머지 8잡 진행 중. [기록](docs/runs/2026-09-26-illumina-regermline-retry.md)
