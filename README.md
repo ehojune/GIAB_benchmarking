@@ -626,6 +626,8 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-27 08시 — gd2 KOR-101 QC 복구·반영으로 누적 7건 완료. gd3 KOR-101 재실패는 gap 보존, gd4 228/265단계. [점검](docs/runs/2026-09-27-0804-heartbeat.md).
+
 - 2026-09-27 04시 — 회사·공개 비교 13건 회수, Verify QC 5건 추가 반영·2건 제한 재시도. BioSkryb×UG100 476개 수령·검증 완료, 카탈로그·Excel 갱신. [현황](docs/STATUS.md).
 
 - 2026-09-27 — fastp 보고서 12샘플 복원·Verify 단독 1건 복구 완료. 같은 QC 7건 재시도와 gd1·gd2 비교 6건 제출, 다운로드 83.11%. [기록](docs/runs/2026-09-27-verify-recovery-and-company-comparison.md)

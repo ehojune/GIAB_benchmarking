@@ -1,0 +1,890 @@
+{
+  "at": "2026-09-27T08:12:59.961121+09:00",
+  "followup_at": "2026-09-27T08:14:33.623303+09:00",
+  "baseline": "2026-09-27T04:17:05.823315+09:00",
+  "companies": [
+    {
+      "set": "G000-gd1-20260819",
+      "steps": [
+        "265",
+        "265"
+      ],
+      "done": "- Cohort : G000\n- Batch name : G000-gd1-20260819\n- Message : Success\n",
+      "errors": null,
+      "log_mtime": "2026-09-26T23:17:32"
+    },
+    {
+      "set": "G000-gd2-20260819",
+      "steps": null,
+      "done": "- Cohort : G000\n- Batch name : G000-gd2-20260819\n- Message : Success\n",
+      "errors": null,
+      "log_mtime": "2026-09-26T19:52:47"
+    },
+    {
+      "set": "G000-gd3-20260819",
+      "steps": null,
+      "done": "- Cohort : G000\n- Batch name : G000-gd3-20260819\n- Message : Success\n",
+      "errors": null,
+      "log_mtime": "2026-09-26T19:52:47"
+    },
+    {
+      "set": "G000-gd4-20260819",
+      "steps": [
+        "228",
+        "265"
+      ],
+      "done": null,
+      "errors": "- Time: Sat Sep 26 15:51:14 JST 2026\n- Sample: {'C000000400200000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400200000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 17:06:37 JST 2026\n- Sample: {'C000000400600000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400600000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 23:08:16 JST 2026\n- Sample: {'C000000400400000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400400000G0x1_verifybamID.err'}\n",
+      "log_mtime": "2026-09-27T08:05:11"
+    }
+  ],
+  "progress": {
+    "at": "2026-09-27T08:12:59.961121+09:00",
+    "baseline": "2026-09-27T04:17:05.823315+09:00",
+    "jobs": [
+      {
+        "job": "155526",
+        "name": "regermline_java17_BGISEQ500",
+        "state": "r",
+        "start_unchanged": true,
+        "cpu_delta_seconds": 56458,
+        "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-BGISEQ500\n- Message : Error\n",
+        "errors": null
+      },
+      {
+        "job": "155527",
+        "name": "regermline_java17_Element-AVITI",
+        "state": "r",
+        "start_unchanged": true,
+        "cpu_delta_seconds": 56565,
+        "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Element-AVITI\n- Message : Error\n",
+        "errors": null
+      },
+      {
+        "job": "155528",
+        "name": "regermline_java17_Hiseq-300x",
+        "state": "r",
+        "start_unchanged": true,
+        "cpu_delta_seconds": 23422,
+        "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Hiseq-300x\n- Message : Error\n",
+        "errors": null
+      },
+      {
+        "job": "156690",
+        "name": "regermline_java17_GIAB-publicData-MGISEQ2000-PCRfree",
+        "state": "r",
+        "start_unchanged": true,
+        "cpu_delta_seconds": 55199,
+        "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-MGISEQ2000-PCRfree\n- Message : Error\n",
+        "errors": null
+      },
+      {
+        "job": "156763",
+        "name": "germline_G000-gd4-20260819",
+        "state": "r",
+        "start_unchanged": true,
+        "cpu_delta_seconds": 135347,
+        "done": null,
+        "errors": "- Time: Sat Sep 26 15:51:14 JST 2026\n- Sample: {'C000000400200000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400200000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 17:06:37 JST 2026\n- Sample: {'C000000400600000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400600000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 23:08:16 JST 2026\n- Sample: {'C000000400400000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400400000G0x1_verifybamID.err'}\n"
+      }
+    ],
+    "jobs_no_longer_in_qstat": [],
+    "public_mark": [
+      {
+        "set": "BGISEQ500",
+        "sample": "HG002",
+        "bytes_delta": 1883176,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "6.0",
+          "14273",
+          "17901"
+        ],
+        "after": [
+          "6.0",
+          "15991",
+          "17901"
+        ],
+        "mtime": "2026-09-27T08:12:05"
+      },
+      {
+        "set": "BGISEQ500",
+        "sample": "HG003",
+        "bytes_delta": 1907476,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "11.0",
+          "12547",
+          "18330"
+        ],
+        "after": [
+          "11.0",
+          "14273",
+          "18330"
+        ],
+        "mtime": "2026-09-27T08:12:26"
+      },
+      {
+        "set": "BGISEQ500",
+        "sample": "HG004",
+        "bytes_delta": 17541460,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "6.0",
+          "17567",
+          "18074"
+        ],
+        "after": [
+          "11.0",
+          "2589",
+          "18074"
+        ],
+        "mtime": "2026-09-27T08:12:54"
+      },
+      {
+        "set": "Element-AVITI",
+        "sample": "HG002",
+        "bytes_delta": 2426682,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "11.0",
+          "2909",
+          "19836"
+        ],
+        "after": [
+          "11.0",
+          "5117",
+          "19836"
+        ],
+        "mtime": "2026-09-27T08:12:22"
+      },
+      {
+        "set": "Element-AVITI",
+        "sample": "HG003",
+        "bytes_delta": 1956911,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "6.0",
+          "14825",
+          "19051"
+        ],
+        "after": [
+          "6.0",
+          "16613",
+          "19051"
+        ],
+        "mtime": "2026-09-27T08:12:54"
+      },
+      {
+        "set": "Element-AVITI",
+        "sample": "HG004",
+        "bytes_delta": 1883700,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "6.0",
+          "7165",
+          "21167"
+        ],
+        "after": [
+          "6.0",
+          "8893",
+          "21167"
+        ],
+        "mtime": "2026-09-27T08:12:38"
+      },
+      {
+        "set": "Hiseq-300x",
+        "sample": "HG002",
+        "bytes_delta": 1516663,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "2.0",
+          "44436",
+          "52839"
+        ],
+        "after": [
+          "2.0",
+          "46320",
+          "52839"
+        ],
+        "mtime": "2026-09-27T08:12:13"
+      },
+      {
+        "set": "Hiseq-300x",
+        "sample": "HG003",
+        "bytes_delta": 1559324,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "2.0",
+          "42906",
+          "53467"
+        ],
+        "after": [
+          "2.0",
+          "44843",
+          "53467"
+        ],
+        "mtime": "2026-09-27T08:12:02"
+      },
+      {
+        "set": "Hiseq-300x",
+        "sample": "HG004",
+        "bytes_delta": 1469168,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "2.0",
+          "43412",
+          "61287"
+        ],
+        "after": [
+          "2.0",
+          "45237",
+          "61287"
+        ],
+        "mtime": "2026-09-27T08:12:46"
+      },
+      {
+        "set": "Illumina-250PE",
+        "sample": "HG002",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "12618",
+          "12618"
+        ],
+        "after": [
+          "16.0",
+          "12618",
+          "12618"
+        ],
+        "mtime": "2026-09-25T16:35:14"
+      },
+      {
+        "set": "Illumina-250PE",
+        "sample": "HG003",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "11393",
+          "11393"
+        ],
+        "after": [
+          "16.0",
+          "11393",
+          "11393"
+        ],
+        "mtime": "2026-09-25T05:28:57"
+      },
+      {
+        "set": "Illumina-250PE",
+        "sample": "HG004",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "12474",
+          "12474"
+        ],
+        "after": [
+          "16.0",
+          "12474",
+          "12474"
+        ],
+        "mtime": "2026-09-26T01:27:02"
+      },
+      {
+        "set": "MGISEQ2000-PCRfree",
+        "sample": "HG002",
+        "bytes_delta": 6001259,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "5.0",
+          "9717",
+          "15160"
+        ],
+        "after": [
+          "6.0",
+          "1503",
+          "15160"
+        ],
+        "mtime": "2026-09-27T08:12:48"
+      },
+      {
+        "set": "MGISEQ2000-PCRfree",
+        "sample": "HG003",
+        "bytes_delta": 2263385,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "6.0",
+          "711",
+          "14631"
+        ],
+        "after": [
+          "6.0",
+          "2789",
+          "14631"
+        ],
+        "mtime": "2026-09-27T08:12:36"
+      },
+      {
+        "set": "MGISEQ2000-PCRfree",
+        "sample": "HG004",
+        "bytes_delta": 1716858,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "2.0",
+          "25969",
+          "29656"
+        ],
+        "after": [
+          "2.0",
+          "28107",
+          "29656"
+        ],
+        "mtime": "2026-09-27T08:13:00"
+      }
+    ],
+    "company_mark": [
+      {
+        "set": "G000-gd1-20260819",
+        "sample": "C000000100100000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4757",
+          "4757"
+        ],
+        "after": [
+          "16.0",
+          "4757",
+          "4757"
+        ],
+        "mtime": "2026-09-26T20:08:51"
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample": "C000000100200000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4830",
+          "4830"
+        ],
+        "after": [
+          "16.0",
+          "4830",
+          "4830"
+        ],
+        "mtime": "2026-09-26T20:38:05"
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample": "C000000100300000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4303",
+          "4303"
+        ],
+        "after": [
+          "16.0",
+          "4303",
+          "4303"
+        ],
+        "mtime": "2026-09-26T15:32:54"
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample": "C000000100400000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4024",
+          "4024"
+        ],
+        "after": [
+          "16.0",
+          "4024",
+          "4024"
+        ],
+        "mtime": "2026-09-26T10:50:12"
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample": "C000000100500000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4219",
+          "4219"
+        ],
+        "after": [
+          "16.0",
+          "4219",
+          "4219"
+        ],
+        "mtime": "2026-09-26T15:15:50"
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample": "C000000100600000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4278",
+          "4278"
+        ],
+        "after": [
+          "16.0",
+          "4278",
+          "4278"
+        ],
+        "mtime": "2026-09-26T15:27:14"
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample": "C000000200100000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4093",
+          "4093"
+        ],
+        "after": [
+          "16.0",
+          "4093",
+          "4093"
+        ],
+        "mtime": "2026-09-26T06:50:26"
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample": "C000000200200000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4221",
+          "4221"
+        ],
+        "after": [
+          "16.0",
+          "4221",
+          "4221"
+        ],
+        "mtime": "2026-09-26T10:59:20"
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample": "C000000200300000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4304",
+          "4304"
+        ],
+        "after": [
+          "16.0",
+          "4304",
+          "4304"
+        ],
+        "mtime": "2026-09-26T12:36:15"
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample": "C000000200400000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4146",
+          "4146"
+        ],
+        "after": [
+          "16.0",
+          "4146",
+          "4146"
+        ],
+        "mtime": "2026-09-26T09:59:20"
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample": "C000000200500000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4861",
+          "4861"
+        ],
+        "after": [
+          "16.0",
+          "4861",
+          "4861"
+        ],
+        "mtime": "2026-09-26T16:40:59"
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample": "C000000200600000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4301",
+          "4301"
+        ],
+        "after": [
+          "16.0",
+          "4301",
+          "4301"
+        ],
+        "mtime": "2026-09-26T12:25:09"
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample": "C000000300100000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3662",
+          "3662"
+        ],
+        "after": [
+          "16.0",
+          "3662",
+          "3662"
+        ],
+        "mtime": "2026-09-26T10:46:36"
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample": "C000000300200000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3468",
+          "3468"
+        ],
+        "after": [
+          "16.0",
+          "3468",
+          "3468"
+        ],
+        "mtime": "2026-09-26T08:04:44"
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample": "C000000300300000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3531",
+          "3531"
+        ],
+        "after": [
+          "16.0",
+          "3531",
+          "3531"
+        ],
+        "mtime": "2026-09-26T08:50:36"
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample": "C000000300400000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3575",
+          "3575"
+        ],
+        "after": [
+          "16.0",
+          "3575",
+          "3575"
+        ],
+        "mtime": "2026-09-26T11:07:54"
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample": "C000000300500000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3638",
+          "3638"
+        ],
+        "after": [
+          "16.0",
+          "3638",
+          "3638"
+        ],
+        "mtime": "2026-09-26T11:27:55"
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample": "C000000300600000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3557",
+          "3557"
+        ],
+        "after": [
+          "16.0",
+          "3557",
+          "3557"
+        ],
+        "mtime": "2026-09-26T10:58:36"
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample": "C000000400100000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "5360",
+          "5360"
+        ],
+        "after": [
+          "16.0",
+          "5360",
+          "5360"
+        ],
+        "mtime": "2026-09-27T03:39:55"
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample": "C000000400200000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4073",
+          "4073"
+        ],
+        "after": [
+          "16.0",
+          "4073",
+          "4073"
+        ],
+        "mtime": "2026-09-26T13:36:30"
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample": "C000000400300000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3906",
+          "3906"
+        ],
+        "after": [
+          "16.0",
+          "3906",
+          "3906"
+        ],
+        "mtime": "2026-09-26T10:25:34"
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample": "C000000400400000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4880",
+          "4880"
+        ],
+        "after": [
+          "16.0",
+          "4880",
+          "4880"
+        ],
+        "mtime": "2026-09-26T21:22:18"
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample": "C000000400500000G0x1_mark.log",
+        "bytes_delta": 3908437,
+        "was_done": false,
+        "done": true,
+        "before": [
+          "16.0",
+          "3813",
+          "5814"
+        ],
+        "after": [
+          "16.0",
+          "5814",
+          "5814"
+        ],
+        "mtime": "2026-09-27T08:02:26"
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample": "C000000400600000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4243",
+          "4243"
+        ],
+        "after": [
+          "16.0",
+          "4243",
+          "4243"
+        ],
+        "mtime": "2026-09-26T15:13:52"
+      }
+    ],
+    "somatic": {
+      "qacct_count": 29,
+      "all_success": true,
+      "qc_sha256_unchanged": true,
+      "qc_rows": 13,
+      "summary_count": 28
+    }
+  },
+  "verify_followup": {
+    "at": "2026-09-27T08:14:33.623303+09:00",
+    "samples": [
+      {
+        "sample": "C000000200100000G0x1",
+        "job": "156813",
+        "protected_outcomes_unchanged": true,
+        "exit": {
+          "at": "2026-09-27T04:56:45.098232+09:00",
+          "returncode": 0
+        },
+        "promoted": {
+          "at": "2026-09-27T08:14:16.820912+09:00",
+          "job": "156813",
+          "sample": "C000000200100000G0x1",
+          "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200100000G0x1",
+          "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/analyze_meta/C000000200100000G0x1/C000000200100000G0x1.selfSM",
+          "selfSM_sha256": "31ed13cf034db3dd81ab2c3e3b9d4ed17bd518815411a4c78518e155f2dbb273",
+          "protected_outcomes_unchanged": true,
+          "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200100000G0x1/original-before-promotion",
+          "FREEMIX": "3.01584e-06"
+        },
+        "qc_hash_and_checksum_match": true,
+        "qacct": [
+          "jobnumber    156813",
+          "end_time     Sun Sep 27 04:56:45 2026",
+          "failed       0",
+          "exit_status  0"
+        ]
+      },
+      {
+        "sample": "C000000300100000G0x1",
+        "job": "156814",
+        "protected_outcomes_unchanged": true,
+        "exit": {
+          "at": "2026-09-27T04:53:05.498967+09:00",
+          "returncode": -11
+        },
+        "failure": {
+          "at": "2026-09-27T04:53:05.506130+09:00",
+          "error": "('verifybamid', -11)"
+        },
+        "qc_not_promoted": true,
+        "qacct": [
+          "jobnumber    156814",
+          "end_time     Sun Sep 27 04:53:05 2026",
+          "failed       0",
+          "exit_status  1"
+        ]
+      }
+    ]
+  },
+  "owners": [
+    {
+      "name": "GIAB PacBio 에이전트",
+      "status": "idle",
+      "last_activity": "2026-09-26T11:44:04.918Z"
+    },
+    {
+      "name": "GIAB 숏리드 에이전트",
+      "status": "idle",
+      "last_activity": "2026-09-24T23:23:11.385Z"
+    },
+    {
+      "name": "GIAB 다운로드 에이전트",
+      "status": "idle",
+      "last_activity": "2026-09-26T00:25:32.947Z"
+    },
+    {
+      "name": "GIAB ONT 에이전트",
+      "status": "idle",
+      "last_activity": "2026-09-26T11:27:51.898Z"
+    },
+    {
+      "name": "GIAB 프로젝트 총괄 에이전트",
+      "status": "idle",
+      "last_activity": "2026-09-26T19:47:58.361Z"
+    }
+  ],
+  "decisions": {
+    "gd3_KOR101": "SIGSEGV recurred with one thread. Preserve failure and normal results; no further blind retry or caller replacement. Does not affect HG002/3/4 benchmark samples.",
+    "gd4": "Wait for native job 156763 to finish, then check outputs/minimal QC and submit the existing three comparisons once.",
+    "download": "Closed at prior check; no repeat download or checksum batch."
+  }
+}
