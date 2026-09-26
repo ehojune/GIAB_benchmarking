@@ -4,8 +4,8 @@
 
 | 순서 | 남은 일 | 완료 표시 |
 |---|---|---|
-| 1 | **비교 156787–156793**(gd3 3개·공개 4개) 결과 회수. gd1/2/4 **156760/156761/156763** 종료·최소 QC 뒤 나머지 회사 비교 9건 | qacct·ALL DONE·summary를 함께 확인해 SNP/INDEL precision·recall·F1 표 작성. gd3 HG002 오염 QC gap 명시. 옛 회사 캐시 재사용 금지. [실행 기록](runs/2026-09-26-gd3-qc-and-comparison.md) |
-| 2 | 공개 기본 **155526–155528, 156690** 유지, 종료 후 리드 수·산출물·오류 확인 | Illumina **156786 exit 1**의 Manta 3건·HG002 verifybamID는 gap 유지. 회사별 기본 잡 종료 후 일반 regermline, 같은 단계 재실패 시 실패 중간 디렉토리만 정리 후 regermline. gd3는 비교 종료 후 재개. 강제 dry-run 253작업으로 일반 재개를 배제하지 않음. 추가 20 set 일괄 제출 금지 |
+| 1 | **fastp 보고서 복원 156796/156797** 종료·RESTORED.json·12샘플 리드 수 검증. gd2/3 VerifyBamID 각 3건 재개 범위 판단 | 원자료·CRAM·gVCF 보존. 일반 regermline은 실제로 253작업을 재계산하므로 무조건 반복하지 않음. [이번 조치](runs/2026-09-26-gd23-regermline-and-DONE.md) |
+| 2 | gd1/4·공개 기본 4잡 유지. gd2를 포함한 나머지 회사 비교 9건은 복구·최소 QC 뒤 진행 | 기존 비교 7건 qacct·ALL DONE·summary 완료 확인. gd3 HG002 QC gap 명시. Illumina 156786의 기존 gap 유지, 추가 20 set 일괄 제출 금지 |
 | 3 | BioSkryb×UG100 수령·크기·제공 MD5 검증 마무리 | 현재 37.37% 수령. 완료 뒤 카탈로그·Excel 갱신. 가벼운 정리 3건은 완료 유지; **PR #68·#69 미통합·병합 보류** |
 | 4 | 업체 롱리드 수령 뒤 기존 pipeline/QC/truth 비교 | 현재 **수령 대기**. GIAB 자료와 업체 자료를 구분 |
 
