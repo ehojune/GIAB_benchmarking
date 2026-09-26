@@ -13,7 +13,7 @@
 | HG001 | CompleteGenomics_normal | complete_genomics | 59 | 501542582234 | 467.1 |
 | HG001 | CompleteGenomics_normal_RMDNA | complete_genomics | 597 | 1739597712380 | 1,620.1 |
 | HG001 | Element_AVITI_20240920 | other | 12 | 452049791297 | 421.0 |
-| HG001 | Garvan_NA12878_HG001_HiSeq_Exome | exome | 28 | 42082351521 | 39.2 |
+| HG001 | Garvan_NA12878_HG001_HiSeq_Exome | exome | 28 | 42082351234 | 39.2 |
 | HG001 | HudsonAlpha_PacBio_CCS | pacbio_hifi | 20 | 70753508977 | 65.9 |
 | HG001 | MGISEQ | bgi_mgi | 8 | 387014256646 | 360.4 |
 | HG001 | MtSinai_BioNano | other | 11 | 531354227 | 0.5 |
@@ -25,7 +25,7 @@
 | HG001 | PacBio_SequelII_CCS_11kb | pacbio_hifi | 9 | 118071717440 | 110.0 |
 | HG001 | Ultralong_OxfordNanopore | ont | 6 | 353415034147 | 329.1 |
 | HG001 | analysis | other | 369 | 509437738253 | 474.5 |
-| HG001 | ion_exome | exome | 6 | 69928314003 | 65.1 |
+| HG001 | ion_exome | exome | 6 | 69928313543 | 65.1 |
 | HG001 | stLFR | linked_reads | 8 | 551502577660 | 513.6 |
 | HG002 | 10XGenomics | linked_reads | 3 | 64566886820 | 60.1 |
 | HG002 | 10Xgenomics_ChromiumGenome | linked_reads | 65 | 178214119371 | 166.0 |
@@ -35,7 +35,7 @@
 | HG002 | CORNELL_Oxford_Nanopore | ont | 2915 | 6135549502 | 5.7 |
 | HG002 | CompleteGenomics_normal_RMDNA | complete_genomics | 607 | 1938371319975 | 1,805.2 |
 | HG002 | Dovetail_ChicagoLibraties | other | 13 | 25356952859 | 23.6 |
-| HG002 | Element_AVITI_20231018 | other | 20 | 977851167572 | 910.7 |
+| HG002 | Element_AVITI_20231018 | other | 20 | 977851167570 | 910.7 |
 | HG002 | Element_AVITI_20240920 | other | 12 | 459824111998 | 428.2 |
 | HG002 | HG002B-PhaseGenomics-20241031 | other | 14 | 414415156890 | 386.0 |
 | HG002 | HiC_downsampled | other | 10 | 228380008054 | 212.7 |
@@ -45,7 +45,7 @@
 | HG002 | NIST_HiSeq_HG002_Homogeneity-10953946 | illumina_wgs | 2069 | 2519428085259 | 2,346.4 |
 | HG002 | NIST_Illumina_2x250bps | illumina_wgs | 78 | 475674590746 | 443.0 |
 | HG002 | NIST_SOLiD5500W | other | 30 | 1111109922208 | 1,034.8 |
-| HG002 | NIST_Stanford_Illumina_6kb_matepair | illumina_wgs | 11 | 200441931659 | 186.7 |
+| HG002 | NIST_Stanford_Illumina_6kb_matepair | illumina_wgs | 11 | 200441931721 | 186.7 |
 | HG002 | NIST_Stanford_Moleculo | illumina_wgs | 9218 | 129496271008 | 120.6 |
 | HG002 | OsloUniversityHospital_Exome | exome | 2 | 10346682572 | 9.6 |
 | HG002 | PacBio_CCS_10kb | pacbio_hifi | 92 | 302830518001 | 282.0 |
@@ -115,7 +115,7 @@
 | HG005 | CompleteGenomics_normal_cellsDNA | complete_genomics | 611 | 2002058649304 | 1,864.6 |
 | HG005 | Element_AVITI_20240920 | other | 12 | 450278970217 | 419.4 |
 | HG005 | HG005_NA24631_son_HiSeq_300x | illumina_wgs | 439 | 3272926125262 | 3,048.1 |
-| HG005 | HudsonAlpha_PacBio_CCS | pacbio_hifi | 23 | 127561620641 | 118.8 |
+| HG005 | HudsonAlpha_PacBio_CCS | pacbio_hifi | 23 | 127561620807 | 118.8 |
 | HG005 | MGISEQ | bgi_mgi | 6 | 442229557306 | 411.9 |
 | HG005 | MtSinai_PacBio | pacbio_clr | 149 | 1858315901637 | 1,730.7 |
 | HG005 | NIST_BGIseq_2x150bp_100x | bgi_mgi | 38 | 1107203349053 | 1,031.2 |
@@ -225,4 +225,4 @@
 | ONT 공개 (phase2) | HG002.ONT-R10_giab2025.01_PAW70337 | 2 | 171812103620 | 160.0 |
 | giab-aws (phase0 ext) | HG008-T.Bioskryb_UG100_singlecell | 476 | 5220867898115 | 4,862.3 |
 
-**합계 81,806 files / 131,171,556,765,916 bytes = 122,163.0 GiB = 119.30 TiB = 131.2 TB** (5경로 전체). 카탈로그 합계(114.3 TiB)와의 차이: giab-aws 476 files(4.75 TiB), ENA 12 files(135 GiB), rel6 2 files(137 GiB)는 대응 GIAB 행의 `reads_format`에 출처만 적고 집계에 넣지 않는 관례 — [catalog/README.md](../catalog/README.md) "외부 유래 행".
+**합계 81,806 files / 131,171,556,765,395 bytes = 122,163.0 GiB = 119.30 TiB = 131.2 TB** (5경로 전체). 카탈로그 합계(114.3 TiB)와의 차이: giab-aws 476 files(4.75 TiB), ENA 12 files(135 GiB), rel6 2 files(137 GiB)는 대응 GIAB 행의 `reads_format`에 출처만 적고 집계에 넣지 않는 관례 — [catalog/README.md](../catalog/README.md) "외부 유래 행".

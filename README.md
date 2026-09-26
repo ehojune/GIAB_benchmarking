@@ -626,6 +626,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-25 — md5 전수 검증 잡 156685 집계·마감: phase0 본체 81,302 files 중 실질검증(PASS*) 77,511, FAIL 39건 전수를 라이브 FTP와 대조해 실손상 0건 확정(5건은 GIAB README 갱신 반영, 원본은 `.bak-20260925` 보존). 매니페스트 바이트 5줄·`docs/SIZES.md` 재생성. 기록: [docs/runs/2026-09-25-md5-verification-followup.md](docs/runs/2026-09-25-md5-verification-followup.md).
 - 2026-09-26 20:15 — 사용자 요청으로 gd3 HG002의 VerifyBamID만 개별 재시도(156798). 완료 CRAM에서 임시 BAM을 복원하며 정렬·변이는 재계산하지 않는다. [실행 기록](docs/runs/2026-09-26-verify-only-pilot.md)
 
 - 2026-09-26 20:00 — gd3·공개 비교 7건 완료 확인. gd2·gd3 일반 regermline은 253작업을 재계산해 중지했고 제거된 fastp 보고서만 복원 중이다. DONE과 개별 VerifyBamID 실패의 근거를 남겼다. [기록](docs/runs/2026-09-26-gd23-regermline-and-DONE.md)
