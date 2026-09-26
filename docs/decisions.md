@@ -1281,3 +1281,16 @@ Manta HG003은 1스레드 재시도156780도 같은 signal 11이라 반복하지
 - 카탈로그는 규칙대로 대응 GIAB 행(`HG008-T_bioskryb-libraries-UG100`)의 `reads_format`·정렬·인덱스 칸에 적고 파일 수·용량 집계에는 넣지 않는다 — 5 TB가 집계 밖에 있으므로 README 규모 문구와 `docs/SIZES.md`(5경로 합계)에 따로 명시한다. 정렬 주체가 Ultima라 `align_by=N/A`, VCF 콜러는 README에 없어 `N/A`.
 - 계산 노드는 외부망이 없어 다운로드는 로그인 노드 nohup(JOBS=6). 5.22 TB는 1 Gbit 회선에서 15~17시간.
 
+
+## 2026-09-26 — 총괄 인계(Codex → Claude)와 Illumina-250PE 정리 범위 정정
+
+사용자 지시(09-26 아침, 채팅): Codex 오류로 쓸 수 없으니 Claude 세션을 GIAB 총괄로 임명한다. 4시간마다 점검해 필요한 조치를 하고 GitHub 이슈로 보고한다(모바일 알림 목적). 국통바빅 제출은 `germline`, 오류 뒤 재시도는 `regermline`.
+09-25의 "Codex가 4시간 점검·보고 관리, Claude 타이머 재개 금지"는 이 지시로 대체된다 — 실행 담당이 한 명이라는 취지는 그대로이고 그 한 명이 바뀌었다. SCOPE에 한 단락으로 남겼다.
+
+**정정(정리 범위).** 09-25 21:44 기록은 Manta HG002/3과 HG002 verifybamID만 정리 대상으로 적고 HG004는 "실행 시 실패가 확인된 경우에만"이라 했다. 155529가 끝나 보니 HG004도 같은 두 단계에서 같은 방식으로 실패했다. Codex 정리잡 156782는 이것을 새 오류로 보고 멈췄다(옳은 보수성이지만, 같은 부류다). HG004 Manta는 조건부 승인 그대로이고, HG004 verifybamID는 HG002와 같은 처리(표는 써졌지만 sha256sum·QC 링크 없이 죽음)를 적용했다. 옮기지 않으면 Snakemake가 완료로 봐 재계산이 없고 `onstart`가 error_list를 지워 실패 근거만 사라진다. 이것이 09-25 승인의 첫 실제 실행이며 두 번째 재시도가 아니다.
+
+**제출 방식.** Codex는 자기 SGE 잡 안에서 정리 후 `bash regermline.sh`를 부르는 래퍼를 썼다. 이번엔 정리를 로그인 노드에서 하고(rename 19건, 수십 초) 사용자가 알려준 대로 `source bashrc.txt` → `cd` → `regermline`(alias 본문과 같은 qsub 줄)로 냈다. 잡 이름·로그 위치가 파이프라인 규약대로 남고 Java 17은 회사 잡과 같은 방식(`-V`)으로 전달된다. 독립 검증 3갈래가 지적한 "스트리밍 셸에서 `test -f`는 뒤 명령을 막지 못한다"는 `&&` 체인·마커·같은 세트 잡 0건 검사로 고쳤다.
+
+**Codex 부재 시 PR.** 문서만 바꾼 PR은 리뷰 없이 merge하고 본문에 그 사실을 적는다(사용자 자율 규칙 "Codex 3회 이내 후 merge"의 0회 판). 스크립트·서버 상태 가정을 바꾸는 PR은 열어 두고 사용자에게 넘긴다.
+
+근거: [실행 기록](runs/2026-09-26-illumina-regermline-retry.md), 서버 `G000/backup/20260926-illumina-regermline/`.

@@ -25,6 +25,8 @@ bioinfo-agent 범용 개발은 별도로 진행한다. **somatic 전장은 사�
 
 09-25 사용자 지시로 **Codex가 4시간 점검·보고와 승인된 후속 작업, HG002/3/4 비교 시점을 관리**한다. 회사 run 완료·QC 뒤 비교를 시작한다. PacBio 담당은 23:52 같은 비교를 보류했고 새 잡을 제출하지 않았다. 실행 담당은 한 명으로 유지하며 Claude 타이머·상시 polling은 다시 켜지 않는다.
 
+09-26 사용자 지시: Codex 오류로 쓸 수 없어 **GIAB 총괄을 Claude 세션이 맡는다.** 4시간마다 상황을 점검해 필요한 작업을 진행하고 GitHub 이슈로 보고한다. 위 09-25 단락의 "Codex가 관리"와 "Claude 타이머 재개 금지"는 이 지시로 대체된다. 국통바빅 제출은 `germline`, 오류 뒤 재시도는 `regermline`이다.
+
 새 에이전트, 반복 리뷰봇 호출, 추가 caller·중복 run·원인 연구·구간별 연구·구조 통일·자동 HARVEST/Yuan PR은 시작하지 않는다. 실제 오류는 작게 고친다. 새 실험이나 큰 개발이 필요하면 범위와 비용을 사용자와 상의한다.
 
 현재 상태는 [STATUS](STATUS.md), 남은 일은 [backlog](backlog.md), 옛 근거는 [reference](reference/README.md)에 있다.
