@@ -1,0 +1,430 @@
+{
+  "at": "2026-09-27T00:28:42.663800+09:00",
+  "basic_observed_at": "2026-09-27T00:16:28.799338+09:00",
+  "basic_jobs": [
+    {
+      "job": "155526",
+      "name": "regermline_java17_BGISEQ500",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 57107,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-BGISEQ500\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155527",
+      "name": "regermline_java17_Element-AVITI",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 61678,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Element-AVITI\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155528",
+      "name": "regermline_java17_Hiseq-300x",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 24020,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Hiseq-300x\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "156690",
+      "name": "regermline_java17_GIAB-publicData-MGISEQ2000-PCRfree",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 59411,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-MGISEQ2000-PCRfree\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "156763",
+      "name": "germline_G000-gd4-20260819",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 170771,
+      "done": null,
+      "errors": "- Time: Sat Sep 26 15:51:14 JST 2026\n- Sample: {'C000000400200000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400200000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 17:06:37 JST 2026\n- Sample: {'C000000400600000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400600000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 23:08:16 JST 2026\n- Sample: {'C000000400400000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400400000G0x1_verifybamID.err'}\n"
+    }
+  ],
+  "progress": {
+    "company_mark_complete": 22,
+    "company_mark_total": 24,
+    "unfinished_company_logs_grew": true,
+    "unfinished_public_logs_grew": true
+  },
+  "somatic": {
+    "qacct_count": 29,
+    "all_success": true,
+    "qc_sha256_unchanged": true,
+    "qc_rows": 13,
+    "summary_count": 28
+  },
+  "company_completion": [
+    {
+      "company": "gd1",
+      "qacct": [
+        "jobnumber    156760",
+        "end_time     Sat Sep 26 23:17:37 2026",
+        "failed       0",
+        "exit_status  0"
+      ],
+      "done": "- Cohort : G000\n- Batch name : G000-gd1-20260819\n- Message : Success\n",
+      "error_list_exists": false,
+      "verify_failures": [
+        {
+          "sample": "C000000100400000G0x1",
+          "master": "/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/log/germline_G000-gd1-20260819.o156760",
+          "line": 182209,
+          "checksum_exists": false,
+          "qc_link_exists": false
+        },
+        {
+          "sample": "C000000100600000G0x1",
+          "master": "/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/log/germline_G000-gd1-20260819.o156760",
+          "line": 191255,
+          "checksum_exists": false,
+          "qc_link_exists": false
+        }
+      ]
+    },
+    {
+      "company": "gd2",
+      "qacct": [
+        "jobnumber    156761",
+        "end_time     Sat Sep 26 19:06:10 2026",
+        "failed       0",
+        "exit_status  0"
+      ],
+      "done": "- Cohort : G000\n- Batch name : G000-gd2-20260819\n- Message : Success\n",
+      "error_list_exists": false,
+      "verify_failures": [
+        {
+          "sample": "C000000200100000G0x1",
+          "master": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/log/germline_G000-gd2-20260819.o156761",
+          "line": 205152,
+          "checksum_exists": false,
+          "qc_link_exists": false
+        },
+        {
+          "sample": "C000000200400000G0x1",
+          "master": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/log/germline_G000-gd2-20260819.o156761",
+          "line": 206830,
+          "checksum_exists": false,
+          "qc_link_exists": false
+        },
+        {
+          "sample": "C000000200600000G0x1",
+          "master": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/log/germline_G000-gd2-20260819.o156761",
+          "line": 208364,
+          "checksum_exists": false,
+          "qc_link_exists": false
+        }
+      ]
+    },
+    {
+      "company": "gd3",
+      "qacct": [
+        "jobnumber    156762",
+        "end_time     Sat Sep 26 14:21:31 2026",
+        "failed       0",
+        "exit_status  0"
+      ],
+      "done": "- Cohort : G000\n- Batch name : G000-gd3-20260819\n- Message : Success\n",
+      "error_list_exists": false,
+      "verify_failures": [
+        {
+          "sample": "C000000300100000G0x1",
+          "master": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/log/germline_G000-gd3-20260819.o156762",
+          "line": 142294,
+          "checksum_exists": false,
+          "qc_link_exists": false
+        },
+        {
+          "sample": "C000000300400000G0x1",
+          "master": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/log/germline_G000-gd3-20260819.o156762",
+          "line": 142443,
+          "checksum_exists": false,
+          "qc_link_exists": false
+        },
+        {
+          "sample": "C000000300300000G0x1",
+          "master": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/log/germline_G000-gd3-20260819.o156762",
+          "line": 142502,
+          "checksum_exists": false,
+          "qc_link_exists": false
+        }
+      ]
+    }
+  ],
+  "fastp_restoration": [
+    {
+      "company": "gd2",
+      "checks": [
+        {
+          "sample": "C000000200100000G0x1",
+          "primary_reads": 787181748,
+          "canonical_reports_match": true
+        },
+        {
+          "sample": "C000000200200000G0x1",
+          "primary_reads": 827375938,
+          "canonical_reports_match": true
+        },
+        {
+          "sample": "C000000200300000G0x1",
+          "primary_reads": 863417286,
+          "canonical_reports_match": true
+        },
+        {
+          "sample": "C000000200400000G0x1",
+          "primary_reads": 815010484,
+          "canonical_reports_match": true
+        },
+        {
+          "sample": "C000000200500000G0x1",
+          "primary_reads": 945972040,
+          "canonical_reports_match": true
+        },
+        {
+          "sample": "C000000200600000G0x1",
+          "primary_reads": 839541542,
+          "canonical_reports_match": true
+        }
+      ],
+      "marker": "/BiO/scratch/dyl/kbb/G000/backup/20260926-gd23-regermline/fastp-reports/gd2/RESTORED.json"
+    },
+    {
+      "company": "gd3",
+      "checks": [
+        {
+          "sample": "C000000300100000G0x1",
+          "primary_reads": 710228924,
+          "canonical_reports_match": true
+        },
+        {
+          "sample": "C000000300200000G0x1",
+          "primary_reads": 668248994,
+          "canonical_reports_match": true
+        },
+        {
+          "sample": "C000000300300000G0x1",
+          "primary_reads": 699111904,
+          "canonical_reports_match": true
+        },
+        {
+          "sample": "C000000300400000G0x1",
+          "primary_reads": 688532668,
+          "canonical_reports_match": true
+        },
+        {
+          "sample": "C000000300500000G0x1",
+          "primary_reads": 713031590,
+          "canonical_reports_match": true
+        },
+        {
+          "sample": "C000000300600000G0x1",
+          "primary_reads": 692786782,
+          "canonical_reports_match": true
+        }
+      ],
+      "marker": "/BiO/scratch/dyl/kbb/G000/backup/20260926-gd23-regermline/fastp-reports/gd3/RESTORED.json"
+    }
+  ],
+  "pilot_promoted": {
+    "at": "2026-09-27T00:23:05.225280+09:00",
+    "job": "156798",
+    "sample": "C000000300400000G0x1",
+    "source": "/BiO/scratch/dyl/kbb/G000/backup/20260926-verify-only-pilot",
+    "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/analyze_meta/C000000300400000G0x1/C000000300400000G0x1.selfSM",
+    "selfSM_sha256": "704ff566f6ce44eb02bee73c329f14739c6380180292896fe59f62b3a7bf4a0a",
+    "protected_outcomes_unchanged": true,
+    "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260926-verify-only-pilot/original-before-promotion",
+    "FREEMIX": "8.33497e-06"
+  },
+  "verify_jobs": [
+    {
+      "job": "156799",
+      "company": "gd1",
+      "sample": "C000000100400000G0x1",
+      "state": "r",
+      "stage": "restore_bam",
+      "bam_bytes": 15619032450
+    },
+    {
+      "job": "156800",
+      "company": "gd1",
+      "sample": "C000000100600000G0x1",
+      "state": "r",
+      "stage": "restore_bam",
+      "bam_bytes": 14528813200
+    },
+    {
+      "job": "156801",
+      "company": "gd2",
+      "sample": "C000000200100000G0x1",
+      "state": "r",
+      "stage": "restore_bam",
+      "bam_bytes": 14882146889
+    },
+    {
+      "job": "156802",
+      "company": "gd2",
+      "sample": "C000000200400000G0x1",
+      "state": "r",
+      "stage": "restore_bam",
+      "bam_bytes": 15573532304
+    },
+    {
+      "job": "156803",
+      "company": "gd2",
+      "sample": "C000000200600000G0x1",
+      "state": "r",
+      "stage": "restore_bam",
+      "bam_bytes": 15319452303
+    },
+    {
+      "job": "156804",
+      "company": "gd3",
+      "sample": "C000000300100000G0x1",
+      "state": "r",
+      "stage": "restore_bam",
+      "bam_bytes": 16049027368
+    },
+    {
+      "job": "156805",
+      "company": "gd3",
+      "sample": "C000000300300000G0x1",
+      "state": "r",
+      "stage": "restore_bam",
+      "bam_bytes": 16275927304
+    }
+  ],
+  "new_comparison_jobs": [
+    {
+      "job": "156806",
+      "label": "gd001-HG002",
+      "state": "r",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd001-HG002",
+      "phase": "GenotypeGVCFs"
+    },
+    {
+      "job": "156807",
+      "label": "gd001-HG003",
+      "state": "r",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd001-HG003",
+      "phase": "GenotypeGVCFs"
+    },
+    {
+      "job": "156808",
+      "label": "gd001-HG004",
+      "state": "r",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd001-HG004",
+      "phase": "GenotypeGVCFs"
+    },
+    {
+      "job": "156809",
+      "label": "gd002-HG002",
+      "state": "r",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd002-HG002",
+      "phase": "GenotypeGVCFs"
+    },
+    {
+      "job": "156810",
+      "label": "gd002-HG003",
+      "state": "r",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd002-HG003",
+      "phase": "GenotypeGVCFs"
+    },
+    {
+      "job": "156811",
+      "label": "gd002-HG004",
+      "state": "r",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd002-HG004",
+      "phase": "GenotypeGVCFs"
+    }
+  ],
+  "download": {
+    "at": "2026-09-27T00:16:34.636912",
+    "received_bytes": 4339216293920,
+    "target_bytes": 5220867898115,
+    "byte_percent": 83.11293023688032,
+    "counts": {
+      "size_match": 199,
+      "partial": 6,
+      "missing": 271,
+      "oversize": 0
+    },
+    "current_md5_markers_read_only": 102
+  },
+  "download_all_six_growing": true,
+  "owners": [
+    {
+      "session": "f4f3cd33-069f-4618-9370-aeca65f756bd",
+      "state": "idle",
+      "last_activity": "2026-09-26T11:44:04.918Z"
+    },
+    {
+      "session": "febe25e4-aaad-40ef-b098-6762f7da433f",
+      "state": "idle",
+      "last_activity": "2026-09-24T23:23:11.385Z"
+    },
+    {
+      "session": "9fd8a804-eb9d-4050-85dc-351146d3fc7a",
+      "state": "idle",
+      "last_activity": "2026-09-26T00:25:32.947Z"
+    },
+    {
+      "session": "f9a76550-837f-4f82-b561-d0a7cbbacc74",
+      "state": "idle",
+      "last_activity": "2026-09-26T11:27:51.898Z"
+    },
+    {
+      "session": "148efde9-4992-4a4a-8412-73d5e5e8053e",
+      "state": "idle",
+      "last_activity": "2026-09-26T11:47:33.509Z"
+    }
+  ],
+  "pr_state_observed": {
+    "68": {
+      "state": "MERGED",
+      "at": "2026-09-26T11:30:23Z",
+      "commit": "f9dee5fd62519895b7ff5ea2f87edafbf6f12627"
+    },
+    "69": {
+      "state": "MERGED",
+      "at": "2026-09-26T11:37:45Z",
+      "commit": "4bf78785f2414024eda4026ddb964a1d71add6ff"
+    },
+    "actor_report": "existing PacBio agent; no merge by this heartbeat"
+  },
+  "actions": {
+    "new_verify_jobs": 7,
+    "new_happy_jobs": 6,
+    "pilot_qc_promoted": 1,
+    "server_deletions": 0,
+    "claude_resume": false,
+    "new_automation": false,
+    "ont_wording_correction_only": true,
+    "catalog_workbook_changed": false
+  },
+  "source_sha256": {
+    "live-jobs-20260927-0018.txt": "43f09106e391afbf7fdf80ca8ed0563a447f50d27d161c00304f57c514ca0213",
+    "progress-snapshot-20260927-0018.txt": "ace512dffb5603d1d9cd7ff0a33eb6cc788a9569ec01e0d9f90f177b08b3c39a",
+    "company-progress-20260927-0018.txt": "5c9b5b8eab37b5f0e069c6d26dd0146e3ba75ed74cc5ce8930d1dbe183999f5a",
+    "company-errors-20260927-0018.txt": "151ff98946cdcf58f3250797bc12753871408c03ac5a571e3b4d1cce709eceac",
+    "somatic-current-20260927-0018.txt": "48de8058746cc102afd438d02fc77b9d9512d0e0fda37d471c9ccaae1553748e",
+    "download-status-20260927-0018.txt": "39ed07943700ebb75d22453d461c409ba3758bf39837d5a4a7f69a5f0ef18814",
+    "owner-status-20260927-0018.json": "bdb8ade712af11efdb0a1968db787efc3dd2abacd638d2e857ea60eae24146fa",
+    "gd1-completion-20260927-0018.txt": "ca8a37c40b4b7f031e60048751002c7957dbb9c9b03a15b6e90181fe37f72981",
+    "gd2-completion-20260927-0018.txt": "fbb74c695ad274e1cc8617d91e65bf8e6dd3db3bd5b3529b79c52946f46dd337",
+    "verified-restoration-20260927-0018.txt": "688f52c0980d037f0b57cde0750e1b5f45408c9d0360a8432c2d3208718637d7",
+    "verify-only-status-20260927-0006.txt": "e0988b17b6805ac046be789056f7ec3c7943b31608894ab0c83863b4d681f484",
+    "fastp-report-restore-status-20260927-0006.txt": "3478706a06463912437185d80c851ad98ae81a65bea598121708ba724fe81b66",
+    "verify-batch-submission-20260927.txt": "5ca5bcd2e2beac5d4e99ecba137b99c0fb72093b2f3844bfb3a8a02ef1e287a6",
+    "happy-prepared-20260927-gd12.txt": "15ddd5879753e288a7fc214badab737465731796b6bb93343c8c8dba04110fdd",
+    "happy-submitted-gd12-20260927.txt": "3e38bdadc01667372fdeef5aa41026ee6406491389bccf1a57234bbdf5bf5142",
+    "followups-20260927-0030.txt": "3d91c865e5a9378e8f0a7334eeb94807d2a624ad9e1a09d38b47458be42dbea8"
+  }
+}

@@ -626,6 +626,8 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-27 — fastp 보고서 12샘플 복원·Verify 단독 1건 복구 완료. 같은 QC 7건 재시도와 gd1·gd2 비교 6건 제출, 다운로드 83.11%. [기록](docs/runs/2026-09-27-verify-recovery-and-company-comparison.md)
+
 - 2026-09-26 — PacBio: 보고서 마무리 판을 main 에 반영(#74, HG003 Google 15kb 세대 혼합 표시). GIAB 전장 실측(germline 19런·SV 5런·somatic 13쌍)을 bioinfo-agent 검증 기록으로 되먹였다(ehojune/bioinfo-agent#58, 0.4.9). 보류하던 #68·#69 는 사용자 승인으로 Codex 리뷰 3회 후 병합.
 - 2026-09-25 — md5 전수 검증 잡 156685 집계·마감: phase0 본체 81,302 files 중 실질검증(PASS*) 77,511, FAIL 39건 전수를 라이브 FTP와 대조해 실손상 0건 확정(5건은 GIAB README 갱신 반영, 원본은 `.bak-20260925` 보존). 매니페스트 바이트 5줄·`docs/SIZES.md` 재생성. 기록: [docs/runs/2026-09-25-md5-verification-followup.md](docs/runs/2026-09-25-md5-verification-followup.md).
 - 2026-09-26 20:15 — 사용자 요청으로 gd3 HG002의 VerifyBamID만 개별 재시도(156798). 완료 CRAM에서 임시 BAM을 복원하며 정렬·변이는 재계산하지 않는다. [실행 기록](docs/runs/2026-09-26-verify-only-pilot.md)
