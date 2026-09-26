@@ -14,6 +14,6 @@
 
 공통 백업은 `/BiO/scratch/dyl/kbb/G000/backup/20260925-company-reset`. 재구성 기록은 `G000/.company-reset-20260925.json`. 원자료·샘플 정본·서버 엑셀 유지. 카탈로그·Excel은 자료 보유/처리 상태를 유지하며 비교 점수는 위 별도 보고서에 둔다. 다운로드 완료로 미리 표시하지 않는다.
 
-가벼운 정리 3건은 완료했다. PacBio 요약 PR #74, BioSkryb 수령 PR #75, [MD5 후속 대조](runs/2026-09-25-md5-verification-followup.md) PR #69는 main 반영(#69는 09-26 사용자 승인). [ONT 비교](https://github.com/ehojune/GIAB_benchmarking/blob/6a18594/docs/reference/2026-09-25-ont-guppy324-vs-345-same-flowcell.md)는 담당 브랜치에만 있다. PR #68(Java 17 제출 래퍼)은 사용자 승인으로 리뷰 후 병합한다.
+가벼운 정리 3건은 완료했다. PacBio 요약 PR #74, BioSkryb 수령 PR #75, [MD5 후속 대조](runs/2026-09-25-md5-verification-followup.md) PR #69는 main 반영(#69는 09-26 사용자 승인). [ONT 비교](https://github.com/ehojune/GIAB_benchmarking/blob/6a18594/docs/reference/2026-09-25-ont-guppy324-vs-345-same-flowcell.md)는 담당 브랜치에만 있다. PR #68(Java 17 제출 래퍼)도 09-26 사용자 승인으로 main 반영.
 
 **Codex가 단독으로 4시간 점검·보고와 승인된 후속 작업을 맡는다.** 현재 Claude 네 담당·임시 총괄은 idle. 새 Claude 실행·중복 자동화 없음. 남은 일은 [backlog](backlog.md), 과거 이력은 [조회용 자료](reference/README.md)에 있다.
