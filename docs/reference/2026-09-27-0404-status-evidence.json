@@ -1,0 +1,1213 @@
+{
+  "basic_checked_at": "2026-09-27T04:17:05.823315+09:00",
+  "retry_checked_at": "2026-09-27T04:43:28.222665+09:00",
+  "basic_progress": {
+    "at": "2026-09-27T04:17:05.823315+09:00",
+    "baseline": "2026-09-27T00:16:28.799338+09:00",
+    "jobs": [
+      {
+        "job": "155526",
+        "name": "regermline_java17_BGISEQ500",
+        "state": "r",
+        "start_unchanged": true,
+        "cpu_delta_seconds": 55239,
+        "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-BGISEQ500\n- Message : Error\n",
+        "errors": null
+      },
+      {
+        "job": "155527",
+        "name": "regermline_java17_Element-AVITI",
+        "state": "r",
+        "start_unchanged": true,
+        "cpu_delta_seconds": 59239,
+        "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Element-AVITI\n- Message : Error\n",
+        "errors": null
+      },
+      {
+        "job": "155528",
+        "name": "regermline_java17_Hiseq-300x",
+        "state": "r",
+        "start_unchanged": true,
+        "cpu_delta_seconds": 23334,
+        "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Hiseq-300x\n- Message : Error\n",
+        "errors": null
+      },
+      {
+        "job": "156690",
+        "name": "regermline_java17_GIAB-publicData-MGISEQ2000-PCRfree",
+        "state": "r",
+        "start_unchanged": true,
+        "cpu_delta_seconds": 63942,
+        "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-MGISEQ2000-PCRfree\n- Message : Error\n",
+        "errors": null
+      },
+      {
+        "job": "156763",
+        "name": "germline_G000-gd4-20260819",
+        "state": "r",
+        "start_unchanged": true,
+        "cpu_delta_seconds": 36625,
+        "done": null,
+        "errors": "- Time: Sat Sep 26 15:51:14 JST 2026\n- Sample: {'C000000400200000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400200000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 17:06:37 JST 2026\n- Sample: {'C000000400600000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400600000G0x1_verifybamID.err'}\n- Time: Sat Sep 26 23:08:16 JST 2026\n- Sample: {'C000000400400000G0x1'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/13.verifybamID/C000000400400000G0x1_verifybamID.err'}\n"
+      }
+    ],
+    "jobs_no_longer_in_qstat": [],
+    "public_mark": [
+      {
+        "set": "BGISEQ500",
+        "sample": "HG002",
+        "bytes_delta": 2056228,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "6.0",
+          "12397",
+          "17901"
+        ],
+        "after": [
+          "6.0",
+          "14273",
+          "17901"
+        ],
+        "mtime": "2026-09-27T04:16:41"
+      },
+      {
+        "set": "BGISEQ500",
+        "sample": "HG003",
+        "bytes_delta": 2064286,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "11.0",
+          "10679",
+          "18330"
+        ],
+        "after": [
+          "11.0",
+          "12547",
+          "18330"
+        ],
+        "mtime": "2026-09-27T04:16:28"
+      },
+      {
+        "set": "BGISEQ500",
+        "sample": "HG004",
+        "bytes_delta": 2094248,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "6.0",
+          "15659",
+          "18074"
+        ],
+        "after": [
+          "6.0",
+          "17567",
+          "18074"
+        ],
+        "mtime": "2026-09-27T04:17:01"
+      },
+      {
+        "set": "Element-AVITI",
+        "sample": "HG002",
+        "bytes_delta": 3051563,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "11.0",
+          "125",
+          "19836"
+        ],
+        "after": [
+          "11.0",
+          "2909",
+          "19836"
+        ],
+        "mtime": "2026-09-27T04:16:43"
+      },
+      {
+        "set": "Element-AVITI",
+        "sample": "HG003",
+        "bytes_delta": 1924751,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "6.0",
+          "13069",
+          "19051"
+        ],
+        "after": [
+          "6.0",
+          "14825",
+          "19051"
+        ],
+        "mtime": "2026-09-27T04:16:38"
+      },
+      {
+        "set": "Element-AVITI",
+        "sample": "HG004",
+        "bytes_delta": 1752407,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "6.0",
+          "5557",
+          "21167"
+        ],
+        "after": [
+          "6.0",
+          "7165",
+          "21167"
+        ],
+        "mtime": "2026-09-27T04:17:00"
+      },
+      {
+        "set": "Hiseq-300x",
+        "sample": "HG002",
+        "bytes_delta": 1538403,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "2.0",
+          "42525",
+          "52839"
+        ],
+        "after": [
+          "2.0",
+          "44436",
+          "52839"
+        ],
+        "mtime": "2026-09-27T04:16:55"
+      },
+      {
+        "set": "Hiseq-300x",
+        "sample": "HG003",
+        "bytes_delta": 1519069,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "2.0",
+          "41019",
+          "53467"
+        ],
+        "after": [
+          "2.0",
+          "42906",
+          "53467"
+        ],
+        "mtime": "2026-09-27T04:16:13"
+      },
+      {
+        "set": "Hiseq-300x",
+        "sample": "HG004",
+        "bytes_delta": 1482040,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "2.0",
+          "41571",
+          "61287"
+        ],
+        "after": [
+          "2.0",
+          "43412",
+          "61287"
+        ],
+        "mtime": "2026-09-27T04:16:42"
+      },
+      {
+        "set": "Illumina-250PE",
+        "sample": "HG002",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "12618",
+          "12618"
+        ],
+        "after": [
+          "16.0",
+          "12618",
+          "12618"
+        ],
+        "mtime": "2026-09-25T16:35:14"
+      },
+      {
+        "set": "Illumina-250PE",
+        "sample": "HG003",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "11393",
+          "11393"
+        ],
+        "after": [
+          "16.0",
+          "11393",
+          "11393"
+        ],
+        "mtime": "2026-09-25T05:28:57"
+      },
+      {
+        "set": "Illumina-250PE",
+        "sample": "HG004",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "12474",
+          "12474"
+        ],
+        "after": [
+          "16.0",
+          "12474",
+          "12474"
+        ],
+        "mtime": "2026-09-26T01:27:02"
+      },
+      {
+        "set": "MGISEQ2000-PCRfree",
+        "sample": "HG002",
+        "bytes_delta": 6046300,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "5.0",
+          "2129",
+          "15160"
+        ],
+        "after": [
+          "5.0",
+          "9717",
+          "15160"
+        ],
+        "mtime": "2026-09-27T04:17:06"
+      },
+      {
+        "set": "MGISEQ2000-PCRfree",
+        "sample": "HG003",
+        "bytes_delta": 4468370,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "5.0",
+          "10027",
+          "14631"
+        ],
+        "after": [
+          "6.0",
+          "711",
+          "14631"
+        ],
+        "mtime": "2026-09-27T04:16:33"
+      },
+      {
+        "set": "MGISEQ2000-PCRfree",
+        "sample": "HG004",
+        "bytes_delta": 1556280,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "2.0",
+          "24031",
+          "29656"
+        ],
+        "after": [
+          "2.0",
+          "25969",
+          "29656"
+        ],
+        "mtime": "2026-09-27T04:16:34"
+      }
+    ],
+    "company_mark": [
+      {
+        "set": "G000-gd1-20260819",
+        "sample": "C000000100100000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4757",
+          "4757"
+        ],
+        "after": [
+          "16.0",
+          "4757",
+          "4757"
+        ],
+        "mtime": "2026-09-26T20:08:51"
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample": "C000000100200000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4830",
+          "4830"
+        ],
+        "after": [
+          "16.0",
+          "4830",
+          "4830"
+        ],
+        "mtime": "2026-09-26T20:38:05"
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample": "C000000100300000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4303",
+          "4303"
+        ],
+        "after": [
+          "16.0",
+          "4303",
+          "4303"
+        ],
+        "mtime": "2026-09-26T15:32:54"
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample": "C000000100400000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4024",
+          "4024"
+        ],
+        "after": [
+          "16.0",
+          "4024",
+          "4024"
+        ],
+        "mtime": "2026-09-26T10:50:12"
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample": "C000000100500000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4219",
+          "4219"
+        ],
+        "after": [
+          "16.0",
+          "4219",
+          "4219"
+        ],
+        "mtime": "2026-09-26T15:15:50"
+      },
+      {
+        "set": "G000-gd1-20260819",
+        "sample": "C000000100600000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4278",
+          "4278"
+        ],
+        "after": [
+          "16.0",
+          "4278",
+          "4278"
+        ],
+        "mtime": "2026-09-26T15:27:14"
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample": "C000000200100000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4093",
+          "4093"
+        ],
+        "after": [
+          "16.0",
+          "4093",
+          "4093"
+        ],
+        "mtime": "2026-09-26T06:50:26"
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample": "C000000200200000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4221",
+          "4221"
+        ],
+        "after": [
+          "16.0",
+          "4221",
+          "4221"
+        ],
+        "mtime": "2026-09-26T10:59:20"
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample": "C000000200300000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4304",
+          "4304"
+        ],
+        "after": [
+          "16.0",
+          "4304",
+          "4304"
+        ],
+        "mtime": "2026-09-26T12:36:15"
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample": "C000000200400000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4146",
+          "4146"
+        ],
+        "after": [
+          "16.0",
+          "4146",
+          "4146"
+        ],
+        "mtime": "2026-09-26T09:59:20"
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample": "C000000200500000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4861",
+          "4861"
+        ],
+        "after": [
+          "16.0",
+          "4861",
+          "4861"
+        ],
+        "mtime": "2026-09-26T16:40:59"
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "sample": "C000000200600000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4301",
+          "4301"
+        ],
+        "after": [
+          "16.0",
+          "4301",
+          "4301"
+        ],
+        "mtime": "2026-09-26T12:25:09"
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample": "C000000300100000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3662",
+          "3662"
+        ],
+        "after": [
+          "16.0",
+          "3662",
+          "3662"
+        ],
+        "mtime": "2026-09-26T10:46:36"
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample": "C000000300200000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3468",
+          "3468"
+        ],
+        "after": [
+          "16.0",
+          "3468",
+          "3468"
+        ],
+        "mtime": "2026-09-26T08:04:44"
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample": "C000000300300000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3531",
+          "3531"
+        ],
+        "after": [
+          "16.0",
+          "3531",
+          "3531"
+        ],
+        "mtime": "2026-09-26T08:50:36"
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample": "C000000300400000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3575",
+          "3575"
+        ],
+        "after": [
+          "16.0",
+          "3575",
+          "3575"
+        ],
+        "mtime": "2026-09-26T11:07:54"
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample": "C000000300500000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3638",
+          "3638"
+        ],
+        "after": [
+          "16.0",
+          "3638",
+          "3638"
+        ],
+        "mtime": "2026-09-26T11:27:55"
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "sample": "C000000300600000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3557",
+          "3557"
+        ],
+        "after": [
+          "16.0",
+          "3557",
+          "3557"
+        ],
+        "mtime": "2026-09-26T10:58:36"
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample": "C000000400100000G0x1_mark.log",
+        "bytes_delta": 3669879,
+        "was_done": false,
+        "done": true,
+        "before": [
+          "16.0",
+          "3481",
+          "5360"
+        ],
+        "after": [
+          "16.0",
+          "5360",
+          "5360"
+        ],
+        "mtime": "2026-09-27T03:39:55"
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample": "C000000400200000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4073",
+          "4073"
+        ],
+        "after": [
+          "16.0",
+          "4073",
+          "4073"
+        ],
+        "mtime": "2026-09-26T13:36:30"
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample": "C000000400300000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "3906",
+          "3906"
+        ],
+        "after": [
+          "16.0",
+          "3906",
+          "3906"
+        ],
+        "mtime": "2026-09-26T10:25:34"
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample": "C000000400400000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4880",
+          "4880"
+        ],
+        "after": [
+          "16.0",
+          "4880",
+          "4880"
+        ],
+        "mtime": "2026-09-26T21:22:18"
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample": "C000000400500000G0x1_mark.log",
+        "bytes_delta": 5806380,
+        "was_done": false,
+        "done": false,
+        "before": [
+          "16.0",
+          "841",
+          "5814"
+        ],
+        "after": [
+          "16.0",
+          "3813",
+          "5814"
+        ],
+        "mtime": "2026-09-27T04:16:09"
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "sample": "C000000400600000G0x1_mark.log",
+        "bytes_delta": 0,
+        "was_done": true,
+        "done": true,
+        "before": [
+          "16.0",
+          "4243",
+          "4243"
+        ],
+        "after": [
+          "16.0",
+          "4243",
+          "4243"
+        ],
+        "mtime": "2026-09-26T15:13:52"
+      }
+    ],
+    "somatic": {
+      "qacct_count": 29,
+      "all_success": true,
+      "qc_sha256_unchanged": true,
+      "qc_rows": 13,
+      "summary_count": 28
+    }
+  },
+  "download": {
+    "at": "2026-09-27T04:19:18.979081",
+    "counts": {
+      "size_match": 476,
+      "partial": 0,
+      "missing": 0,
+      "oversize": 0
+    },
+    "received_bytes": 5220867898115,
+    "target_bytes": 5220867898115,
+    "byte_percent": 100.0,
+    "by_kind": {
+      "reads": {
+        "files": 119,
+        "received_bytes": 5151464595703,
+        "target_bytes": 5151464595703,
+        "size_match": 119,
+        "partial": 0,
+        "missing": 0,
+        "oversize": 0
+      },
+      "index": {
+        "files": 238,
+        "received_bytes": 349171271,
+        "target_bytes": 349171271,
+        "size_match": 238,
+        "partial": 0,
+        "missing": 0,
+        "oversize": 0
+      },
+      "variants": {
+        "files": 119,
+        "received_bytes": 69054131141,
+        "target_bytes": 69054131141,
+        "size_match": 119,
+        "partial": 0,
+        "missing": 0,
+        "oversize": 0
+      }
+    },
+    "current_md5_markers_read_only": 238,
+    "partial": []
+  },
+  "download_actual_md5": {
+    "matched": 238,
+    "no_reference": 238,
+    "log": "/BiO/scratch/ehojune/GIAB_benchmark/ext/phase0_ext_verify_20260927_0404.log"
+  },
+  "verify_batch": [
+    {
+      "sample": "C000000100400000G0x1",
+      "job": "156799",
+      "state": "verified",
+      "qacct": {
+        "rc": 0,
+        "fields": [
+          "jobnumber    156799",
+          "end_time     Sun Sep 27 00:45:07 2026",
+          "failed       0",
+          "exit_status  0"
+        ],
+        "stderr": ""
+      }
+    },
+    {
+      "sample": "C000000100600000G0x1",
+      "job": "156800",
+      "state": "verified",
+      "qacct": {
+        "rc": 0,
+        "fields": [
+          "jobnumber    156800",
+          "end_time     Sun Sep 27 00:47:26 2026",
+          "failed       0",
+          "exit_status  0"
+        ],
+        "stderr": ""
+      }
+    },
+    {
+      "sample": "C000000200100000G0x1",
+      "job": "156801",
+      "state": "failed",
+      "qacct": {
+        "rc": 0,
+        "fields": [
+          "jobnumber    156801",
+          "end_time     Sun Sep 27 00:46:51 2026",
+          "failed       0",
+          "exit_status  1"
+        ],
+        "stderr": ""
+      }
+    },
+    {
+      "sample": "C000000200400000G0x1",
+      "job": "156802",
+      "state": "failed",
+      "qacct": {
+        "rc": 0,
+        "fields": [
+          "jobnumber    156802",
+          "end_time     Sun Sep 27 00:45:57 2026",
+          "failed       0",
+          "exit_status  1"
+        ],
+        "stderr": ""
+      }
+    },
+    {
+      "sample": "C000000200600000G0x1",
+      "job": "156803",
+      "state": "verified",
+      "qacct": {
+        "rc": 0,
+        "fields": [
+          "jobnumber    156803",
+          "end_time     Sun Sep 27 00:46:06 2026",
+          "failed       0",
+          "exit_status  0"
+        ],
+        "stderr": ""
+      }
+    },
+    {
+      "sample": "C000000300100000G0x1",
+      "job": "156804",
+      "state": "failed",
+      "qacct": {
+        "rc": 0,
+        "fields": [
+          "jobnumber    156804",
+          "end_time     Sun Sep 27 00:43:02 2026",
+          "failed       0",
+          "exit_status  1"
+        ],
+        "stderr": ""
+      }
+    },
+    {
+      "sample": "C000000300300000G0x1",
+      "job": "156805",
+      "state": "verified",
+      "qacct": {
+        "rc": 0,
+        "fields": [
+          "jobnumber    156805",
+          "end_time     Sun Sep 27 00:42:03 2026",
+          "failed       0",
+          "exit_status  0"
+        ],
+        "stderr": ""
+      }
+    }
+  ],
+  "promoted": [
+    {
+      "at": "2026-09-27T04:19:42.853993+09:00",
+      "job": "156799",
+      "sample": "C000000100400000G0x1",
+      "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000100400000G0x1",
+      "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/analyze_meta/C000000100400000G0x1/C000000100400000G0x1.selfSM",
+      "selfSM_sha256": "fa9d44744c5b0aeddfc19883ca9e3ca614238b22269deb3509fa9b52bc9302a0",
+      "protected_outcomes_unchanged": true,
+      "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000100400000G0x1/original-before-promotion",
+      "FREEMIX": "1.94207e-05"
+    },
+    {
+      "at": "2026-09-27T04:19:43.090860+09:00",
+      "job": "156800",
+      "sample": "C000000100600000G0x1",
+      "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000100600000G0x1",
+      "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/analyze_meta/C000000100600000G0x1/C000000100600000G0x1.selfSM",
+      "selfSM_sha256": "5e36463d56cf6c8db6c1922ebe745541f0eb805f8aaceec4fc7797027ef93410",
+      "protected_outcomes_unchanged": true,
+      "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000100600000G0x1/original-before-promotion",
+      "FREEMIX": "2.68309e-05"
+    },
+    {
+      "at": "2026-09-27T04:19:43.324200+09:00",
+      "job": "156803",
+      "sample": "C000000200600000G0x1",
+      "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000200600000G0x1",
+      "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/analyze_meta/C000000200600000G0x1/C000000200600000G0x1.selfSM",
+      "selfSM_sha256": "bf2fade6e50468ef10153093bc724e479d32eb4f3282cf20fdd9ca09eef8a488",
+      "protected_outcomes_unchanged": true,
+      "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000200600000G0x1/original-before-promotion",
+      "FREEMIX": "1.45955e-06"
+    },
+    {
+      "at": "2026-09-27T04:19:43.582001+09:00",
+      "job": "156805",
+      "sample": "C000000300300000G0x1",
+      "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000300300000G0x1",
+      "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/analyze_meta/C000000300300000G0x1/C000000300300000G0x1.selfSM",
+      "selfSM_sha256": "df8b43768b658f31e14b6d68f4b80a45066dc4a43a90d0f0a8be442aa8b3e30b",
+      "protected_outcomes_unchanged": true,
+      "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000300300000G0x1/original-before-promotion",
+      "FREEMIX": "2.18992e-05"
+    }
+  ],
+  "single_retry": {
+    "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200400000G0x1",
+    "markers": {
+      "job.json": {
+        "at": "2026-09-27T04:23:33.089260+09:00",
+        "job": "156812",
+        "sample": "C000000200400000G0x1",
+        "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200400000G0x1"
+      },
+      "started.json": {
+        "at": "2026-09-27T04:23:44.731205+09:00",
+        "job": "156812",
+        "host": "shepherd-1-2"
+      },
+      "verifybamid.exit.json": {
+        "at": "2026-09-27T04:38:55.258274+09:00",
+        "returncode": 0
+      },
+      "VERIFIED.json": {
+        "at": "2026-09-27T04:38:55.290125+09:00",
+        "job": "156812",
+        "sample": "C000000200400000G0x1",
+        "verify_exit": 0,
+        "selfSM": {
+          "#SEQ_ID": "C000000200400000G0x1",
+          "RG": "NA",
+          "CHIP_ID": "NA",
+          "#SNPS": "100000",
+          "#READS": "3516738",
+          "AVG_DP": "35.7694",
+          "FREEMIX": "1.86554e-06",
+          "FREELK1": "-881159",
+          "FREELK0": "-1.00369e+06",
+          "FREE_RH": "NA",
+          "FREE_RA": "NA",
+          "CHIPMIX": "NA",
+          "CHIPLK1": "NA",
+          "CHIPLK0": "NA",
+          "CHIP_RH": "NA",
+          "CHIP_RA": "NA",
+          "DPREF": "NA",
+          "RDPHET": "NA",
+          "RDPALT": "NA"
+        },
+        "selfSM_sha256": "a0ace8c4781c776af43fedf9eafd0288585f8ccd3c7dccbf27178d4bacad9368",
+        "Ancestry_sha256": "67645f5aabf7e59bf910f8ee3b1550e8e71e4fcc1763a1d802d3c12b9dd4a147",
+        "protected_outcomes_unchanged": true,
+        "canonical_results_modified": false,
+        "threads": 1
+      },
+      "PROMOTED.json": {
+        "at": "2026-09-27T04:40:43.939806+09:00",
+        "job": "156812",
+        "sample": "C000000200400000G0x1",
+        "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200400000G0x1",
+        "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/analyze_meta/C000000200400000G0x1/C000000200400000G0x1.selfSM",
+        "selfSM_sha256": "a0ace8c4781c776af43fedf9eafd0288585f8ccd3c7dccbf27178d4bacad9368",
+        "protected_outcomes_unchanged": true,
+        "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200400000G0x1/original-before-promotion",
+        "FREEMIX": "1.86554e-06"
+      }
+    },
+    "promoted_hash_confirmed": true,
+    "qacct": {
+      "rc": 0,
+      "fields": [
+        "jobnumber    156812              ",
+        "end_time     Sun Sep 27 04:38:55 2026",
+        "failed       0    ",
+        "exit_status  0                   "
+      ],
+      "stderr": ""
+    },
+    "stderr_tail": "chr21:25912793-25912793...\nNOTICE - Process chr21:25944559-25944559...\nNOTICE - Process chr21:25989391-25989391...\nNOTICE - Process chr21:25990009-25990009...\nNOTICE - Process chr21:26026896-26026896...\nNOTICE - Process chr21:26028804-26028804...\nNOTICE - Process chr21:26043021-26043021...\nNOTICE - Process chr21:26054507-26054507...\nNOTICE - Process chr21:26063209-26063209...\nNOTICE - Process chr21:26199150-26199150...\nNOTICE - Process chr21:26203198-26203198...\nNOTICE - Process chr21:26251437-26251437...\nNOTICE - Process chr21:26254042-26254042...\nNOTICE - Process chr21:26263596-26263596...\nNOTICE - Process chr21:26277417-26277417...\nNOTICE - Process chr21:26277931-26277931...\nNOTICE - Process chr21:26278995-26278995...\nNOTICE - Process chr21:26280000-26280000...\nNOTICE - Process chr21:26301823-26301823...\nNOTICE - Process chr21:26331648-26331648...\nNOTICE - Process chr21:26402030-26402030...\nNOTICE - Process chr21:26402799-26402799...\nNOTICE - Process chr21:26410673-26410673...\nNOTICE - Process chr21:26425201-26425201...\nNOTICE - Process chr21:26468248-26468248...\nNOTICE - Process chr21:26489674-26489674...\nNOTICE - Process chr21:26491116-26491116...\nNOTICE - Process chr21:26503889-26503889...\nNOTICE - Process chr21:26505808-26505808...\nNOTICE - Process chr21:26537068-26537068...\nNOTICE - Process chr21:26551884-26551884...\nNOTICE - Process chr21:26587771-26587771...\nNOTICE - Process chr21:26604181-26604181...\n[SimplePileup] Total Number Bases: 3516738\n[SimplePileup] Total Number Markers: 98317\nNOTICE - Number of marker in Reference Matrix:100000\nNOTICE - Number of marker shared with input file:98317\nNOTICE - Mean Depth:35.769379\nNOTICE - SD Depth:8.189359\nNOTICE - 97593 SNP markers remained after sanity check.\nNOTICE - Passing Marker Sanity Check...\nNOTICE - Success!\n"
+  },
+  "remaining_retries": [
+    {
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000300100000G0x1",
+      "markers": {
+        "job.json": {
+          "at": "2026-09-27T04:40:44.411105+09:00",
+          "job": "156814",
+          "sample": "C000000300100000G0x1",
+          "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000300100000G0x1"
+        },
+        "started.json": {
+          "at": "2026-09-27T04:40:59.776887+09:00",
+          "job": "156814",
+          "host": "shepherd-1-1"
+        }
+      },
+      "qacct": {
+        "rc": 1,
+        "fields": [],
+        "stderr": "error: job id 156814 not found\n"
+      },
+      "stderr_tail": "CE - Process chr12:92082293-92082293...\nNOTICE - Process chr12:92125513-92125513...\nNOTICE - Process chr12:92129967-92129967...\nNOTICE - Process chr12:92172861-92172861...\nNOTICE - Process chr12:92179678-92179678...\nNOTICE - Process chr12:92200005-92200005...\nNOTICE - Process chr12:92221947-92221947...\nNOTICE - Process chr12:92222483-92222483...\nNOTICE - Process chr12:92271854-92271854...\nNOTICE - Process chr12:92276997-92276997...\nNOTICE - Process chr12:92328448-92328448...\nNOTICE - Process chr12:92355426-92355426...\nNOTICE - Process chr12:92425363-92425363...\nNOTICE - Process chr12:92425690-92425690...\nNOTICE - Process chr12:92430555-92430555...\nNOTICE - Process chr12:92432821-92432821...\nNOTICE - Process chr12:92434493-92434493...\nNOTICE - Process chr12:92462255-92462255...\nNOTICE - Process chr12:92468672-92468672...\nNOTICE - Process chr12:92470442-92470442...\nNOTICE - Process chr12:92484530-92484530...\nNOTICE - Process chr12:92484843-92484843...\nNOTICE - Process chr12:92496744-92496744...\nNOTICE - Process chr12:92511346-92511346...\nNOTICE - Process chr12:92522532-92522532...\nNOTICE - Process chr12:92542004-92542004...\nNOTICE - Process chr12:92564936-92564936...\nNOTICE - Process chr12:92575579-92575579...\nNOTICE - Process chr12:92602191-92602191...\nNOTICE - Process chr12:92616235-92616235...\nNOTICE - Process chr12:92632357-92632357...\nNOTICE - Process chr12:92633460-92633460...\nNOTICE - Process chr12:92655913-92655913...\nNOTICE - Process chr12:92670414-92670414...\nNOTICE - Process chr12:92701154-92701154...\nNOTICE - Process chr12:92705980-92705980...\nNOTICE - Process chr12:92753092-92753092...\nNOTICE - Process chr12:92757161-92757161...\nNOTICE - Process chr12:92781337-92781337...\nNOTICE - Process chr12:92864889-92864889...\nNOTICE - Process chr12:92897826-92897826...\n"
+    },
+    {
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200100000G0x1",
+      "markers": {
+        "job.json": {
+          "at": "2026-09-27T04:40:44.197175+09:00",
+          "job": "156813",
+          "sample": "C000000200100000G0x1",
+          "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200100000G0x1"
+        },
+        "started.json": {
+          "at": "2026-09-27T04:40:59.785441+09:00",
+          "job": "156813",
+          "host": "shepherd-1-13"
+        }
+      },
+      "qacct": {
+        "rc": 1,
+        "fields": [],
+        "stderr": "error: job id 156813 not found\n"
+      },
+      "stderr_tail": "60...\nNOTICE - Process chr11:117431102-117431102...\nNOTICE - Process chr11:117438778-117438778...\nNOTICE - Process chr11:117439306-117439306...\nNOTICE - Process chr11:117440453-117440453...\nNOTICE - Process chr11:117458699-117458699...\nNOTICE - Process chr11:117463677-117463677...\nNOTICE - Process chr11:117472482-117472482...\nNOTICE - Process chr11:117491146-117491146...\nNOTICE - Process chr11:117493176-117493176...\nNOTICE - Process chr11:117495106-117495106...\nNOTICE - Process chr11:117540949-117540949...\nNOTICE - Process chr11:117553290-117553290...\nNOTICE - Process chr11:117559764-117559764...\nNOTICE - Process chr11:117560216-117560216...\nNOTICE - Process chr11:117560330-117560330...\nNOTICE - Process chr11:117563772-117563772...\nNOTICE - Process chr11:117593458-117593458...\nNOTICE - Process chr11:117624230-117624230...\nNOTICE - Process chr11:117625586-117625586...\nNOTICE - Process chr11:117652560-117652560...\nNOTICE - Process chr11:117666638-117666638...\nNOTICE - Process chr11:117671434-117671434...\nNOTICE - Process chr11:117692497-117692497...\nNOTICE - Process chr11:117704914-117704914...\nNOTICE - Process chr11:117713629-117713629...\nNOTICE - Process chr11:117735605-117735605...\nNOTICE - Process chr11:117737898-117737898...\nNOTICE - Process chr11:117783240-117783240...\nNOTICE - Process chr11:117785257-117785257...\nNOTICE - Process chr11:117801846-117801846...\nNOTICE - Process chr11:117803113-117803113...\nNOTICE - Process chr11:117817802-117817802...\nNOTICE - Process chr11:117823374-117823374...\nNOTICE - Process chr11:117828047-117828047...\nNOTICE - Process chr11:117848165-117848165...\nNOTICE - Process chr11:117851786-117851786...\nNOTICE - Process chr11:117867032-117867032...\nNOTICE - Process chr11:117874303-117874303...\nNOTICE - Process chr11:117891573-117891573...\nNOTICE - Process chr11:117916562-117916562...\n"
+    }
+  ],
+  "comparison_jobs": [
+    {
+      "label": "gd001-HG002",
+      "job": "156806",
+      "qacct": {
+        "rc": 0,
+        "fields": [
+          "jobnumber    156806",
+          "end_time     Sun Sep 27 01:41:54 2026",
+          "failed       0",
+          "exit_status  0"
+        ],
+        "stderr": ""
+      }
+    },
+    {
+      "label": "gd001-HG003",
+      "job": "156807",
+      "qacct": {
+        "rc": 0,
+        "fields": [
+          "jobnumber    156807",
+          "end_time     Sun Sep 27 01:36:56 2026",
+          "failed       0",
+          "exit_status  0"
+        ],
+        "stderr": ""
+      }
+    },
+    {
+      "label": "gd001-HG004",
+      "job": "156808",
+      "qacct": {
+        "rc": 0,
+        "fields": [
+          "jobnumber    156808",
+          "end_time     Sun Sep 27 01:41:09 2026",
+          "failed       0",
+          "exit_status  0"
+        ],
+        "stderr": ""
+      }
+    },
+    {
+      "label": "gd002-HG002",
+      "job": "156809",
+      "qacct": {
+        "rc": 0,
+        "fields": [
+          "jobnumber    156809",
+          "end_time     Sun Sep 27 01:42:53 2026",
+          "failed       0",
+          "exit_status  0"
+        ],
+        "stderr": ""
+      }
+    },
+    {
+      "label": "gd002-HG003",
+      "job": "156810",
+      "qacct": {
+        "rc": 0,
+        "fields": [
+          "jobnumber    156810",
+          "end_time     Sun Sep 27 01:40:31 2026",
+          "failed       0",
+          "exit_status  0"
+        ],
+        "stderr": ""
+      }
+    },
+    {
+      "label": "gd002-HG004",
+      "job": "156811",
+      "qacct": {
+        "rc": 0,
+        "fields": [
+          "jobnumber    156811",
+          "end_time     Sun Sep 27 01:42:54 2026",
+          "failed       0",
+          "exit_status  0"
+        ],
+        "stderr": ""
+      }
+    }
+  ],
+  "owner_states": [
+    {
+      "session": "f4f3cd33-069f-4618-9370-aeca65f756bd",
+      "state": "idle",
+      "last_activity": "2026-09-26T11:44:04.918Z"
+    },
+    {
+      "session": "febe25e4-aaad-40ef-b098-6762f7da433f",
+      "state": "idle",
+      "last_activity": "2026-09-24T23:23:11.385Z"
+    },
+    {
+      "session": "9fd8a804-eb9d-4050-85dc-351146d3fc7a",
+      "state": "idle",
+      "last_activity": "2026-09-26T00:25:32.947Z"
+    },
+    {
+      "session": "f9a76550-837f-4f82-b561-d0a7cbbacc74",
+      "state": "idle",
+      "last_activity": "2026-09-26T11:27:51.898Z"
+    },
+    {
+      "session": "148efde9-4992-4a4a-8412-73d5e5e8053e",
+      "state": "idle",
+      "last_activity": "2026-09-26T15:48:01.034Z"
+    }
+  ],
+  "xlsx_validation": {
+    "passed": true,
+    "expected_changes": 4,
+    "changed_catalog_rows": 1,
+    "master_cells_compared": 22542,
+    "issue_count": 0,
+    "issues": []
+  },
+  "xlsx_render_limitation": "Workbook runtime stalled; OOXML four-cell patch used. All other ZIP members byte-identical; visual rendering unavailable."
+}
