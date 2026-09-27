@@ -626,6 +626,8 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-28 — [05:30 점검](docs/runs/2026-09-28-0530-heartbeat.md): Manta 세 샘플 복구·반영 완료. 공개 기본 4잡과 Illumina 채점 3잡 진행.
+
 - 2026-09-28 — [05시 점검](docs/runs/2026-09-28-0500-heartbeat.md): HG002 Manta 스택 수정 성공·결과 반영, HG003/4 실행 유지. Illumina250PE 기존 소변이 채점 3건 추가 제출.
 
 - 2026-09-28 — 사용자 지시로 [Manta HG002/3/4 병렬 실행](docs/reference/2026-09-28-manta-parallel.json): 156831–156833, 스택 64MiB 수정. 한 샘플 성공 대기 조건을 없앴다.

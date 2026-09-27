@@ -1,0 +1,286 @@
+{
+  "at": "2026-09-28T05:33:52.385924+09:00",
+  "host": "nbbcluster2",
+  "user": "ehojune",
+  "public_at": "2026-09-28T05:31:57.223968+09:00",
+  "public_baseline": "2026-09-28T05:01:05.360325+09:00",
+  "public": [
+    {
+      "set": "BGISEQ500",
+      "job": "155526",
+      "state": "r",
+      "cpu_delta_seconds": 6678,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "11.0",
+            "10771",
+            "17901"
+          ],
+          "log_bytes_delta": 267429
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "15.0",
+            "8119",
+            "18330"
+          ],
+          "log_bytes_delta": 350558
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "11.0",
+            "14153",
+            "18074"
+          ],
+          "log_bytes_delta": 287301
+        }
+      ]
+    },
+    {
+      "set": "Element-AVITI",
+      "job": "155527",
+      "state": "r",
+      "cpu_delta_seconds": 6578,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "11.0",
+            "15317",
+            "19836"
+          ],
+          "log_bytes_delta": 254200
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "11.0",
+            "9305",
+            "19051"
+          ],
+          "log_bytes_delta": 233026
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "6.0",
+            "18461",
+            "21167"
+          ],
+          "log_bytes_delta": 232392
+        }
+      ]
+    },
+    {
+      "set": "Hiseq-300x",
+      "job": "155528",
+      "state": "r",
+      "cpu_delta_seconds": 3643,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "4.0",
+            "3765",
+            "52839"
+          ],
+          "log_bytes_delta": 185395
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "4.0",
+            "1896",
+            "53467"
+          ],
+          "log_bytes_delta": 199769
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "2.0",
+            "55156",
+            "61287"
+          ],
+          "log_bytes_delta": 202860
+        }
+      ]
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "job": "156690",
+      "state": "r",
+      "cpu_delta_seconds": 5330,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "6.0",
+            "13511",
+            "15160"
+          ],
+          "log_bytes_delta": 309216
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "11.0",
+            "571",
+            "14631"
+          ],
+          "log_bytes_delta": 382391
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "4.0",
+            "10982",
+            "29656"
+          ],
+          "log_bytes_delta": 218425
+        }
+      ]
+    }
+  ],
+  "manta": [
+    {
+      "sample": "GIAB-publicData-Illumina-250PE-HG002",
+      "job": "156831",
+      "promoted_at": "2026-09-28T05:05:03.086021+09:00",
+      "filtered_variant_records": 11658,
+      "qacct": {
+        "failed": "0",
+        "exit_status": "0"
+      },
+      "canonical_variants_link": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/results/variants",
+      "variants_source": "/BiO/scratch/ehojune/GIAB_benchmark/repairs/manta-diagnosis-20260928/HG002-stack64/run/results/variants",
+      "outcome_link": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/outcome/GIAB-publicData-Illumina-250PE-HG002/GIAB-publicData-Illumina-250PE-HG002.diploidSV.conInv_filtered.vcf",
+      "outcome_sha256": "79013e9dff8ca288ab6119dd7a375cb4052960bac6203254ab98d71556485cee",
+      "verified_at": "2026-09-28T04:58:13.676467+09:00",
+      "workflow_exit": 0,
+      "input_and_prior_output_preserved": true,
+      "broken_output_or_qc_links": 0,
+      "outcome_file_count": 12,
+      "qc_file_count": 10
+    },
+    {
+      "sample": "GIAB-publicData-Illumina-250PE-HG003",
+      "job": "156832",
+      "promoted_at": "2026-09-28T05:32:49.917932+09:00",
+      "filtered_variant_records": 10601,
+      "qacct": {
+        "failed": "0",
+        "exit_status": "0"
+      },
+      "canonical_variants_link": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/results/variants",
+      "variants_source": "/BiO/scratch/ehojune/GIAB_benchmark/repairs/manta-diagnosis-20260928/HG003-stack64/run/results/variants",
+      "outcome_link": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/outcome/GIAB-publicData-Illumina-250PE-HG003/GIAB-publicData-Illumina-250PE-HG003.diploidSV.conInv_filtered.vcf",
+      "outcome_sha256": "6d4d8532886b459462d6806b105c7a1eb7908985175879e03ddff4b7c3769a3a",
+      "verified_at": "2026-09-28T05:21:46.164481+09:00",
+      "workflow_exit": 0,
+      "input_and_prior_output_preserved": true,
+      "broken_output_or_qc_links": 0,
+      "outcome_file_count": 12,
+      "qc_file_count": 10
+    },
+    {
+      "sample": "GIAB-publicData-Illumina-250PE-HG004",
+      "job": "156833",
+      "promoted_at": "2026-09-28T05:32:50.486618+09:00",
+      "filtered_variant_records": 11523,
+      "qacct": {
+        "failed": "0",
+        "exit_status": "0"
+      },
+      "canonical_variants_link": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/results/variants",
+      "variants_source": "/BiO/scratch/ehojune/GIAB_benchmark/repairs/manta-diagnosis-20260928/HG004-stack64/run/results/variants",
+      "outcome_link": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/outcome/GIAB-publicData-Illumina-250PE-HG004/GIAB-publicData-Illumina-250PE-HG004.diploidSV.conInv_filtered.vcf",
+      "outcome_sha256": "9da2aa2906be6981c2e1c24401bc66879ec48e0532edcdc75a296c89248d8006",
+      "verified_at": "2026-09-28T05:28:01.330252+09:00",
+      "workflow_exit": 0,
+      "input_and_prior_output_preserved": true,
+      "broken_output_or_qc_links": 0,
+      "outcome_file_count": 12,
+      "qc_file_count": 10
+    }
+  ],
+  "comparisons_complete": 16,
+  "comparisons_running": [
+    {
+      "label": "public-Illumina250PE-HG002",
+      "job": "156834",
+      "state": "r",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG002",
+      "usage": [
+        "usage         1:            cpu=02:12:41, mem=11565.14383 GB s, io=42.03875 GB, vmem=1.395G, maxvmem=46.741G"
+      ],
+      "stage": "hap.py (GenotypeGVCFs complete)"
+    },
+    {
+      "label": "public-Illumina250PE-HG003",
+      "job": "156835",
+      "state": "r",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG003",
+      "usage": [
+        "usage         1:            cpu=02:07:38, mem=11268.92222 GB s, io=41.45581 GB, vmem=1.388G, maxvmem=48.565G"
+      ],
+      "stage": "hap.py (GenotypeGVCFs complete)"
+    },
+    {
+      "label": "public-Illumina250PE-HG004",
+      "job": "156836",
+      "state": "r",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG004",
+      "usage": [
+        "usage         1:            cpu=02:15:27, mem=11878.36618 GB s, io=41.26156 GB, vmem=1.375G, maxvmem=47.122G"
+      ],
+      "stage": "hap.py (GenotypeGVCFs complete)"
+    }
+  ],
+  "historical_set_markers": {
+    "__DONE__": {
+      "text": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Illumina-250PE\n- Message : Error\n",
+      "mtime": "2026-09-26T09:39:49",
+      "sha256": "9244ff16a2eefcd96a7791402aa5eb7b91b1bfb0a1b24eb6f810d5aa482fc225"
+    },
+    "error_list.txt": {
+      "text": "- Time: Sat Sep 26 09:10:29 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG004'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004_manta.err'}\n- Time: Sat Sep 26 09:12:14 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG002'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002_manta.err'}\n- Time: Sat Sep 26 09:12:29 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003_manta.err'}\n- Time: Sat Sep 26 09:20:39 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG002'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/13.verifybamID/GIAB-publicData-Illumina-250PE-HG002_verifybamID.err'}\n- Time: Sat Sep 26 09:38:33 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'haplo_gather'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/10.haplo/GIAB-publicData-Illumina-250PE-HG003_haplo.err'}\n- Time: Sat Sep 26 09:39:47 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'count_variants'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/15.countVariants/GIAB-publicData-Illumina-250PE-HG003_countVariants.err'}\n",
+      "mtime": "2026-09-26T09:39:47",
+      "sha256": "81380c962065c15116429b6016e9289d51aa87d9c4808686c0a3a304c98a8e86"
+    }
+  },
+  "history_interpretation": "Manta3 and VerifyHG002 recovered separately. HG003 haplo_gather/count_variants were already validated existing-link collisions (2026-09-26 handoff); historical markers preserved, not reclassified as a successful master exit.",
+  "owners": [
+    {
+      "session": "f4f3cd33-069f-4618-9370-aeca65f756bd",
+      "state": "not-listed",
+      "last_activity": "2026-09-26T11:44:04.918Z"
+    },
+    {
+      "session": "febe25e4-aaad-40ef-b098-6762f7da433f",
+      "state": "not-listed",
+      "last_activity": "2026-09-24T23:23:11.385Z"
+    },
+    {
+      "session": "9fd8a804-eb9d-4050-85dc-351146d3fc7a",
+      "state": "not-listed",
+      "last_activity": "2026-09-26T00:25:32.947Z"
+    },
+    {
+      "session": "f9a76550-837f-4f82-b561-d0a7cbbacc74",
+      "state": "not-listed",
+      "last_activity": "2026-09-26T11:27:51.898Z"
+    },
+    {
+      "session": "148efde9-4992-4a4a-8412-73d5e5e8053e",
+      "state": "not-listed",
+      "last_activity": "2026-09-27T07:47:58.599Z"
+    }
+  ],
+  "submitted_this_check": [],
+  "closed_work": "Company24 and Verify24/24, prior16 comparisons, download/ONT/PacBio baseline and HG008 somatic13 unchanged."
+}

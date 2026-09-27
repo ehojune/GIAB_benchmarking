@@ -1363,3 +1363,8 @@ gd4 비교 3건 모두 정상 종료해 총 16건 표를 마감했다. gd4 HG002
 ## 2026-09-28 05시 — Manta 결과 반영과 소변이 병행
 
 HG002 Manta는 exit0·VCF/QC·해시·원자료 보존을 확인해 누락된 variants 경로와 outcome 링크만 추가했다. 실패 workflow·DONE/error_list는 보존했다. Illumina 세 샘플의 소변이 입력은 haplo exit0·샘플/인덱스·CRAM·리드 수·Verify QC를 통과했으므로 SV 복구와 독립적으로 기존 채점 156834–156836을 제출했다. 같은 truth/영역/도구, 새 출력 폴더를 쓴다. [근거](reference/2026-09-28-0500-status-evidence.json).
+
+
+## 2026-09-28 05:32 — Manta 복구 종료
+
+세 샘플의 스택 64MiB 실행이 모두 정상 종료했다. HG003/4도 입력·해시·VCF QC를 확인해 기존 경로에 연결했다. 이전 DONE/error_list는 보존하며 master 성공으로 고쳐 쓰지 않는다. [검증·반영 근거](reference/2026-09-28-0530-status-evidence.json).
