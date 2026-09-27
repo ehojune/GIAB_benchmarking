@@ -626,6 +626,7 @@ GIAB는 같은 장비의 원시 데이터와 분석 결과를 **다른 디렉토
 
 ## Journal
 
+- 2026-09-28 03시 — Illumina Manta 3건 최종 재시도도 실패해 각 2/2회로 반복 종료. 공개 4잡·12샘플은 계속 진전. [점검](docs/runs/2026-09-28-0303-heartbeat.md).
 - 2026-09-28 00시 — Verify 잔여 3건 복구·반영: 회사 24/24, Illumina 3/3 QC 확보. Manta만 마지막 2차 156827–156829 실행. [점검](docs/runs/2026-09-28-0002-heartbeat.md).
 - 2026-09-27 21시 — 사용자 승인으로 남은 Verify·Manta 6건을 단계별 최대 2회 재시도, 1차 156821–156826 제출. 기존 점검은 3시간으로 변경. [기록](docs/runs/2026-09-27-bounded-retries.md).
 - 2026-09-27 20시 — 회사·공개 비교 16건 완료. gd4 QC 두 건 반영으로 정본 QC 22/24, 공개 4잡은 계속 진전. [비교표](docs/reports/2026-09-27-shortread-sixteen.md) · [점검](docs/runs/2026-09-27-reboot-status.md).

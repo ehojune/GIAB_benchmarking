@@ -1,0 +1,454 @@
+{
+  "at": "2026-09-28T03:04:19.650653+09:00",
+  "baseline": "2026-09-28T00:03:07.690166+09:00",
+  "host": "nbbcluster2",
+  "user": "ehojune",
+  "jobs": [
+    {
+      "job": "155526",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 38566,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-BGISEQ500\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155527",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 40291,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Element-AVITI\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155528",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 20143,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Hiseq-300x\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "156690",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 34062,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-MGISEQ2000-PCRfree\n- Message : Error\n",
+      "errors": null
+    }
+  ],
+  "jobs_no_longer_in_qstat": [],
+  "public_mark": [
+    {
+      "set": "BGISEQ500",
+      "sample": "HG002",
+      "bytes_delta": 1641219,
+      "before": [
+        "11.0",
+        "8089",
+        "17901"
+      ],
+      "after": [
+        "11.0",
+        "9585",
+        "17901"
+      ],
+      "mtime": "2026-09-28T03:04:04",
+      "done": false
+    },
+    {
+      "set": "BGISEQ500",
+      "sample": "HG003",
+      "bytes_delta": 1962683,
+      "before": [
+        "15.0",
+        "4867",
+        "18330"
+      ],
+      "after": [
+        "15.0",
+        "6655",
+        "18330"
+      ],
+      "mtime": "2026-09-28T03:04:14",
+      "done": false
+    },
+    {
+      "set": "BGISEQ500",
+      "sample": "HG004",
+      "bytes_delta": 1653131,
+      "before": [
+        "11.0",
+        "11433",
+        "18074"
+      ],
+      "after": [
+        "11.0",
+        "12929",
+        "18074"
+      ],
+      "mtime": "2026-09-28T03:04:01",
+      "done": false
+    },
+    {
+      "set": "Element-AVITI",
+      "sample": "HG002",
+      "bytes_delta": 1586868,
+      "before": [
+        "11.0",
+        "12727",
+        "19836"
+      ],
+      "after": [
+        "11.0",
+        "14163",
+        "19836"
+      ],
+      "mtime": "2026-09-28T03:04:11",
+      "done": false
+    },
+    {
+      "set": "Element-AVITI",
+      "sample": "HG003",
+      "bytes_delta": 1644159,
+      "before": [
+        "11.0",
+        "6653",
+        "19051"
+      ],
+      "after": [
+        "11.0",
+        "8149",
+        "19051"
+      ],
+      "mtime": "2026-09-28T03:03:21",
+      "done": false
+    },
+    {
+      "set": "Element-AVITI",
+      "sample": "HG004",
+      "bytes_delta": 1571737,
+      "before": [
+        "6.0",
+        "15951",
+        "21167"
+      ],
+      "after": [
+        "6.0",
+        "17385",
+        "21167"
+      ],
+      "mtime": "2026-09-28T03:04:06",
+      "done": false
+    },
+    {
+      "set": "Hiseq-300x",
+      "sample": "HG002",
+      "bytes_delta": 1097978,
+      "before": [
+        "4.0",
+        "1215",
+        "52839"
+      ],
+      "after": [
+        "4.0",
+        "2589",
+        "52839"
+      ],
+      "mtime": "2026-09-28T03:03:52",
+      "done": false
+    },
+    {
+      "set": "Hiseq-300x",
+      "sample": "HG003",
+      "bytes_delta": 1173841,
+      "before": [
+        "2.0",
+        "52676",
+        "53467"
+      ],
+      "after": [
+        "4.0",
+        "672",
+        "53467"
+      ],
+      "mtime": "2026-09-28T03:04:06",
+      "done": false
+    },
+    {
+      "set": "Hiseq-300x",
+      "sample": "HG004",
+      "bytes_delta": 1050603,
+      "before": [
+        "2.0",
+        "52674",
+        "61287"
+      ],
+      "after": [
+        "2.0",
+        "53979",
+        "61287"
+      ],
+      "mtime": "2026-09-28T03:03:57",
+      "done": false
+    },
+    {
+      "set": "Illumina-250PE",
+      "sample": "HG002",
+      "bytes_delta": 0,
+      "before": [
+        "16.0",
+        "12618",
+        "12618"
+      ],
+      "after": [
+        "16.0",
+        "12618",
+        "12618"
+      ],
+      "mtime": "2026-09-25T16:35:14",
+      "done": true
+    },
+    {
+      "set": "Illumina-250PE",
+      "sample": "HG003",
+      "bytes_delta": 0,
+      "before": [
+        "16.0",
+        "11393",
+        "11393"
+      ],
+      "after": [
+        "16.0",
+        "11393",
+        "11393"
+      ],
+      "mtime": "2026-09-25T05:28:57",
+      "done": true
+    },
+    {
+      "set": "Illumina-250PE",
+      "sample": "HG004",
+      "bytes_delta": 0,
+      "before": [
+        "16.0",
+        "12474",
+        "12474"
+      ],
+      "after": [
+        "16.0",
+        "12474",
+        "12474"
+      ],
+      "mtime": "2026-09-26T01:27:02",
+      "done": true
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "sample": "HG002",
+      "bytes_delta": 1889645,
+      "before": [
+        "6.0",
+        "10439",
+        "15160"
+      ],
+      "after": [
+        "6.0",
+        "12165",
+        "15160"
+      ],
+      "mtime": "2026-09-28T03:04:08",
+      "done": false
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "sample": "HG003",
+      "bytes_delta": 1946529,
+      "before": [
+        "6.0",
+        "11945",
+        "14631"
+      ],
+      "after": [
+        "6.0",
+        "13721",
+        "14631"
+      ],
+      "mtime": "2026-09-28T03:03:44",
+      "done": false
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "sample": "HG004",
+      "bytes_delta": 1376447,
+      "before": [
+        "4.0",
+        "7879",
+        "29656"
+      ],
+      "after": [
+        "4.0",
+        "9606",
+        "29656"
+      ],
+      "mtime": "2026-09-28T03:03:21",
+      "done": false
+    }
+  ],
+  "manta_final": {
+    "at": "2026-09-28T03:04:20.739957+09:00",
+    "host": "nbbcluster2",
+    "user": "ehojune",
+    "attempts": [
+      {
+        "at": "2026-09-28T00:05:28.213897+09:00",
+        "key": "manta-illumina-HG002",
+        "sample": "GIAB-publicData-Illumina-250PE-HG002",
+        "attempt": 2,
+        "job": "156827",
+        "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-2",
+        "qacct": {
+          "jobnumber": "156827",
+          "failed": "0",
+          "exit_status": "1",
+          "end_time": "Mon Sep 28 00:11:23 2026",
+          "maxvmem": "1.281GB",
+          "hostname": "shepherd-1-1.kobic.re.kr"
+        },
+        "failure": {
+          "at": "2026-09-28T00:11:23.225984+09:00",
+          "sample": "GIAB-publicData-Illumina-250PE-HG002",
+          "key": "manta-illumina-HG002",
+          "attempt": 2,
+          "error": "('manta_workflow', 1, '')",
+          "stage": {
+            "at": "2026-09-28T00:05:31.528584+09:00",
+            "stage": "manta_workflow",
+            "command": [
+              "/BiO/scratch/dyl/kbb/opt/python2.7.18/bin/python2",
+              "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-2/run/runWorkflow.py",
+              "-j",
+              "10"
+            ]
+          }
+        },
+        "workflow_exit": "1",
+        "log": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-2/run/workflow.error.log.txt",
+        "evidence": [
+          "[2026-09-27T15:11:23.183571Z] [shepherd-1-1.kobic.re.kr] [84292_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-27T15:11:10.609494Z] [shepherd-1-1.kobic.re.kr] [84292_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11"
+        ],
+        "verified_exists": false
+      },
+      {
+        "at": "2026-09-28T00:05:28.450587+09:00",
+        "key": "manta-illumina-HG003",
+        "sample": "GIAB-publicData-Illumina-250PE-HG003",
+        "attempt": 2,
+        "job": "156828",
+        "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-2",
+        "qacct": {
+          "jobnumber": "156828",
+          "failed": "0",
+          "exit_status": "1",
+          "end_time": "Mon Sep 28 00:11:23 2026",
+          "maxvmem": "1.295GB",
+          "hostname": "shepherd-1-12.kobic.re.kr"
+        },
+        "failure": {
+          "at": "2026-09-28T00:11:23.169730+09:00",
+          "sample": "GIAB-publicData-Illumina-250PE-HG003",
+          "key": "manta-illumina-HG003",
+          "attempt": 2,
+          "error": "('manta_workflow', 1, '')",
+          "stage": {
+            "at": "2026-09-28T00:05:31.517284+09:00",
+            "stage": "manta_workflow",
+            "command": [
+              "/BiO/scratch/dyl/kbb/opt/python2.7.18/bin/python2",
+              "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-2/run/runWorkflow.py",
+              "-j",
+              "10"
+            ]
+          }
+        },
+        "workflow_exit": "1",
+        "log": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-2/run/workflow.error.log.txt",
+        "evidence": [
+          "[2026-09-27T15:11:23.128768Z] [shepherd-1-12.kobic.re.kr] [1779848_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-27T15:11:22.161006Z] [shepherd-1-12.kobic.re.kr] [1779848_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11"
+        ],
+        "verified_exists": false
+      },
+      {
+        "at": "2026-09-28T00:05:28.687013+09:00",
+        "key": "manta-illumina-HG004",
+        "sample": "GIAB-publicData-Illumina-250PE-HG004",
+        "attempt": 2,
+        "job": "156829",
+        "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-2",
+        "qacct": {
+          "jobnumber": "156829",
+          "failed": "0",
+          "exit_status": "1",
+          "end_time": "Mon Sep 28 00:10:23 2026",
+          "maxvmem": "1.298GB",
+          "hostname": "shepherd-1-11.kobic.re.kr"
+        },
+        "failure": {
+          "at": "2026-09-28T00:10:23.287395+09:00",
+          "sample": "GIAB-publicData-Illumina-250PE-HG004",
+          "key": "manta-illumina-HG004",
+          "attempt": 2,
+          "error": "('manta_workflow', 1, '')",
+          "stage": {
+            "at": "2026-09-28T00:05:31.516561+09:00",
+            "stage": "manta_workflow",
+            "command": [
+              "/BiO/scratch/dyl/kbb/opt/python2.7.18/bin/python2",
+              "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-2/run/runWorkflow.py",
+              "-j",
+              "10"
+            ]
+          }
+        },
+        "workflow_exit": "1",
+        "log": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-2/run/workflow.error.log.txt",
+        "evidence": [
+          "[2026-09-27T15:10:23.260592Z] [shepherd-1-11.kobic.re.kr] [2003345_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-27T15:10:20.388824Z] [shepherd-1-11.kobic.re.kr] [2003345_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11"
+        ],
+        "verified_exists": false
+      }
+    ]
+  },
+  "owners": [
+    {
+      "session": "f4f3cd33-069f-4618-9370-aeca65f756bd",
+      "state": "not-listed",
+      "last_activity": "2026-09-26T11:44:04.918Z",
+      "activity_unchanged": true
+    },
+    {
+      "session": "febe25e4-aaad-40ef-b098-6762f7da433f",
+      "state": "not-listed",
+      "last_activity": "2026-09-24T23:23:11.385Z",
+      "activity_unchanged": true
+    },
+    {
+      "session": "9fd8a804-eb9d-4050-85dc-351146d3fc7a",
+      "state": "not-listed",
+      "last_activity": "2026-09-26T00:25:32.947Z",
+      "activity_unchanged": true
+    },
+    {
+      "session": "f9a76550-837f-4f82-b561-d0a7cbbacc74",
+      "state": "not-listed",
+      "last_activity": "2026-09-26T11:27:51.898Z",
+      "activity_unchanged": true
+    },
+    {
+      "session": "148efde9-4992-4a4a-8412-73d5e5e8053e",
+      "state": "not-listed",
+      "last_activity": "2026-09-27T07:47:58.599Z",
+      "activity_unchanged": true
+    }
+  ]
+}

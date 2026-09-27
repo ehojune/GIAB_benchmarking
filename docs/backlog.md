@@ -4,11 +4,11 @@
 
 | 순서 | 남은 일 | 완료 기준 |
 |---|---|---|
-| 1 | Illumina Manta 2차 156827–156829 회수 | 종료코드·SV 출력 QC 확인. 이번 승인 이후 각 2/2회째이므로 실패해도 재제출 없음 |
+| 1 | Illumina Manta 3건 원인 미확정 | 2/2회 모두 실패. 로그에서 작은 수정 근거가 확인되기 전에는 추가 실행 없음 |
 | 2 | 공개 기본 4잡 확인 | 종료·산출물·최소 QC 확인 후 필요한 기존 비교 |
 | 3 | 업체 롱리드 수령 뒤 기존 pipeline/QC/truth 비교 | 현재 수령 대기 |
 
-**남은 오류:** 공개 Illumina HG002/3/4 Manta. 1차의 `GenerateSVCandidates`가 signal 11로 종료했다. 2차 결과까지 확인한 뒤 원인·다음 판단을 보고한다. Verify 세 건은 성공해 정식 QC에 반영했으며 재실행하지 않는다.
+**남은 오류:** 공개 Illumina HG002/3/4 Manta. 1·2차 모두 `GenerateSVCandidates`가 signal 11로 종료했다. 입력·실행환경·도구 중 원인을 특정하지 못했으며 추가 반복은 중단했다. Verify 세 건은 성공해 정식 QC에 반영했으며 재실행하지 않는다.
 
 완료: 회사 기본 24샘플·Verify QC 24/24(실패 11건 모두 복구), Illumina Verify 3/3, 비교 16건, BioSkryb 수령·검증·카탈로그 반영, fastp 보고서 복원, somatic 13쌍 QC·채점.
 
