@@ -1,0 +1,221 @@
+{
+  "at": "2026-09-27T20:51:06.680719+09:00",
+  "completed_comparisons": [
+    {
+      "label": "gd004-HG002",
+      "job": "156815",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG002",
+      "summary_path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG002/gd004-HG002.summary.csv",
+      "summary_sha256": "0dd91f078b8eb4044c6d3320eb6b8499b3f737037cafc9c59345f14b74f2a81c",
+      "rows": [
+        {
+          "Type": "INDEL",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "525466",
+          "TRUTH.TP": "509612",
+          "TRUTH.FN": "15854",
+          "QUERY.TOTAL": "939015",
+          "QUERY.FP": "5124",
+          "QUERY.UNK": "403191",
+          "FP.gt": "1328",
+          "FP.al": "2403",
+          "METRIC.Recall": "0.969829",
+          "METRIC.Precision": "0.990437",
+          "METRIC.Frac_NA": "0.429377",
+          "METRIC.F1_Score": "0.980025",
+          "TRUTH.TOTAL.TiTv_ratio": "",
+          "QUERY.TOTAL.TiTv_ratio": "",
+          "TRUTH.TOTAL.het_hom_ratio": "1.52827573414",
+          "QUERY.TOTAL.het_hom_ratio": "2.00031233664"
+        },
+        {
+          "Type": "SNP",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "3365115",
+          "TRUTH.TP": "3263159",
+          "TRUTH.FN": "101956",
+          "QUERY.TOTAL": "3845411",
+          "QUERY.FP": "49453",
+          "QUERY.UNK": "531746",
+          "FP.gt": "3901",
+          "FP.al": "2636",
+          "METRIC.Recall": "0.969702",
+          "METRIC.Precision": "0.985076",
+          "METRIC.Frac_NA": "0.138281",
+          "METRIC.F1_Score": "0.977329",
+          "TRUTH.TOTAL.TiTv_ratio": "2.10012885565",
+          "QUERY.TOTAL.TiTv_ratio": "1.96639606146",
+          "TRUTH.TOTAL.het_hom_ratio": "1.58119585325",
+          "QUERY.TOTAL.het_hom_ratio": "1.71565881658"
+        }
+      ],
+      "parameters": {
+        "engine": "xcmp",
+        "threads": 16,
+        "vcf1": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38/HG002_GRCh38_1_22_v4.2.1_benchmark.vcf.gz",
+        "vcf2": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG002/gd004-HG002.genotyped.vcf.gz",
+        "ref": "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+        "fp_bedfile": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38/HG002_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed"
+      },
+      "version": "",
+      "qacct": {
+        "jobnumber": "156815",
+        "end_time": "Sun Sep 27 17:10:44 2026",
+        "failed": "0",
+        "exit_status": "0"
+      },
+      "input_unchanged": {
+        "label": "gd004-HG002",
+        "input": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/10.haplo/C000000400400000G0x1_v1.1.0.g.vcf.gz",
+        "bytes": 3872802581,
+        "mtime_ns": 1790434334000000000,
+        "inode": 144115951053318442,
+        "qc_gap": "verifybamID retry pending"
+      }
+    },
+    {
+      "label": "gd004-HG003",
+      "job": "156816",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG003",
+      "summary_path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG003/gd004-HG003.summary.csv",
+      "summary_sha256": "8e5af0661f9a816993a8b4d10e508c8d93d08d3b1d16069bb0b0a78a39597be1",
+      "rows": [
+        {
+          "Type": "INDEL",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "504497",
+          "TRUTH.TP": "490283",
+          "TRUTH.FN": "14214",
+          "QUERY.TOTAL": "941897",
+          "QUERY.FP": "4639",
+          "QUERY.UNK": "426627",
+          "FP.gt": "1293",
+          "FP.al": "2077",
+          "METRIC.Recall": "0.971825",
+          "METRIC.Precision": "0.990997",
+          "METRIC.Frac_NA": "0.452944",
+          "METRIC.F1_Score": "0.981318",
+          "TRUTH.TOTAL.TiTv_ratio": "",
+          "QUERY.TOTAL.TiTv_ratio": "",
+          "TRUTH.TOTAL.het_hom_ratio": "1.48975928106",
+          "QUERY.TOTAL.het_hom_ratio": "1.98126243986"
+        },
+        {
+          "Type": "SNP",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "3327481",
+          "TRUTH.TP": "3229737",
+          "TRUTH.FN": "97744",
+          "QUERY.TOTAL": "3843587",
+          "QUERY.FP": "49112",
+          "QUERY.UNK": "563767",
+          "FP.gt": "3696",
+          "FP.al": "2587",
+          "METRIC.Recall": "0.970625",
+          "METRIC.Precision": "0.985026",
+          "METRIC.Frac_NA": "0.146677",
+          "METRIC.F1_Score": "0.977773",
+          "TRUTH.TOTAL.TiTv_ratio": "2.10258504162",
+          "QUERY.TOTAL.TiTv_ratio": "1.95674516291",
+          "TRUTH.TOTAL.het_hom_ratio": "1.53513777165",
+          "QUERY.TOTAL.het_hom_ratio": "1.68604130864"
+        }
+      ],
+      "parameters": {
+        "engine": "xcmp",
+        "threads": 16,
+        "vcf1": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG003_NA24149_father/NISTv4.2.1/GRCh38/HG003_GRCh38_1_22_v4.2.1_benchmark.vcf.gz",
+        "vcf2": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG003/gd004-HG003.genotyped.vcf.gz",
+        "ref": "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+        "fp_bedfile": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG003_NA24149_father/NISTv4.2.1/GRCh38/HG003_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed"
+      },
+      "version": "",
+      "qacct": {
+        "jobnumber": "156816",
+        "end_time": "Sun Sep 27 17:09:56 2026",
+        "failed": "0",
+        "exit_status": "0"
+      },
+      "input_unchanged": {
+        "label": "gd004-HG003",
+        "input": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/10.haplo/C000000400500000G0x1_v1.1.0.g.vcf.gz",
+        "bytes": 2698219863,
+        "mtime_ns": 1790472957000000000,
+        "inode": 144115951170776085,
+        "qc_gap": null
+      }
+    },
+    {
+      "label": "gd004-HG004",
+      "job": "156817",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG004",
+      "summary_path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG004/gd004-HG004.summary.csv",
+      "summary_sha256": "c88da1394038e3e88c3b3f81c7f902bed3750debdf70a8dfa26674c0cf886874",
+      "rows": [
+        {
+          "Type": "INDEL",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "510516",
+          "TRUTH.TP": "494215",
+          "TRUTH.FN": "16301",
+          "QUERY.TOTAL": "927825",
+          "QUERY.FP": "5281",
+          "QUERY.UNK": "407724",
+          "FP.gt": "1329",
+          "FP.al": "2716",
+          "METRIC.Recall": "0.96807",
+          "METRIC.Precision": "0.989846",
+          "METRIC.Frac_NA": "0.439441",
+          "METRIC.F1_Score": "0.978837",
+          "TRUTH.TOTAL.TiTv_ratio": "",
+          "QUERY.TOTAL.TiTv_ratio": "",
+          "TRUTH.TOTAL.het_hom_ratio": "1.51613073552",
+          "QUERY.TOTAL.het_hom_ratio": "1.95102011475"
+        },
+        {
+          "Type": "SNP",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "3346598",
+          "TRUTH.TP": "3245924",
+          "TRUTH.FN": "100674",
+          "QUERY.TOTAL": "3844665",
+          "QUERY.FP": "46939",
+          "QUERY.UNK": "550895",
+          "FP.gt": "3812",
+          "FP.al": "2382",
+          "METRIC.Recall": "0.969918",
+          "METRIC.Precision": "0.985749",
+          "METRIC.Frac_NA": "0.143288",
+          "METRIC.F1_Score": "0.977769",
+          "TRUTH.TOTAL.TiTv_ratio": "2.10078083097",
+          "QUERY.TOTAL.TiTv_ratio": "1.96842267763",
+          "TRUTH.TOTAL.het_hom_ratio": "1.58687160169",
+          "QUERY.TOTAL.het_hom_ratio": "1.72187583886"
+        }
+      ],
+      "parameters": {
+        "engine": "xcmp",
+        "threads": 16,
+        "vcf1": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG004_NA24143_mother/NISTv4.2.1/GRCh38/HG004_GRCh38_1_22_v4.2.1_benchmark.vcf.gz",
+        "vcf2": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG004/gd004-HG004.genotyped.vcf.gz",
+        "ref": "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+        "fp_bedfile": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG004_NA24143_mother/NISTv4.2.1/GRCh38/HG004_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed"
+      },
+      "version": "",
+      "qacct": {
+        "jobnumber": "156817",
+        "end_time": "Sun Sep 27 17:21:53 2026",
+        "failed": "0",
+        "exit_status": "0"
+      },
+      "input_unchanged": {
+        "label": "gd004-HG004",
+        "input": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/10.haplo/C000000400600000G0x1_v1.1.0.g.vcf.gz",
+        "bytes": 6038952520,
+        "mtime_ns": 1790412174000000000,
+        "inode": 144115950969464459,
+        "qc_gap": "verifybamID retry pending"
+      }
+    }
+  ]
+}

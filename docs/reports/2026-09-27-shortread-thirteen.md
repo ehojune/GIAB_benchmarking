@@ -1,5 +1,7 @@
 # 숏리드 비교 — 완료 13건
 
+> 과거 04시 스냅샷. 최신 표는 [완료 16건](2026-09-27-shortread-sixteen.md)이다.
+
 2026-09-27 04:17 KST. gd1·gd2 6건이 추가로 정상 종료했다. 새 입력의 국통바빅 gVCF → GATK 4.6.1.0 GenotypeGVCFs → hap.py 0.3.12, GIAB v4.2.1 GRCh38 chr1–22/no-inconsistent 영역. 옛 회사 캐시는 쓰지 않았다.
 
 | 자료 | SNP F1 | INDEL F1 |

@@ -1,0 +1,959 @@
+{
+  "at": "2026-09-27T20:52:44.861628+09:00",
+  "identity": [
+    "nbbcluster2",
+    "ehojune"
+  ],
+  "connector_port": 13001,
+  "comparison": [
+    {
+      "label": "gd004-HG002",
+      "job": "156815",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG002",
+      "summary_path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG002/gd004-HG002.summary.csv",
+      "summary_sha256": "0dd91f078b8eb4044c6d3320eb6b8499b3f737037cafc9c59345f14b74f2a81c",
+      "rows": [
+        {
+          "Type": "INDEL",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "525466",
+          "TRUTH.TP": "509612",
+          "TRUTH.FN": "15854",
+          "QUERY.TOTAL": "939015",
+          "QUERY.FP": "5124",
+          "QUERY.UNK": "403191",
+          "FP.gt": "1328",
+          "FP.al": "2403",
+          "METRIC.Recall": "0.969829",
+          "METRIC.Precision": "0.990437",
+          "METRIC.Frac_NA": "0.429377",
+          "METRIC.F1_Score": "0.980025",
+          "TRUTH.TOTAL.TiTv_ratio": "",
+          "QUERY.TOTAL.TiTv_ratio": "",
+          "TRUTH.TOTAL.het_hom_ratio": "1.52827573414",
+          "QUERY.TOTAL.het_hom_ratio": "2.00031233664"
+        },
+        {
+          "Type": "SNP",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "3365115",
+          "TRUTH.TP": "3263159",
+          "TRUTH.FN": "101956",
+          "QUERY.TOTAL": "3845411",
+          "QUERY.FP": "49453",
+          "QUERY.UNK": "531746",
+          "FP.gt": "3901",
+          "FP.al": "2636",
+          "METRIC.Recall": "0.969702",
+          "METRIC.Precision": "0.985076",
+          "METRIC.Frac_NA": "0.138281",
+          "METRIC.F1_Score": "0.977329",
+          "TRUTH.TOTAL.TiTv_ratio": "2.10012885565",
+          "QUERY.TOTAL.TiTv_ratio": "1.96639606146",
+          "TRUTH.TOTAL.het_hom_ratio": "1.58119585325",
+          "QUERY.TOTAL.het_hom_ratio": "1.71565881658"
+        }
+      ],
+      "parameters": {
+        "engine": "xcmp",
+        "threads": 16,
+        "vcf1": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38/HG002_GRCh38_1_22_v4.2.1_benchmark.vcf.gz",
+        "vcf2": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG002/gd004-HG002.genotyped.vcf.gz",
+        "ref": "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+        "fp_bedfile": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38/HG002_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed"
+      },
+      "version": "",
+      "qacct": {
+        "jobnumber": "156815",
+        "end_time": "Sun Sep 27 17:10:44 2026",
+        "failed": "0",
+        "exit_status": "0"
+      },
+      "input_unchanged": {
+        "label": "gd004-HG002",
+        "input": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/10.haplo/C000000400400000G0x1_v1.1.0.g.vcf.gz",
+        "bytes": 3872802581,
+        "mtime_ns": 1790434334000000000,
+        "inode": 144115951053318442,
+        "qc_gap": "verifybamID retry pending"
+      }
+    },
+    {
+      "label": "gd004-HG003",
+      "job": "156816",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG003",
+      "summary_path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG003/gd004-HG003.summary.csv",
+      "summary_sha256": "8e5af0661f9a816993a8b4d10e508c8d93d08d3b1d16069bb0b0a78a39597be1",
+      "rows": [
+        {
+          "Type": "INDEL",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "504497",
+          "TRUTH.TP": "490283",
+          "TRUTH.FN": "14214",
+          "QUERY.TOTAL": "941897",
+          "QUERY.FP": "4639",
+          "QUERY.UNK": "426627",
+          "FP.gt": "1293",
+          "FP.al": "2077",
+          "METRIC.Recall": "0.971825",
+          "METRIC.Precision": "0.990997",
+          "METRIC.Frac_NA": "0.452944",
+          "METRIC.F1_Score": "0.981318",
+          "TRUTH.TOTAL.TiTv_ratio": "",
+          "QUERY.TOTAL.TiTv_ratio": "",
+          "TRUTH.TOTAL.het_hom_ratio": "1.48975928106",
+          "QUERY.TOTAL.het_hom_ratio": "1.98126243986"
+        },
+        {
+          "Type": "SNP",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "3327481",
+          "TRUTH.TP": "3229737",
+          "TRUTH.FN": "97744",
+          "QUERY.TOTAL": "3843587",
+          "QUERY.FP": "49112",
+          "QUERY.UNK": "563767",
+          "FP.gt": "3696",
+          "FP.al": "2587",
+          "METRIC.Recall": "0.970625",
+          "METRIC.Precision": "0.985026",
+          "METRIC.Frac_NA": "0.146677",
+          "METRIC.F1_Score": "0.977773",
+          "TRUTH.TOTAL.TiTv_ratio": "2.10258504162",
+          "QUERY.TOTAL.TiTv_ratio": "1.95674516291",
+          "TRUTH.TOTAL.het_hom_ratio": "1.53513777165",
+          "QUERY.TOTAL.het_hom_ratio": "1.68604130864"
+        }
+      ],
+      "parameters": {
+        "engine": "xcmp",
+        "threads": 16,
+        "vcf1": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG003_NA24149_father/NISTv4.2.1/GRCh38/HG003_GRCh38_1_22_v4.2.1_benchmark.vcf.gz",
+        "vcf2": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG003/gd004-HG003.genotyped.vcf.gz",
+        "ref": "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+        "fp_bedfile": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG003_NA24149_father/NISTv4.2.1/GRCh38/HG003_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed"
+      },
+      "version": "",
+      "qacct": {
+        "jobnumber": "156816",
+        "end_time": "Sun Sep 27 17:09:56 2026",
+        "failed": "0",
+        "exit_status": "0"
+      },
+      "input_unchanged": {
+        "label": "gd004-HG003",
+        "input": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/10.haplo/C000000400500000G0x1_v1.1.0.g.vcf.gz",
+        "bytes": 2698219863,
+        "mtime_ns": 1790472957000000000,
+        "inode": 144115951170776085,
+        "qc_gap": null
+      }
+    },
+    {
+      "label": "gd004-HG004",
+      "job": "156817",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG004",
+      "summary_path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG004/gd004-HG004.summary.csv",
+      "summary_sha256": "c88da1394038e3e88c3b3f81c7f902bed3750debdf70a8dfa26674c0cf886874",
+      "rows": [
+        {
+          "Type": "INDEL",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "510516",
+          "TRUTH.TP": "494215",
+          "TRUTH.FN": "16301",
+          "QUERY.TOTAL": "927825",
+          "QUERY.FP": "5281",
+          "QUERY.UNK": "407724",
+          "FP.gt": "1329",
+          "FP.al": "2716",
+          "METRIC.Recall": "0.96807",
+          "METRIC.Precision": "0.989846",
+          "METRIC.Frac_NA": "0.439441",
+          "METRIC.F1_Score": "0.978837",
+          "TRUTH.TOTAL.TiTv_ratio": "",
+          "QUERY.TOTAL.TiTv_ratio": "",
+          "TRUTH.TOTAL.het_hom_ratio": "1.51613073552",
+          "QUERY.TOTAL.het_hom_ratio": "1.95102011475"
+        },
+        {
+          "Type": "SNP",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "3346598",
+          "TRUTH.TP": "3245924",
+          "TRUTH.FN": "100674",
+          "QUERY.TOTAL": "3844665",
+          "QUERY.FP": "46939",
+          "QUERY.UNK": "550895",
+          "FP.gt": "3812",
+          "FP.al": "2382",
+          "METRIC.Recall": "0.969918",
+          "METRIC.Precision": "0.985749",
+          "METRIC.Frac_NA": "0.143288",
+          "METRIC.F1_Score": "0.977769",
+          "TRUTH.TOTAL.TiTv_ratio": "2.10078083097",
+          "QUERY.TOTAL.TiTv_ratio": "1.96842267763",
+          "TRUTH.TOTAL.het_hom_ratio": "1.58687160169",
+          "QUERY.TOTAL.het_hom_ratio": "1.72187583886"
+        }
+      ],
+      "parameters": {
+        "engine": "xcmp",
+        "threads": 16,
+        "vcf1": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG004_NA24143_mother/NISTv4.2.1/GRCh38/HG004_GRCh38_1_22_v4.2.1_benchmark.vcf.gz",
+        "vcf2": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG004/gd004-HG004.genotyped.vcf.gz",
+        "ref": "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+        "fp_bedfile": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG004_NA24143_mother/NISTv4.2.1/GRCh38/HG004_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed"
+      },
+      "version": "",
+      "qacct": {
+        "jobnumber": "156817",
+        "end_time": "Sun Sep 27 17:21:53 2026",
+        "failed": "0",
+        "exit_status": "0"
+      },
+      "input_unchanged": {
+        "label": "gd004-HG004",
+        "input": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/10.haplo/C000000400600000G0x1_v1.1.0.g.vcf.gz",
+        "bytes": 6038952520,
+        "mtime_ns": 1790412174000000000,
+        "inode": 144115950969464459,
+        "qc_gap": "verifybamID retry pending"
+      }
+    }
+  ],
+  "qc_promoted": [
+    {
+      "at": "2026-09-27T20:51:41.965540+09:00",
+      "job": "156819",
+      "sample": "C000000400400000G0x1",
+      "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400400000G0x1",
+      "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/analyze_meta/C000000400400000G0x1/C000000400400000G0x1.selfSM",
+      "selfSM_sha256": "e491825178e04686f7179a379de1fff8a451e1379dcd4cf58ff80cdd4b9f6396",
+      "protected_outcomes_unchanged": true,
+      "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400400000G0x1/original-before-promotion",
+      "FREEMIX": "4.43755e-06"
+    },
+    {
+      "at": "2026-09-27T20:51:42.180802+09:00",
+      "job": "156820",
+      "sample": "C000000400600000G0x1",
+      "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400600000G0x1",
+      "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/analyze_meta/C000000400600000G0x1/C000000400600000G0x1.selfSM",
+      "selfSM_sha256": "35e35e1754920adc5d6d2a7e61b4f7421e26517f05df632db00a8b66272aa0da",
+      "protected_outcomes_unchanged": true,
+      "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400600000G0x1/original-before-promotion",
+      "FREEMIX": "4.58586e-06"
+    }
+  ],
+  "company_qc": [
+    {
+      "set": "G000-gd1-20260819",
+      "samples": [
+        {
+          "sample": "C000000100100000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": null,
+          "sha256": "671e561ac0f648e6998f65938618297e3338e067b8cd92adffa4873712d9aedf",
+          "FREEMIX": "3.74186e-06",
+          "validated": true
+        },
+        {
+          "sample": "C000000100200000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": null,
+          "sha256": "df9180ffa933e65d1ce11de523575c0c643e98ee82b779c0c50fb5cbac279e5c",
+          "FREEMIX": "1.07186e-05",
+          "validated": true
+        },
+        {
+          "sample": "C000000100300000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": null,
+          "sha256": "5101ad7ae1d3c2a43738f8ad4bdb070567717c4587319cc16a4610c329ba3bf5",
+          "FREEMIX": "1.89328e-05",
+          "validated": true
+        },
+        {
+          "sample": "C000000100400000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": {
+            "at": "2026-09-27T04:19:42.853993+09:00",
+            "job": "156799",
+            "sample": "C000000100400000G0x1",
+            "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000100400000G0x1",
+            "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/analyze_meta/C000000100400000G0x1/C000000100400000G0x1.selfSM",
+            "selfSM_sha256": "fa9d44744c5b0aeddfc19883ca9e3ca614238b22269deb3509fa9b52bc9302a0",
+            "protected_outcomes_unchanged": true,
+            "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000100400000G0x1/original-before-promotion",
+            "FREEMIX": "1.94207e-05"
+          },
+          "sha256": "fa9d44744c5b0aeddfc19883ca9e3ca614238b22269deb3509fa9b52bc9302a0",
+          "FREEMIX": "1.94207e-05",
+          "validated": true
+        },
+        {
+          "sample": "C000000100500000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": null,
+          "sha256": "8f424a8dba570306871cbef1ce53ff58b9449669b1f6c08f24e3bedea8e78a89",
+          "FREEMIX": "7.22313e-06",
+          "validated": true
+        },
+        {
+          "sample": "C000000100600000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": {
+            "at": "2026-09-27T04:19:43.090860+09:00",
+            "job": "156800",
+            "sample": "C000000100600000G0x1",
+            "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000100600000G0x1",
+            "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/analyze_meta/C000000100600000G0x1/C000000100600000G0x1.selfSM",
+            "selfSM_sha256": "5e36463d56cf6c8db6c1922ebe745541f0eb805f8aaceec4fc7797027ef93410",
+            "protected_outcomes_unchanged": true,
+            "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000100600000G0x1/original-before-promotion",
+            "FREEMIX": "2.68309e-05"
+          },
+          "sha256": "5e36463d56cf6c8db6c1922ebe745541f0eb805f8aaceec4fc7797027ef93410",
+          "FREEMIX": "2.68309e-05",
+          "validated": true
+        }
+      ],
+      "done": "- Cohort : G000\n- Batch name : G000-gd1-20260819\n- Message : Success\n",
+      "error_list_exists": false,
+      "accounting": {
+        "end_time": "Sat Sep 26 23:17:37 2026",
+        "failed": "0",
+        "exit_status": "0"
+      }
+    },
+    {
+      "set": "G000-gd2-20260819",
+      "samples": [
+        {
+          "sample": "C000000200100000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": {
+            "at": "2026-09-27T08:14:16.820912+09:00",
+            "job": "156813",
+            "sample": "C000000200100000G0x1",
+            "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200100000G0x1",
+            "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/analyze_meta/C000000200100000G0x1/C000000200100000G0x1.selfSM",
+            "selfSM_sha256": "31ed13cf034db3dd81ab2c3e3b9d4ed17bd518815411a4c78518e155f2dbb273",
+            "protected_outcomes_unchanged": true,
+            "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200100000G0x1/original-before-promotion",
+            "FREEMIX": "3.01584e-06"
+          },
+          "sha256": "31ed13cf034db3dd81ab2c3e3b9d4ed17bd518815411a4c78518e155f2dbb273",
+          "FREEMIX": "3.01584e-06",
+          "validated": true
+        },
+        {
+          "sample": "C000000200200000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": null,
+          "sha256": "0d6dd646cb2980c220978c39776b632b572b9c338470270b23a8bf1a9029114f",
+          "FREEMIX": "1.45275e-06",
+          "validated": true
+        },
+        {
+          "sample": "C000000200300000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": null,
+          "sha256": "76660c1fda2930fcc6f5b49826b7e206faeb8b2f5be61e68dad1a03110407bbf",
+          "FREEMIX": "2.60661e-06",
+          "validated": true
+        },
+        {
+          "sample": "C000000200400000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": {
+            "at": "2026-09-27T04:40:43.939806+09:00",
+            "job": "156812",
+            "sample": "C000000200400000G0x1",
+            "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200400000G0x1",
+            "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/analyze_meta/C000000200400000G0x1/C000000200400000G0x1.selfSM",
+            "selfSM_sha256": "a0ace8c4781c776af43fedf9eafd0288585f8ccd3c7dccbf27178d4bacad9368",
+            "protected_outcomes_unchanged": true,
+            "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200400000G0x1/original-before-promotion",
+            "FREEMIX": "1.86554e-06"
+          },
+          "sha256": "a0ace8c4781c776af43fedf9eafd0288585f8ccd3c7dccbf27178d4bacad9368",
+          "FREEMIX": "1.86554e-06",
+          "validated": true
+        },
+        {
+          "sample": "C000000200500000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": null,
+          "sha256": "c8faa74ef0988601cc3599f8667a372d7d3423d5881080980880e775058ff5c0",
+          "FREEMIX": "2.22777e-06",
+          "validated": true
+        },
+        {
+          "sample": "C000000200600000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": {
+            "at": "2026-09-27T04:19:43.324200+09:00",
+            "job": "156803",
+            "sample": "C000000200600000G0x1",
+            "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000200600000G0x1",
+            "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/analyze_meta/C000000200600000G0x1/C000000200600000G0x1.selfSM",
+            "selfSM_sha256": "bf2fade6e50468ef10153093bc724e479d32eb4f3282cf20fdd9ca09eef8a488",
+            "protected_outcomes_unchanged": true,
+            "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000200600000G0x1/original-before-promotion",
+            "FREEMIX": "1.45955e-06"
+          },
+          "sha256": "bf2fade6e50468ef10153093bc724e479d32eb4f3282cf20fdd9ca09eef8a488",
+          "FREEMIX": "1.45955e-06",
+          "validated": true
+        }
+      ],
+      "done": "- Cohort : G000\n- Batch name : G000-gd2-20260819\n- Message : Success\n",
+      "error_list_exists": false,
+      "accounting": {
+        "end_time": "Sat Sep 26 19:06:10 2026",
+        "failed": "0",
+        "exit_status": "0"
+      }
+    },
+    {
+      "set": "G000-gd3-20260819",
+      "samples": [
+        {
+          "sample": "C000000300100000G0x1",
+          "checksum_exists": false,
+          "qc_link_exists": false,
+          "repair_record": null,
+          "validated": false
+        },
+        {
+          "sample": "C000000300200000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": null,
+          "sha256": "5548bfcf91b28ca5c47cc0290baf48ed0702b63ee2c89499363ee2c58ed92f7f",
+          "FREEMIX": "1.26926e-05",
+          "validated": true
+        },
+        {
+          "sample": "C000000300300000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": {
+            "at": "2026-09-27T04:19:43.582001+09:00",
+            "job": "156805",
+            "sample": "C000000300300000G0x1",
+            "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000300300000G0x1",
+            "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/analyze_meta/C000000300300000G0x1/C000000300300000G0x1.selfSM",
+            "selfSM_sha256": "df8b43768b658f31e14b6d68f4b80a45066dc4a43a90d0f0a8be442aa8b3e30b",
+            "protected_outcomes_unchanged": true,
+            "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000300300000G0x1/original-before-promotion",
+            "FREEMIX": "2.18992e-05"
+          },
+          "sha256": "df8b43768b658f31e14b6d68f4b80a45066dc4a43a90d0f0a8be442aa8b3e30b",
+          "FREEMIX": "2.18992e-05",
+          "validated": true
+        },
+        {
+          "sample": "C000000300400000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": {
+            "at": "2026-09-27T00:23:05.225280+09:00",
+            "job": "156798",
+            "sample": "C000000300400000G0x1",
+            "source": "/BiO/scratch/dyl/kbb/G000/backup/20260926-verify-only-pilot",
+            "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/analyze_meta/C000000300400000G0x1/C000000300400000G0x1.selfSM",
+            "selfSM_sha256": "704ff566f6ce44eb02bee73c329f14739c6380180292896fe59f62b3a7bf4a0a",
+            "protected_outcomes_unchanged": true,
+            "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260926-verify-only-pilot/original-before-promotion",
+            "FREEMIX": "8.33497e-06"
+          },
+          "sha256": "704ff566f6ce44eb02bee73c329f14739c6380180292896fe59f62b3a7bf4a0a",
+          "FREEMIX": "8.33497e-06",
+          "validated": true
+        },
+        {
+          "sample": "C000000300500000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": null,
+          "sha256": "4d1bfdb18f5de76535675e34b7dd37f1f29899e82ec95c80e072cacdaf3efd86",
+          "FREEMIX": "2.75013e-05",
+          "validated": true
+        },
+        {
+          "sample": "C000000300600000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": null,
+          "sha256": "893bfa86c720be1bd3560ce21a4e84d1924a68ccb78501460208ab6e63036035",
+          "FREEMIX": "4.205e-05",
+          "validated": true
+        }
+      ],
+      "done": "- Cohort : G000\n- Batch name : G000-gd3-20260819\n- Message : Success\n",
+      "error_list_exists": false,
+      "accounting": {
+        "end_time": "Sat Sep 26 14:21:31 2026",
+        "failed": "0",
+        "exit_status": "0"
+      }
+    },
+    {
+      "set": "G000-gd4-20260819",
+      "samples": [
+        {
+          "sample": "C000000400100000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": null,
+          "sha256": "8b9b8543668ca8eee2d5093ebc0d7753579697ab9521c1cce7dd2d0e0ab6277e",
+          "FREEMIX": "6.79797e-06",
+          "validated": true
+        },
+        {
+          "sample": "C000000400200000G0x1",
+          "checksum_exists": false,
+          "qc_link_exists": false,
+          "repair_record": null,
+          "validated": false
+        },
+        {
+          "sample": "C000000400300000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": null,
+          "sha256": "8ed7905a78cb9a32b5600e0a8c6cf9390dcbcf7a317783aecde68c3f58a8399c",
+          "FREEMIX": "1.14297e-06",
+          "validated": true
+        },
+        {
+          "sample": "C000000400400000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": {
+            "at": "2026-09-27T20:51:41.965540+09:00",
+            "job": "156819",
+            "sample": "C000000400400000G0x1",
+            "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400400000G0x1",
+            "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/analyze_meta/C000000400400000G0x1/C000000400400000G0x1.selfSM",
+            "selfSM_sha256": "e491825178e04686f7179a379de1fff8a451e1379dcd4cf58ff80cdd4b9f6396",
+            "protected_outcomes_unchanged": true,
+            "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400400000G0x1/original-before-promotion",
+            "FREEMIX": "4.43755e-06"
+          },
+          "sha256": "e491825178e04686f7179a379de1fff8a451e1379dcd4cf58ff80cdd4b9f6396",
+          "FREEMIX": "4.43755e-06",
+          "validated": true
+        },
+        {
+          "sample": "C000000400500000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": null,
+          "sha256": "fb58387255a4a26b71eea0f708dbf9d9b7995001fad829b82c8de951c136bcac",
+          "FREEMIX": "2.68372e-05",
+          "validated": true
+        },
+        {
+          "sample": "C000000400600000G0x1",
+          "checksum_exists": true,
+          "qc_link_exists": true,
+          "repair_record": {
+            "at": "2026-09-27T20:51:42.180802+09:00",
+            "job": "156820",
+            "sample": "C000000400600000G0x1",
+            "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400600000G0x1",
+            "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/analyze_meta/C000000400600000G0x1/C000000400600000G0x1.selfSM",
+            "selfSM_sha256": "35e35e1754920adc5d6d2a7e61b4f7421e26517f05df632db00a8b66272aa0da",
+            "protected_outcomes_unchanged": true,
+            "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400600000G0x1/original-before-promotion",
+            "FREEMIX": "4.58586e-06"
+          },
+          "sha256": "35e35e1754920adc5d6d2a7e61b4f7421e26517f05df632db00a8b66272aa0da",
+          "FREEMIX": "4.58586e-06",
+          "validated": true
+        }
+      ],
+      "done": "- Cohort : G000\n- Batch name : G000-gd4-20260819\n- Message : Success\n",
+      "error_list_exists": false,
+      "accounting": {
+        "end_time": "Sun Sep 27 10:37:40 2026",
+        "failed": "0",
+        "exit_status": "0"
+      }
+    }
+  ],
+  "public_progress": [
+    {
+      "job": "155526",
+      "name": "regermline_java17_BGISEQ500",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 62479,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-BGISEQ500\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155527",
+      "name": "regermline_java17_Element-AVITI",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 63084,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Element-AVITI\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155528",
+      "name": "regermline_java17_Hiseq-300x",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 27331,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Hiseq-300x\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "156690",
+      "name": "regermline_java17_GIAB-publicData-MGISEQ2000-PCRfree",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 49742,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-MGISEQ2000-PCRfree\n- Message : Error\n",
+      "errors": null
+    }
+  ],
+  "public_active_mark": [
+    {
+      "set": "BGISEQ500",
+      "sample": "HG002",
+      "bytes_delta": 2843615,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "11.0",
+        "3833",
+        "17901"
+      ],
+      "after": [
+        "11.0",
+        "6423",
+        "17901"
+      ],
+      "mtime": "2026-09-27T20:46:05"
+    },
+    {
+      "set": "BGISEQ500",
+      "sample": "HG003",
+      "bytes_delta": 3568071,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "11.0",
+        "17897",
+        "18330"
+      ],
+      "after": [
+        "15.0",
+        "2819",
+        "18330"
+      ],
+      "mtime": "2026-09-27T20:46:36"
+    },
+    {
+      "set": "BGISEQ500",
+      "sample": "HG004",
+      "bytes_delta": 2305901,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "11.0",
+        "7689",
+        "18074"
+      ],
+      "after": [
+        "11.0",
+        "9787",
+        "18074"
+      ],
+      "mtime": "2026-09-27T20:46:35"
+    },
+    {
+      "set": "Element-AVITI",
+      "sample": "HG002",
+      "bytes_delta": 2324244,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "11.0",
+        "9113",
+        "19836"
+      ],
+      "after": [
+        "11.0",
+        "11221",
+        "19836"
+      ],
+      "mtime": "2026-09-27T20:45:54"
+    },
+    {
+      "set": "Element-AVITI",
+      "sample": "HG003",
+      "bytes_delta": 3077265,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "11.0",
+        "2077",
+        "19051"
+      ],
+      "after": [
+        "11.0",
+        "4877",
+        "19051"
+      ],
+      "mtime": "2026-09-27T20:46:39"
+    },
+    {
+      "set": "Element-AVITI",
+      "sample": "HG004",
+      "bytes_delta": 2233880,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "6.0",
+        "12487",
+        "21167"
+      ],
+      "after": [
+        "6.0",
+        "14525",
+        "21167"
+      ],
+      "mtime": "2026-09-27T20:46:12"
+    },
+    {
+      "set": "Hiseq-300x",
+      "sample": "HG002",
+      "bytes_delta": 1776676,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "2.0",
+        "50186",
+        "52839"
+      ],
+      "after": [
+        "2.0",
+        "52393",
+        "52839"
+      ],
+      "mtime": "2026-09-27T20:45:46"
+    },
+    {
+      "set": "Hiseq-300x",
+      "sample": "HG003",
+      "bytes_delta": 1826586,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "2.0",
+        "48850",
+        "53467"
+      ],
+      "after": [
+        "2.0",
+        "51119",
+        "53467"
+      ],
+      "mtime": "2026-09-27T20:46:36"
+    },
+    {
+      "set": "Hiseq-300x",
+      "sample": "HG004",
+      "bytes_delta": 1696189,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "2.0",
+        "49092",
+        "61287"
+      ],
+      "after": [
+        "2.0",
+        "51199",
+        "61287"
+      ],
+      "mtime": "2026-09-27T20:44:48"
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "sample": "HG002",
+      "bytes_delta": 2857130,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "6.0",
+        "5981",
+        "15160"
+      ],
+      "after": [
+        "6.0",
+        "8601",
+        "15160"
+      ],
+      "mtime": "2026-09-27T20:46:20"
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "sample": "HG003",
+      "bytes_delta": 2910606,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "6.0",
+        "7367",
+        "14631"
+      ],
+      "after": [
+        "6.0",
+        "10037",
+        "14631"
+      ],
+      "mtime": "2026-09-27T20:46:09"
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "sample": "HG004",
+      "bytes_delta": 2136005,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "4.0",
+        "3301",
+        "29656"
+      ],
+      "after": [
+        "4.0",
+        "5981",
+        "29656"
+      ],
+      "mtime": "2026-09-27T20:46:39"
+    }
+  ],
+  "illumina": {
+    "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Illumina-250PE\n- Message : Error\n",
+    "error_list": "- Time: Sat Sep 26 09:10:29 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG004'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004_manta.err'}\n- Time: Sat Sep 26 09:12:14 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG002'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002_manta.err'}\n- Time: Sat Sep 26 09:12:29 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003_manta.err'}\n- Time: Sat Sep 26 09:20:39 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG002'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/13.verifybamID/GIAB-publicData-Illumina-250PE-HG002_verifybamID.err'}\n- Time: Sat Sep 26 09:38:33 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'haplo_gather'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/10.haplo/GIAB-publicData-Illumina-250PE-HG003_haplo.err'}\n- Time: Sat Sep 26 09:39:47 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'count_variants'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/15.countVariants/GIAB-publicData-Illumina-250PE-HG003_countVariants.err'}\n",
+    "error_list_mtime": "2026-09-26T09:39:47"
+  },
+  "remaining_verify_failures": [
+    {
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400200000G0x1",
+      "FAILED.json": "{\n  \"at\": \"2026-09-27T16:52:41.738481+09:00\",\n  \"error\": \"('verifybamid', -11)\",\n  \"stage\": {\n    \"at\": \"2026-09-27T16:36:34.638987+09:00\",\n    \"stage\": \"verifybamid\",\n    \"command\": [\n      \"/BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/bin/VerifyBamID\",\n      \"--BamFile\",\n      \"/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400200000G0x1/C000000400200000G0x1_v1.1.0.bam\",\n      \"--Output\",\n      \"/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400200000G0x1/C000000400200000G0x1\",\n      \"--Reference\",\n      \"/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta\",\n      \"--SVDPrefix\",\n      \"/BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/resource/1000g.phase3.100k.b38.vcf.gz.dat\",\n      \"--NumThread\",\n      \"1\"\n    ]\n  }\n}\n",
+      "verifybamid.exit.json": "{\n  \"at\": \"2026-09-27T16:52:41.709464+09:00\",\n  \"returncode\": -11\n}\n",
+      "verifybamid.stderr": "4637127...\nNOTICE - Process chr21:24648452-24648452...\nNOTICE - Process chr21:24649560-24649560...\nNOTICE - Process chr21:24655080-24655080...\nNOTICE - Process chr21:24659044-24659044...\nNOTICE - Process chr21:24679857-24679857...\nNOTICE - Process chr21:24693245-24693245...\nNOTICE - Process chr21:24772518-24772518...\nNOTICE - Process chr21:24791082-24791082...\nNOTICE - Process chr21:24792573-24792573...\nNOTICE - Process chr21:24817021-24817021...\nNOTICE - Process chr21:24832383-24832383...\nNOTICE - Process chr21:24860254-24860254...\nNOTICE - Process chr21:24938949-24938949...\nNOTICE - Process chr21:24951486-24951486...\nNOTICE - Process chr21:25007401-25007401...\nNOTICE - Process chr21:25012068-25012068...\nNOTICE - Process chr21:25013888-25013888...\nNOTICE - Process chr21:25042218-25042218...\nNOTICE - Process chr21:25079820-25079820...\nNOTICE - Process chr21:25140602-25140602...\nNOTICE - Process chr21:25150871-25150871...\nNOTICE - Process chr21:25210076-25210076...\nNOTICE - Process chr21:25244769-25244769...\nNOTICE - Process chr21:25471037-25471037...\nNOTICE - Process chr21:25488159-25488159...\nNOTICE - Process chr21:25544362-25544362...\nNOTICE - Process chr21:25578142-25578142...\nNOTICE - Process chr21:25592836-25592836...\nNOTICE - Process chr21:25623663-25623663...\nNOTICE - Process chr21:25640835-25640835...\nNOTICE - Process chr21:25687590-25687590...\nNOTICE - Process chr21:25716535-25716535...\nNOTICE - Process chr21:25791027-25791027...\nNOTICE - Process chr21:25813018-25813018...\nNOTICE - Process chr21:25888144-25888144...\nNOTICE - Process chr21:25899847-25899847...\nNOTICE - Process chr21:25903026-25903026...\nNOTICE - Process chr21:25907726-25907726...\nNOTICE - Process chr21:25912793-25912793...\nNOTICE - Process chr21:25944559-25944559...\nNOTICE - Process chr21:25989391-25989391...\nNOTICE - Process chr21:25990009-25990009...\nNOTICE - Process chr21:26026896-26026896...\nNOTICE - Process chr21:26028804-26028804...\nNOTICE - Process chr21:26043021-26043021...\nNOTICE - Process chr21:26054507-26054507...\nNOTICE - Process chr21:26063209-26063209...\nNOTICE - Process chr21:26199150-26199150...\nNOTICE - Process chr21:26203198-26203198...\nNOTICE - Process chr21:26251437-26251437...\nNOTICE - Process chr21:26254042-26254042...\nNOTICE - Process chr21:26263596-26263596...\nNOTICE - Process chr21:26277417-26277417...\nNOTICE - Process chr21:26277931-26277931...\nNOTICE - Process chr21:26278995-26278995...\nNOTICE - Process chr21:26280000-26280000...\nNOTICE - Process chr21:26301823-26301823...\nNOTICE - Process chr21:26331648-26331648...\nNOTICE - Process chr21:26402030-26402030...\nNOTICE - Process chr21:26402799-26402799...\nNOTICE - Process chr21:26410673-26410673...\nNOTICE - Process chr21:26425201-26425201...\nNOTICE - Process chr21:26468248-26468248...\nNOTICE - Process chr21:26489674-26489674...\nNOTICE - Process chr21:26491116-26491116...\nNOTICE - Process chr21:26503889-26503889...\nNOTICE - Process chr21:26505808-26505808...\nNOTICE - Process chr21:26537068-26537068...\nNOTICE - Process chr21:26551884-26551884...\nNOTICE - Process chr21:26587771-26587771...\nNOTICE - Process chr21:26604181-26604181...\n[SimplePileup] Total Number Bases: 3153503\n[SimplePileup] Total Number Markers: 98273\nNOTICE - Number of marker in Reference Matrix:100000\nNOTICE - Number of marker shared with input file:98273\nNOTICE - Mean Depth:32.089211\nNOTICE - SD Depth:6.847195\nNOTICE - 97761 SNP markers remained after sanity check.\nNOTICE - Passing Marker Sanity Check...\nNOTICE - Success!\n",
+      "cluster.log": "Traceback (most recent call last):\n  File \"/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/driver.py\", line 55, in <module>\n    elif sys.argv[1]=='run':run(sys.argv[2])\n  File \"/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/driver.py\", line 52, in run\n    w=module(R/'worker.py');w.P=P;w.R=d;w.SID=sid;w.C=P/'tmp/09.bqsr'/(sid+'_v1.1.0.cram');w.B=d/(sid+'_v1.1.0.bam');w.PREFIX=d/sid;w.run()\n  File \"/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/worker.py\", line 67, in run\n    command('verifybamid', [VERIFY, '--BamFile', B, '--Output', PREFIX, '--Reference', REF, '--SVDPrefix', SVD, '--NumThread', '1'])\n  File \"/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/worker.py\", line 51, in command\n    assert z.returncode == 0, (label, z.returncode)\nAssertionError: ('verifybamid', -11)\n"
+    },
+    {
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000300100000G0x1",
+      "FAILED.json": "{\n  \"at\": \"2026-09-27T04:53:05.506130+09:00\",\n  \"error\": \"('verifybamid', -11)\"\n}\n",
+      "verifybamid.exit.json": "{\n  \"at\": \"2026-09-27T04:53:05.498967+09:00\",\n  \"returncode\": -11\n}\n",
+      "verifybamid.stderr": "4637127...\nNOTICE - Process chr21:24648452-24648452...\nNOTICE - Process chr21:24649560-24649560...\nNOTICE - Process chr21:24655080-24655080...\nNOTICE - Process chr21:24659044-24659044...\nNOTICE - Process chr21:24679857-24679857...\nNOTICE - Process chr21:24693245-24693245...\nNOTICE - Process chr21:24772518-24772518...\nNOTICE - Process chr21:24791082-24791082...\nNOTICE - Process chr21:24792573-24792573...\nNOTICE - Process chr21:24817021-24817021...\nNOTICE - Process chr21:24832383-24832383...\nNOTICE - Process chr21:24860254-24860254...\nNOTICE - Process chr21:24938949-24938949...\nNOTICE - Process chr21:24951486-24951486...\nNOTICE - Process chr21:25007401-25007401...\nNOTICE - Process chr21:25012068-25012068...\nNOTICE - Process chr21:25013888-25013888...\nNOTICE - Process chr21:25042218-25042218...\nNOTICE - Process chr21:25079820-25079820...\nNOTICE - Process chr21:25140602-25140602...\nNOTICE - Process chr21:25150871-25150871...\nNOTICE - Process chr21:25210076-25210076...\nNOTICE - Process chr21:25244769-25244769...\nNOTICE - Process chr21:25471037-25471037...\nNOTICE - Process chr21:25488159-25488159...\nNOTICE - Process chr21:25544362-25544362...\nNOTICE - Process chr21:25578142-25578142...\nNOTICE - Process chr21:25592836-25592836...\nNOTICE - Process chr21:25623663-25623663...\nNOTICE - Process chr21:25640835-25640835...\nNOTICE - Process chr21:25687590-25687590...\nNOTICE - Process chr21:25716535-25716535...\nNOTICE - Process chr21:25791027-25791027...\nNOTICE - Process chr21:25813018-25813018...\nNOTICE - Process chr21:25888144-25888144...\nNOTICE - Process chr21:25899847-25899847...\nNOTICE - Process chr21:25903026-25903026...\nNOTICE - Process chr21:25907726-25907726...\nNOTICE - Process chr21:25912793-25912793...\nNOTICE - Process chr21:25944559-25944559...\nNOTICE - Process chr21:25989391-25989391...\nNOTICE - Process chr21:25990009-25990009...\nNOTICE - Process chr21:26026896-26026896...\nNOTICE - Process chr21:26028804-26028804...\nNOTICE - Process chr21:26043021-26043021...\nNOTICE - Process chr21:26054507-26054507...\nNOTICE - Process chr21:26063209-26063209...\nNOTICE - Process chr21:26199150-26199150...\nNOTICE - Process chr21:26203198-26203198...\nNOTICE - Process chr21:26251437-26251437...\nNOTICE - Process chr21:26254042-26254042...\nNOTICE - Process chr21:26263596-26263596...\nNOTICE - Process chr21:26277417-26277417...\nNOTICE - Process chr21:26277931-26277931...\nNOTICE - Process chr21:26278995-26278995...\nNOTICE - Process chr21:26280000-26280000...\nNOTICE - Process chr21:26301823-26301823...\nNOTICE - Process chr21:26331648-26331648...\nNOTICE - Process chr21:26402030-26402030...\nNOTICE - Process chr21:26402799-26402799...\nNOTICE - Process chr21:26410673-26410673...\nNOTICE - Process chr21:26425201-26425201...\nNOTICE - Process chr21:26468248-26468248...\nNOTICE - Process chr21:26489674-26489674...\nNOTICE - Process chr21:26491116-26491116...\nNOTICE - Process chr21:26503889-26503889...\nNOTICE - Process chr21:26505808-26505808...\nNOTICE - Process chr21:26537068-26537068...\nNOTICE - Process chr21:26551884-26551884...\nNOTICE - Process chr21:26587771-26587771...\nNOTICE - Process chr21:26604181-26604181...\n[SimplePileup] Total Number Bases: 2908757\n[SimplePileup] Total Number Markers: 98275\nNOTICE - Number of marker in Reference Matrix:100000\nNOTICE - Number of marker shared with input file:98275\nNOTICE - Mean Depth:29.598138\nNOTICE - SD Depth:6.527436\nNOTICE - 97731 SNP markers remained after sanity check.\nNOTICE - Passing Marker Sanity Check...\nNOTICE - Success!\n",
+      "cluster.log": "Traceback (most recent call last):\n  File \"/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/retry.py\", line 46, in <module>\n    elif sys.argv[1]=='run':run(sys.argv[2])\n  File \"/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/retry.py\", line 38, in run\n    save(d/'verifybamid.exit.json',{'at':now(),'returncode':z.returncode});assert z.returncode==0,('verifybamid',z.returncode)\nAssertionError: ('verifybamid', -11)\n"
+    },
+    {
+      "folder": "/BiO/scratch/ehojune/GIAB_benchmark/repairs/verifybamID-Illumina250PE-HG002-20260925",
+      "verify.stderr": "4648452...\nNOTICE - Process chr21:24649560-24649560...\nNOTICE - Process chr21:24655080-24655080...\nNOTICE - Process chr21:24659044-24659044...\nNOTICE - Process chr21:24679857-24679857...\nNOTICE - Process chr21:24693245-24693245...\nNOTICE - Process chr21:24772518-24772518...\nNOTICE - Process chr21:24791082-24791082...\nNOTICE - Process chr21:24792573-24792573...\nNOTICE - Process chr21:24817021-24817021...\nNOTICE - Process chr21:24832383-24832383...\nNOTICE - Process chr21:24860254-24860254...\nNOTICE - Process chr21:24938949-24938949...\nNOTICE - Process chr21:24951486-24951486...\nNOTICE - Process chr21:25007401-25007401...\nNOTICE - Process chr21:25012068-25012068...\nNOTICE - Process chr21:25013888-25013888...\nNOTICE - Process chr21:25042218-25042218...\nNOTICE - Process chr21:25079820-25079820...\nNOTICE - Process chr21:25140602-25140602...\nNOTICE - Process chr21:25150871-25150871...\nNOTICE - Process chr21:25210076-25210076...\nNOTICE - Process chr21:25244769-25244769...\nNOTICE - Process chr21:25471037-25471037...\nNOTICE - Process chr21:25488159-25488159...\nNOTICE - Process chr21:25544362-25544362...\nNOTICE - Process chr21:25578142-25578142...\nNOTICE - Process chr21:25592836-25592836...\nNOTICE - Process chr21:25623663-25623663...\nNOTICE - Process chr21:25640835-25640835...\nNOTICE - Process chr21:25687590-25687590...\nNOTICE - Process chr21:25716535-25716535...\nNOTICE - Process chr21:25791027-25791027...\nNOTICE - Process chr21:25813018-25813018...\nNOTICE - Process chr21:25888144-25888144...\nNOTICE - Process chr21:25899847-25899847...\nNOTICE - Process chr21:25903026-25903026...\nNOTICE - Process chr21:25907726-25907726...\nNOTICE - Process chr21:25912793-25912793...\nNOTICE - Process chr21:25944559-25944559...\nNOTICE - Process chr21:25989391-25989391...\nNOTICE - Process chr21:25990009-25990009...\nNOTICE - Process chr21:26026896-26026896...\nNOTICE - Process chr21:26028804-26028804...\nNOTICE - Process chr21:26043021-26043021...\nNOTICE - Process chr21:26054507-26054507...\nNOTICE - Process chr21:26063209-26063209...\nNOTICE - Process chr21:26199150-26199150...\nNOTICE - Process chr21:26203198-26203198...\nNOTICE - Process chr21:26251437-26251437...\nNOTICE - Process chr21:26254042-26254042...\nNOTICE - Process chr21:26263596-26263596...\nNOTICE - Process chr21:26277417-26277417...\nNOTICE - Process chr21:26277931-26277931...\nNOTICE - Process chr21:26278995-26278995...\nNOTICE - Process chr21:26280000-26280000...\nNOTICE - Process chr21:26301823-26301823...\nNOTICE - Process chr21:26331648-26331648...\nNOTICE - Process chr21:26402030-26402030...\nNOTICE - Process chr21:26402799-26402799...\nNOTICE - Process chr21:26410673-26410673...\nNOTICE - Process chr21:26425201-26425201...\nNOTICE - Process chr21:26468248-26468248...\nNOTICE - Process chr21:26489674-26489674...\nNOTICE - Process chr21:26491116-26491116...\nNOTICE - Process chr21:26503889-26503889...\nNOTICE - Process chr21:26505808-26505808...\nNOTICE - Process chr21:26537068-26537068...\nNOTICE - Process chr21:26551884-26551884...\nNOTICE - Process chr21:26587771-26587771...\nNOTICE - Process chr21:26604181-26604181...\n[SimplePileup] Total Number Bases: 5357931\n[SimplePileup] Total Number Markers: 98283\nNOTICE - Number of marker in Reference Matrix:100000\nNOTICE - Number of marker shared with input file:98283\nNOTICE - Mean Depth:54.515338\nNOTICE - SD Depth:10.021381\nNOTICE - 97532 SNP markers remained after sanity check.\nNOTICE - Passing Marker Sanity Check...\nNOTICE - Success!\ntimeout: the monitored command dumped core\n",
+      "isolated_attempt.exitcode": "139\n",
+      "cluster.log": "/opt/sge/default/spool/shepherd-1-11/job_scripts/156781: line 17: 1873190 Segmentation fault      timeout --signal=TERM 2700 \"$tools/verifybamid/current/bin/VerifyBamID\" --BamFile \"$bam\" --Output \"$repair/$sample\" --Reference \"$ref\" --SVDPrefix \"$tools/verifybamid/current/resource/1000g.phase3.100k.b38.vcf.gz.dat\" --NumThread 1 > verify.stdout 2> verify.stderr\n"
+    }
+  ],
+  "manta": [
+    {
+      "sample": "HG002",
+      "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002_manta.err",
+      "bytes": 245,
+      "mtime": 1790381087.0,
+      "tail": "\nSuccessfully created workflow run script.\nTo execute the workflow, run the following script and set appropriate options:\n\n/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/runWorkflow.py\n",
+      "workflow_logs": [
+        {
+          "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/workflow.error.log.txt",
+          "bytes": 8388,
+          "tail": "t --edge-runtime-log /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/workspace/svHyGen/edgeRuntimeLog.0000.txt --edge-stats-log /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/results/stats/svCandidateGenerationStats.xml --edge-stats-report /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/results/stats/svCandidateGenerationStats.tsv --align-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG002_v1.1.0.bam'\n[2026-09-26T00:12:02.277633Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [TaskManager] [ERROR] [generateCandidateSV_0000] Error Message:\n[2026-09-26T00:12:02.279065Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [TaskManager] [ERROR] [generateCandidateSV_0000] Anomalous task wrapper stderr output. Wrapper signal file: '/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/workspace/pyflow.data/logs/tmp/taskWrapperLogs/001/011/pyflowTaskWrapper.signal.txt'\n[2026-09-26T00:12:02.280545Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [TaskManager] [ERROR] [generateCandidateSV_0000] Logging 5 line(s) of task wrapper log output below:\n[2026-09-26T00:12:02.281909Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:10:41.425475Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] wrapperStart\n[2026-09-26T00:12:02.283261Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:10:41.475868Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskStart\n[2026-09-26T00:12:02.284605Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:12:02.197253Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11\n[2026-09-26T00:12:02.286078Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:12:02.219496Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskStderrTail 1\n[2026-09-26T00:12:02.287510Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] Last 0 stderr lines from task (of 0 total lines):\n[2026-09-26T00:12:02.289037Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [TaskManager] [ERROR] Shutting down task submission. Waiting for remaining tasks to complete.\n[2026-09-26T00:12:14.194162Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [WorkflowRunner] [ERROR] Workflow terminated due to the following task errors:\n[2026-09-26T00:12:14.196678Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [WorkflowRunner] [ERROR] Failed to complete command task: 'generateCandidateSV_0000' launched from master workflow, error code: 1, command: '/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/libexec/GenerateSVCandidates --threads 10 --align-stats /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/workspace/alignmentStats.xml --graph-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/workspace/svLocusGraph.bin --bin-index 0 --bin-count 1 --max-edge-count 10 --min-candidate-sv-size 8 --min-candidate-spanning-count 3 --min-scored-sv-size 50 --ref /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --candidate-output-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/workspace/svHyGen/candidateSV.0000.vcf --diploid-output-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/workspace/svHyGen/diploidSV.0000.vcf --min-qual-score 10 --min-pass-qual-score 20 --min-pass-gt-score 15 --enable-remote-read-retrieval --chrom-depth /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/workspace/chromDepth.txt --edge-runtime-log /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/workspace/svHyGen/edgeRuntimeLog.0000.txt --edge-stats-log /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/results/stats/svCandidateGenerationStats.xml --edge-stats-report /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/results/stats/svCandidateGenerationStats.tsv --align-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG002_v1.1.0.bam'\n[2026-09-26T00:12:14.198323Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] Error Message:\n[2026-09-26T00:12:14.199815Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] Anomalous task wrapper stderr output. Wrapper signal file: '/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/workspace/pyflow.data/logs/tmp/taskWrapperLogs/001/011/pyflowTaskWrapper.signal.txt'\n[2026-09-26T00:12:14.201261Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] Logging 5 line(s) of task wrapper log output below:\n[2026-09-26T00:12:14.202673Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:10:41.425475Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] wrapperStart\n[2026-09-26T00:12:14.207002Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:10:41.475868Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskStart\n[2026-09-26T00:12:14.208487Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:12:02.197253Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11\n[2026-09-26T00:12:14.209901Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:12:02.219496Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskStderrTail 1\n[2026-09-26T00:12:14.211509Z] [shepherd-1-2.kobic.re.kr] [3632382_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] Last 0 stderr lines from task (of 0 total lines):\n"
+        }
+      ]
+    },
+    {
+      "sample": "HG003",
+      "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003_manta.err",
+      "bytes": 245,
+      "mtime": 1790381088.0,
+      "tail": "\nSuccessfully created workflow run script.\nTo execute the workflow, run the following script and set appropriate options:\n\n/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/runWorkflow.py\n",
+      "workflow_logs": [
+        {
+          "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/workflow.error.log.txt",
+          "bytes": 8388,
+          "tail": "t --edge-runtime-log /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/workspace/svHyGen/edgeRuntimeLog.0000.txt --edge-stats-log /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/results/stats/svCandidateGenerationStats.xml --edge-stats-report /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/results/stats/svCandidateGenerationStats.tsv --align-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG003_v1.1.0.bam'\n[2026-09-26T00:12:19.588320Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [TaskManager] [ERROR] [generateCandidateSV_0000] Error Message:\n[2026-09-26T00:12:19.589863Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [TaskManager] [ERROR] [generateCandidateSV_0000] Anomalous task wrapper stderr output. Wrapper signal file: '/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/workspace/pyflow.data/logs/tmp/taskWrapperLogs/001/011/pyflowTaskWrapper.signal.txt'\n[2026-09-26T00:12:19.591272Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [TaskManager] [ERROR] [generateCandidateSV_0000] Logging 5 line(s) of task wrapper log output below:\n[2026-09-26T00:12:19.592711Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:10:16.579446Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] wrapperStart\n[2026-09-26T00:12:19.594115Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:10:16.615338Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskStart\n[2026-09-26T00:12:19.595534Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:12:19.534727Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11\n[2026-09-26T00:12:19.597028Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:12:19.556426Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskStderrTail 1\n[2026-09-26T00:12:19.598561Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] Last 0 stderr lines from task (of 0 total lines):\n[2026-09-26T00:12:19.600099Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [TaskManager] [ERROR] Shutting down task submission. Waiting for remaining tasks to complete.\n[2026-09-26T00:12:28.940085Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [WorkflowRunner] [ERROR] Workflow terminated due to the following task errors:\n[2026-09-26T00:12:28.971054Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [WorkflowRunner] [ERROR] Failed to complete command task: 'generateCandidateSV_0000' launched from master workflow, error code: 1, command: '/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/libexec/GenerateSVCandidates --threads 10 --align-stats /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/workspace/alignmentStats.xml --graph-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/workspace/svLocusGraph.bin --bin-index 0 --bin-count 1 --max-edge-count 10 --min-candidate-sv-size 8 --min-candidate-spanning-count 3 --min-scored-sv-size 50 --ref /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --candidate-output-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/workspace/svHyGen/candidateSV.0000.vcf --diploid-output-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/workspace/svHyGen/diploidSV.0000.vcf --min-qual-score 10 --min-pass-qual-score 20 --min-pass-gt-score 15 --enable-remote-read-retrieval --chrom-depth /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/workspace/chromDepth.txt --edge-runtime-log /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/workspace/svHyGen/edgeRuntimeLog.0000.txt --edge-stats-log /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/results/stats/svCandidateGenerationStats.xml --edge-stats-report /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/results/stats/svCandidateGenerationStats.tsv --align-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG003_v1.1.0.bam'\n[2026-09-26T00:12:28.972649Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] Error Message:\n[2026-09-26T00:12:28.974066Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] Anomalous task wrapper stderr output. Wrapper signal file: '/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003/workspace/pyflow.data/logs/tmp/taskWrapperLogs/001/011/pyflowTaskWrapper.signal.txt'\n[2026-09-26T00:12:28.976246Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] Logging 5 line(s) of task wrapper log output below:\n[2026-09-26T00:12:28.977641Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:10:16.579446Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] wrapperStart\n[2026-09-26T00:12:28.979035Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:10:16.615338Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskStart\n[2026-09-26T00:12:28.980768Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:12:19.534727Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11\n[2026-09-26T00:12:28.982242Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:12:19.556426Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskStderrTail 1\n[2026-09-26T00:12:28.983755Z] [shepherd-1-2.kobic.re.kr] [3632389_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] Last 0 stderr lines from task (of 0 total lines):\n"
+        }
+      ]
+    },
+    {
+      "sample": "HG004",
+      "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004_manta.err",
+      "bytes": 245,
+      "mtime": 1790381087.0,
+      "tail": "\nSuccessfully created workflow run script.\nTo execute the workflow, run the following script and set appropriate options:\n\n/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/runWorkflow.py\n",
+      "workflow_logs": [
+        {
+          "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/workflow.error.log.txt",
+          "bytes": 8388,
+          "tail": "t --edge-runtime-log /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/workspace/svHyGen/edgeRuntimeLog.0000.txt --edge-stats-log /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/results/stats/svCandidateGenerationStats.xml --edge-stats-report /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/results/stats/svCandidateGenerationStats.tsv --align-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG004_v1.1.0.bam'\n[2026-09-26T00:10:16.496734Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [TaskManager] [ERROR] [generateCandidateSV_0000] Error Message:\n[2026-09-26T00:10:16.498226Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [TaskManager] [ERROR] [generateCandidateSV_0000] Anomalous task wrapper stderr output. Wrapper signal file: '/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/workspace/pyflow.data/logs/tmp/taskWrapperLogs/001/011/pyflowTaskWrapper.signal.txt'\n[2026-09-26T00:10:16.499564Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [TaskManager] [ERROR] [generateCandidateSV_0000] Logging 5 line(s) of task wrapper log output below:\n[2026-09-26T00:10:16.500880Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:09:15.652976Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] wrapperStart\n[2026-09-26T00:10:16.502272Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:09:15.681867Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskStart\n[2026-09-26T00:10:16.504534Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:10:16.426957Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11\n[2026-09-26T00:10:16.506923Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:10:16.448919Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskStderrTail 1\n[2026-09-26T00:10:16.508621Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] Last 0 stderr lines from task (of 0 total lines):\n[2026-09-26T00:10:16.510103Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [TaskManager] [ERROR] Shutting down task submission. Waiting for remaining tasks to complete.\n[2026-09-26T00:10:29.185455Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [WorkflowRunner] [ERROR] Workflow terminated due to the following task errors:\n[2026-09-26T00:10:29.187868Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [WorkflowRunner] [ERROR] Failed to complete command task: 'generateCandidateSV_0000' launched from master workflow, error code: 1, command: '/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/libexec/GenerateSVCandidates --threads 10 --align-stats /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/workspace/alignmentStats.xml --graph-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/workspace/svLocusGraph.bin --bin-index 0 --bin-count 1 --max-edge-count 10 --min-candidate-sv-size 8 --min-candidate-spanning-count 3 --min-scored-sv-size 50 --ref /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --candidate-output-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/workspace/svHyGen/candidateSV.0000.vcf --diploid-output-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/workspace/svHyGen/diploidSV.0000.vcf --min-qual-score 10 --min-pass-qual-score 20 --min-pass-gt-score 15 --enable-remote-read-retrieval --chrom-depth /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/workspace/chromDepth.txt --edge-runtime-log /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/workspace/svHyGen/edgeRuntimeLog.0000.txt --edge-stats-log /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/results/stats/svCandidateGenerationStats.xml --edge-stats-report /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/results/stats/svCandidateGenerationStats.tsv --align-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG004_v1.1.0.bam'\n[2026-09-26T00:10:29.189356Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] Error Message:\n[2026-09-26T00:10:29.191637Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] Anomalous task wrapper stderr output. Wrapper signal file: '/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004/workspace/pyflow.data/logs/tmp/taskWrapperLogs/001/011/pyflowTaskWrapper.signal.txt'\n[2026-09-26T00:10:29.193183Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] Logging 5 line(s) of task wrapper log output below:\n[2026-09-26T00:10:29.194641Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:09:15.652976Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] wrapperStart\n[2026-09-26T00:10:29.196363Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:09:15.681867Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskStart\n[2026-09-26T00:10:29.198430Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:10:16.426957Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11\n[2026-09-26T00:10:29.199917Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-26T00:10:16.448919Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskStderrTail 1\n[2026-09-26T00:10:29.201604Z] [shepherd-1-2.kobic.re.kr] [3632383_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] Last 0 stderr lines from task (of 0 total lines):\n"
+        }
+      ]
+    }
+  ],
+  "owners": [
+    {
+      "session": "f4f3cd33-069f-4618-9370-aeca65f756bd",
+      "registry_status": "not-listed",
+      "last_activity": "2026-09-26T11:44:04.918Z"
+    },
+    {
+      "session": "febe25e4-aaad-40ef-b098-6762f7da433f",
+      "registry_status": "not-listed",
+      "last_activity": "2026-09-24T23:23:11.385Z"
+    },
+    {
+      "session": "9fd8a804-eb9d-4050-85dc-351146d3fc7a",
+      "registry_status": "not-listed",
+      "last_activity": "2026-09-26T00:25:32.947Z"
+    },
+    {
+      "session": "f9a76550-837f-4f82-b561-d0a7cbbacc74",
+      "registry_status": "not-listed",
+      "last_activity": "2026-09-26T11:27:51.898Z"
+    },
+    {
+      "session": "148efde9-4992-4a4a-8412-73d5e5e8053e",
+      "registry_status": "not-listed",
+      "last_activity": "2026-09-27T07:47:58.599Z"
+    }
+  ],
+  "somatic_summary_count": 28,
+  "qstat": "job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID \n-----------------------------------------------------------------------------------------------------------------\n 155526 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-8.kobic.re    60        \n 155527 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-9.kobic.re    60        \n 155528 0.75000 regermline ehojune      r     09/21/2026 16:36:14 shepherd.q@shepherd-1-9.kobic.    60        \n 156690 0.25000 regermline ehojune      r     09/25/2026 01:06:44 shepherd.q@shepherd-1-8.kobic.    60        \n",
+  "new_jobs_submitted": []
+}
