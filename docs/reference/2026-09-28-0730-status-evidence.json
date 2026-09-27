@@ -1,0 +1,219 @@
+{
+  "at": "2026-09-28T07:31:45.635647+09:00",
+  "host": "nbbcluster2",
+  "user": "ehojune",
+  "baseline": "2026-09-28T07:01:19.829544+09:00",
+  "public": [
+    {
+      "set": "BGISEQ500",
+      "job": "155526",
+      "state": "r",
+      "cpu_delta_seconds": 6094,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "11.0",
+            "11743",
+            "17901"
+          ],
+          "tasks_delta": 250,
+          "log_bytes_delta": 276267,
+          "mtime": "2026-09-28T07:31:19"
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "15.0",
+            "9173",
+            "18330"
+          ],
+          "tasks_delta": 260,
+          "log_bytes_delta": 288451,
+          "mtime": "2026-09-28T07:31:19"
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "11.0",
+            "15077",
+            "18074"
+          ],
+          "tasks_delta": 230,
+          "log_bytes_delta": 251230,
+          "mtime": "2026-09-28T07:31:43"
+        }
+      ],
+      "old_done_mtime": "2026-09-21T08:44:32",
+      "historical_done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-BGISEQ500\n- Message : Error\n",
+      "current_error_list": null
+    },
+    {
+      "set": "Element-AVITI",
+      "job": "155527",
+      "state": "r",
+      "cpu_delta_seconds": 6665,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "11.0",
+            "16271",
+            "19836"
+          ],
+          "tasks_delta": 250,
+          "log_bytes_delta": 273320,
+          "mtime": "2026-09-28T07:30:59"
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "11.0",
+            "10249",
+            "19051"
+          ],
+          "tasks_delta": 242,
+          "log_bytes_delta": 267440,
+          "mtime": "2026-09-28T07:31:43"
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "6.0",
+            "19383",
+            "21167"
+          ],
+          "tasks_delta": 240,
+          "log_bytes_delta": 260111,
+          "mtime": "2026-09-28T07:31:44"
+        }
+      ],
+      "old_done_mtime": "2026-09-19T22:25:35",
+      "historical_done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Element-AVITI\n- Message : Error\n",
+      "current_error_list": null
+    },
+    {
+      "set": "Hiseq-300x",
+      "job": "155528",
+      "state": "r",
+      "cpu_delta_seconds": 3685,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "4.0",
+            "4737",
+            "52839"
+          ],
+          "tasks_delta": 240,
+          "log_bytes_delta": 191779,
+          "mtime": "2026-09-28T07:31:22"
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "4.0",
+            "2849",
+            "53467"
+          ],
+          "tasks_delta": 250,
+          "log_bytes_delta": 199769,
+          "mtime": "2026-09-28T07:30:55"
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "2.0",
+            "56107",
+            "61287"
+          ],
+          "tasks_delta": 260,
+          "log_bytes_delta": 209301,
+          "mtime": "2026-09-28T07:31:32"
+        }
+      ],
+      "old_done_mtime": "2026-09-21T07:28:13",
+      "historical_done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Hiseq-300x\n- Message : Error\n",
+      "current_error_list": null
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "job": "156690",
+      "state": "r",
+      "cpu_delta_seconds": 5264,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "6.0",
+            "14645",
+            "15160"
+          ],
+          "tasks_delta": 300,
+          "log_bytes_delta": 328990,
+          "mtime": "2026-09-28T07:31:31"
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "11.0",
+            "1805",
+            "14631"
+          ],
+          "tasks_delta": 292,
+          "log_bytes_delta": 319750,
+          "mtime": "2026-09-28T07:31:06"
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "4.0",
+            "12127",
+            "29656"
+          ],
+          "tasks_delta": 302,
+          "log_bytes_delta": 242506,
+          "mtime": "2026-09-28T07:30:58"
+        }
+      ],
+      "old_done_mtime": "2026-09-20T19:00:15",
+      "historical_done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-MGISEQ2000-PCRfree\n- Message : Error\n",
+      "current_error_list": null
+    }
+  ],
+  "completed_comparisons": 19,
+  "closed_comparison_evidence": "docs/reference/2026-09-28-0600-status-evidence.json",
+  "latency_evidence": "outputs/markdup-bottleneck-evidence-20260928.json",
+  "diagnosis": "Large input plus measured I/O wait in representative nodes; avoid extrapolating task fractions to ETA.",
+  "owners": [
+    {
+      "session": "f4f3cd33-069f-4618-9370-aeca65f756bd",
+      "status": "not-listed",
+      "last_activity": "2026-09-26T11:44:04.918Z"
+    },
+    {
+      "session": "febe25e4-aaad-40ef-b098-6762f7da433f",
+      "status": "not-listed",
+      "last_activity": "2026-09-24T23:23:11.385Z"
+    },
+    {
+      "session": "9fd8a804-eb9d-4050-85dc-351146d3fc7a",
+      "status": "not-listed",
+      "last_activity": "2026-09-26T00:25:32.947Z"
+    },
+    {
+      "session": "f9a76550-837f-4f82-b561-d0a7cbbacc74",
+      "status": "not-listed",
+      "last_activity": "2026-09-26T11:27:51.898Z"
+    },
+    {
+      "session": "148efde9-4992-4a4a-8412-73d5e5e8053e",
+      "status": "not-listed",
+      "last_activity": "2026-09-27T07:47:58.599Z"
+    }
+  ],
+  "new_analysis_jobs": [],
+  "new_analysis_failures": [],
+  "next_check": "2026-09-28 08:00 KST",
+  "ppt_deadline": "2026-09-28 09:00 KST"
+}

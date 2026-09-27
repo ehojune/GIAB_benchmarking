@@ -1373,3 +1373,8 @@ HG002 Manta는 exit0·VCF/QC·해시·원자료 보존을 확인해 누락된 va
 ## 2026-09-28 06시 — 비교 19건과 공개 처리 기록
 
 Illumina 3건을 검증해 비교를 19건으로 갱신했다. 완료된 공개 7행의 자체 처리 누락을 반영하되 기존 GIAB 정렬·변이 출처는 그대로 두고 자체 결과는 notes에 분리했다. 새 분석은 추가하지 않았다. [근거](reference/2026-09-28-public-shortread-catalog.json).
+
+
+## 2026-09-28 07:13 — MarkDuplicates 지연 진단
+
+공개 원본 크기와 대표 계산노드 I/O 대기·Java D 상태를 확인했다. 20GiB heap·공유 Lustre 임시경로는 설정값이다. 주원인을 메모리 부족으로 단정하지 않고 기존 4잡을 유지한다. job-local 저장소 설정은 완료 결과가 없는 샘플의 복구가 필요해질 때만 검토한다. [근거](reference/2026-09-28-public-markdup-latency.md).
