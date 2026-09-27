@@ -1,0 +1,193 @@
+{
+  "at": "2026-09-28T04:43:19.045175+09:00",
+  "baseline": "2026-09-28T03:04:20.194627+09:00",
+  "live_at": "2026-09-28T04:45:28.882405+09:00",
+  "jobs": [
+    {
+      "set": "BGISEQ500",
+      "job": "155526",
+      "state": "r",
+      "cpu_delta_seconds": 21345,
+      "samples": [
+        {
+          "sample": "HG002",
+          "log_bytes_delta": 886012,
+          "stage": [
+            "11.0",
+            "10389",
+            "17901"
+          ],
+          "mtime": "2026-09-28T04:42:33"
+        },
+        {
+          "sample": "HG003",
+          "log_bytes_delta": 1089827,
+          "stage": [
+            "15.0",
+            "7647",
+            "18330"
+          ],
+          "mtime": "2026-09-28T04:43:13"
+        },
+        {
+          "sample": "HG004",
+          "log_bytes_delta": 930431,
+          "stage": [
+            "11.0",
+            "13771",
+            "18074"
+          ],
+          "mtime": "2026-09-28T04:42:49"
+        }
+      ]
+    },
+    {
+      "set": "Element-AVITI",
+      "job": "155527",
+      "state": "r",
+      "cpu_delta_seconds": 21330,
+      "samples": [
+        {
+          "sample": "HG002",
+          "log_bytes_delta": 841369,
+          "stage": [
+            "11.0",
+            "14927",
+            "19836"
+          ],
+          "mtime": "2026-09-28T04:42:34"
+        },
+        {
+          "sample": "HG003",
+          "log_bytes_delta": 872692,
+          "stage": [
+            "11.0",
+            "8943",
+            "19051"
+          ],
+          "mtime": "2026-09-28T04:43:12"
+        },
+        {
+          "sample": "HG004",
+          "log_bytes_delta": 779684,
+          "stage": [
+            "6.0",
+            "18099",
+            "21167"
+          ],
+          "mtime": "2026-09-28T04:42:28"
+        }
+      ]
+    },
+    {
+      "set": "Hiseq-300x",
+      "job": "155528",
+      "state": "r",
+      "cpu_delta_seconds": 11804,
+      "samples": [
+        {
+          "sample": "HG002",
+          "log_bytes_delta": 633666,
+          "stage": [
+            "4.0",
+            "3382",
+            "52839"
+          ],
+          "mtime": "2026-09-28T04:42:31"
+        },
+        {
+          "sample": "HG003",
+          "log_bytes_delta": 657309,
+          "stage": [
+            "4.0",
+            "1497",
+            "53467"
+          ],
+          "mtime": "2026-09-28T04:43:14"
+        },
+        {
+          "sample": "HG004",
+          "log_bytes_delta": 640791,
+          "stage": [
+            "2.0",
+            "54775",
+            "61287"
+          ],
+          "mtime": "2026-09-28T04:42:32"
+        }
+      ]
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "job": "156690",
+      "state": "r",
+      "cpu_delta_seconds": 18437,
+      "samples": [
+        {
+          "sample": "HG002",
+          "log_bytes_delta": 1016122,
+          "stage": [
+            "6.0",
+            "13089",
+            "15160"
+          ],
+          "mtime": "2026-09-28T04:42:13"
+        },
+        {
+          "sample": "HG003",
+          "log_bytes_delta": 12463360,
+          "stage": [
+            "7.0",
+            "14631",
+            "14631"
+          ],
+          "mtime": "2026-09-28T04:42:51"
+        },
+        {
+          "sample": "HG004",
+          "log_bytes_delta": 755717,
+          "stage": [
+            "4.0",
+            "10550",
+            "29656"
+          ],
+          "mtime": "2026-09-28T04:41:29"
+        }
+      ]
+    }
+  ],
+  "manta_at": "2026-09-28T04:39:38.204565+09:00",
+  "manta": [
+    {
+      "sample": "HG002",
+      "job": "156831",
+      "running": true,
+      "stage": "manta_workflow",
+      "failed": null,
+      "verified": null,
+      "artifacts": [
+        {
+          "file": "run/workspace/svHyGen/diploidSV.0000.vcf",
+          "bytes": 1469056,
+          "mtime": "2026-09-28T04:39:36"
+        },
+        {
+          "file": "run/workspace/svHyGen/candidateSV.0000.vcf",
+          "bytes": 7637286,
+          "mtime": "2026-09-28T04:39:38"
+        },
+        {
+          "file": "run/workspace/svHyGen/edgeRuntimeLog.0000.txt",
+          "bytes": 106782,
+          "mtime": "2026-09-28T04:38:05"
+        }
+      ]
+    }
+  ],
+  "schedule": {
+    "id": "giab-4",
+    "before_0900": "every hour at minute 00 and 30",
+    "at_0900": "deliver exactly five slides, then change same heartbeat to every four hours"
+  },
+  "owner_snapshot": "outputs/owner-status-20260928-0444.json"
+}
