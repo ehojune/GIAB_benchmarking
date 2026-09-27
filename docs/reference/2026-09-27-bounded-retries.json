@@ -1,0 +1,341 @@
+{
+  "at": "2026-09-27T21:08:22.484731+09:00",
+  "authorization": "2026-09-27: original failed stage rerun or bounded fix; maximum two new attempts per item; monitor every three hours",
+  "identity": [
+    "nbbcluster2",
+    "ehojune"
+  ],
+  "server_root": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries",
+  "hashes": {
+    "driver_sha256": "c361b79868eac53c76f3c8ddc9d7f7e9c8e3bed86398f8cdc02528b5880da8dc",
+    "preflight_sha256": "e617c2d3242453c47860615da23ee659798ba33c76e31b0f56c358b553449601"
+  },
+  "jobs": [
+    {
+      "at": "2026-09-27T21:08:13.874232+09:00",
+      "key": "verify-gd3-KOR101",
+      "sample": "C000000300100000G0x1",
+      "attempt": 1,
+      "job": "156821",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-gd3-KOR101/attempt-1"
+    },
+    {
+      "at": "2026-09-27T21:08:14.005463+09:00",
+      "key": "verify-gd4-KOR102",
+      "sample": "C000000400200000G0x1",
+      "attempt": 1,
+      "job": "156822",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-gd4-KOR102/attempt-1"
+    },
+    {
+      "at": "2026-09-27T21:08:14.132145+09:00",
+      "key": "verify-illumina-HG002",
+      "sample": "GIAB-publicData-Illumina-250PE-HG002",
+      "attempt": 1,
+      "job": "156823",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-illumina-HG002/attempt-1"
+    },
+    {
+      "at": "2026-09-27T21:08:14.259052+09:00",
+      "key": "manta-illumina-HG002",
+      "sample": "GIAB-publicData-Illumina-250PE-HG002",
+      "attempt": 1,
+      "job": "156824",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1"
+    },
+    {
+      "at": "2026-09-27T21:08:14.386384+09:00",
+      "key": "manta-illumina-HG003",
+      "sample": "GIAB-publicData-Illumina-250PE-HG003",
+      "attempt": 1,
+      "job": "156825",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1"
+    },
+    {
+      "at": "2026-09-27T21:08:14.516390+09:00",
+      "key": "manta-illumina-HG004",
+      "sample": "GIAB-publicData-Illumina-250PE-HG004",
+      "attempt": 1,
+      "job": "156826",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1"
+    }
+  ],
+  "inputs": [
+    {
+      "key": "verify-gd3-KOR101",
+      "sample": "C000000300100000G0x1",
+      "bam": {
+        "path": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000300100000G0x1/C000000300100000G0x1_v1.1.0.bam",
+        "target": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000300100000G0x1/C000000300100000G0x1_v1.1.0.bam",
+        "bytes": 36819532577,
+        "mtime_ns": 1790436946000000000,
+        "inode": 144115949912579647
+      },
+      "bam_index": {
+        "path": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000300100000G0x1/C000000300100000G0x1_v1.1.0.bam.bai",
+        "target": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000300100000G0x1/C000000300100000G0x1_v1.1.0.bam.bai",
+        "bytes": 9385464,
+        "mtime_ns": 1790437001000000000,
+        "inode": 144115949912579652
+      },
+      "quickcheck": 0,
+      "read_groups": [
+        "@RG\tID:C000000300100000G0x1\tSM:C000000300100000G0x1\tPL:ILLUMINA\tLB:UNKNOWN"
+      ],
+      "protected_outcome_paths": 48
+    },
+    {
+      "key": "verify-gd4-KOR102",
+      "sample": "C000000400200000G0x1",
+      "bam": {
+        "path": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400200000G0x1/C000000400200000G0x1_v1.1.0.bam",
+        "target": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400200000G0x1/C000000400200000G0x1_v1.1.0.bam",
+        "bytes": 40510946644,
+        "mtime_ns": 1790494479000000000,
+        "inode": 144115950952757535
+      },
+      "bam_index": {
+        "path": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400200000G0x1/C000000400200000G0x1_v1.1.0.bam.bai",
+        "target": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400200000G0x1/C000000400200000G0x1_v1.1.0.bam.bai",
+        "bytes": 9356912,
+        "mtime_ns": 1790494538000000000,
+        "inode": 144115950952757540
+      },
+      "quickcheck": 0,
+      "read_groups": [
+        "@RG\tID:C000000400200000G0x1\tSM:C000000400200000G0x1\tPL:ILLUMINA\tLB:UNKNOWN"
+      ],
+      "protected_outcome_paths": 48
+    },
+    {
+      "key": "verify-illumina-HG002",
+      "sample": "GIAB-publicData-Illumina-250PE-HG002",
+      "bam": {
+        "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG002_v1.1.0.bam",
+        "target": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG002_v1.1.0.bam",
+        "bytes": 77460504813,
+        "mtime_ns": 1790327503000000000,
+        "inode": 144115950633994776
+      },
+      "bam_index": {
+        "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG002_v1.1.0.bam.bai",
+        "target": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG002_v1.1.0.bam.bai",
+        "bytes": 9759504,
+        "mtime_ns": 1790327503000000000,
+        "inode": 144115950633994808
+      },
+      "quickcheck": 0,
+      "read_groups": [
+        "@RG\tID:GIAB-publicData-Illumina-250PE-HG002\tSM:GIAB-publicData-Illumina-250PE-HG002\tPL:ILLUMINA\tLB:UNKNOWN"
+      ],
+      "protected_outcome_paths": 33
+    },
+    {
+      "key": "manta-illumina-HG002",
+      "sample": "GIAB-publicData-Illumina-250PE-HG002",
+      "bam": {
+        "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG002_v1.1.0.bam",
+        "target": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG002_v1.1.0.bam",
+        "bytes": 77460504813,
+        "mtime_ns": 1790327503000000000,
+        "inode": 144115950633994776
+      },
+      "bam_index": {
+        "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG002_v1.1.0.bam.bai",
+        "target": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG002_v1.1.0.bam.bai",
+        "bytes": 9759504,
+        "mtime_ns": 1790327503000000000,
+        "inode": 144115950633994808
+      },
+      "quickcheck": 0,
+      "read_groups": [
+        "@RG\tID:GIAB-publicData-Illumina-250PE-HG002\tSM:GIAB-publicData-Illumina-250PE-HG002\tPL:ILLUMINA\tLB:UNKNOWN"
+      ],
+      "protected_outcome_paths": 33
+    },
+    {
+      "key": "manta-illumina-HG003",
+      "sample": "GIAB-publicData-Illumina-250PE-HG003",
+      "bam": {
+        "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG003_v1.1.0.bam",
+        "target": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG003_v1.1.0.bam",
+        "bytes": 70610086661,
+        "mtime_ns": 1790286922000000000,
+        "inode": 144115950533307740
+      },
+      "bam_index": {
+        "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG003_v1.1.0.bam.bai",
+        "target": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG003_v1.1.0.bam.bai",
+        "bytes": 9694504,
+        "mtime_ns": 1790286922000000000,
+        "inode": 144115950533307842
+      },
+      "quickcheck": 0,
+      "read_groups": [
+        "@RG\tID:GIAB-publicData-Illumina-250PE-HG003\tSM:GIAB-publicData-Illumina-250PE-HG003\tPL:ILLUMINA\tLB:UNKNOWN"
+      ],
+      "protected_outcome_paths": 33
+    },
+    {
+      "key": "manta-illumina-HG004",
+      "sample": "GIAB-publicData-Illumina-250PE-HG004",
+      "bam": {
+        "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG004_v1.1.0.bam",
+        "target": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG004_v1.1.0.bam",
+        "bytes": 76856089641,
+        "mtime_ns": 1790359158000000000,
+        "inode": 144115950768113547
+      },
+      "bam_index": {
+        "path": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG004_v1.1.0.bam.bai",
+        "target": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG004_v1.1.0.bam.bai",
+        "bytes": 9754784,
+        "mtime_ns": 1790359158000000000,
+        "inode": 144115950768113549
+      },
+      "quickcheck": 0,
+      "read_groups": [
+        "@RG\tID:GIAB-publicData-Illumina-250PE-HG004\tSM:GIAB-publicData-Illumina-250PE-HG004\tPL:ILLUMINA\tLB:UNKNOWN"
+      ],
+      "protected_outcome_paths": 33
+    }
+  ],
+  "original_rules": {
+    "manta": "1198: rule manta:\n1199:     input:\n1200:         bqsr_bam = f\"{BQSR_DIR}/{{sample}}_{SCRIPT_VERSION}.bam\",\n1201:         bqsr_bam_bai = f\"{BQSR_DIR}/{{sample}}_{SCRIPT_VERSION}.bam.bai\"\n1202:     output:\n1203:         manta_diploidSV_vcf = f\"{MANTA_DIR}/{{sample}}/results/variants/diploidSV.vcf.gz\",\n1204:         manta_converted_vcf = f\"{MANTA_DIR}/{{sample}}/results/variants/{{sample}}.diploidSV.conInv.vcf\",\n1205:         manta_coninv =        f\"{MANTA_DIR}/{{sample}}/results/variants/{{sample}}.diploidSV.conInv_filtered.vcf\"\n1206:     params:\n1207:         run_dir =           f\"{MANTA_DIR}/{{sample}}\",\n1208:         conInv_out_prefix = f\"{MANTA_DIR}/{{sample}}/results/variants/{{sample}}.diploidSV.conInv\"\n1209:     log:\n1210:         err = f\"{MANTA_DIR}/{{sample}}_manta.err\"\n1211:     benchmark:\n1212:         f\"{BENCHMARK_DIR}/{{sample}}.manta.benchmark\"\n1213:     resources:\n1214:         mem_mb=config[\"memory\"][\"mem-5g\"]\n1215:     threads:\n1216:         config['threads']['default']\n1217:     priority:\n1218:         config[\"PRIORITY\"][\"manta\"]\n1219:     run:\n1220:         try:\n1221:             shell(\"\"\"\n1222:                 \n1223:                 {PYTHON2} {MANTA} --bam {input.bqsr_bam} --referenceFasta {REF} --runDir {params.run_dir}/ 1>> {log.err}\n1224:                 \n1225:                 {PYTHON2} {params.run_dir}/runWorkflow.py -j {threads} 1>> {log.err}\n1226:                 \n1227:                 {PYTHON2} {CONVERTINVERSION} {SAMTOOLS} {REF} \\\n1228:                     {output.manta_diploidSV_vcf} > {output.manta_converted_vcf} 2>> {log.err}\n1229:                 \n1230:                 {PYTHON3} {MANTAFILTER} {output.manta_converted_vcf} {params.conInv_out_prefix}\n1231:                 \n1232:                 exit_code=$?\n1233:                 # exit_code 출력\n1234:                 echo \"[#status code] {rule} {wildcards.sample} $exit_code\" >> {log.err}\n1235:                 # status code 검사\n1236:                 if [ \"$exit_code\" -ne 0 ];then\n1237:                     echo \"Error detected, status code is non-zero\" >> {log.err}\n1238:                     rm -rf {output.manta_diploidSV_vcf} {output.manta_converted_vcf} {output.manta_coninv}\n1239:                     exit 1\n1240:                 fi\n1241:                 \n1242:                 sha256sum {output.manta_coninv} > {output.manta_coninv}.sha256sum\n1243:                 \n1244:                 ln -s {output.manta_coninv} {INPUT_DIR}/outcome/{wildcards.sample}/{wildcards.sample}.diploidSV.conInv_filtered.vcf\n1245:             \"\"\")   \n1246:         except:\n1247:             sample_id = {wildcards.sample}\n1248:             step = {rule}\n1249:             err_message = {log.err}\n1250:             send_alarm(sample_id, step, err_message, INPUT_DIR)\n1251: \n1252: #21.canvas",
+    "verifybamID": "1055: rule verifybamID:\n1056:     input:\n1057:         bqsr_bam = f\"{BQSR_DIR}/{{sample}}_{SCRIPT_VERSION}.bam\",\n1058:         bqsr_bam_bai = f\"{BQSR_DIR}/{{sample}}_{SCRIPT_VERSION}.bam.bai\"\n1059:     output:\n1060:         verify_ancestry = f\"{VERIFYBAMID_DIR}/{{sample}}.Ancestry\",\n1061:         verify_selfsm =   f\"{VERIFYBAMID_DIR}/{{sample}}.selfSM\"\n1062:     log:\n1063:         out = f\"{VERIFYBAMID_DIR}/{{sample}}_verifybamID.log\",\n1064:         err = f\"{VERIFYBAMID_DIR}/{{sample}}_verifybamID.err\"\n1065:     params:\n1066:         verify_out_prefix = f\"{VERIFYBAMID_DIR}/{{sample}}\"\n1067:     benchmark:\n1068:         f\"{BENCHMARK_DIR}/{{sample}}.verifybamID.benchmark\"\n1069:     resources:\n1070:         mem_mb=config[\"memory\"][\"mem-5g\"]\n1071:     threads:\n1072:         config['threads']['verifybamid']\n1073:     priority:\n1074:         config[\"PRIORITY\"][\"verifybamid\"]\n1075:     run:\n1076:         try:\n1077:             shell(\"\"\"\n1078:                 {VerifyBamID2} \\\n1079:                     --BamFile {input.bqsr_bam} \\\n1080:                     --Output {params.verify_out_prefix} \\\n1081:                     --Reference {REF} \\\n1082:                     --SVDPrefix {VerifyBamID2_SVD} \\\n1083:                     --NumThread {threads} 1> {log.err} 2> {log.out}\n1084:                 \n1085:                 exit_code=$?\n1086:                 # exit_code 출력\n1087:                 echo \"[#status code] {rule} {wildcards.sample} $exit_code\" >> {log.err}\n1088:                 # status code 검사\n1089:                 if [ \"$exit_code\" -ne 0 ];then\n1090:                     echo \"Error detected, status code is non-zero\" >> {log.err}\n1091:                     rm -rf {output.verify_ancestry} {output.verify_selfsm}\n1092:                     exit 1\n1093:                 fi\n1094:                 \n1095:                 sha256sum {output.verify_selfsm} >  {output.verify_selfsm}.sha256sum\n1096:                 \n1097:                 ln -s {output.verify_selfsm} {ANALYSIS_DIR}/{wildcards.sample}/{wildcards.sample}.selfSM\n1098:             \"\"\")   \n1099:         except:\n1100:             sample_id = {wildcards.sample}\n1101:             step = {rule}\n1102:             err_message = {log.err}\n1103:             send_alarm(sample_id, step, err_message, INPUT_DIR)\n1104: \n1105: #14.mosdepth"
+  },
+  "source_files": [
+    {
+      "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/bin/VerifyBamID",
+      "target": "/BiO/scratch/dyl/kbb/UTILS/Tools/verifybamid/current/bin/VerifyBamID",
+      "bytes": 6759392,
+      "mtime_ns": 1787718253000000000,
+      "inode": 144115946691260748,
+      "sha256": "f1ba29bf518e307157e96bc5b56e8cccc8dc53b9cd0f83d63ebd87a1081ad04e"
+    },
+    {
+      "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/samtools/samtools-1.20/bin/samtools",
+      "target": "/BiO/scratch/dyl/kbb/UTILS/Tools/samtools/samtools-1.20/bin/samtools",
+      "bytes": 9045376,
+      "mtime_ns": 1787709288000000000,
+      "inode": 144115946641018594,
+      "sha256": "4a7b04647de3c4ee3401c7f67ffc234d610e8588a54c070475b7160a99034cd0"
+    },
+    {
+      "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/bin/configManta.py",
+      "target": "/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/bin/configManta.py",
+      "bytes": 7518,
+      "mtime_ns": 1787893798000000000,
+      "inode": 144115946708031298,
+      "sha256": "16572903affb9082f1ba6be03e13725cbc70f3513e3e9bbb9dc4dd06d2f52b05"
+    },
+    {
+      "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/libexec/GenerateSVCandidates",
+      "target": "/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/libexec/GenerateSVCandidates",
+      "bytes": 7621512,
+      "mtime_ns": 1561759768000000000,
+      "inode": 144115946691293068,
+      "sha256": "1105eda7f1ff6578e3ab6d0663008aa63f5c1b0c008a21dc114f75f87ad0d183"
+    },
+    {
+      "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/libexec/convertInversion.py",
+      "target": "/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/libexec/convertInversion.py",
+      "bytes": 9768,
+      "mtime_ns": 1788852287000000000,
+      "inode": 144115946808756992,
+      "sha256": "eccd377c7b0306f8ea918365b3de93a6126bc3f395ebd6e26faa5a7baf75d9e9"
+    },
+    {
+      "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/in_house_scripts/manta_filter.py",
+      "target": "/BiO/scratch/dyl/kbb/UTILS/Tools/in_house_scripts/manta_filter.py",
+      "bytes": 2456,
+      "mtime_ns": 1787729339000000000,
+      "inode": 144115946691289738,
+      "sha256": "271949aac854881cb102b3675d37015edcae7242c1569c8df3e6db5a85d5a92d"
+    },
+    {
+      "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/bcftools/current/bin/bcftools",
+      "target": "/BiO/scratch/dyl/kbb/UTILS/Tools/bcftools/current/bin/bcftools",
+      "bytes": 12182376,
+      "mtime_ns": 1787729760000000000,
+      "inode": 144115946691293011,
+      "sha256": "3ab7a7755c01cce0d17599add742a27ba0191dc47879779f7e1d144df8b30a85"
+    },
+    {
+      "path": "/BiO/scratch/dyl/kbb/opt/python2.7.18/bin/python2",
+      "target": "/BiO/scratch/dyl/kbb/opt/python2.7.18/bin/python2.7",
+      "bytes": 9252056,
+      "mtime_ns": 1787731621000000000,
+      "inode": 144115946691352199,
+      "sha256": "9385aa2de8e870e02a9d275eee6ffe147bab1c9786601452694c9e32e286c851"
+    },
+    {
+      "path": "/BiO/scratch/dyl/kbb/opt/python3.8.11/bin/python3",
+      "target": "/BiO/scratch/dyl/kbb/opt/python3.8.11/bin/python3.8",
+      "bytes": 20560272,
+      "mtime_ns": 1787731310000000000,
+      "inode": 144115946691327156,
+      "sha256": "e1b5c0dbc73024d7d37bffb07519543ebc948546f4a9ccc59a2e3f5a795d0ecb"
+    },
+    {
+      "path": "/BiO/scratch/dyl/kbb/UTILS/Tools/in_house_scripts/snakemake_script/germline_pipeline_snakefile.py",
+      "target": "/BiO/scratch/dyl/kbb/UTILS/Tools/in_house_scripts/snakemake_script/germline_pipeline_snakefile_2025_g4.py",
+      "bytes": 66092,
+      "mtime_ns": 1789971355000000000,
+      "inode": 144115946640994563,
+      "sha256": "92ab0826ee929c9ae89fa1b79974d5f4a968acbd7fba335cb373c42884cb4e8c"
+    }
+  ],
+  "reference": {
+    "path": "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+    "target": "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+    "bytes": 3249912778,
+    "mtime_ns": 1715142994000000000,
+    "inode": 144115946691259418
+  },
+  "qstat": "job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID \n-----------------------------------------------------------------------------------------------------------------\n 155526 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-8.kobic.re    60        \n 155527 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-9.kobic.re    60        \n 155528 0.75000 regermline ehojune      r     09/21/2026 16:36:14 shepherd.q@shepherd-1-9.kobic.    60        \n 156690 0.55315 regermline ehojune      r     09/25/2026 01:06:44 shepherd.q@shepherd-1-8.kobic.    60        \n 156821 0.25000 giab_retry ehojune      r     09/27/2026 21:08:14 shepherd.q@shepherd-1-10.kobic     4        \n 156822 0.00000 giab_retry ehojune      qw    09/27/2026 21:08:14                                    4        \n 156823 0.00000 giab_retry ehojune      qw    09/27/2026 21:08:14                                    4        \n 156824 0.00000 giab_retry ehojune      qw    09/27/2026 21:08:14                                   10        \n 156825 0.00000 giab_retry ehojune      qw    09/27/2026 21:08:14                                   10        \n 156826 0.00000 giab_retry ehojune      qw    09/27/2026 21:08:14                                   10        \n",
+  "canonical_writes": false,
+  "attempt_limit": 2,
+  "automation": {
+    "id": "giab-4",
+    "hours": 3,
+    "status": "ACTIVE"
+  },
+  "followup": {
+    "at": "2026-09-27T21:10:45.314296+09:00",
+    "all_six_running": true,
+    "stages": [
+      {
+        "key": "verify-gd3-KOR101",
+        "job": "156821",
+        "stage": "verifybamid"
+      },
+      {
+        "key": "verify-gd4-KOR102",
+        "job": "156822",
+        "stage": "verifybamid"
+      },
+      {
+        "key": "verify-illumina-HG002",
+        "job": "156823",
+        "stage": "verifybamid"
+      },
+      {
+        "key": "manta-illumina-HG002",
+        "job": "156824",
+        "stage": "manta_workflow"
+      },
+      {
+        "key": "manta-illumina-HG003",
+        "job": "156825",
+        "stage": "manta_workflow"
+      },
+      {
+        "key": "manta-illumina-HG004",
+        "job": "156826",
+        "stage": "manta_workflow"
+      }
+    ],
+    "qstat": "job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID \n-----------------------------------------------------------------------------------------------------------------\n 155526 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-8.kobic.re    60        \n 155527 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-9.kobic.re    60        \n 155528 0.75000 regermline ehojune      r     09/21/2026 16:36:14 shepherd.q@shepherd-1-9.kobic.    60        \n 156690 0.55315 regermline ehojune      r     09/25/2026 01:06:44 shepherd.q@shepherd-1-8.kobic.    60        \n 156821 0.25000 giab_retry ehojune      r     09/27/2026 21:08:14 shepherd.q@shepherd-1-10.kobic     4        \n 156822 0.25000 giab_retry ehojune      r     09/27/2026 21:08:29 shepherd.q@shepherd-1-11.kobic     4        \n 156823 0.25000 giab_retry ehojune      r     09/27/2026 21:08:29 shepherd.q@shepherd-1-13.kobic     4        \n 156824 0.26466 giab_retry ehojune      r     09/27/2026 21:08:29 shepherd.q@shepherd-1-4.kobic.    10        \n 156825 0.26466 giab_retry ehojune      r     09/27/2026 21:08:29 shepherd.q@shepherd-1-5.kobic.    10        \n 156826 0.26466 giab_retry ehojune      r     09/27/2026 21:08:29 shepherd.q@shepherd-1-14.kobic    10        \n"
+  }
+}
