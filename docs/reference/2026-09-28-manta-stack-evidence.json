@@ -1,0 +1,106 @@
+{
+  "gdb_diagnostic_job": "156830",
+  "gdb_completed": "2026-09-28T04:18:31.757462+09:00",
+  "gdb_exit": 0,
+  "inferior_signal": "SIGSEGV",
+  "input_stats_unchanged": true,
+  "crash_thread_stack": "Thread 0x15555419b700 (LWP 2012935)):\n#0  0x0000155554637b4e in _int_malloc () from /lib64/libc.so.6\n#1  0x0000155554639982 in malloc () from /lib64/libc.so.6\n#2  0x00000000006e6c58 in operator new(unsigned long) ()\n#3  0x0000000000776d29 in std::string::_Rep::_S_create(unsigned long, unsigned long, std::allocator<char> const&) ()\n#4  0x0000000000776e47 in char* std::string::_S_construct<char*>(char*, char*, std::allocator<char> const&, std::forward_iterator_tag) [clone .part.25] ()\n#5  0x000000000077856d in std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::string const&, unsigned long, unsigned long) ()\n#6  0x00000000005fbad2 in searchRepeats(IterativeAssemblerOptions const&, unsigned int, std::string const&, std::unordered_map<std::string, std::pair<unsigned int, unsigned int>, std::hash<std::string>, std::equal_to<std::string>, std::allocator<std::pair<std::string const, std::pair<unsigned int, unsigned int> > > >&, std::vector<std::string, std::allocator<std::string> >&, std::set<std::string, std::less<std::string>, std::allocator<std::string> >&) ()\n#7  0x00000000005fbd2d in searchRepeats(IterativeAssemblerOptions const&, unsigned int, std::string const&, std::unordered_map<std::string, std::pair<unsigned int, unsigned int>, std::hash<std::string>, std::equal_to<std::string>, std::allocator<std::pair<std::string const, std::pair<unsigned int, unsigned int> > > >&, std::vector<std::string, std::allocator<std::string> >&, std::set<std::string, std::less<std::string>, std::allocator<std::string> >&) ()\n#8  0x00000000005fbd2d in searchRepeats(IterativeAssemblerOptions const&, unsigned int, std::string const&, std::unordered_map<std::string, std::pair<unsigned int, unsigned int>, std::hash<std::string>, std::equal_to<std::string>, std::allocator<std::pair<std::string const, std::pair<unsigned int, unsigned int> > > >&, std::vector<std::string, std::allocator<std::string> >&, std::set<std::string, std::less<std::string>, std::allocator<std::string> >&) ()\n#9  0x00000000005fbd2d in searchRepeats(IterativeAssemblerOptions const&, unsigned int, std::string const&, std::unordered_map<std::string, std::pair<unsigned int, unsigned int>, std::hash<std::string>, std::equal_to<std::string>, std::allocator<std::pair<std::string const, std::pair<unsigned int, unsigned int> > > >&, std::vector<std::string, std::allocator<std::string> >&, std::set<std::string, std::less<std::string>, std::allocator<std::string> >&) ()\n#10 0x00000000005fbd2d in searchRepeats(IterativeAssemblerOptions const&, unsigned int, std::string const&, std::unordered_map<std::string, std::pair<unsigned int, unsigned int>, std::hash<std::string>, std::equal_to<std::string>, std::allocator<std::pair<std::string const, std::pair<unsigned int, unsigned int> > > >&, std::vector<std::string, std::allocator<std::string> >&, std::set<std::string, std::less<std::string>, std::allocator<std::string> >&) ()\n#11 0x00000000005fbd2d in searchRepeats(IterativeAssemblerOptions const&, unsigned int, std::string const&, std::unordered_map<std::string, std::pair<unsigned int, unsigned int>, std::hash<std::string>, std::equal_to<std::string>, std::allocator<std::pair<std::string const, std::pair<unsigned int, unsigned int> > > >&, std::vector<std::string, std::allocator<std::string> >&, std::set<std::string, std::less<std::string>, std::allocator<std::string> >&) ()\n#12 0x00000000005fbd2d in searchRepeats(IterativeAssemblerOptions const&, unsigned int, std::string const&, std::unordered_map<std::string, std::pair<unsigned int, unsigned int>, std::hash<std::string>, std::equal_to<std::string>, std::allocator<std::pair<std::string const, std::pair<unsigned int, unsigned int> > > >&, std::vector<std::string, std::allocator<std::string> >&, std::set<std::string, std::less<std::string>, std::allocator<std::string> >&) ()\n#13 0x00000000005fbd2d in searchRepeats(IterativeAssemblerOptions const&, unsigned int, std::string const&, std::unordered_map<std::string, std::pair<unsigned int, unsigned int>, std::hash<std::string>, std::equal_to<std::string>, std::allocator<std::pair<std::string const, std::pair<unsigned int, unsigned int> > > >&, std::vector<std::string, std::allocator<std::string> >&, std::set<std::string, std::less<std::string>, std::allocator<std::string> >&) ()\n#14 0x00000000005fbd2d in searchRepeats(IterativeAssemblerOptions const&, unsigned int, std::string const&, std::unordered_map<std::string, std::pair<unsigned int, unsigned int>, std::hash<std::string>, std::equal_to<std::string>, std::allocator<std::pair<std::string const, std::pair<unsigned int, unsigned int> > > >&, std::vector<std::string, std::allocator<std::string> >&, std::set<std::string, std::less<std::string>, std::allocator<std::string> >&) ()\n#15 0x00000000005fbd2d in searchRepeats(IterativeAssemblerOptions const&, unsigned int, std::string const&, std::unordered_map<std::string, std::pair<unsigned int, unsigned int>, std::hash<std::string>, std::equal_to<std::string>, std::allocator<std::pair<std::string const, std::pair<unsigned int, unsigned int> > > >&, std::vector<std::string, std::allocator<std::string> >&, std::set<std::string, std::less<std::string>, std::allocator<std::string> >&) ()",
+  "rsp": "0x155553f9bfd0",
+  "thread_address": "0x15555419b700",
+  "pilot": {
+    "at": "2026-09-28T04:29:16.424735+09:00",
+    "runs": [
+      {
+        "sample": "HG002",
+        "folder": "/BiO/scratch/ehojune/GIAB_benchmark/repairs/manta-diagnosis-20260928/HG002-stack64",
+        "SUBMISSION.json": {
+          "at": "2026-09-28T04:22:57.355702+09:00",
+          "rc": 0,
+          "stdout": "Your job 156831 (\"manta_stack64_HG002\") has been submitted\n",
+          "stderr": "",
+          "folder": "/BiO/scratch/ehojune/GIAB_benchmark/repairs/manta-diagnosis-20260928/HG002-stack64",
+          "job": "156831"
+        },
+        "STARTED.json": {
+          "at": "2026-09-28T04:22:59.573265+09:00",
+          "host": "shepherd-1-14",
+          "job": "156831",
+          "stack_before": [
+            -1,
+            -1
+          ]
+        },
+        "STACK_CHANGE.json": {
+          "at": "2026-09-28T04:22:59.826876+09:00",
+          "before_limit": [
+            -1,
+            -1
+          ],
+          "after_limit": [
+            67108864,
+            -1
+          ],
+          "before_probe": "soft=18446744073709551615 hard=18446744073709551615\npthread_stack_bytes=2097152\n",
+          "after_probe": "soft=67108864 hard=18446744073709551615\npthread_stack_bytes=67108864\n"
+        },
+        "stage.json": {
+          "at": "2026-09-28T04:23:01.624989+09:00",
+          "stage": "manta_workflow",
+          "command": [
+            "/BiO/scratch/dyl/kbb/opt/python2.7.18/bin/python2",
+            "/BiO/scratch/ehojune/GIAB_benchmark/repairs/manta-diagnosis-20260928/HG002-stack64/run/runWorkflow.py",
+            "-j",
+            "10"
+          ]
+        },
+        "cluster.log": "",
+        "manta_workflow.stderr": "rkflow task: 'mergeLocusGraphInputList' launched from master workflow\n[2026-09-27T19:27:01.315482Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskManager] Launching command task: 'mergeLocusGraph' from master workflow\n[2026-09-27T19:27:01.320796Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskRunner:mergeLocusGraph] Task initiated on local node\n[2026-09-27T19:27:05.536669Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskManager] Completed command task: 'mergeLocusGraph' launched from master workflow\n[2026-09-27T19:27:05.538203Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskManager] Launching command task: 'checkLocusGraph' from master workflow\n[2026-09-27T19:27:05.539305Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskManager] Launching command task: 'locusGraphStats' from master workflow\n[2026-09-27T19:27:05.540480Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskManager] Launching command task: 'removeTmpDir' from master workflow\n[2026-09-27T19:27:05.543396Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskRunner:checkLocusGraph] Task initiated on local node\n[2026-09-27T19:27:05.546229Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskRunner:locusGraphStats] Task initiated on local node\n[2026-09-27T19:27:05.547373Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskRunner:removeTmpDir] Task initiated on local node\n[2026-09-27T19:27:06.408276Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskManager] Completed command task: 'removeTmpDir' launched from master workflow\n[2026-09-27T19:27:06.623617Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskManager] Completed command task: 'locusGraphStats' launched from master workflow\n[2026-09-27T19:27:06.788881Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskManager] Completed command task: 'checkLocusGraph' launched from master workflow\n[2026-09-27T19:27:06.790479Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskManager] Launching command task: 'makeHyGenDir' from master workflow\n[2026-09-27T19:27:06.795615Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskRunner:makeHyGenDir] Task initiated on local node\n[2026-09-27T19:27:07.055714Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskManager] Completed command task: 'makeHyGenDir' launched from master workflow\n[2026-09-27T19:27:07.057534Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskManager] Launching command task: 'generateCandidateSV_0000' from master workflow\n[2026-09-27T19:27:07.062605Z] [shepherd-1-14.kobic.re.kr] [1626131_1] [TaskRunner:generateCandidateSV_0000] Task initiated on local node\n",
+        "run/workflow.error.log.txt": "",
+        "artifacts": [
+          {
+            "file": "run/workspace/svHyGen/diploidSV.0000.vcf",
+            "bytes": 264402,
+            "mtime": "2026-09-28T04:28:48"
+          },
+          {
+            "file": "run/workspace/svHyGen/candidateSV.0000.vcf",
+            "bytes": 464489,
+            "mtime": "2026-09-28T04:29:05"
+          },
+          {
+            "file": "run/workspace/svHyGen/edgeRuntimeLog.0000.txt",
+            "bytes": 32884,
+            "mtime": "2026-09-28T04:29:11"
+          }
+        ],
+        "graph_inputs_comparison": [
+          {
+            "file": "alignmentStats.xml",
+            "prior_sha256": "441c2d5e58a3e421e11ef955e4995af1467a1d47e33422794e6e4dfc075d6d80",
+            "current_sha256": "441c2d5e58a3e421e11ef955e4995af1467a1d47e33422794e6e4dfc075d6d80",
+            "same": true
+          },
+          {
+            "file": "chromDepth.txt",
+            "prior_sha256": "7dfebf04adad21e06cd809f7ce175163fa6a3d200e233dcfa4b10e10f74bb665",
+            "current_sha256": "7dfebf04adad21e06cd809f7ce175163fa6a3d200e233dcfa4b10e10f74bb665",
+            "same": true
+          },
+          {
+            "file": "svLocusGraph.bin",
+            "prior_sha256": "09dbf8e799f56b238f807635bfe8d7b78121aa510836f6c5954b4d660e44e569",
+            "current_sha256": "5183f02b8c19603cfac419de7b159f22826781583d96fb186074c561291a4290",
+            "same": false
+          }
+        ],
+        "qstat_rc": 0,
+        "qstat": "job_number:                 156831\njob_name:                   manta_stack64_HG002\nusage         1:            cpu=00:48:38, mem=1285.15738 GB s, io=266.90276 GB, vmem=1.426G, maxvmem=1.426G"
+      }
+    ]
+  },
+  "references": [
+    "https://man7.org/linux/man-pages/man3/pthread_create.3.html",
+    "https://github.com/Illumina/manta/blob/v1.6.0/src/c%2B%2B/lib/assembly/IterativeAssembler.cpp#L509-L574"
+  ],
+  "interpretation": "Stack exhaustion in recursive searchRepeats is the leading diagnosis; full workflow validation is pending."
+}
