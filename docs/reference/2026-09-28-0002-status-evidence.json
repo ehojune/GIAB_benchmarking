@@ -1,0 +1,698 @@
+{
+  "at": "2026-09-28T00:06:23.087384+09:00",
+  "verified_first_attempts": [
+    {
+      "at": "2026-09-27T21:08:13.874232+09:00",
+      "key": "verify-gd3-KOR101",
+      "sample": "C000000300100000G0x1",
+      "attempt": 1,
+      "job": "156821",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-gd3-KOR101/attempt-1",
+      "qacct": {
+        "jobnumber": "156821",
+        "failed": "0",
+        "exit_status": "0",
+        "end_time": "Sun Sep 27 21:13:53 2026",
+        "maxvmem": "564.586MB",
+        "hostname": "shepherd-1-10.kobic.re.kr"
+      },
+      "protected_outcomes_unchanged": true,
+      "verified": {
+        "at": "2026-09-27T21:13:53.116706+09:00",
+        "sample": "C000000300100000G0x1",
+        "job": "156821",
+        "attempt": 1,
+        "key": "verify-gd3-KOR101",
+        "protected_outcomes_unchanged": true,
+        "canonical_results_modified": false,
+        "verify_exit": 0,
+        "selfSM": {
+          "#SEQ_ID": "C000000300100000G0x1",
+          "RG": "NA",
+          "CHIP_ID": "NA",
+          "#SNPS": "100000",
+          "#READS": "2908757",
+          "AVG_DP": "29.5981",
+          "FREEMIX": "2.6197e-05",
+          "FREELK1": "-696935",
+          "FREELK0": "-705471",
+          "FREE_RH": "NA",
+          "FREE_RA": "NA",
+          "CHIPMIX": "NA",
+          "CHIPLK1": "NA",
+          "CHIPLK0": "NA",
+          "CHIP_RH": "NA",
+          "CHIP_RA": "NA",
+          "DPREF": "NA",
+          "RDPHET": "NA",
+          "RDPALT": "NA"
+        },
+        "selfSM_sha256": "e03ab34658ee03f6a2e8da4b6c492ef1ec367eacbc198c6d22ce67952e637bfd",
+        "Ancestry_sha256": "637026162b0fe96f33e22505ffcb707051cb97e1378f8969f32ce0cb3d5af6db",
+        "threads": 4
+      }
+    },
+    {
+      "at": "2026-09-27T21:08:14.005463+09:00",
+      "key": "verify-gd4-KOR102",
+      "sample": "C000000400200000G0x1",
+      "attempt": 1,
+      "job": "156822",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-gd4-KOR102/attempt-1",
+      "qacct": {
+        "jobnumber": "156822",
+        "failed": "0",
+        "exit_status": "0",
+        "end_time": "Sun Sep 27 21:15:09 2026",
+        "maxvmem": "561.410MB",
+        "hostname": "shepherd-1-11.kobic.re.kr"
+      },
+      "protected_outcomes_unchanged": true,
+      "verified": {
+        "at": "2026-09-27T21:15:09.968671+09:00",
+        "sample": "C000000400200000G0x1",
+        "job": "156822",
+        "attempt": 1,
+        "key": "verify-gd4-KOR102",
+        "protected_outcomes_unchanged": true,
+        "canonical_results_modified": false,
+        "verify_exit": 0,
+        "selfSM": {
+          "#SEQ_ID": "C000000400200000G0x1",
+          "RG": "NA",
+          "CHIP_ID": "NA",
+          "#SNPS": "100000",
+          "#READS": "3153503",
+          "AVG_DP": "32.0892",
+          "FREEMIX": "7.67851e-06",
+          "FREELK1": "-744165",
+          "FREELK0": "-1.38374e+06",
+          "FREE_RH": "NA",
+          "FREE_RA": "NA",
+          "CHIPMIX": "NA",
+          "CHIPLK1": "NA",
+          "CHIPLK0": "NA",
+          "CHIP_RH": "NA",
+          "CHIP_RA": "NA",
+          "DPREF": "NA",
+          "RDPHET": "NA",
+          "RDPALT": "NA"
+        },
+        "selfSM_sha256": "de232d55071c84f454178a0b6fda155e7c327c0bbed00d15e6834e4992ac5a6f",
+        "Ancestry_sha256": "e6e8c49584483baada58ea0be233b7a7761720557fe998fb926d92aaf1c2f942",
+        "threads": 4
+      }
+    },
+    {
+      "at": "2026-09-27T21:08:14.132145+09:00",
+      "key": "verify-illumina-HG002",
+      "sample": "GIAB-publicData-Illumina-250PE-HG002",
+      "attempt": 1,
+      "job": "156823",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-illumina-HG002/attempt-1",
+      "qacct": {
+        "jobnumber": "156823",
+        "failed": "0",
+        "exit_status": "0",
+        "end_time": "Sun Sep 27 21:21:35 2026",
+        "maxvmem": "563.316MB",
+        "hostname": "shepherd-1-13.kobic.re.kr"
+      },
+      "protected_outcomes_unchanged": true,
+      "verified": {
+        "at": "2026-09-27T21:21:34.986328+09:00",
+        "sample": "GIAB-publicData-Illumina-250PE-HG002",
+        "job": "156823",
+        "attempt": 1,
+        "key": "verify-illumina-HG002",
+        "protected_outcomes_unchanged": true,
+        "canonical_results_modified": false,
+        "verify_exit": 0,
+        "selfSM": {
+          "#SEQ_ID": "GIAB-publicData-Illumina-250PE-HG002",
+          "RG": "NA",
+          "CHIP_ID": "NA",
+          "#SNPS": "100000",
+          "#READS": "5357931",
+          "AVG_DP": "54.5153",
+          "FREEMIX": "9.5572e-05",
+          "FREELK1": "-1.33785e+06",
+          "FREELK0": "-1.33985e+06",
+          "FREE_RH": "NA",
+          "FREE_RA": "NA",
+          "CHIPMIX": "NA",
+          "CHIPLK1": "NA",
+          "CHIPLK0": "NA",
+          "CHIP_RH": "NA",
+          "CHIP_RA": "NA",
+          "DPREF": "NA",
+          "RDPHET": "NA",
+          "RDPALT": "NA"
+        },
+        "selfSM_sha256": "98a21c51507aeafa9c4d75f160a9db67bb47070102a2885f5bcf6b5efa6784ce",
+        "Ancestry_sha256": "bbe661e56758e37b581144eb1b899f89d0c85f497590dfa90d766c1dd5e75639",
+        "threads": 4
+      }
+    },
+    {
+      "at": "2026-09-27T21:08:14.259052+09:00",
+      "key": "manta-illumina-HG002",
+      "sample": "GIAB-publicData-Illumina-250PE-HG002",
+      "attempt": 1,
+      "job": "156824",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1",
+      "qacct": {
+        "jobnumber": "156824",
+        "failed": "0",
+        "exit_status": "1",
+        "end_time": "Sun Sep 27 21:14:23 2026",
+        "maxvmem": "1.317GB",
+        "hostname": "shepherd-1-4.kobic.re.kr"
+      },
+      "protected_outcomes_unchanged": true,
+      "failure": {
+        "workflow_exit": "1",
+        "log": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/workflow.error.log.txt",
+        "evidence": [
+          "[2026-09-27T12:14:12.507020Z] [shepherd-1-4.kobic.re.kr] [1826706_1] [TaskManager] [ERROR] Failed to complete command task: 'generateCandidateSV_0000' launched from master workflow, error code: 1, command: '/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/libexec/GenerateSVCandidates --threads 10 --align-stats /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/workspace/alignmentStats.xml --graph-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/workspace/svLocusGraph.bin --bin-index 0 --bin-count 1 --max-edge-count 10 --min-candidate-sv-size 8 --min-candidate-spanning-count 3 --min-scored-sv-size 50 --ref /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --candidate-output-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/workspace/svHyGen/candidateSV.0000.vcf --diploid-output-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/workspace/svHyGen/diploidSV.0000.vcf --min-qual-score 10 --min-pass-qual-score 20 --min-pass-gt-score 15 --enable-remote-read-retrieval --chrom-depth /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/workspace/chromDepth.txt --edge-runtime-log /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/workspace/svHyGen/edgeRuntimeLog.0000.txt --edge-stats-log /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/results/stats/svCandidateGenerationStats.xml --edge-stats-report /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/results/stats/svCandidateGenerationStats.tsv --align-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG002_v1.1.0.bam'",
+          "[2026-09-27T12:14:12.515946Z] [shepherd-1-4.kobic.re.kr] [1826706_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-27T12:14:12.476148Z] [shepherd-1-4.kobic.re.kr] [1826706_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11",
+          "[2026-09-27T12:14:23.463117Z] [shepherd-1-4.kobic.re.kr] [1826706_1] [WorkflowRunner] [ERROR] Failed to complete command task: 'generateCandidateSV_0000' launched from master workflow, error code: 1, command: '/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/libexec/GenerateSVCandidates --threads 10 --align-stats /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/workspace/alignmentStats.xml --graph-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/workspace/svLocusGraph.bin --bin-index 0 --bin-count 1 --max-edge-count 10 --min-candidate-sv-size 8 --min-candidate-spanning-count 3 --min-scored-sv-size 50 --ref /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --candidate-output-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/workspace/svHyGen/candidateSV.0000.vcf --diploid-output-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/workspace/svHyGen/diploidSV.0000.vcf --min-qual-score 10 --min-pass-qual-score 20 --min-pass-gt-score 15 --enable-remote-read-retrieval --chrom-depth /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/workspace/chromDepth.txt --edge-runtime-log /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/workspace/svHyGen/edgeRuntimeLog.0000.txt --edge-stats-log /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/results/stats/svCandidateGenerationStats.xml --edge-stats-report /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-1/run/results/stats/svCandidateGenerationStats.tsv --align-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG002_v1.1.0.bam'",
+          "[2026-09-27T12:14:23.472124Z] [shepherd-1-4.kobic.re.kr] [1826706_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-27T12:14:12.476148Z] [shepherd-1-4.kobic.re.kr] [1826706_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11"
+        ]
+      }
+    },
+    {
+      "at": "2026-09-27T21:08:14.386384+09:00",
+      "key": "manta-illumina-HG003",
+      "sample": "GIAB-publicData-Illumina-250PE-HG003",
+      "attempt": 1,
+      "job": "156825",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1",
+      "qacct": {
+        "jobnumber": "156825",
+        "failed": "0",
+        "exit_status": "1",
+        "end_time": "Sun Sep 27 21:14:38 2026",
+        "maxvmem": "1.290GB",
+        "hostname": "shepherd-1-5.kobic.re.kr"
+      },
+      "protected_outcomes_unchanged": true,
+      "failure": {
+        "workflow_exit": "1",
+        "log": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/workflow.error.log.txt",
+        "evidence": [
+          "[2026-09-27T12:14:31.777451Z] [shepherd-1-5.kobic.re.kr] [2229784_1] [TaskManager] [ERROR] Failed to complete command task: 'generateCandidateSV_0000' launched from master workflow, error code: 1, command: '/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/libexec/GenerateSVCandidates --threads 10 --align-stats /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/workspace/alignmentStats.xml --graph-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/workspace/svLocusGraph.bin --bin-index 0 --bin-count 1 --max-edge-count 10 --min-candidate-sv-size 8 --min-candidate-spanning-count 3 --min-scored-sv-size 50 --ref /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --candidate-output-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/workspace/svHyGen/candidateSV.0000.vcf --diploid-output-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/workspace/svHyGen/diploidSV.0000.vcf --min-qual-score 10 --min-pass-qual-score 20 --min-pass-gt-score 15 --enable-remote-read-retrieval --chrom-depth /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/workspace/chromDepth.txt --edge-runtime-log /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/workspace/svHyGen/edgeRuntimeLog.0000.txt --edge-stats-log /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/results/stats/svCandidateGenerationStats.xml --edge-stats-report /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/results/stats/svCandidateGenerationStats.tsv --align-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG003_v1.1.0.bam'",
+          "[2026-09-27T12:14:31.786202Z] [shepherd-1-5.kobic.re.kr] [2229784_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-27T12:14:31.731369Z] [shepherd-1-5.kobic.re.kr] [2229784_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11",
+          "[2026-09-27T12:14:38.884811Z] [shepherd-1-5.kobic.re.kr] [2229784_1] [WorkflowRunner] [ERROR] Failed to complete command task: 'generateCandidateSV_0000' launched from master workflow, error code: 1, command: '/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/libexec/GenerateSVCandidates --threads 10 --align-stats /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/workspace/alignmentStats.xml --graph-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/workspace/svLocusGraph.bin --bin-index 0 --bin-count 1 --max-edge-count 10 --min-candidate-sv-size 8 --min-candidate-spanning-count 3 --min-scored-sv-size 50 --ref /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --candidate-output-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/workspace/svHyGen/candidateSV.0000.vcf --diploid-output-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/workspace/svHyGen/diploidSV.0000.vcf --min-qual-score 10 --min-pass-qual-score 20 --min-pass-gt-score 15 --enable-remote-read-retrieval --chrom-depth /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/workspace/chromDepth.txt --edge-runtime-log /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/workspace/svHyGen/edgeRuntimeLog.0000.txt --edge-stats-log /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/results/stats/svCandidateGenerationStats.xml --edge-stats-report /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-1/run/results/stats/svCandidateGenerationStats.tsv --align-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG003_v1.1.0.bam'",
+          "[2026-09-27T12:14:38.893029Z] [shepherd-1-5.kobic.re.kr] [2229784_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-27T12:14:31.731369Z] [shepherd-1-5.kobic.re.kr] [2229784_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11"
+        ]
+      }
+    },
+    {
+      "at": "2026-09-27T21:08:14.516390+09:00",
+      "key": "manta-illumina-HG004",
+      "sample": "GIAB-publicData-Illumina-250PE-HG004",
+      "attempt": 1,
+      "job": "156826",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1",
+      "qacct": {
+        "jobnumber": "156826",
+        "failed": "0",
+        "exit_status": "1",
+        "end_time": "Sun Sep 27 21:13:23 2026",
+        "maxvmem": "1.291GB",
+        "hostname": "shepherd-1-14.kobic.re.kr"
+      },
+      "protected_outcomes_unchanged": true,
+      "failure": {
+        "workflow_exit": "1",
+        "log": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/workflow.error.log.txt",
+        "evidence": [
+          "[2026-09-27T12:13:17.179517Z] [shepherd-1-14.kobic.re.kr] [1602635_1] [TaskManager] [ERROR] Failed to complete command task: 'generateCandidateSV_0000' launched from master workflow, error code: 1, command: '/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/libexec/GenerateSVCandidates --threads 10 --align-stats /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/workspace/alignmentStats.xml --graph-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/workspace/svLocusGraph.bin --bin-index 0 --bin-count 1 --max-edge-count 10 --min-candidate-sv-size 8 --min-candidate-spanning-count 3 --min-scored-sv-size 50 --ref /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --candidate-output-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/workspace/svHyGen/candidateSV.0000.vcf --diploid-output-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/workspace/svHyGen/diploidSV.0000.vcf --min-qual-score 10 --min-pass-qual-score 20 --min-pass-gt-score 15 --enable-remote-read-retrieval --chrom-depth /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/workspace/chromDepth.txt --edge-runtime-log /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/workspace/svHyGen/edgeRuntimeLog.0000.txt --edge-stats-log /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/results/stats/svCandidateGenerationStats.xml --edge-stats-report /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/results/stats/svCandidateGenerationStats.tsv --align-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG004_v1.1.0.bam'",
+          "[2026-09-27T12:13:17.188118Z] [shepherd-1-14.kobic.re.kr] [1602635_1] [TaskManager] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-27T12:13:17.171652Z] [shepherd-1-14.kobic.re.kr] [1602635_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11",
+          "[2026-09-27T12:13:23.362664Z] [shepherd-1-14.kobic.re.kr] [1602635_1] [WorkflowRunner] [ERROR] Failed to complete command task: 'generateCandidateSV_0000' launched from master workflow, error code: 1, command: '/BiO/scratch/dyl/kbb/UTILS/Tools/manta/current/libexec/GenerateSVCandidates --threads 10 --align-stats /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/workspace/alignmentStats.xml --graph-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/workspace/svLocusGraph.bin --bin-index 0 --bin-count 1 --max-edge-count 10 --min-candidate-sv-size 8 --min-candidate-spanning-count 3 --min-scored-sv-size 50 --ref /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta --candidate-output-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/workspace/svHyGen/candidateSV.0000.vcf --diploid-output-file /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/workspace/svHyGen/diploidSV.0000.vcf --min-qual-score 10 --min-pass-qual-score 20 --min-pass-gt-score 15 --enable-remote-read-retrieval --chrom-depth /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/workspace/chromDepth.txt --edge-runtime-log /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/workspace/svHyGen/edgeRuntimeLog.0000.txt --edge-stats-log /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/results/stats/svCandidateGenerationStats.xml --edge-stats-report /BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-1/run/results/stats/svCandidateGenerationStats.tsv --align-file /BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/09.bqsr/GIAB-publicData-Illumina-250PE-HG004_v1.1.0.bam'",
+          "[2026-09-27T12:13:23.371038Z] [shepherd-1-14.kobic.re.kr] [1602635_1] [WorkflowRunner] [ERROR] [generateCandidateSV_0000] [taskWrapper-stderr] [2026-09-27T12:13:17.171652Z] [shepherd-1-14.kobic.re.kr] [1602635_1] [pyflowTaskWrapper:generateCandidateSV_0000] [wrapperSignal] taskExitCode -11"
+        ]
+      }
+    }
+  ],
+  "promoted": [
+    {
+      "at": "2026-09-28T00:05:18.109305+09:00",
+      "job": "156821",
+      "sample": "C000000300100000G0x1",
+      "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-gd3-KOR101/attempt-1",
+      "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/analyze_meta/C000000300100000G0x1/C000000300100000G0x1.selfSM",
+      "selfSM_sha256": "e03ab34658ee03f6a2e8da4b6c492ef1ec367eacbc198c6d22ce67952e637bfd",
+      "protected_outcomes_unchanged": true,
+      "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-gd3-KOR101/attempt-1/original-before-promotion",
+      "FREEMIX": "2.6197e-05"
+    },
+    {
+      "at": "2026-09-28T00:05:18.338604+09:00",
+      "job": "156822",
+      "sample": "C000000400200000G0x1",
+      "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-gd4-KOR102/attempt-1",
+      "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/analyze_meta/C000000400200000G0x1/C000000400200000G0x1.selfSM",
+      "selfSM_sha256": "de232d55071c84f454178a0b6fda155e7c327c0bbed00d15e6834e4992ac5a6f",
+      "protected_outcomes_unchanged": true,
+      "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-gd4-KOR102/attempt-1/original-before-promotion",
+      "FREEMIX": "7.67851e-06"
+    },
+    {
+      "at": "2026-09-28T00:05:18.556920+09:00",
+      "job": "156823",
+      "sample": "GIAB-publicData-Illumina-250PE-HG002",
+      "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-illumina-HG002/attempt-1",
+      "qc_link": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/analyze_meta/GIAB-publicData-Illumina-250PE-HG002/GIAB-publicData-Illumina-250PE-HG002.selfSM",
+      "selfSM_sha256": "98a21c51507aeafa9c4d75f160a9db67bb47070102a2885f5bcf6b5efa6784ce",
+      "protected_outcomes_unchanged": true,
+      "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-illumina-HG002/attempt-1/original-before-promotion",
+      "FREEMIX": "9.5572e-05"
+    }
+  ],
+  "qc_validation": {
+    "at": "2026-09-28T00:06:21.078462+09:00",
+    "sets": [
+      {
+        "set": "G000-gd1-20260819",
+        "samples": [
+          {
+            "sample": "C000000100100000G0x1",
+            "FREEMIX": "3.74186e-06",
+            "sha256": "671e561ac0f648e6998f65938618297e3338e067b8cd92adffa4873712d9aedf",
+            "repair": null
+          },
+          {
+            "sample": "C000000100200000G0x1",
+            "FREEMIX": "1.07186e-05",
+            "sha256": "df9180ffa933e65d1ce11de523575c0c643e98ee82b779c0c50fb5cbac279e5c",
+            "repair": null
+          },
+          {
+            "sample": "C000000100300000G0x1",
+            "FREEMIX": "1.89328e-05",
+            "sha256": "5101ad7ae1d3c2a43738f8ad4bdb070567717c4587319cc16a4610c329ba3bf5",
+            "repair": null
+          },
+          {
+            "sample": "C000000100400000G0x1",
+            "FREEMIX": "1.94207e-05",
+            "sha256": "fa9d44744c5b0aeddfc19883ca9e3ca614238b22269deb3509fa9b52bc9302a0",
+            "repair": {
+              "at": "2026-09-27T04:19:42.853993+09:00",
+              "job": "156799",
+              "sample": "C000000100400000G0x1",
+              "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000100400000G0x1",
+              "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/analyze_meta/C000000100400000G0x1/C000000100400000G0x1.selfSM",
+              "selfSM_sha256": "fa9d44744c5b0aeddfc19883ca9e3ca614238b22269deb3509fa9b52bc9302a0",
+              "protected_outcomes_unchanged": true,
+              "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000100400000G0x1/original-before-promotion",
+              "FREEMIX": "1.94207e-05"
+            }
+          },
+          {
+            "sample": "C000000100500000G0x1",
+            "FREEMIX": "7.22313e-06",
+            "sha256": "8f424a8dba570306871cbef1ce53ff58b9449669b1f6c08f24e3bedea8e78a89",
+            "repair": null
+          },
+          {
+            "sample": "C000000100600000G0x1",
+            "FREEMIX": "2.68309e-05",
+            "sha256": "5e36463d56cf6c8db6c1922ebe745541f0eb805f8aaceec4fc7797027ef93410",
+            "repair": {
+              "at": "2026-09-27T04:19:43.090860+09:00",
+              "job": "156800",
+              "sample": "C000000100600000G0x1",
+              "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000100600000G0x1",
+              "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd1-20260819/analyze_meta/C000000100600000G0x1/C000000100600000G0x1.selfSM",
+              "selfSM_sha256": "5e36463d56cf6c8db6c1922ebe745541f0eb805f8aaceec4fc7797027ef93410",
+              "protected_outcomes_unchanged": true,
+              "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000100600000G0x1/original-before-promotion",
+              "FREEMIX": "2.68309e-05"
+            }
+          }
+        ],
+        "done": "- Cohort : G000\n- Batch name : G000-gd1-20260819\n- Message : Success\n",
+        "error_list": null
+      },
+      {
+        "set": "G000-gd2-20260819",
+        "samples": [
+          {
+            "sample": "C000000200100000G0x1",
+            "FREEMIX": "3.01584e-06",
+            "sha256": "31ed13cf034db3dd81ab2c3e3b9d4ed17bd518815411a4c78518e155f2dbb273",
+            "repair": {
+              "at": "2026-09-27T08:14:16.820912+09:00",
+              "job": "156813",
+              "sample": "C000000200100000G0x1",
+              "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200100000G0x1",
+              "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/analyze_meta/C000000200100000G0x1/C000000200100000G0x1.selfSM",
+              "selfSM_sha256": "31ed13cf034db3dd81ab2c3e3b9d4ed17bd518815411a4c78518e155f2dbb273",
+              "protected_outcomes_unchanged": true,
+              "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200100000G0x1/original-before-promotion",
+              "FREEMIX": "3.01584e-06"
+            }
+          },
+          {
+            "sample": "C000000200200000G0x1",
+            "FREEMIX": "1.45275e-06",
+            "sha256": "0d6dd646cb2980c220978c39776b632b572b9c338470270b23a8bf1a9029114f",
+            "repair": null
+          },
+          {
+            "sample": "C000000200300000G0x1",
+            "FREEMIX": "2.60661e-06",
+            "sha256": "76660c1fda2930fcc6f5b49826b7e206faeb8b2f5be61e68dad1a03110407bbf",
+            "repair": null
+          },
+          {
+            "sample": "C000000200400000G0x1",
+            "FREEMIX": "1.86554e-06",
+            "sha256": "a0ace8c4781c776af43fedf9eafd0288585f8ccd3c7dccbf27178d4bacad9368",
+            "repair": {
+              "at": "2026-09-27T04:40:43.939806+09:00",
+              "job": "156812",
+              "sample": "C000000200400000G0x1",
+              "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200400000G0x1",
+              "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/analyze_meta/C000000200400000G0x1/C000000200400000G0x1.selfSM",
+              "selfSM_sha256": "a0ace8c4781c776af43fedf9eafd0288585f8ccd3c7dccbf27178d4bacad9368",
+              "protected_outcomes_unchanged": true,
+              "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-one-thread/C000000200400000G0x1/original-before-promotion",
+              "FREEMIX": "1.86554e-06"
+            }
+          },
+          {
+            "sample": "C000000200500000G0x1",
+            "FREEMIX": "2.22777e-06",
+            "sha256": "c8faa74ef0988601cc3599f8667a372d7d3423d5881080980880e775058ff5c0",
+            "repair": null
+          },
+          {
+            "sample": "C000000200600000G0x1",
+            "FREEMIX": "1.45955e-06",
+            "sha256": "bf2fade6e50468ef10153093bc724e479d32eb4f3282cf20fdd9ca09eef8a488",
+            "repair": {
+              "at": "2026-09-27T04:19:43.324200+09:00",
+              "job": "156803",
+              "sample": "C000000200600000G0x1",
+              "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000200600000G0x1",
+              "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd2-20260819/analyze_meta/C000000200600000G0x1/C000000200600000G0x1.selfSM",
+              "selfSM_sha256": "bf2fade6e50468ef10153093bc724e479d32eb4f3282cf20fdd9ca09eef8a488",
+              "protected_outcomes_unchanged": true,
+              "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000200600000G0x1/original-before-promotion",
+              "FREEMIX": "1.45955e-06"
+            }
+          }
+        ],
+        "done": "- Cohort : G000\n- Batch name : G000-gd2-20260819\n- Message : Success\n",
+        "error_list": null
+      },
+      {
+        "set": "G000-gd3-20260819",
+        "samples": [
+          {
+            "sample": "C000000300100000G0x1",
+            "FREEMIX": "2.6197e-05",
+            "sha256": "e03ab34658ee03f6a2e8da4b6c492ef1ec367eacbc198c6d22ce67952e637bfd",
+            "repair": {
+              "at": "2026-09-28T00:05:18.109305+09:00",
+              "job": "156821",
+              "sample": "C000000300100000G0x1",
+              "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-gd3-KOR101/attempt-1",
+              "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/analyze_meta/C000000300100000G0x1/C000000300100000G0x1.selfSM",
+              "selfSM_sha256": "e03ab34658ee03f6a2e8da4b6c492ef1ec367eacbc198c6d22ce67952e637bfd",
+              "protected_outcomes_unchanged": true,
+              "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-gd3-KOR101/attempt-1/original-before-promotion",
+              "FREEMIX": "2.6197e-05"
+            }
+          },
+          {
+            "sample": "C000000300200000G0x1",
+            "FREEMIX": "1.26926e-05",
+            "sha256": "5548bfcf91b28ca5c47cc0290baf48ed0702b63ee2c89499363ee2c58ed92f7f",
+            "repair": null
+          },
+          {
+            "sample": "C000000300300000G0x1",
+            "FREEMIX": "2.18992e-05",
+            "sha256": "df8b43768b658f31e14b6d68f4b80a45066dc4a43a90d0f0a8be442aa8b3e30b",
+            "repair": {
+              "at": "2026-09-27T04:19:43.582001+09:00",
+              "job": "156805",
+              "sample": "C000000300300000G0x1",
+              "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000300300000G0x1",
+              "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/analyze_meta/C000000300300000G0x1/C000000300300000G0x1.selfSM",
+              "selfSM_sha256": "df8b43768b658f31e14b6d68f4b80a45066dc4a43a90d0f0a8be442aa8b3e30b",
+              "protected_outcomes_unchanged": true,
+              "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-verify-only/C000000300300000G0x1/original-before-promotion",
+              "FREEMIX": "2.18992e-05"
+            }
+          },
+          {
+            "sample": "C000000300400000G0x1",
+            "FREEMIX": "8.33497e-06",
+            "sha256": "704ff566f6ce44eb02bee73c329f14739c6380180292896fe59f62b3a7bf4a0a",
+            "repair": {
+              "at": "2026-09-27T00:23:05.225280+09:00",
+              "job": "156798",
+              "sample": "C000000300400000G0x1",
+              "source": "/BiO/scratch/dyl/kbb/G000/backup/20260926-verify-only-pilot",
+              "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd3-20260819/analyze_meta/C000000300400000G0x1/C000000300400000G0x1.selfSM",
+              "selfSM_sha256": "704ff566f6ce44eb02bee73c329f14739c6380180292896fe59f62b3a7bf4a0a",
+              "protected_outcomes_unchanged": true,
+              "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260926-verify-only-pilot/original-before-promotion",
+              "FREEMIX": "8.33497e-06"
+            }
+          },
+          {
+            "sample": "C000000300500000G0x1",
+            "FREEMIX": "2.75013e-05",
+            "sha256": "4d1bfdb18f5de76535675e34b7dd37f1f29899e82ec95c80e072cacdaf3efd86",
+            "repair": null
+          },
+          {
+            "sample": "C000000300600000G0x1",
+            "FREEMIX": "4.205e-05",
+            "sha256": "893bfa86c720be1bd3560ce21a4e84d1924a68ccb78501460208ab6e63036035",
+            "repair": null
+          }
+        ],
+        "done": "- Cohort : G000\n- Batch name : G000-gd3-20260819\n- Message : Success\n",
+        "error_list": null
+      },
+      {
+        "set": "G000-gd4-20260819",
+        "samples": [
+          {
+            "sample": "C000000400100000G0x1",
+            "FREEMIX": "6.79797e-06",
+            "sha256": "8b9b8543668ca8eee2d5093ebc0d7753579697ab9521c1cce7dd2d0e0ab6277e",
+            "repair": null
+          },
+          {
+            "sample": "C000000400200000G0x1",
+            "FREEMIX": "7.67851e-06",
+            "sha256": "de232d55071c84f454178a0b6fda155e7c327c0bbed00d15e6834e4992ac5a6f",
+            "repair": {
+              "at": "2026-09-28T00:05:18.338604+09:00",
+              "job": "156822",
+              "sample": "C000000400200000G0x1",
+              "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-gd4-KOR102/attempt-1",
+              "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/analyze_meta/C000000400200000G0x1/C000000400200000G0x1.selfSM",
+              "selfSM_sha256": "de232d55071c84f454178a0b6fda155e7c327c0bbed00d15e6834e4992ac5a6f",
+              "protected_outcomes_unchanged": true,
+              "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-gd4-KOR102/attempt-1/original-before-promotion",
+              "FREEMIX": "7.67851e-06"
+            }
+          },
+          {
+            "sample": "C000000400300000G0x1",
+            "FREEMIX": "1.14297e-06",
+            "sha256": "8ed7905a78cb9a32b5600e0a8c6cf9390dcbcf7a317783aecde68c3f58a8399c",
+            "repair": null
+          },
+          {
+            "sample": "C000000400400000G0x1",
+            "FREEMIX": "4.43755e-06",
+            "sha256": "e491825178e04686f7179a379de1fff8a451e1379dcd4cf58ff80cdd4b9f6396",
+            "repair": {
+              "at": "2026-09-27T20:51:41.965540+09:00",
+              "job": "156819",
+              "sample": "C000000400400000G0x1",
+              "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400400000G0x1",
+              "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/analyze_meta/C000000400400000G0x1/C000000400400000G0x1.selfSM",
+              "selfSM_sha256": "e491825178e04686f7179a379de1fff8a451e1379dcd4cf58ff80cdd4b9f6396",
+              "protected_outcomes_unchanged": true,
+              "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400400000G0x1/original-before-promotion",
+              "FREEMIX": "4.43755e-06"
+            }
+          },
+          {
+            "sample": "C000000400500000G0x1",
+            "FREEMIX": "2.68372e-05",
+            "sha256": "fb58387255a4a26b71eea0f708dbf9d9b7995001fad829b82c8de951c136bcac",
+            "repair": null
+          },
+          {
+            "sample": "C000000400600000G0x1",
+            "FREEMIX": "4.58586e-06",
+            "sha256": "35e35e1754920adc5d6d2a7e61b4f7421e26517f05df632db00a8b66272aa0da",
+            "repair": {
+              "at": "2026-09-27T20:51:42.180802+09:00",
+              "job": "156820",
+              "sample": "C000000400600000G0x1",
+              "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400600000G0x1",
+              "qc_link": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/analyze_meta/C000000400600000G0x1/C000000400600000G0x1.selfSM",
+              "selfSM_sha256": "35e35e1754920adc5d6d2a7e61b4f7421e26517f05df632db00a8b66272aa0da",
+              "protected_outcomes_unchanged": true,
+              "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400600000G0x1/original-before-promotion",
+              "FREEMIX": "4.58586e-06"
+            }
+          }
+        ],
+        "done": "- Cohort : G000\n- Batch name : G000-gd4-20260819\n- Message : Success\n",
+        "error_list": null
+      },
+      {
+        "set": "GIAB-publicData-Illumina-250PE",
+        "samples": [
+          {
+            "sample": "GIAB-publicData-Illumina-250PE-HG002",
+            "FREEMIX": "9.5572e-05",
+            "sha256": "98a21c51507aeafa9c4d75f160a9db67bb47070102a2885f5bcf6b5efa6784ce",
+            "repair": {
+              "at": "2026-09-28T00:05:18.556920+09:00",
+              "job": "156823",
+              "sample": "GIAB-publicData-Illumina-250PE-HG002",
+              "source": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-illumina-HG002/attempt-1",
+              "qc_link": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/analyze_meta/GIAB-publicData-Illumina-250PE-HG002/GIAB-publicData-Illumina-250PE-HG002.selfSM",
+              "selfSM_sha256": "98a21c51507aeafa9c4d75f160a9db67bb47070102a2885f5bcf6b5efa6784ce",
+              "protected_outcomes_unchanged": true,
+              "original_failure_preserved": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/verify-illumina-HG002/attempt-1/original-before-promotion",
+              "FREEMIX": "9.5572e-05"
+            }
+          },
+          {
+            "sample": "GIAB-publicData-Illumina-250PE-HG003",
+            "FREEMIX": "0.000126438",
+            "sha256": "3da5f9ffd9f5154a809cce5827a051947d96213ab137cb90d708da6e9a19bbff",
+            "repair": null
+          },
+          {
+            "sample": "GIAB-publicData-Illumina-250PE-HG004",
+            "FREEMIX": "0.000115881",
+            "sha256": "c1f2b0a5d52f856256303acdaf12d98a4a07df826acb6a90d02d29a5305bb7df",
+            "repair": null
+          }
+        ],
+        "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Illumina-250PE\n- Message : Error\n",
+        "error_list": "- Time: Sat Sep 26 09:10:29 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG004'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG004_manta.err'}\n- Time: Sat Sep 26 09:12:14 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG002'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002_manta.err'}\n- Time: Sat Sep 26 09:12:29 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'manta'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG003_manta.err'}\n- Time: Sat Sep 26 09:20:39 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG002'}\n- Step: {'verifybamID'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/13.verifybamID/GIAB-publicData-Illumina-250PE-HG002_verifybamID.err'}\n- Time: Sat Sep 26 09:38:33 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'haplo_gather'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/10.haplo/GIAB-publicData-Illumina-250PE-HG003_haplo.err'}\n- Time: Sat Sep 26 09:39:47 KST 2026\n- Sample: {'GIAB-publicData-Illumina-250PE-HG003'}\n- Step: {'count_variants'}\n- Error Log: {'/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/15.countVariants/GIAB-publicData-Illumina-250PE-HG003_countVariants.err'}\n"
+      }
+    ]
+  },
+  "last_manta_attempts": [
+    {
+      "at": "2026-09-28T00:05:28.213897+09:00",
+      "key": "manta-illumina-HG002",
+      "sample": "GIAB-publicData-Illumina-250PE-HG002",
+      "attempt": 2,
+      "job": "156827",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG002/attempt-2"
+    },
+    {
+      "at": "2026-09-28T00:05:28.450587+09:00",
+      "key": "manta-illumina-HG003",
+      "sample": "GIAB-publicData-Illumina-250PE-HG003",
+      "attempt": 2,
+      "job": "156828",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG003/attempt-2"
+    },
+    {
+      "at": "2026-09-28T00:05:28.687013+09:00",
+      "key": "manta-illumina-HG004",
+      "sample": "GIAB-publicData-Illumina-250PE-HG004",
+      "attempt": 2,
+      "job": "156829",
+      "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-bounded-retries/manta-illumina-HG004/attempt-2"
+    }
+  ],
+  "attempt_limit": 2,
+  "no_further_verify_retry": true,
+  "public_progress": [
+    {
+      "job": "155526",
+      "name": "regermline_java17_BGISEQ500",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 42107,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-BGISEQ500\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155527",
+      "name": "regermline_java17_Element-AVITI",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 43481,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Element-AVITI\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155528",
+      "name": "regermline_java17_Hiseq-300x",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 21268,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Hiseq-300x\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "156690",
+      "name": "regermline_java17_GIAB-publicData-MGISEQ2000-PCRfree",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 35883,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-MGISEQ2000-PCRfree\n- Message : Error\n",
+      "errors": null
+    }
+  ],
+  "active_mark_logs_grew": true,
+  "somatic": {
+    "qacct_count": 29,
+    "all_success": true,
+    "qc_sha256_unchanged": true,
+    "qc_rows": 13,
+    "summary_count": 28
+  },
+  "owners": [
+    {
+      "session": "f4f3cd33-069f-4618-9370-aeca65f756bd",
+      "status": "not-listed",
+      "last_activity": "2026-09-26T11:44:04.918Z"
+    },
+    {
+      "session": "febe25e4-aaad-40ef-b098-6762f7da433f",
+      "status": "not-listed",
+      "last_activity": "2026-09-24T23:23:11.385Z"
+    },
+    {
+      "session": "9fd8a804-eb9d-4050-85dc-351146d3fc7a",
+      "status": "not-listed",
+      "last_activity": "2026-09-26T00:25:32.947Z"
+    },
+    {
+      "session": "f9a76550-837f-4f82-b561-d0a7cbbacc74",
+      "status": "not-listed",
+      "last_activity": "2026-09-26T11:27:51.898Z"
+    },
+    {
+      "session": "148efde9-4992-4a4a-8412-73d5e5e8053e",
+      "status": "not-listed",
+      "last_activity": "2026-09-27T07:47:58.599Z"
+    }
+  ],
+  "qstat": "job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID \n-----------------------------------------------------------------------------------------------------------------\n 155526 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-8.kobic.re    60        \n 155527 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-9.kobic.re    60        \n 155528 0.75000 regermline ehojune      r     09/21/2026 16:36:14 shepherd.q@shepherd-1-9.kobic.    60        \n 156690 0.55018 regermline ehojune      r     09/25/2026 01:06:44 shepherd.q@shepherd-1-8.kobic.    60        \n 156827 0.25000 giab_retry ehojune      r     09/28/2026 00:05:29 shepherd.q@shepherd-1-1.kobic.    10        \n 156828 0.25000 giab_retry ehojune      r     09/28/2026 00:05:29 shepherd.q@shepherd-1-12.kobic    10        \n 156829 0.25000 giab_retry ehojune      r     09/28/2026 00:05:29 shepherd.q@shepherd-1-11.kobic    10        \n"
+}

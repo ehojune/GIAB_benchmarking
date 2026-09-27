@@ -21,7 +21,7 @@
 | 공개 NovaSeq6000 30x HG004 | 0.980805 | 0.980090 |
 | 공개 NovaSeqX 30x HG002 | 0.978631 | 0.979057 |
 
-회사 HG002/3/4의 VerifyBamID QC는 모두 정상 종료 결과를 확보했다. 회사에서 남은 QC 오류는 비교 대상 밖 KOR-101(gd3)·KOR-102(gd4)다. 회사 기본 run 24샘플은 종료했지만 QC까지 24/24 성공한 것은 아니다.
+09-28 00:05 QC 갱신: gd3 KOR-101·gd4 KOR-102도 재실행에 성공해 **회사 VerifyBamID 24/24** 결과를 확보했다. 위 16건 비교 점수는 바뀌지 않았다. [복구 근거](../reference/2026-09-28-0002-status-evidence.json).
 
 공개 BGISEQ500·Element-AVITI·Hiseq-300x·MGISEQ2000-PCRfree는 아직 실행 중이다. 이 표는 현재 완료된 비교이며 F1 차이만으로 회사 품질 순위나 원인을 단정하지 않는다.
 
