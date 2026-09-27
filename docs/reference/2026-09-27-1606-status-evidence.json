@@ -1,0 +1,594 @@
+{
+  "at": "2026-09-27T16:21:12.702754+09:00",
+  "baseline": "2026-09-27T08:12:59.961121+09:00",
+  "basic_checked_at": "2026-09-27T16:14:08.116729+09:00",
+  "gd4": {
+    "job": "156763",
+    "qacct": [
+      "jobnumber    156763",
+      "end_time     Sun Sep 27 10:37:40 2026",
+      "failed       0",
+      "exit_status  0"
+    ],
+    "done": "- Cohort : G000\n- Batch name : G000-gd4-20260819\n- Message : Success\n",
+    "error_list_exists": false,
+    "samples": [
+      {
+        "sample": "C000000400100000G0x1",
+        "cram_vcf_minimum_qc": "PASS",
+        "fastp_primary_reads_match": true,
+        "primary_reads": 1104626172,
+        "primary_mapping_pct": 99.98,
+        "mosdepth_total_mean": 44.61
+      },
+      {
+        "sample": "C000000400200000G0x1",
+        "cram_vcf_minimum_qc": "PASS",
+        "fastp_primary_reads_match": true,
+        "primary_reads": 829927412,
+        "primary_mapping_pct": 99.98,
+        "mosdepth_total_mean": 32.71
+      },
+      {
+        "sample": "C000000400300000G0x1",
+        "cram_vcf_minimum_qc": "PASS",
+        "fastp_primary_reads_match": true,
+        "primary_reads": 799258486,
+        "primary_mapping_pct": 99.99,
+        "mosdepth_total_mean": 32.14
+      },
+      {
+        "sample": "C000000400400000G0x1",
+        "cram_vcf_minimum_qc": "PASS",
+        "fastp_primary_reads_match": true,
+        "primary_reads": 1004633346,
+        "primary_mapping_pct": 99.97,
+        "mosdepth_total_mean": 39.86
+      },
+      {
+        "sample": "C000000400500000G0x1",
+        "cram_vcf_minimum_qc": "PASS",
+        "fastp_primary_reads_match": true,
+        "primary_reads": 1183096368,
+        "primary_mapping_pct": 99.98,
+        "mosdepth_total_mean": 45.98
+      },
+      {
+        "sample": "C000000400600000G0x1",
+        "cram_vcf_minimum_qc": "PASS",
+        "fastp_primary_reads_match": true,
+        "primary_reads": 867960142,
+        "primary_mapping_pct": 99.98,
+        "mosdepth_total_mean": 34.73
+      }
+    ],
+    "verify_failures": [
+      {
+        "sample": "C000000400200000G0x1",
+        "master": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/log/germline_G000-gd4-20260819.o156763",
+        "line": 208384,
+        "checksum_exists": false,
+        "qc_link_exists": false
+      },
+      {
+        "sample": "C000000400600000G0x1",
+        "master": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/log/germline_G000-gd4-20260819.o156763",
+        "line": 213354,
+        "checksum_exists": false,
+        "qc_link_exists": false
+      },
+      {
+        "sample": "C000000400400000G0x1",
+        "master": "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/log/germline_G000-gd4-20260819.o156763",
+        "line": 218313,
+        "checksum_exists": false,
+        "qc_link_exists": false
+      }
+    ]
+  },
+  "public_progress": [
+    {
+      "job": "155526",
+      "name": "regermline_java17_BGISEQ500",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 114988,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-BGISEQ500\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155527",
+      "name": "regermline_java17_Element-AVITI",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 117000,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Element-AVITI\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "155528",
+      "name": "regermline_java17_Hiseq-300x",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 48530,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Hiseq-300x\n- Message : Error\n",
+      "errors": null
+    },
+    {
+      "job": "156690",
+      "name": "regermline_java17_GIAB-publicData-MGISEQ2000-PCRfree",
+      "state": "r",
+      "start_unchanged": true,
+      "cpu_delta_seconds": 84061,
+      "done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-MGISEQ2000-PCRfree\n- Message : Error\n",
+      "errors": null
+    }
+  ],
+  "public_active_mark_logs": [
+    {
+      "set": "BGISEQ500",
+      "sample": "HG002",
+      "bytes_delta": 20312492,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "6.0",
+        "15991",
+        "17901"
+      ],
+      "after": [
+        "11.0",
+        "3833",
+        "17901"
+      ],
+      "mtime": "2026-09-27T16:13:42"
+    },
+    {
+      "set": "BGISEQ500",
+      "sample": "HG003",
+      "bytes_delta": 4007908,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "11.0",
+        "14273",
+        "18330"
+      ],
+      "after": [
+        "11.0",
+        "17897",
+        "18330"
+      ],
+      "mtime": "2026-09-27T16:13:56"
+    },
+    {
+      "set": "BGISEQ500",
+      "sample": "HG004",
+      "bytes_delta": 5608121,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "11.0",
+        "2589",
+        "18074"
+      ],
+      "after": [
+        "11.0",
+        "7689",
+        "18074"
+      ],
+      "mtime": "2026-09-27T16:13:44"
+    },
+    {
+      "set": "Element-AVITI",
+      "sample": "HG002",
+      "bytes_delta": 4391860,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "11.0",
+        "5117",
+        "19836"
+      ],
+      "after": [
+        "11.0",
+        "9113",
+        "19836"
+      ],
+      "mtime": "2026-09-27T16:13:47"
+    },
+    {
+      "set": "Element-AVITI",
+      "sample": "HG003",
+      "bytes_delta": 19891969,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "6.0",
+        "16613",
+        "19051"
+      ],
+      "after": [
+        "11.0",
+        "2077",
+        "19051"
+      ],
+      "mtime": "2026-09-27T16:14:03"
+    },
+    {
+      "set": "Element-AVITI",
+      "sample": "HG004",
+      "bytes_delta": 3932739,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "6.0",
+        "8893",
+        "21167"
+      ],
+      "after": [
+        "6.0",
+        "12487",
+        "21167"
+      ],
+      "mtime": "2026-09-27T16:13:19"
+    },
+    {
+      "set": "Hiseq-300x",
+      "sample": "HG002",
+      "bytes_delta": 3112211,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "2.0",
+        "46320",
+        "52839"
+      ],
+      "after": [
+        "2.0",
+        "50186",
+        "52839"
+      ],
+      "mtime": "2026-09-27T16:13:59"
+    },
+    {
+      "set": "Hiseq-300x",
+      "sample": "HG003",
+      "bytes_delta": 3225728,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "2.0",
+        "44843",
+        "53467"
+      ],
+      "after": [
+        "2.0",
+        "48850",
+        "53467"
+      ],
+      "mtime": "2026-09-27T16:13:52"
+    },
+    {
+      "set": "Hiseq-300x",
+      "sample": "HG004",
+      "bytes_delta": 3103361,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "2.0",
+        "45237",
+        "61287"
+      ],
+      "after": [
+        "2.0",
+        "49092",
+        "61287"
+      ],
+      "mtime": "2026-09-27T16:14:06"
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "sample": "HG002",
+      "bytes_delta": 4883375,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "6.0",
+        "1503",
+        "15160"
+      ],
+      "after": [
+        "6.0",
+        "5981",
+        "15160"
+      ],
+      "mtime": "2026-09-27T16:13:27"
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "sample": "HG003",
+      "bytes_delta": 4990137,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "6.0",
+        "2789",
+        "14631"
+      ],
+      "after": [
+        "6.0",
+        "7367",
+        "14631"
+      ],
+      "mtime": "2026-09-27T16:14:02"
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "sample": "HG004",
+      "bytes_delta": 3872137,
+      "was_done": false,
+      "done": false,
+      "before": [
+        "2.0",
+        "28107",
+        "29656"
+      ],
+      "after": [
+        "4.0",
+        "3301",
+        "29656"
+      ],
+      "mtime": "2026-09-27T16:13:10"
+    }
+  ],
+  "somatic": {
+    "qacct_count": 29,
+    "all_success": true,
+    "qc_sha256_unchanged": true,
+    "qc_rows": 13,
+    "summary_count": 28
+  },
+  "happy_submission": {
+    "state": "submitted",
+    "submitted_at": "2026-09-27T16:18:14.041757+09:00",
+    "returncode": 0,
+    "stdout": "SUBMITTED\tgd004-HG002\t156815\t/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG002\nSUBMITTED\tgd004-HG003\t156816\t/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG003\nSUBMITTED\tgd004-HG004\t156817\t/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG004\n",
+    "stderr": "",
+    "jobs": [
+      {
+        "label": "gd004-HG002",
+        "job": "156815",
+        "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG002"
+      },
+      {
+        "label": "gd004-HG003",
+        "job": "156816",
+        "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG003"
+      },
+      {
+        "label": "gd004-HG004",
+        "job": "156817",
+        "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG004"
+      }
+    ]
+  },
+  "verify_submission": {
+    "at": "2026-09-27T16:20:10.921065+09:00",
+    "jobs": [
+      {
+        "sample": "C000000400200000G0x1",
+        "job": "156818",
+        "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400200000G0x1"
+      },
+      {
+        "sample": "C000000400400000G0x1",
+        "job": "156819",
+        "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400400000G0x1"
+      },
+      {
+        "sample": "C000000400600000G0x1",
+        "job": "156820",
+        "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400600000G0x1"
+      }
+    ]
+  },
+  "followups": {
+    "at": "2026-09-27T16:21:12.702754+09:00",
+    "verify": [
+      {
+        "sample": "C000000400200000G0x1",
+        "job": "156818",
+        "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400200000G0x1",
+        "state": "r",
+        "markers": {
+          "started.json": {
+            "at": "2026-09-27T16:20:14.621465+09:00",
+            "job": "156818",
+            "host": "shepherd-1-12"
+          },
+          "stage.json": {
+            "at": "2026-09-27T16:20:14.658257+09:00",
+            "stage": "restore_bam",
+            "command": [
+              "/BiO/scratch/dyl/kbb/UTILS/Tools/samtools/samtools-1.20/bin/samtools",
+              "view",
+              "-@",
+              "4",
+              "-T",
+              "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+              "-b",
+              "-o",
+              "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400200000G0x1/C000000400200000G0x1_v1.1.0.bam",
+              "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/09.bqsr/C000000400200000G0x1_v1.1.0.cram"
+            ]
+          }
+        },
+        "bam_bytes": 2683798531
+      },
+      {
+        "sample": "C000000400400000G0x1",
+        "job": "156819",
+        "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400400000G0x1",
+        "state": "r",
+        "markers": {
+          "started.json": {
+            "at": "2026-09-27T16:20:14.632887+09:00",
+            "job": "156819",
+            "host": "shepherd-1-4"
+          },
+          "stage.json": {
+            "at": "2026-09-27T16:20:14.669151+09:00",
+            "stage": "restore_bam",
+            "command": [
+              "/BiO/scratch/dyl/kbb/UTILS/Tools/samtools/samtools-1.20/bin/samtools",
+              "view",
+              "-@",
+              "4",
+              "-T",
+              "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+              "-b",
+              "-o",
+              "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400400000G0x1/C000000400400000G0x1_v1.1.0.bam",
+              "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/09.bqsr/C000000400400000G0x1_v1.1.0.cram"
+            ]
+          }
+        },
+        "bam_bytes": 2553750636
+      },
+      {
+        "sample": "C000000400600000G0x1",
+        "job": "156820",
+        "folder": "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400600000G0x1",
+        "state": "r",
+        "markers": {
+          "started.json": {
+            "at": "2026-09-27T16:20:14.632121+09:00",
+            "job": "156820",
+            "host": "shepherd-1-2"
+          },
+          "stage.json": {
+            "at": "2026-09-27T16:20:14.668729+09:00",
+            "stage": "restore_bam",
+            "command": [
+              "/BiO/scratch/dyl/kbb/UTILS/Tools/samtools/samtools-1.20/bin/samtools",
+              "view",
+              "-@",
+              "4",
+              "-T",
+              "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+              "-b",
+              "-o",
+              "/BiO/scratch/dyl/kbb/G000/backup/20260927-gd4-verify-only/C000000400600000G0x1/C000000400600000G0x1_v1.1.0.bam",
+              "/BiO/scratch/dyl/kbb/G000/G000-gd4-20260819/tmp/09.bqsr/C000000400600000G0x1_v1.1.0.cram"
+            ]
+          }
+        },
+        "bam_bytes": 2660685010
+      }
+    ],
+    "happy": [
+      {
+        "label": "gd004-HG002",
+        "job": "156815",
+        "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG002",
+        "state": "r",
+        "files": [
+          {
+            "name": "gd004-HG002.genotyped.vcf.gz.part.vcf.gz",
+            "bytes": 29461661
+          }
+        ],
+        "tail": "FO  ProgressMeter - Starting traversal\n16:18:55.589 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute\n16:18:55.702 WARN  ReferenceConfidenceVariantContextMerger - Detected invalid annotations: When trying to merge variant contexts at location chr1:10146 the annotation MLEAC=[1, 0] was not a numerical value and was ignored\n16:18:55.743 WARN  InbreedingCoeff - InbreedingCoeff will not be calculated at position chr1:10146 and possibly subsequent; at least 10 samples must have called genotypes\n16:19:05.592 INFO  ProgressMeter -        chr1:22950438              0.2               2368000       14203738.9\n16:19:15.593 INFO  ProgressMeter -        chr1:52148221              0.3               5002000       15002999.4\n16:19:25.594 INFO  ProgressMeter -        chr1:82442747              0.5               7596000       15189468.4\n16:19:35.595 INFO  ProgressMeter -       chr1:112725488              0.7              10117000       15173224.0\n16:19:45.597 INFO  ProgressMeter -       chr1:154866297              0.8              12613000       15133178.7\n16:19:55.598 INFO  ProgressMeter -       chr1:187279759              1.0              15163000       15160725.9\n16:20:05.602 INFO  ProgressMeter -       chr1:217205374              1.2              17757000       15217459.6\n16:20:15.604 INFO  ProgressMeter -       chr1:247588969              1.3              20314000       15232643.9\n16:20:25.607 INFO  ProgressMeter -        chr2:28190522              1.5              22873000       15245617.5\n16:20:35.610 INFO  ProgressMeter -        chr2:58828751              1.7              25450000       15266794.0\n16:20:45.611 INFO  ProgressMeter -        chr2:88545393              1.8              28140000       15346021.7\n16:20:55.613 INFO  ProgressMeter -       chr2:119264064              2.0              30722000       15357928.4\n16:21:05.615 INFO  ProgressMeter -       chr2:149031681              2.2              33384000       15404919.0\n"
+      },
+      {
+        "label": "gd004-HG003",
+        "job": "156816",
+        "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG003",
+        "state": "r",
+        "files": [
+          {
+            "name": "gd004-HG003.genotyped.vcf.gz.part.vcf.gz",
+            "bytes": 43109714
+          }
+        ],
+        "tail": "FO  ProgressMeter - Starting traversal\n16:18:55.591 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute\n16:18:55.739 WARN  ReferenceConfidenceVariantContextMerger - Detected invalid annotations: When trying to merge variant contexts at location chr1:10397 the annotation MLEAC=[1, 0] was not a numerical value and was ignored\n16:18:55.804 WARN  InbreedingCoeff - InbreedingCoeff will not be calculated at position chr1:13613 and possibly subsequent; at least 10 samples must have called genotypes\n16:19:05.592 INFO  ProgressMeter -        chr1:23275461              0.2               2410000       14460000.0\n16:19:15.595 INFO  ProgressMeter -        chr1:58702106              0.3               5042000       15123731.4\n16:19:25.599 INFO  ProgressMeter -       chr1:110957495              0.5               7283000       14563087.4\n16:19:35.601 INFO  ProgressMeter -       chr1:156763619              0.7               9727000       14587217.9\n16:19:45.603 INFO  ProgressMeter -       chr1:205571829              0.8              12045000       14450820.8\n16:19:55.604 INFO  ProgressMeter -       chr1:248944751              1.0              14436000       14433113.4\n16:20:05.608 INFO  ProgressMeter -        chr2:40380105              1.2              16850000       14439556.7\n16:20:15.610 INFO  ProgressMeter -        chr2:86941327              1.3              19239000       14426004.1\n16:20:25.611 INFO  ProgressMeter -       chr2:126374881              1.5              21803000       14532265.4\n16:20:35.613 INFO  ProgressMeter -       chr2:176396313              1.7              24162000       14494156.2\n16:20:45.613 INFO  ProgressMeter -       chr2:228651709              1.8              26466000       14433244.6\n16:20:55.616 INFO  ProgressMeter -        chr3:25145970              2.0              28909000       14451609.7\n16:21:05.617 INFO  ProgressMeter -        chr3:68204381              2.2              31372000       14476600.7\n"
+      },
+      {
+        "label": "gd004-HG004",
+        "job": "156817",
+        "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/gd004-HG004",
+        "state": "r",
+        "files": [
+          {
+            "name": "gd004-HG004.genotyped.vcf.gz.part.vcf.gz",
+            "bytes": 20446642
+          }
+        ],
+        "tail": "FO  ProgressMeter - Starting traversal\n16:18:55.604 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute\n16:18:55.713 WARN  ReferenceConfidenceVariantContextMerger - Detected invalid annotations: When trying to merge variant contexts at location chr1:10146 the annotation MLEAC=[1, 0] was not a numerical value and was ignored\n16:18:55.743 WARN  InbreedingCoeff - InbreedingCoeff will not be calculated at position chr1:10146 and possibly subsequent; at least 10 samples must have called genotypes\n16:19:05.605 INFO  ProgressMeter -        chr1:15224428              0.2               2573000       15438000.0\n16:19:15.605 INFO  ProgressMeter -        chr1:31613061              0.3               5372000       16115194.2\n16:19:25.606 INFO  ProgressMeter -        chr1:50296468              0.5               8250000       16498900.1\n16:19:35.609 INFO  ProgressMeter -        chr1:71036795              0.7              11051000       16574428.2\n16:19:45.610 INFO  ProgressMeter -        chr1:92382437              0.8              13798000       16555613.3\n16:19:55.612 INFO  ProgressMeter -       chr1:113688607              1.0              16558000       16556068.5\n16:20:05.613 INFO  ProgressMeter -       chr1:151020320              1.2              19206000       16460169.4\n16:20:15.613 INFO  ProgressMeter -       chr1:171249554              1.3              22003000       16500393.7\n16:20:25.613 INFO  ProgressMeter -       chr1:193491484              1.5              24821000       16545678.8\n16:20:35.616 INFO  ProgressMeter -       chr1:214114307              1.7              27621000       16570611.5\n16:20:45.618 INFO  ProgressMeter -       chr1:234435632              1.8              30439000       16600978.1\n16:20:55.620 INFO  ProgressMeter -         chr2:5746587              2.0              33189000       16592425.9\n16:21:05.620 INFO  ProgressMeter -        chr2:26083601              2.2              36006000       16616108.8\n"
+      }
+    ],
+    "coverage": [
+      {
+        "sample": "C000000400100000G0x1",
+        "total": "total\t3216001592\t143458966497\t44.61\t0\t421751"
+      },
+      {
+        "sample": "C000000400200000G0x1",
+        "total": "total\t3215369375\t105187102680\t32.71\t0\t282024"
+      },
+      {
+        "sample": "C000000400300000G0x1",
+        "total": "total\t3215428426\t103358953105\t32.14\t0\t241611"
+      },
+      {
+        "sample": "C000000400400000G0x1",
+        "total": "total\t3215831903\t128190210186\t39.86\t0\t323515"
+      },
+      {
+        "sample": "C000000400500000G0x1",
+        "total": "total\t3215838387\t147860710564\t45.98\t0\t505139"
+      },
+      {
+        "sample": "C000000400600000G0x1",
+        "total": "total\t3215767234\t111697258373\t34.73\t0\t253534"
+      }
+    ]
+  },
+  "owners": [
+    {
+      "name": "GIAB PacBio 에이전트",
+      "status": "idle",
+      "last_activity": "2026-09-26T11:44:04.918Z"
+    },
+    {
+      "name": "GIAB 숏리드 에이전트",
+      "status": "idle",
+      "last_activity": "2026-09-24T23:23:11.385Z"
+    },
+    {
+      "name": "GIAB 다운로드 에이전트",
+      "status": "idle",
+      "last_activity": "2026-09-26T00:25:32.947Z"
+    },
+    {
+      "name": "GIAB ONT 에이전트",
+      "status": "idle",
+      "last_activity": "2026-09-26T11:27:51.898Z"
+    },
+    {
+      "name": "GIAB 프로젝트 총괄 에이전트",
+      "status": "idle",
+      "last_activity": "2026-09-27T03:47:59.242Z"
+    }
+  ],
+  "recovery_method": {
+    "threads": 1,
+    "temporary_bam_from_completed_cram": true,
+    "canonical_results_untouched_by_jobs": true,
+    "source_hashes": {
+      "gd4-verify-driver-20260927.py": "7df3f776b7a7007d78b7750a225112d36ff9c64df7c71624f16843d46c64e3bf",
+      "gd4-verify-worker-20260927.py": "ed991d1db0c028ec45fbd2ede4c2e18886c736fda887bc6862e27671c7e4f16d"
+    }
+  }
+}
