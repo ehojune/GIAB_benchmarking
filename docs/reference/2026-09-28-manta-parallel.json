@@ -1,0 +1,42 @@
+{
+  "at": "2026-09-28T04:50:57.678585+09:00",
+  "user_instruction": "Run HG002/3/4 concurrently; diagnose, fix and resubmit failed samples without a single-sample success gate.",
+  "new_driver": "/BiO/scratch/ehojune/GIAB_benchmark/repairs/manta-diagnosis-20260928/stack_repair_parallel.py",
+  "driver_sha256": "e19f7f06b4a9e06554b490fd356c08bdf5d2bc967cd9496ae789ca609fbbd011",
+  "original_driver_preserved": true,
+  "runs": [
+    {
+      "sample": "HG002",
+      "job": "156831",
+      "submitted": "2026-09-28T04:22:57.355702+09:00",
+      "started": "2026-09-28T04:22:59.573265+09:00",
+      "host": "shepherd-1-14",
+      "stage": "manta_workflow",
+      "stack_bytes": 67108864,
+      "qstat": "job_number:                 156831\njob_name:                   manta_stack64_HG002\nusage         1:            cpu=04:24:03, mem=19055.76656 GB s, io=754.40648 GB, vmem=1.409G, maxvmem=1.454G",
+      "verified": null
+    },
+    {
+      "sample": "HG003",
+      "job": "156832",
+      "submitted": "2026-09-28T04:50:38.676472+09:00",
+      "started": "2026-09-28T04:50:44.803416+09:00",
+      "host": "shepherd-1-3",
+      "stage": "manta_workflow",
+      "stack_bytes": 67108864,
+      "qstat": "job_number:                 156832\njob_name:                   manta_stack64_HG003\nusage         1:            cpu=00:00:00, mem=0.00000 GB s, io=0.00000 GB, vmem=N/A, maxvmem=N/A",
+      "verified": null
+    },
+    {
+      "sample": "HG004",
+      "job": "156833",
+      "submitted": "2026-09-28T04:50:38.859289+09:00",
+      "started": "2026-09-28T04:50:44.625813+09:00",
+      "host": "shepherd-1-11",
+      "stage": "manta_workflow",
+      "stack_bytes": 67108864,
+      "qstat": "job_number:                 156833\njob_name:                   manta_stack64_HG004\nusage         1:            cpu=00:00:00, mem=0.00000 GB s, io=0.00000 GB, vmem=N/A, maxvmem=N/A",
+      "verified": null
+    }
+  ]
+}
