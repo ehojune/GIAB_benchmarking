@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "issues": [],
+  "issue_count": 0,
+  "expected_cells": 64,
+  "catalog_rows_updated": 7,
+  "catalog_rows_unchanged": 435,
+  "master_cells_compared": 22542,
+  "provider_provenance_preserved": true,
+  "candidate_sha256": "b4eb143ae50c627768b72f51ff624eb9444f7413e7f7806d6b6a2dc32e855e44",
+  "formulas_before": 12,
+  "formulas_after": 12,
+  "hyperlinks_before": 16,
+  "hyperlinks_after": 16,
+  "style_check": "Parsed semantics; XML order and equivalent defaults normalized."
+}

@@ -1,0 +1,561 @@
+{
+  "at": "2026-09-28T06:07:02.131807+09:00",
+  "host": "nbbcluster2",
+  "user": "ehojune",
+  "public_at": "2026-09-28T06:01:26.451976+09:00",
+  "public_baseline": "2026-09-28T05:31:57.223968+09:00",
+  "public": [
+    {
+      "set": "BGISEQ500",
+      "job": "155526",
+      "state": "r",
+      "cpu_delta_seconds": 6138,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "11.0",
+            "11041",
+            "17901"
+          ],
+          "log_bytes_delta": 295410
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "15.0",
+            "8391",
+            "18330"
+          ],
+          "log_bytes_delta": 298666
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "11.0",
+            "14385",
+            "18074"
+          ],
+          "log_bytes_delta": 259342
+        }
+      ]
+    },
+    {
+      "set": "Element-AVITI",
+      "job": "155527",
+      "state": "r",
+      "cpu_delta_seconds": 6434,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "11.0",
+            "15539",
+            "19836"
+          ],
+          "log_bytes_delta": 245331
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "11.0",
+            "9535",
+            "19051"
+          ],
+          "log_bytes_delta": 252791
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "6.0",
+            "18701",
+            "21167"
+          ],
+          "log_bytes_delta": 263051
+        }
+      ]
+    },
+    {
+      "set": "Hiseq-300x",
+      "job": "155528",
+      "state": "r",
+      "cpu_delta_seconds": 3374,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "4.0",
+            "4008",
+            "52839"
+          ],
+          "log_bytes_delta": 194174
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "4.0",
+            "2131",
+            "53467"
+          ],
+          "log_bytes_delta": 187790
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "2.0",
+            "55375",
+            "61287"
+          ],
+          "log_bytes_delta": 176305
+        }
+      ]
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "job": "156690",
+      "state": "r",
+      "cpu_delta_seconds": 5242,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "6.0",
+            "13791",
+            "15160"
+          ],
+          "log_bytes_delta": 307018
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "11.0",
+            "891",
+            "14631"
+          ],
+          "log_bytes_delta": 348481
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "4.0",
+            "11253",
+            "29656"
+          ],
+          "log_bytes_delta": 217613
+        }
+      ]
+    }
+  ],
+  "new_comparisons": [
+    {
+      "label": "public-Illumina250PE-HG002",
+      "hgid": "HG002",
+      "job": "156834",
+      "qacct": {
+        "failed": "0",
+        "exit_status": "0"
+      },
+      "all_done": true,
+      "input_stat_unchanged": true,
+      "sample_header_match": true,
+      "indexes_readable": true,
+      "index_count_metadata": 0,
+      "indexed_chr1_first_Mb_records": 1190,
+      "summary_path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG002/public-Illumina250PE-HG002.summary.csv",
+      "summary_sha256": "fb6094733a4aa88d883ff4852b32f240128399261efbd468e6668d90e36d5c43",
+      "PASS_rows": [
+        {
+          "Type": "INDEL",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "525466",
+          "TRUTH.TP": "503562",
+          "TRUTH.FN": "21904",
+          "QUERY.TOTAL": "846953",
+          "QUERY.FP": "7662",
+          "QUERY.UNK": "316174",
+          "FP.gt": "2107",
+          "FP.al": "4032",
+          "METRIC.Recall": "0.958315",
+          "METRIC.Precision": "0.985565",
+          "METRIC.Frac_NA": "0.373308",
+          "METRIC.F1_Score": "0.971749",
+          "TRUTH.TOTAL.TiTv_ratio": "",
+          "QUERY.TOTAL.TiTv_ratio": "",
+          "TRUTH.TOTAL.het_hom_ratio": "1.52827573414",
+          "QUERY.TOTAL.het_hom_ratio": "1.81940435671"
+        },
+        {
+          "Type": "SNP",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "3365115",
+          "TRUTH.TP": "3268210",
+          "TRUTH.FN": "96905",
+          "QUERY.TOTAL": "3892209",
+          "QUERY.FP": "28299",
+          "QUERY.UNK": "594654",
+          "FP.gt": "3430",
+          "FP.al": "1145",
+          "METRIC.Recall": "0.971203",
+          "METRIC.Precision": "0.991418",
+          "METRIC.Frac_NA": "0.152781",
+          "METRIC.F1_Score": "0.981207",
+          "TRUTH.TOTAL.TiTv_ratio": "2.10012885565",
+          "QUERY.TOTAL.TiTv_ratio": "1.92480634829",
+          "TRUTH.TOTAL.het_hom_ratio": "1.58119585325",
+          "QUERY.TOTAL.het_hom_ratio": "1.68792914381"
+        }
+      ],
+      "commandline": "/opt/hap.py/bin/hap.py /BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38/HG002_GRCh38_1_22_v4.2.1_benchmark.vcf.gz /BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG002/public-Illumina250PE-HG002.genotyped.vcf.gz -f /BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38/HG002_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed -r /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta -o /BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG002/public-Illumina250PE-HG002 --threads 16 --scratch-prefix /BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG002/tmp --logfile /BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG002/public-Illumina250PE-HG002.hap.py.log",
+      "parameters": {
+        "engine": "xcmp",
+        "verbose": false,
+        "roc": "QUAL",
+        "locations": null,
+        "write_counts": true,
+        "preprocessing_truth_confregions": true,
+        "preprocessing_leftshift": true,
+        "filters_only": "",
+        "type": null,
+        "do_roc": true,
+        "vcf2": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG002/public-Illumina250PE-HG002.genotyped.vcf.gz",
+        "engine_vcfeval": "/opt/hap.py/lib/python27/Haplo/../../../libexec/rtg-tools-install/rtg",
+        "force_interactive": true,
+        "vcf1": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38/HG002_GRCh38_1_22_v4.2.1_benchmark.vcf.gz",
+        "hb_expand": 30,
+        "engine_vcfeval_template": null,
+        "convert_gvcf_query": false,
+        "strat_tsv": null,
+        "write_vcf": true,
+        "window": 50,
+        "somatic_allele_conversion": false,
+        "roc_filter": false,
+        "version": false,
+        "ref": "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+        "fp_bedfile": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38/HG002_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed",
+        "filter_nonref": false,
+        "_vcfs": [
+          "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38/HG002_GRCh38_1_22_v4.2.1_benchmark.vcf.gz",
+          "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG002/public-Illumina250PE-HG002.genotyped.vcf.gz"
+        ],
+        "max_enum": 16768,
+        "engine_scmp_distance": 30,
+        "no_hc": false,
+        "usefiltered_truth": false,
+        "regions_bedfile": null,
+        "fixchr": null,
+        "strat_fixchr": null,
+        "preserve_info": false,
+        "logfile": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG002/public-Illumina250PE-HG002.hap.py.log",
+        "pass_only": false,
+        "scratch_prefix": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG002/tmp",
+        "gender": "auto",
+        "output_vtc": false,
+        "preprocessing_decompose": true,
+        "convert_gvcf_truth": false,
+        "ci_alpha": 0.0,
+        "bcf": false,
+        "delete_scratch": true,
+        "quiet": false,
+        "write_json": true,
+        "preprocess_window": 10000,
+        "roc_delta": 0.5,
+        "targets_bedfile": null,
+        "roc_regions": [
+          "*"
+        ],
+        "reports_prefix": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG002/public-Illumina250PE-HG002",
+        "strat_regions": [],
+        "threads": 16,
+        "preprocessing_truth": false,
+        "preprocessing_norm": false
+      },
+      "runinfo_sha256": "3da3057106f404ad204a0afc8cfcb8ec26185d20d7bd5543b35695f9f338c349"
+    },
+    {
+      "label": "public-Illumina250PE-HG003",
+      "hgid": "HG003",
+      "job": "156835",
+      "qacct": {
+        "failed": "0",
+        "exit_status": "0"
+      },
+      "all_done": true,
+      "input_stat_unchanged": true,
+      "sample_header_match": true,
+      "indexes_readable": true,
+      "index_count_metadata": 0,
+      "indexed_chr1_first_Mb_records": 1267,
+      "summary_path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG003/public-Illumina250PE-HG003.summary.csv",
+      "summary_sha256": "33532268467214a54ab5d69745e522de4245df25b32fa674200b75fd0d3c11fe",
+      "PASS_rows": [
+        {
+          "Type": "INDEL",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "504497",
+          "TRUTH.TP": "480577",
+          "TRUTH.FN": "23920",
+          "QUERY.TOTAL": "830171",
+          "QUERY.FP": "8688",
+          "QUERY.UNK": "322829",
+          "FP.gt": "2464",
+          "FP.al": "4679",
+          "METRIC.Recall": "0.952586",
+          "METRIC.Precision": "0.982875",
+          "METRIC.Frac_NA": "0.38887",
+          "METRIC.F1_Score": "0.967494",
+          "TRUTH.TOTAL.TiTv_ratio": "",
+          "QUERY.TOTAL.TiTv_ratio": "",
+          "TRUTH.TOTAL.het_hom_ratio": "1.48975928106",
+          "QUERY.TOTAL.het_hom_ratio": "1.75343658622"
+        },
+        {
+          "Type": "SNP",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "3327481",
+          "TRUTH.TP": "3231962",
+          "TRUTH.FN": "95519",
+          "QUERY.TOTAL": "3863799",
+          "QUERY.FP": "30145",
+          "QUERY.UNK": "600744",
+          "FP.gt": "3175",
+          "FP.al": "1292",
+          "METRIC.Recall": "0.971294",
+          "METRIC.Precision": "0.990762",
+          "METRIC.Frac_NA": "0.15548",
+          "METRIC.F1_Score": "0.980931",
+          "TRUTH.TOTAL.TiTv_ratio": "2.10258504162",
+          "QUERY.TOTAL.TiTv_ratio": "1.92727634881",
+          "TRUTH.TOTAL.het_hom_ratio": "1.53513777165",
+          "QUERY.TOTAL.het_hom_ratio": "1.6510281766"
+        }
+      ],
+      "commandline": "/opt/hap.py/bin/hap.py /BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG003_NA24149_father/NISTv4.2.1/GRCh38/HG003_GRCh38_1_22_v4.2.1_benchmark.vcf.gz /BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG003/public-Illumina250PE-HG003.genotyped.vcf.gz -f /BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG003_NA24149_father/NISTv4.2.1/GRCh38/HG003_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed -r /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta -o /BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG003/public-Illumina250PE-HG003 --threads 16 --scratch-prefix /BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG003/tmp --logfile /BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG003/public-Illumina250PE-HG003.hap.py.log",
+      "parameters": {
+        "engine": "xcmp",
+        "verbose": false,
+        "roc": "QUAL",
+        "locations": null,
+        "write_counts": true,
+        "preprocessing_truth_confregions": true,
+        "preprocessing_leftshift": true,
+        "filters_only": "",
+        "type": null,
+        "do_roc": true,
+        "vcf2": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG003/public-Illumina250PE-HG003.genotyped.vcf.gz",
+        "engine_vcfeval": "/opt/hap.py/lib/python27/Haplo/../../../libexec/rtg-tools-install/rtg",
+        "force_interactive": true,
+        "vcf1": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG003_NA24149_father/NISTv4.2.1/GRCh38/HG003_GRCh38_1_22_v4.2.1_benchmark.vcf.gz",
+        "hb_expand": 30,
+        "engine_vcfeval_template": null,
+        "convert_gvcf_query": false,
+        "strat_tsv": null,
+        "write_vcf": true,
+        "window": 50,
+        "somatic_allele_conversion": false,
+        "roc_filter": false,
+        "version": false,
+        "ref": "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+        "fp_bedfile": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG003_NA24149_father/NISTv4.2.1/GRCh38/HG003_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed",
+        "filter_nonref": false,
+        "_vcfs": [
+          "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG003_NA24149_father/NISTv4.2.1/GRCh38/HG003_GRCh38_1_22_v4.2.1_benchmark.vcf.gz",
+          "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG003/public-Illumina250PE-HG003.genotyped.vcf.gz"
+        ],
+        "max_enum": 16768,
+        "engine_scmp_distance": 30,
+        "no_hc": false,
+        "usefiltered_truth": false,
+        "regions_bedfile": null,
+        "fixchr": null,
+        "strat_fixchr": null,
+        "preserve_info": false,
+        "logfile": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG003/public-Illumina250PE-HG003.hap.py.log",
+        "pass_only": false,
+        "scratch_prefix": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG003/tmp",
+        "gender": "auto",
+        "output_vtc": false,
+        "preprocessing_decompose": true,
+        "convert_gvcf_truth": false,
+        "ci_alpha": 0.0,
+        "bcf": false,
+        "delete_scratch": true,
+        "quiet": false,
+        "write_json": true,
+        "preprocess_window": 10000,
+        "roc_delta": 0.5,
+        "targets_bedfile": null,
+        "roc_regions": [
+          "*"
+        ],
+        "reports_prefix": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG003/public-Illumina250PE-HG003",
+        "strat_regions": [],
+        "threads": 16,
+        "preprocessing_truth": false,
+        "preprocessing_norm": false
+      },
+      "runinfo_sha256": "2a6696bb7e743cf0cb5642742fb620ebda0e5a6300dddbe4ebf27d88820ba8c9"
+    },
+    {
+      "label": "public-Illumina250PE-HG004",
+      "hgid": "HG004",
+      "job": "156836",
+      "qacct": {
+        "failed": "0",
+        "exit_status": "0"
+      },
+      "all_done": true,
+      "input_stat_unchanged": true,
+      "sample_header_match": true,
+      "indexes_readable": true,
+      "index_count_metadata": 0,
+      "indexed_chr1_first_Mb_records": 1266,
+      "summary_path": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG004/public-Illumina250PE-HG004.summary.csv",
+      "summary_sha256": "46d5faeecf2918d9786176ce789372d14531ed2275076e8b4f57130ecfc359f1",
+      "PASS_rows": [
+        {
+          "Type": "INDEL",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "510516",
+          "TRUTH.TP": "487710",
+          "TRUTH.FN": "22806",
+          "QUERY.TOTAL": "846299",
+          "QUERY.FP": "8428",
+          "QUERY.UNK": "331270",
+          "FP.gt": "2347",
+          "FP.al": "4515",
+          "METRIC.Recall": "0.955328",
+          "METRIC.Precision": "0.983636",
+          "METRIC.Frac_NA": "0.391434",
+          "METRIC.F1_Score": "0.969275",
+          "TRUTH.TOTAL.TiTv_ratio": "",
+          "QUERY.TOTAL.TiTv_ratio": "",
+          "TRUTH.TOTAL.het_hom_ratio": "1.51613073552",
+          "QUERY.TOTAL.het_hom_ratio": "1.82101712241"
+        },
+        {
+          "Type": "SNP",
+          "Filter": "PASS",
+          "TRUTH.TOTAL": "3346598",
+          "TRUTH.TP": "3252646",
+          "TRUTH.FN": "93952",
+          "QUERY.TOTAL": "3913447",
+          "QUERY.FP": "29842",
+          "QUERY.UNK": "630051",
+          "FP.gt": "3341",
+          "FP.al": "1348",
+          "METRIC.Recall": "0.971926",
+          "METRIC.Precision": "0.990911",
+          "METRIC.Frac_NA": "0.160996",
+          "METRIC.F1_Score": "0.981327",
+          "TRUTH.TOTAL.TiTv_ratio": "2.10078083097",
+          "QUERY.TOTAL.TiTv_ratio": "1.92087971284",
+          "TRUTH.TOTAL.het_hom_ratio": "1.58687160169",
+          "QUERY.TOTAL.het_hom_ratio": "1.70507666207"
+        }
+      ],
+      "commandline": "/opt/hap.py/bin/hap.py /BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG004_NA24143_mother/NISTv4.2.1/GRCh38/HG004_GRCh38_1_22_v4.2.1_benchmark.vcf.gz /BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG004/public-Illumina250PE-HG004.genotyped.vcf.gz -f /BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG004_NA24143_mother/NISTv4.2.1/GRCh38/HG004_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed -r /BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta -o /BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG004/public-Illumina250PE-HG004 --threads 16 --scratch-prefix /BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG004/tmp --logfile /BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG004/public-Illumina250PE-HG004.hap.py.log",
+      "parameters": {
+        "engine": "xcmp",
+        "verbose": false,
+        "roc": "QUAL",
+        "locations": null,
+        "write_counts": true,
+        "preprocessing_truth_confregions": true,
+        "preprocessing_leftshift": true,
+        "filters_only": "",
+        "type": null,
+        "do_roc": true,
+        "vcf2": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG004/public-Illumina250PE-HG004.genotyped.vcf.gz",
+        "engine_vcfeval": "/opt/hap.py/lib/python27/Haplo/../../../libexec/rtg-tools-install/rtg",
+        "force_interactive": true,
+        "vcf1": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG004_NA24143_mother/NISTv4.2.1/GRCh38/HG004_GRCh38_1_22_v4.2.1_benchmark.vcf.gz",
+        "hb_expand": 30,
+        "engine_vcfeval_template": null,
+        "convert_gvcf_query": false,
+        "strat_tsv": null,
+        "write_vcf": true,
+        "window": 50,
+        "somatic_allele_conversion": false,
+        "roc_filter": false,
+        "version": false,
+        "ref": "/BiO/scratch/dyl/kbb/UTILS/Reference/GATK_bundle/Homo_sapiens_assembly38.fasta",
+        "fp_bedfile": "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG004_NA24143_mother/NISTv4.2.1/GRCh38/HG004_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed",
+        "filter_nonref": false,
+        "_vcfs": [
+          "/BiO/scratch/ehojune/GIAB_benchmark/release/AshkenazimTrio/HG004_NA24143_mother/NISTv4.2.1/GRCh38/HG004_GRCh38_1_22_v4.2.1_benchmark.vcf.gz",
+          "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG004/public-Illumina250PE-HG004.genotyped.vcf.gz"
+        ],
+        "max_enum": 16768,
+        "engine_scmp_distance": 30,
+        "no_hc": false,
+        "usefiltered_truth": false,
+        "regions_bedfile": null,
+        "fixchr": null,
+        "strat_fixchr": null,
+        "preserve_info": false,
+        "logfile": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG004/public-Illumina250PE-HG004.hap.py.log",
+        "pass_only": false,
+        "scratch_prefix": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG004/tmp",
+        "gender": "auto",
+        "output_vtc": false,
+        "preprocessing_decompose": true,
+        "convert_gvcf_truth": false,
+        "ci_alpha": 0.0,
+        "bcf": false,
+        "delete_scratch": true,
+        "quiet": false,
+        "write_json": true,
+        "preprocess_window": 10000,
+        "roc_delta": 0.5,
+        "targets_bedfile": null,
+        "roc_regions": [
+          "*"
+        ],
+        "reports_prefix": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG004/public-Illumina250PE-HG004",
+        "strat_regions": [],
+        "threads": 16,
+        "preprocessing_truth": false,
+        "preprocessing_norm": false
+      },
+      "runinfo_sha256": "e22a8e49ed9f6b6ac350d8fa27098313ece7f8a764e6eb2bd4801bcfd61e0029"
+    }
+  ],
+  "completed_comparisons": 19,
+  "catalog_sync": {
+    "changed_catalog_rows": 7,
+    "changed_catalog_cells": 63,
+    "unchanged_rows": 435,
+    "provider_provenance_preserved": true,
+    "workbook_sha256": "b4eb143ae50c627768b72f51ff624eb9444f7413e7f7806d6b6a2dc32e855e44"
+  },
+  "owners": [
+    {
+      "session": "f4f3cd33-069f-4618-9370-aeca65f756bd",
+      "state": "not-listed",
+      "last_activity": "2026-09-26T11:44:04.918Z"
+    },
+    {
+      "session": "febe25e4-aaad-40ef-b098-6762f7da433f",
+      "state": "not-listed",
+      "last_activity": "2026-09-24T23:23:11.385Z"
+    },
+    {
+      "session": "9fd8a804-eb9d-4050-85dc-351146d3fc7a",
+      "state": "not-listed",
+      "last_activity": "2026-09-26T00:25:32.947Z"
+    },
+    {
+      "session": "f9a76550-837f-4f82-b561-d0a7cbbacc74",
+      "state": "not-listed",
+      "last_activity": "2026-09-26T11:27:51.898Z"
+    },
+    {
+      "session": "148efde9-4992-4a4a-8412-73d5e5e8053e",
+      "state": "not-listed",
+      "last_activity": "2026-09-27T07:47:58.599Z"
+    }
+  ],
+  "new_jobs_submitted": [],
+  "closed_work": "Company24 and Verify24/24, Illumina Manta3/Verify3, downloads/longread baseline and HG008 somatic13 remain closed.",
+  "validation_note": "GATK-written TBI count metadata was zero; all three indexes successfully retrieved chr1:1-1000000 records. This was a checker assumption, not an analysis failure."
+}

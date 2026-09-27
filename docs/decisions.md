@@ -1368,3 +1368,8 @@ HG002 Manta는 exit0·VCF/QC·해시·원자료 보존을 확인해 누락된 va
 ## 2026-09-28 05:32 — Manta 복구 종료
 
 세 샘플의 스택 64MiB 실행이 모두 정상 종료했다. HG003/4도 입력·해시·VCF QC를 확인해 기존 경로에 연결했다. 이전 DONE/error_list는 보존하며 master 성공으로 고쳐 쓰지 않는다. [검증·반영 근거](reference/2026-09-28-0530-status-evidence.json).
+
+
+## 2026-09-28 06시 — 비교 19건과 공개 처리 기록
+
+Illumina 3건을 검증해 비교를 19건으로 갱신했다. 완료된 공개 7행의 자체 처리 누락을 반영하되 기존 GIAB 정렬·변이 출처는 그대로 두고 자체 결과는 notes에 분리했다. 새 분석은 추가하지 않았다. [근거](reference/2026-09-28-public-shortread-catalog.json).
