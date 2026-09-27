@@ -1,0 +1,289 @@
+{
+  "at": "2026-09-28T05:09:38.483040+09:00",
+  "public_at": "2026-09-28T05:01:05.360325+09:00",
+  "public_baseline": "2026-09-28T04:43:19.045175+09:00",
+  "host": "nbbcluster2",
+  "user": "ehojune",
+  "public": [
+    {
+      "set": "BGISEQ500",
+      "job": "155526",
+      "state": "r",
+      "cpu_delta_seconds": 3395,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "11.0",
+            "10529",
+            "17901"
+          ],
+          "log_bytes_delta": 157670
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "15.0",
+            "7800",
+            "18330"
+          ],
+          "log_bytes_delta": 167715
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "11.0",
+            "13893",
+            "18074"
+          ],
+          "log_bytes_delta": 134831
+        }
+      ]
+    },
+    {
+      "set": "Element-AVITI",
+      "job": "155527",
+      "state": "r",
+      "cpu_delta_seconds": 3945,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "11.0",
+            "15087",
+            "19836"
+          ],
+          "log_bytes_delta": 176802
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "11.0",
+            "9093",
+            "19051"
+          ],
+          "log_bytes_delta": 164851
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "6.0",
+            "18249",
+            "21167"
+          ],
+          "log_bytes_delta": 164401
+        }
+      ]
+    },
+    {
+      "set": "Hiseq-300x",
+      "job": "155528",
+      "state": "r",
+      "cpu_delta_seconds": 2031,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "4.0",
+            "3533",
+            "52839"
+          ],
+          "log_bytes_delta": 120660
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "4.0",
+            "1646",
+            "53467"
+          ],
+          "log_bytes_delta": 119072
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "2.0",
+            "54904",
+            "61287"
+          ],
+          "log_bytes_delta": 103856
+        }
+      ]
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "job": "156690",
+      "state": "r",
+      "cpu_delta_seconds": 2994,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "6.0",
+            "13229",
+            "15160"
+          ],
+          "log_bytes_delta": 150596
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "11.0",
+            "220",
+            "14631"
+          ],
+          "log_bytes_delta": 236064
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "4.0",
+            "10710",
+            "29656"
+          ],
+          "log_bytes_delta": 128500
+        }
+      ]
+    }
+  ],
+  "manta": [
+    {
+      "sample": "HG002",
+      "job": "156831",
+      "running": false,
+      "stage": "manta_index",
+      "verified_at": "2026-09-28T04:58:13.676467+09:00",
+      "filtered_variant_records": 11658,
+      "failed": null,
+      "qacct": "end_time     Mon Sep 28 04:58:13 2026\nfailed       0    \nexit_status  0                   \nmaxvmem      1.454GB",
+      "artifacts": [
+        {
+          "file": "run/workspace/svHyGen/list.edgeRuntimeLog.txt",
+          "bytes": 129,
+          "mtime": "2026-09-28T04:58:00"
+        },
+        {
+          "file": "run/workspace/svHyGen/diploidSV.0000.vcf",
+          "bytes": 4776536,
+          "mtime": "2026-09-28T04:58:01"
+        },
+        {
+          "file": "run/workspace/svHyGen/list.sortCandidateSV.txt",
+          "bytes": 126,
+          "mtime": "2026-09-28T04:58:01"
+        },
+        {
+          "file": "run/workspace/svHyGen/candidateSV.0000.vcf",
+          "bytes": 33153068,
+          "mtime": "2026-09-28T04:58:01"
+        },
+        {
+          "file": "run/workspace/svHyGen/list.sortDiploidSV.txt",
+          "bytes": 124,
+          "mtime": "2026-09-28T04:58:01"
+        },
+        {
+          "file": "run/workspace/svHyGen/edgeRuntimeLog.0000.txt",
+          "bytes": 183795,
+          "mtime": "2026-09-28T04:58:00"
+        }
+      ]
+    },
+    {
+      "sample": "HG003",
+      "job": "156832",
+      "running": true,
+      "stage": "manta_workflow",
+      "verified_at": null,
+      "filtered_variant_records": null,
+      "failed": null,
+      "qacct": null,
+      "artifacts": [
+        {
+          "file": "run/workspace/svHyGen/diploidSV.0000.vcf",
+          "bytes": 610664,
+          "mtime": "2026-09-28T05:01:01"
+        },
+        {
+          "file": "run/workspace/svHyGen/candidateSV.0000.vcf",
+          "bytes": 2316974,
+          "mtime": "2026-09-28T05:01:01"
+        },
+        {
+          "file": "run/workspace/svHyGen/edgeRuntimeLog.0000.txt",
+          "bytes": 73978,
+          "mtime": "2026-09-28T05:00:00"
+        }
+      ]
+    },
+    {
+      "sample": "HG004",
+      "job": "156833",
+      "running": true,
+      "stage": "manta_workflow",
+      "verified_at": null,
+      "filtered_variant_records": null,
+      "failed": null,
+      "qacct": null,
+      "artifacts": [
+        {
+          "file": "run/workspace/svHyGen/diploidSV.0000.vcf",
+          "bytes": 466017,
+          "mtime": "2026-09-28T05:00:59"
+        },
+        {
+          "file": "run/workspace/svHyGen/candidateSV.0000.vcf",
+          "bytes": 1188202,
+          "mtime": "2026-09-28T05:01:01"
+        },
+        {
+          "file": "run/workspace/svHyGen/edgeRuntimeLog.0000.txt",
+          "bytes": 73935,
+          "mtime": "2026-09-28T05:01:01"
+        }
+      ]
+    }
+  ],
+  "promoted": {
+    "sample": "GIAB-publicData-Illumina-250PE-HG002",
+    "job": "156831",
+    "promoted_at": "2026-09-28T05:05:03.086021+09:00",
+    "qacct": {
+      "failed": "0",
+      "exit_status": "0"
+    },
+    "filtered_variant_records": 11658,
+    "canonical_variants_link": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/tmp/17.Manta/GIAB-publicData-Illumina-250PE-HG002/results/variants",
+    "variants_source": "/BiO/scratch/ehojune/GIAB_benchmark/repairs/manta-diagnosis-20260928/HG002-stack64/run/results/variants",
+    "outcome_link": "/BiO/scratch/dyl/kbb/G000/GIAB-publicData-Illumina-250PE/outcome/GIAB-publicData-Illumina-250PE-HG002/GIAB-publicData-Illumina-250PE-HG002.diploidSV.conInv_filtered.vcf",
+    "outcome_sha256": "79013e9dff8ca288ab6119dd7a375cb4052960bac6203254ab98d71556485cee",
+    "method": "Add missing variants directory symlink and outcome VCF symlink; preserve failed workflow and DONE/error history.",
+    "protected_inputs_and_existing_outcomes_unchanged": true
+  },
+  "new_comparisons": [
+    {
+      "label": "public-Illumina250PE-HG002",
+      "job": "156834",
+      "state": "r",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG002",
+      "stage": "GenotypeGVCFs"
+    },
+    {
+      "label": "public-Illumina250PE-HG003",
+      "job": "156835",
+      "state": "r",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG003",
+      "stage": "GenotypeGVCFs"
+    },
+    {
+      "label": "public-Illumina250PE-HG004",
+      "job": "156836",
+      "state": "r",
+      "output": "/BiO/scratch/ehojune/GIAB_benchmark/processed_data_ehojune/phase3_shortread_wgs/07_happy/public-Illumina250PE-HG004",
+      "stage": "GenotypeGVCFs"
+    }
+  ],
+  "comparison_readiness": "all3 small-variant stage exit0, gVCF sample/index, CRAM quickcheck, fastp/primary read counts, Verify QC. Full-set historical Error remains; SV repair is independent.",
+  "owner_snapshot": "outputs/owner-status-20260928-0500.json",
+  "closed_work": "Company basic24 and Verify24/24, comparisons16, downloads/ONT/PacBio baseline, HG008 somatic13 unchanged."
+}

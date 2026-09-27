@@ -1358,3 +1358,8 @@ gd4 비교 3건 모두 정상 종료해 총 16건 표를 마감했다. gd4 HG002
 ## 2026-09-28 04:50 — Manta 세 샘플 병렬
 
 사용자가 단일 샘플 검증 대기를 취소했다. 기존 HG002 156831은 계속 두고, 선행 성공 조건만 뺀 별도 driver로 HG003 156832·HG004 156833을 제출했다. 모두 스택 64MiB 적용·실행 확인. 실패 시 각 로그에 근거해 수정하고 병렬 재제출한다. 기존 실행 코드·입력·결과는 보존한다. [근거](reference/2026-09-28-manta-parallel.json).
+
+
+## 2026-09-28 05시 — Manta 결과 반영과 소변이 병행
+
+HG002 Manta는 exit0·VCF/QC·해시·원자료 보존을 확인해 누락된 variants 경로와 outcome 링크만 추가했다. 실패 workflow·DONE/error_list는 보존했다. Illumina 세 샘플의 소변이 입력은 haplo exit0·샘플/인덱스·CRAM·리드 수·Verify QC를 통과했으므로 SV 복구와 독립적으로 기존 채점 156834–156836을 제출했다. 같은 truth/영역/도구, 새 출력 폴더를 쓴다. [근거](reference/2026-09-28-0500-status-evidence.json).
