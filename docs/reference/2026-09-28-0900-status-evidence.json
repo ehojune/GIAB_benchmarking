@@ -1,0 +1,391 @@
+{
+  "at": "2026-09-28T09:02:54.506860+09:00",
+  "host": "nbbcluster2",
+  "user": "ehojune",
+  "baseline": "2026-09-28T08:35:47.645216+09:00",
+  "public": [
+    {
+      "set": "BGISEQ500",
+      "job": "155526",
+      "state": "r",
+      "cpu_delta_seconds": 5947,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "11.0",
+            "12537",
+            "17901"
+          ],
+          "previous_stage_progress": [
+            "11.0",
+            "12287",
+            "17901"
+          ],
+          "stage_changed": false,
+          "tasks_delta": 250,
+          "log_bytes_delta": 273310,
+          "mtime": "2026-09-28T09:02:08"
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "15.0",
+            "10007",
+            "18330"
+          ],
+          "previous_stage_progress": [
+            "15.0",
+            "9737",
+            "18330"
+          ],
+          "stage_changed": false,
+          "tasks_delta": 270,
+          "log_bytes_delta": 293583,
+          "mtime": "2026-09-28T09:02:33"
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "11.0",
+            "15871",
+            "18074"
+          ],
+          "previous_stage_progress": [
+            "11.0",
+            "15629",
+            "18074"
+          ],
+          "stage_changed": false,
+          "tasks_delta": 242,
+          "log_bytes_delta": 267410,
+          "mtime": "2026-09-28T09:02:39"
+        }
+      ],
+      "old_done_mtime": "2026-09-21T08:44:32",
+      "historical_done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-BGISEQ500\n- Message : Error\n",
+      "current_error_list": null,
+      "other_stages": [
+        {
+          "stage": "00.checksum",
+          "files": 6,
+          "latest_mtime": "2026-09-21T00:53:58"
+        },
+        {
+          "stage": "02.trimmed",
+          "files": 12,
+          "latest_mtime": "2026-09-21T01:54:53"
+        },
+        {
+          "stage": "benchmark",
+          "files": 30,
+          "latest_mtime": "2026-09-28T09:02:52"
+        },
+        {
+          "stage": "01.qc",
+          "files": 24,
+          "latest_mtime": "2026-09-21T02:32:03"
+        }
+      ]
+    },
+    {
+      "set": "Element-AVITI",
+      "job": "155527",
+      "state": "r",
+      "cpu_delta_seconds": 6094,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "11.0",
+            "16995",
+            "19836"
+          ],
+          "previous_stage_progress": [
+            "11.0",
+            "16773",
+            "19836"
+          ],
+          "stage_changed": false,
+          "tasks_delta": 222,
+          "log_bytes_delta": 242370,
+          "mtime": "2026-09-28T09:02:41"
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "11.0",
+            "10991",
+            "19051"
+          ],
+          "previous_stage_progress": [
+            "11.0",
+            "10751",
+            "19051"
+          ],
+          "stage_changed": false,
+          "tasks_delta": 240,
+          "log_bytes_delta": 262260,
+          "mtime": "2026-09-28T09:02:10"
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "6.0",
+            "20067",
+            "21167"
+          ],
+          "previous_stage_progress": [
+            "6.0",
+            "19855",
+            "21167"
+          ],
+          "stage_changed": false,
+          "tasks_delta": 212,
+          "log_bytes_delta": 235312,
+          "mtime": "2026-09-28T09:02:38"
+        }
+      ],
+      "old_done_mtime": "2026-09-19T22:25:35",
+      "historical_done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Element-AVITI\n- Message : Error\n",
+      "current_error_list": null,
+      "other_stages": [
+        {
+          "stage": "00.checksum",
+          "files": 6,
+          "latest_mtime": "2026-09-19T10:05:54"
+        },
+        {
+          "stage": "02.trimmed",
+          "files": 12,
+          "latest_mtime": "2026-09-19T11:28:02"
+        },
+        {
+          "stage": "benchmark",
+          "files": 30,
+          "latest_mtime": "2026-09-28T09:02:51"
+        },
+        {
+          "stage": "01.qc",
+          "files": 24,
+          "latest_mtime": "2026-09-19T12:22:25"
+        }
+      ]
+    },
+    {
+      "set": "Hiseq-300x",
+      "job": "155528",
+      "state": "r",
+      "cpu_delta_seconds": 3316,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "4.0",
+            "5510",
+            "52839"
+          ],
+          "previous_stage_progress": [
+            "4.0",
+            "5269",
+            "52839"
+          ],
+          "stage_changed": false,
+          "tasks_delta": 241,
+          "log_bytes_delta": 192580,
+          "mtime": "2026-09-28T09:02:52"
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "4.0",
+            "3573",
+            "53467"
+          ],
+          "previous_stage_progress": [
+            "4.0",
+            "3351",
+            "53467"
+          ],
+          "stage_changed": false,
+          "tasks_delta": 222,
+          "log_bytes_delta": 177387,
+          "mtime": "2026-09-28T09:02:37"
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "2.0",
+            "56831",
+            "61287"
+          ],
+          "previous_stage_progress": [
+            "2.0",
+            "56610",
+            "61287"
+          ],
+          "stage_changed": false,
+          "tasks_delta": 221,
+          "log_bytes_delta": 177905,
+          "mtime": "2026-09-28T09:02:24"
+        }
+      ],
+      "old_done_mtime": "2026-09-21T07:28:13",
+      "historical_done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Hiseq-300x\n- Message : Error\n",
+      "current_error_list": null,
+      "other_stages": [
+        {
+          "stage": "00.checksum",
+          "files": 6,
+          "latest_mtime": "2026-09-19T23:22:38"
+        },
+        {
+          "stage": "02.trimmed",
+          "files": 12,
+          "latest_mtime": "2026-09-20T02:43:19"
+        },
+        {
+          "stage": "benchmark",
+          "files": 30,
+          "latest_mtime": "2026-09-28T09:02:54"
+        },
+        {
+          "stage": "01.qc",
+          "files": 24,
+          "latest_mtime": "2026-09-20T05:42:09"
+        }
+      ]
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "job": "156690",
+      "state": "r",
+      "cpu_delta_seconds": 5160,
+      "samples": [
+        {
+          "sample": "HG002",
+          "stage_progress": [
+            "11.0",
+            "521",
+            "15160"
+          ],
+          "previous_stage_progress": [
+            "7.0",
+            "15160",
+            "15160"
+          ],
+          "stage_changed": true,
+          "tasks_delta": null,
+          "log_bytes_delta": 564429,
+          "mtime": "2026-09-28T09:02:36"
+        },
+        {
+          "sample": "HG003",
+          "stage_progress": [
+            "11.0",
+            "2639",
+            "14631"
+          ],
+          "previous_stage_progress": [
+            "11.0",
+            "2417",
+            "14631"
+          ],
+          "stage_changed": false,
+          "tasks_delta": 222,
+          "log_bytes_delta": 243110,
+          "mtime": "2026-09-28T09:02:36"
+        },
+        {
+          "sample": "HG004",
+          "stage_progress": [
+            "4.0",
+            "12940",
+            "29656"
+          ],
+          "previous_stage_progress": [
+            "4.0",
+            "12707",
+            "29656"
+          ],
+          "stage_changed": false,
+          "tasks_delta": 233,
+          "log_bytes_delta": 187108,
+          "mtime": "2026-09-28T09:02:48"
+        }
+      ],
+      "old_done_mtime": "2026-09-20T19:00:15",
+      "historical_done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-MGISEQ2000-PCRfree\n- Message : Error\n",
+      "current_error_list": null,
+      "other_stages": [
+        {
+          "stage": "00.checksum",
+          "files": 6,
+          "latest_mtime": "2026-09-20T06:15:57"
+        },
+        {
+          "stage": "02.trimmed",
+          "files": 12,
+          "latest_mtime": "2026-09-20T07:46:07"
+        },
+        {
+          "stage": "benchmark",
+          "files": 30,
+          "latest_mtime": "2026-09-28T09:02:53"
+        },
+        {
+          "stage": "01.qc",
+          "files": 24,
+          "latest_mtime": "2026-09-20T08:46:05"
+        }
+      ]
+    }
+  ],
+  "completed_comparisons": 19,
+  "owner_activity_unchanged": true,
+  "owners": [
+    {
+      "session": "f4f3cd33-069f-4618-9370-aeca65f756bd",
+      "state": "not-listed",
+      "last_activity": "2026-09-26T11:44:04.918Z"
+    },
+    {
+      "session": "febe25e4-aaad-40ef-b098-6762f7da433f",
+      "state": "not-listed",
+      "last_activity": "2026-09-24T23:23:11.385Z"
+    },
+    {
+      "session": "9fd8a804-eb9d-4050-85dc-351146d3fc7a",
+      "state": "not-listed",
+      "last_activity": "2026-09-26T00:25:32.947Z"
+    },
+    {
+      "session": "f9a76550-837f-4f82-b561-d0a7cbbacc74",
+      "state": "not-listed",
+      "last_activity": "2026-09-26T11:27:51.898Z"
+    },
+    {
+      "session": "148efde9-4992-4a4a-8412-73d5e5e8053e",
+      "state": "not-listed",
+      "last_activity": "2026-09-27T07:47:58.599Z"
+    }
+  ],
+  "new_jobs_submitted": [],
+  "new_failures_observed": [],
+  "latency_evidence": "docs/reference/2026-09-28-public-markdup-latency.md",
+  "next_check": "2026-09-28 13:00 KST",
+  "briefing": {
+    "file": "GIAB-overview-20260928-0900.pptx",
+    "sha256": "fffb4ecd12c1ecd350640eb485f82db9915696cbfdf8602e45a53ce1020b2204",
+    "slide_count": 5,
+    "source_checked_at": "2026-09-28T09:02:54.506860+09:00"
+  },
+  "automation": {
+    "id": "giab-4",
+    "kind": "heartbeat",
+    "status": "ACTIVE",
+    "rrule": "FREQ=HOURLY;INTERVAL=4;BYMINUTE=0;BYSECOND=0",
+    "target_thread_id": "01a0ce53-6da4-73b3-a2c9-164247e5f658",
+    "updated_at": 1790553913517
+  }
+}
