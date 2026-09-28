@@ -1,0 +1,407 @@
+{
+  "at": "2026-09-28T13:04:06.141713+09:00",
+  "host": "nbbcluster2",
+  "user": "ehojune",
+  "baseline": "2026-09-28T09:02:54.506860+09:00",
+  "public": [
+    {
+      "set": "BGISEQ500",
+      "job": "155526",
+      "state": "r",
+      "cpu_delta_seconds": 26409,
+      "samples": [
+        {
+          "sample": "HG002",
+          "bytes": 98705115,
+          "mtime": "2026-09-28T13:01:03",
+          "stage_progress": [
+            "11.0",
+            "13371",
+            "17901"
+          ],
+          "mark_status": "",
+          "mark_finished": false,
+          "previous_stage_progress": [
+            "11.0",
+            "12537",
+            "17901"
+          ],
+          "stage_changed": false,
+          "task_delta": 834,
+          "log_bytes_delta": 922420
+        },
+        {
+          "sample": "HG003",
+          "bytes": 118097558,
+          "mtime": "2026-09-28T13:02:33",
+          "stage_progress": [
+            "15.0",
+            "10811",
+            "18330"
+          ],
+          "mark_status": "",
+          "mark_finished": false,
+          "previous_stage_progress": [
+            "15.0",
+            "10007",
+            "18330"
+          ],
+          "stage_changed": false,
+          "task_delta": 804,
+          "log_bytes_delta": 891366
+        },
+        {
+          "sample": "HG004",
+          "bytes": 103231528,
+          "mtime": "2026-09-28T13:02:14",
+          "stage_progress": [
+            "11.0",
+            "16723",
+            "18074"
+          ],
+          "mark_status": "",
+          "mark_finished": false,
+          "previous_stage_progress": [
+            "11.0",
+            "15871",
+            "18074"
+          ],
+          "stage_changed": false,
+          "task_delta": 852,
+          "log_bytes_delta": 939349
+        }
+      ],
+      "historical_done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-BGISEQ500\n- Message : Error\n",
+      "historical_done_mtime": "2026-09-21T08:44:32",
+      "current_error_list": null,
+      "other_stages": [
+        {
+          "stage": "00.checksum",
+          "files": 6,
+          "latest_mtime": "2026-09-21T00:53:58"
+        },
+        {
+          "stage": "02.trimmed",
+          "files": 12,
+          "latest_mtime": "2026-09-21T01:54:53"
+        },
+        {
+          "stage": "benchmark",
+          "files": 30,
+          "latest_mtime": "2026-09-28T13:02:37"
+        },
+        {
+          "stage": "01.qc",
+          "files": 24,
+          "latest_mtime": "2026-09-21T02:32:03"
+        }
+      ]
+    },
+    {
+      "set": "Element-AVITI",
+      "job": "155527",
+      "state": "r",
+      "cpu_delta_seconds": 29288,
+      "samples": [
+        {
+          "sample": "HG002",
+          "bytes": 112844177,
+          "mtime": "2026-09-28T12:59:26",
+          "stage_progress": [
+            "11.0",
+            "17767",
+            "19836"
+          ],
+          "mark_status": "",
+          "mark_finished": false,
+          "previous_stage_progress": [
+            "11.0",
+            "16995",
+            "19836"
+          ],
+          "stage_changed": false,
+          "task_delta": 772,
+          "log_bytes_delta": 853811
+        },
+        {
+          "sample": "HG003",
+          "bytes": 102494610,
+          "mtime": "2026-09-28T12:59:15",
+          "stage_progress": [
+            "11.0",
+            "11785",
+            "19051"
+          ],
+          "mark_status": "",
+          "mark_finished": false,
+          "previous_stage_progress": [
+            "11.0",
+            "10991",
+            "19051"
+          ],
+          "stage_changed": false,
+          "task_delta": 794,
+          "log_bytes_delta": 878163
+        },
+        {
+          "sample": "HG004",
+          "bytes": 82548777,
+          "mtime": "2026-09-28T12:59:35",
+          "stage_progress": [
+            "6.0",
+            "20829",
+            "21167"
+          ],
+          "mark_status": "",
+          "mark_finished": false,
+          "previous_stage_progress": [
+            "6.0",
+            "20067",
+            "21167"
+          ],
+          "stage_changed": false,
+          "task_delta": 762,
+          "log_bytes_delta": 832936
+        }
+      ],
+      "historical_done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-Element-AVITI\n- Message : Error\n",
+      "historical_done_mtime": "2026-09-19T22:25:35",
+      "current_error_list": null,
+      "other_stages": [
+        {
+          "stage": "00.checksum",
+          "files": 6,
+          "latest_mtime": "2026-09-19T10:05:54"
+        },
+        {
+          "stage": "02.trimmed",
+          "files": 12,
+          "latest_mtime": "2026-09-19T11:28:02"
+        },
+        {
+          "stage": "benchmark",
+          "files": 30,
+          "latest_mtime": "2026-09-28T13:02:39"
+        },
+        {
+          "stage": "01.qc",
+          "files": 24,
+          "latest_mtime": "2026-09-19T12:22:25"
+        }
+      ]
+    },
+    {
+      "set": "MGISEQ2000-PCRfree",
+      "job": "156690",
+      "state": "r",
+      "cpu_delta_seconds": 19282,
+      "samples": [
+        {
+          "sample": "HG002",
+          "bytes": 73104248,
+          "mtime": "2026-09-28T13:02:30",
+          "stage_progress": [
+            "11.0",
+            "1585",
+            "15160"
+          ],
+          "mark_status": "",
+          "mark_finished": false,
+          "previous_stage_progress": [
+            "11.0",
+            "521",
+            "15160"
+          ],
+          "stage_changed": false,
+          "task_delta": 1064,
+          "log_bytes_delta": 1163737
+        },
+        {
+          "sample": "HG003",
+          "bytes": 72772142,
+          "mtime": "2026-09-28T13:02:53",
+          "stage_progress": [
+            "11.0",
+            "3571",
+            "14631"
+          ],
+          "mark_status": "",
+          "mark_finished": false,
+          "previous_stage_progress": [
+            "11.0",
+            "2639",
+            "14631"
+          ],
+          "stage_changed": false,
+          "task_delta": 932,
+          "log_bytes_delta": 1021462
+        },
+        {
+          "sample": "HG004",
+          "bytes": 47714525,
+          "mtime": "2026-09-28T13:02:04",
+          "stage_progress": [
+            "4.0",
+            "13752",
+            "29656"
+          ],
+          "mark_status": "",
+          "mark_finished": false,
+          "previous_stage_progress": [
+            "4.0",
+            "12940",
+            "29656"
+          ],
+          "stage_changed": false,
+          "task_delta": 812,
+          "log_bytes_delta": 652759
+        }
+      ],
+      "historical_done": "- Cohort : GIAB\n- Batch name : GIAB-publicData-MGISEQ2000-PCRfree\n- Message : Error\n",
+      "historical_done_mtime": "2026-09-20T19:00:15",
+      "current_error_list": null,
+      "other_stages": [
+        {
+          "stage": "00.checksum",
+          "files": 6,
+          "latest_mtime": "2026-09-20T06:15:57"
+        },
+        {
+          "stage": "02.trimmed",
+          "files": 12,
+          "latest_mtime": "2026-09-20T07:46:07"
+        },
+        {
+          "stage": "benchmark",
+          "files": 30,
+          "latest_mtime": "2026-09-28T13:02:55"
+        },
+        {
+          "stage": "01.qc",
+          "files": 24,
+          "latest_mtime": "2026-09-20T08:46:05"
+        }
+      ]
+    }
+  ],
+  "hiseq_optimized": [
+    {
+      "sample": "HG002",
+      "job": "157347",
+      "node": "octopus-2-6",
+      "state": "r",
+      "current_stage": [
+        "2.0",
+        "267",
+        "4096"
+      ],
+      "progress": {
+        "at": "2026-09-28T13:01:14.538542+09:00",
+        "job": "157347",
+        "pid": 962178,
+        "elapsed_seconds": 8233.0,
+        "local_free_GiB": 456.2,
+        "minimum_local_free_GiB": 456.03,
+        "max_RSS_GiB": 43.26
+      },
+      "completed_stage_history": [
+        "10:44:16.639 INFO  DAGScheduler - Submitting 16512 missing tasks from ResultStage 0 (MapPartitionsRDD[15] at sortByKey at SparkUtils.java:165) (first 15 tasks are for partitions Vector(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))",
+        "11:03:50.950 INFO  DAGScheduler - ResultStage 0 (sortByKey at SparkUtils.java:165) finished in 1174.357 s",
+        "11:03:52.305 INFO  DAGScheduler - Submitting 16512 missing tasks from ShuffleMapStage 1 (MapPartitionsRDD[13] at mapToPair at SparkUtils.java:161) (first 15 tasks are for partitions Vector(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))",
+        "11:37:41.269 INFO  DAGScheduler - ShuffleMapStage 1 (mapToPair at SparkUtils.java:161) finished in 2029.017 s",
+        "11:37:41.308 INFO  DAGScheduler - Submitting 4096 missing tasks from ResultStage 2 (MapPartitionsRDD[18] at mapPartitions at SparkUtils.java:188) (first 15 tasks are for partitions Vector(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))"
+      ],
+      "errors": null,
+      "output_files": [],
+      "current_stage_only_eta": {
+        "remaining_hours": 20.0,
+        "tasks_per_hour_since_stage_start": 191.1,
+        "scope": "Current stage2 only; constant throughput scenario. Not Mark completion, not a confidence interval. No whole-Mark ETA until representative heavy stages complete."
+      }
+    },
+    {
+      "sample": "HG003",
+      "job": "157348",
+      "node": "octopus-2-10",
+      "state": "r",
+      "current_stage": [
+        "2.0",
+        "349",
+        "4096"
+      ],
+      "progress": {
+        "at": "2026-09-28T13:01:13.663436+09:00",
+        "job": "157348",
+        "pid": 543266,
+        "elapsed_seconds": 8231.7,
+        "local_free_GiB": 450.37,
+        "minimum_local_free_GiB": 450.34,
+        "max_RSS_GiB": 46.05
+      },
+      "completed_stage_history": [
+        "10:44:23.309 INFO  DAGScheduler - Submitting 16709 missing tasks from ResultStage 0 (MapPartitionsRDD[15] at sortByKey at SparkUtils.java:165) (first 15 tasks are for partitions Vector(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))",
+        "10:51:24.561 INFO  DAGScheduler - ResultStage 0 (sortByKey at SparkUtils.java:165) finished in 421.296 s",
+        "10:51:25.085 INFO  DAGScheduler - Submitting 16709 missing tasks from ShuffleMapStage 1 (MapPartitionsRDD[13] at mapToPair at SparkUtils.java:161) (first 15 tasks are for partitions Vector(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))",
+        "11:14:26.221 INFO  DAGScheduler - ShuffleMapStage 1 (mapToPair at SparkUtils.java:161) finished in 1381.188 s",
+        "11:14:26.262 INFO  DAGScheduler - Submitting 4096 missing tasks from ResultStage 2 (MapPartitionsRDD[18] at mapPartitions at SparkUtils.java:188) (first 15 tasks are for partitions Vector(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))"
+      ],
+      "errors": null,
+      "output_files": [],
+      "current_stage_only_eta": {
+        "remaining_hours": 19.2,
+        "tasks_per_hour_since_stage_start": 195.6,
+        "scope": "Current stage2 only; constant throughput scenario. Not Mark completion, not a confidence interval. No whole-Mark ETA until representative heavy stages complete."
+      }
+    },
+    {
+      "sample": "HG004",
+      "job": "157349",
+      "node": "octopus-2-11",
+      "state": "r",
+      "current_stage": [
+        "2.0",
+        "240",
+        "4096"
+      ],
+      "progress": {
+        "at": "2026-09-28T13:01:12.233294+09:00",
+        "job": "157349",
+        "pid": 2685693,
+        "elapsed_seconds": 8230.7,
+        "local_free_GiB": 403.68,
+        "minimum_local_free_GiB": 403.63,
+        "max_RSS_GiB": 51.73
+      },
+      "completed_stage_history": [
+        "10:44:16.685 INFO  DAGScheduler - Submitting 19152 missing tasks from ResultStage 0 (MapPartitionsRDD[15] at sortByKey at SparkUtils.java:165) (first 15 tasks are for partitions Vector(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))",
+        "10:52:21.449 INFO  DAGScheduler - ResultStage 0 (sortByKey at SparkUtils.java:165) finished in 484.811 s",
+        "10:52:22.022 INFO  DAGScheduler - Submitting 19152 missing tasks from ShuffleMapStage 1 (MapPartitionsRDD[13] at mapToPair at SparkUtils.java:161) (first 15 tasks are for partitions Vector(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))",
+        "11:18:06.644 INFO  DAGScheduler - ShuffleMapStage 1 (mapToPair at SparkUtils.java:161) finished in 1544.677 s",
+        "11:18:06.696 INFO  DAGScheduler - Submitting 4096 missing tasks from ResultStage 2 (MapPartitionsRDD[18] at mapPartitions at SparkUtils.java:188) (first 15 tasks are for partitions Vector(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))"
+      ],
+      "errors": null,
+      "output_files": [],
+      "current_stage_only_eta": {
+        "remaining_hours": 27.7,
+        "tasks_per_hour_since_stage_start": 139.3,
+        "scope": "Current stage2 only; constant throughput scenario. Not Mark completion, not a confidence interval. No whole-Mark ETA until representative heavy stages complete."
+      }
+    }
+  ],
+  "original_hiseq_state": "s",
+  "completed_comparisons": 19,
+  "closed_work": "Company basic/QC24; comparisons19; download/PacBio/ONT basic; Verify/Manta recovery; HG008 somatic13pairs remain closed. No repeated execution.",
+  "actions": {
+    "submitted_jobs": [],
+    "canceled_jobs": [],
+    "promoted_samples": [],
+    "deleted_paths": []
+  },
+  "next": "Track all active jobs and candidate guards; only after all3 verified retire155528/promote/targeted downstream per continuation plan.",
+  "sources": [
+    "progress-snapshot-20260928-1300.txt",
+    "giab-live-jobs-20260928-1300.txt",
+    "hiseq-mark-optimized-status-20260928-1300.txt",
+    "hiseq-mark-phase-history-20260928-1300.txt"
+  ]
+}
