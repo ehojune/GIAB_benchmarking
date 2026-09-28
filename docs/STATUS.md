@@ -1,12 +1,12 @@
 # GIAB 현황
 
-2026-09-28 09:02 KST 점검. **숏리드 비교 19건 완료, 공개 기본 4잡 실행.** [이번 점검](runs/2026-09-28-0900-heartbeat.md) · [비교표](reports/2026-09-28-shortread-nineteen.md).
+2026-09-28 10:45 KST 점검. **비교 19건 완료, 공개 3잡 유지·HiSeq Mark 개선 3잡 실행.** [실행 근거](reference/2026-09-28-hiseq-mark-optimization.md) · [비교표](reports/2026-09-28-shortread-nineteen.md).
 
 | 작업 | 현재 상태 | 다음 행동 |
 |---|---|---|
 | 업체 기본 run·QC | gd1~4 기본 run exit 0·DONE Success. Verify 오류 **11/11건 복구**, QC 24/24 checksum·결과 링크 확인 | 완료 상태 유지 |
 | HG002/3/4 비교 | **19건 완료**: 회사 12건 + 공개 7건. 기존 hap.py/v4.2.1 조건 | 표·공개 7행의 카탈로그·Excel 반영 완료 |
-| 공개 기본 run | **155526–155528, 156690 r**. 08:35→09:02 CPU·활성 Mark 로그 12개 모두 증가. 공유 디스크 I/O 지연 [진단](reference/2026-09-28-public-markdup-latency.md) | 현재 잡 유지, 종료·산출물·최소 QC 확인 |
+| 공개 기본 run | BGI 155526·AVITI 155527·MGI 156690 실행 유지; HiSeq 155528 정지·보존, 개선 Mark **157347–157349 실행** | 개선 결과 검증 뒤 HiSeq 후속 단계만 재개 |
 | Illumina-250PE QC | HG002 Verify 156823 exit 0, 00:05 반영. 기존 HG003/HG004 포함 3/3 확인 | Verify 추가 재시도 없음 |
 | Illumina Manta | **HG002/3/4 156831–156833 exit 0·QC·결과 반영 완료** | 복구 종료, 기존 결과 보존 |
 | 다운로드·PacBio·ONT | 기본 정리 완료. BioSkryb 476개 수령·제공 MD5 검증, 카탈로그·Excel 반영 유지 | 업체 롱리드 수령 대기 |

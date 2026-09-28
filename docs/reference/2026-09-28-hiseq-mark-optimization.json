@@ -1,0 +1,174 @@
+{
+  "at": "2026-09-28T10:45:01.634901+09:00",
+  "qstat": "job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID \n-----------------------------------------------------------------------------------------------------------------\n 155526 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-8.kobic.re    60        \n 155527 0.75000 regermline ehojune      r     09/21/2026 16:36:14 octopus.q@octopus-2-9.kobic.re    60        \n 155528 0.75000 regermline ehojune      s     09/21/2026 16:36:14 shepherd.q@shepherd-1-9.kobic.    60        \n 156690 0.53825 regermline ehojune      r     09/25/2026 01:06:44 shepherd.q@shepherd-1-8.kobic.    60        \n 157347 0.25000 giab_hiseq ehojune      r     09/28/2026 10:43:59 octopus.q@octopus-2-6.kobic.re    32        \n 157348 0.25000 giab_hiseq ehojune      r     09/28/2026 10:43:59 octopus.q@octopus-2-10.kobic.r    32        \n 157349 0.25000 giab_hiseq ehojune      r     09/28/2026 10:43:59 octopus.q@octopus-2-11.kobic.r    32        \n",
+  "benchmark": {
+    "at": "2026-09-28T10:34:31.008518+09:00",
+    "job": "157343",
+    "host": "octopus-2-10",
+    "profiles": [
+      {
+        "label": "baseline",
+        "seconds": 70.118,
+        "reads": 5000000,
+        "duplicate_reads": 71158,
+        "records_sha256": "8a4f1d400e388e0a423335217651000d0a5d8209480e8455b07f858c6f2f52cc",
+        "metrics_sha256": "fd0f5ae7e51e7b6aa53d197cd7576f7a528325ac999b5d0322dcaadb1b735909",
+        "bam_bytes": 564548925,
+        "local_spark": false,
+        "heap_GiB": 20,
+        "cores": 10,
+        "reducers": null
+      },
+      {
+        "label": "optimized",
+        "seconds": 42.045,
+        "reads": 5000000,
+        "duplicate_reads": 71158,
+        "records_sha256": "8a4f1d400e388e0a423335217651000d0a5d8209480e8455b07f858c6f2f52cc",
+        "metrics_sha256": "fd0f5ae7e51e7b6aa53d197cd7576f7a528325ac999b5d0322dcaadb1b735909",
+        "bam_bytes": 564541888,
+        "local_spark": true,
+        "heap_GiB": 160,
+        "cores": 16,
+        "reducers": 32
+      }
+    ],
+    "speedup": 1.668,
+    "reads": 5000000,
+    "subset_bytes": 497596142,
+    "source_input_unchanged": true,
+    "scope": "Execution validation subset only; not a new biological analysis or a full-scale space/performance guarantee. Second profile can benefit from warm filesystem cache.",
+    "extract_seconds": 36.8
+  },
+  "production": {
+    "at": "2026-09-28T10:43:41.788096+09:00",
+    "jobs": [
+      {
+        "sample": "HG002",
+        "node": "octopus-2-6",
+        "job": "157347",
+        "rc": 0,
+        "stderr": ""
+      },
+      {
+        "sample": "HG003",
+        "node": "octopus-2-10",
+        "job": "157348",
+        "rc": 0,
+        "stderr": ""
+      },
+      {
+        "sample": "HG004",
+        "node": "octopus-2-11",
+        "job": "157349",
+        "rc": 0,
+        "stderr": ""
+      }
+    ],
+    "replaced_jobs": [
+      "157344",
+      "157345",
+      "157346"
+    ],
+    "original_job": "155528",
+    "original_suspended": true,
+    "released": true,
+    "reason": "Process-group capacity guard and full Java descendant RSS; v1 intentionally replaced during sampling",
+    "old_cancel": {
+      "at": "2026-09-28T10:43:42.285556+09:00",
+      "rc": 0,
+      "stdout": "ehojune has registered the job 157344 for deletion\nehojune has registered the job 157345 for deletion\nehojune has registered the job 157346 for deletion\n",
+      "stderr": ""
+    },
+    "old_absent_at": "2026-09-28T10:43:45.312324+09:00",
+    "release": {
+      "at": "2026-09-28T10:43:45.318142+09:00",
+      "rc": 0,
+      "stdout": "modified hold of job 157347\nmodified hold of job 157348\nmodified hold of job 157349\n",
+      "stderr": ""
+    }
+  },
+  "samples": [
+    {
+      "sample": "HG002",
+      "job": "157347",
+      "node": "octopus-2-6",
+      "progress": {
+        "at": "2026-09-28T10:45:01.617394+09:00",
+        "job": "157347",
+        "pid": 962178,
+        "elapsed_seconds": 60.1,
+        "local_free_GiB": 817.41,
+        "minimum_local_free_GiB": 817.41,
+        "max_RSS_GiB": 28.69
+      },
+      "stage_progress": [
+        "0.0",
+        "2649",
+        "16512"
+      ],
+      "head_settings": [
+        "10:44:15.131 INFO  SparkContext - Running Spark version 3.5.0",
+        "10:44:15.421 INFO  DiskBlockManager - Created local directory at /tmp/157347.1.octopus.q/giab-mark/spark/blockmgr-85923b05-309c-4f64-9419-e27194ec05ff",
+        "10:44:15.422 INFO  DiskBlockManager - Created local directory at /BiO/scratch/ehojune/GIAB_benchmark/repairs/hiseq-mark-optimization-20260928/full-v2/HG002/scratch/spark-a/blockmgr-60e1d40c-05d1-435e-a093-226fcdea9343",
+        "10:44:15.423 INFO  DiskBlockManager - Created local directory at /BiO/scratch/ehojune/GIAB_benchmark/repairs/hiseq-mark-optimization-20260928/full-v2/HG002/scratch/spark-b/blockmgr-cd202a73-d0ab-46fc-8498-38fd408f9fa8",
+        "10:44:15.436 INFO  MemoryStore - MemoryStore started with capacity 153.4 GiB"
+      ],
+      "stderr": ""
+    },
+    {
+      "sample": "HG003",
+      "job": "157348",
+      "node": "octopus-2-10",
+      "progress": {
+        "at": "2026-09-28T10:44:32.038090+09:00",
+        "job": "157348",
+        "pid": 543266,
+        "elapsed_seconds": 30.1,
+        "local_free_GiB": 817.39,
+        "minimum_local_free_GiB": 817.39,
+        "max_RSS_GiB": 23.55
+      },
+      "stage_progress": [
+        "0.0",
+        "1439",
+        "16709"
+      ],
+      "head_settings": [
+        "10:44:21.034 INFO  SparkContext - Running Spark version 3.5.0",
+        "10:44:21.643 INFO  DiskBlockManager - Created local directory at /tmp/157348.1.octopus.q/giab-mark/spark/blockmgr-fcb66ccb-7bd9-4578-996c-3f4a8bc02fb0",
+        "10:44:21.643 INFO  DiskBlockManager - Created local directory at /BiO/scratch/ehojune/GIAB_benchmark/repairs/hiseq-mark-optimization-20260928/full-v2/HG003/scratch/spark-a/blockmgr-3712f0e0-c6d9-4956-bd06-1540a96dc7e9",
+        "10:44:21.644 INFO  DiskBlockManager - Created local directory at /BiO/scratch/ehojune/GIAB_benchmark/repairs/hiseq-mark-optimization-20260928/full-v2/HG003/scratch/spark-b/blockmgr-7f9f2749-6e0f-448f-a7a9-c5aa93ede0e9",
+        "10:44:21.663 INFO  MemoryStore - MemoryStore started with capacity 153.4 GiB"
+      ],
+      "stderr": ""
+    },
+    {
+      "sample": "HG004",
+      "job": "157349",
+      "node": "octopus-2-11",
+      "progress": {
+        "at": "2026-09-28T10:45:01.577910+09:00",
+        "job": "157349",
+        "pid": 2685693,
+        "elapsed_seconds": 60.1,
+        "local_free_GiB": 815.9,
+        "minimum_local_free_GiB": 815.9,
+        "max_RSS_GiB": 28.31
+      },
+      "stage_progress": [
+        "0.0",
+        "2644",
+        "19152"
+      ],
+      "head_settings": [
+        "10:44:15.088 INFO  SparkContext - Running Spark version 3.5.0",
+        "10:44:15.397 INFO  DiskBlockManager - Created local directory at /tmp/157349.1.octopus.q/giab-mark/spark/blockmgr-9c56d73d-6497-4c80-955e-732f9aee7109",
+        "10:44:15.398 INFO  DiskBlockManager - Created local directory at /BiO/scratch/ehojune/GIAB_benchmark/repairs/hiseq-mark-optimization-20260928/full-v2/HG004/scratch/spark-a/blockmgr-d9d14341-a9ac-4df3-b756-92232ba40107",
+        "10:44:15.399 INFO  DiskBlockManager - Created local directory at /BiO/scratch/ehojune/GIAB_benchmark/repairs/hiseq-mark-optimization-20260928/full-v2/HG004/scratch/spark-b/blockmgr-0e40dd59-93cd-420c-a997-41a7c6808c67",
+        "10:44:15.413 INFO  MemoryStore - MemoryStore started with capacity 153.4 GiB"
+      ],
+      "stderr": ""
+    }
+  ]
+}
