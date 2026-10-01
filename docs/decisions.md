@@ -1390,4 +1390,4 @@ Illumina 3건을 검증해 비교를 19건으로 갱신했다. 완료된 공개 
 
 ## 2026-10-01 — README 진행 기록을 patch_notes로 이전
 
-사용자 지시로 README 끝 `## Journal` 69항목을 [patch_notes/README.md](../patch_notes/README.md)로 옮기고 README 상단 배지로 연결했다. 공개 repo라 독자가 볼 변경 이력을 README 본문에서 떼어 낸다. 날짜·시간 접두만 떼고 본문은 그대로 옮겼으며 상대 링크에만 `../`를 붙였다. `HH시`로 적힌 8건은 분을 지어내지 않고 그대로 시간 열에 두었다. 근거 열은 그 문장을 처음 넣은 README 커밋이다. 68건은 찾았고 2026-09-09 항목은 첫 기록이 09-16 커밋이라 `—`로 남겼다. 이 파일과 `docs/reference/`에 남은 'README Journal' 언급은 그때의 기록이라 고치지 않는다. `yuan.lock.yaml`의 `meta.journal` pin도 사용 이력이라 둔다. 앞으로의 기록 규칙은 AGENTS.md에 있다.
+사용자 지시로 README 끝 `## Journal` 69항목을 [patch_notes/README.md](../patch_notes/README.md)로 옮기고 README 상단 배지로 연결했다. 공개 repo라 독자가 볼 변경 이력을 README 본문에서 떼어 낸다. 날짜·시간 접두만 떼고 본문은 그대로 옮겼으며 상대 링크에만 `../`를 붙였다. `HH시`로 적힌 8건은 분을 지어내지 않고 그대로 시간 열에 두었다. 근거 열은 그 문장을 처음 넣은 README 커밋이다(69건 모두). 2026-09-09 항목만 일주일 뒤 09-16 커밋에 처음 적혔다. 이 파일과 `docs/reference/`에 남은 'README Journal' 언급은 그때의 기록이라 고치지 않는다. `yuan.lock.yaml`의 `meta.journal` pin도 사용 이력이라 둔다. 앞으로의 기록 규칙은 AGENTS.md에 있다.

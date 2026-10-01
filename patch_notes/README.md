@@ -139,7 +139,7 @@
 
 | 시간 | 주요 변경사항 | 근거 |
 |---|---|---|
-| — | phase3 시작: HG002·3·4 숏리드 WGS 입력 목록(`phase3_shortread_wgs/inputs_manifest.tsv`, 18 실행 단위 / 6,178 FASTQ / 5.55 TiB)과 small-variant 정답셋 경로 정리. | — |
+| — | phase3 시작: HG002·3·4 숏리드 WGS 입력 목록(`phase3_shortread_wgs/inputs_manifest.tsv`, 18 실행 단위 / 6,178 FASTQ / 5.55 TiB)과 small-variant 정답셋 경로 정리. | [`3b59434`](https://github.com/ehojune/GIAB_benchmarking/commit/3b59434045af7f4516791b7f6ef6a6a84406a96b) |
 
 ## 2026-08-30
 
