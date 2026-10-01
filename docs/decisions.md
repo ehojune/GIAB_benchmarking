@@ -1387,3 +1387,7 @@ Illumina 3건을 검증해 비교를 19건으로 갱신했다. 완료된 공개 
 ## 2026-09-28 10:45 — HiSeq Mark 자원 개선
 
 사용자가 추천을 승인했다. BGI/AVITI/MGI는 유지하고 HiSeq master를 정지해 진행분을 보존했다. 같은 GATK의 500만 리드 결과 일치 확인 뒤 heap·분할 수·혼합 SSD 임시경로를 적용한 157347–157349를 병렬 제출했다. 전체 배수·ETA는 아직 미확정이며 새 결과 검증 뒤 후속 단계만 잇는다. [근거](reference/2026-09-28-hiseq-mark-optimization.md).
+
+## 2026-10-01 — README 진행 기록을 patch_notes로 이전
+
+사용자 지시로 README 끝 `## Journal` 69항목을 [patch_notes/README.md](../patch_notes/README.md)로 옮기고 README 상단 배지로 연결했다. 공개 repo라 독자가 볼 변경 이력을 README 본문에서 떼어 낸다. 날짜·시간 접두만 떼고 본문은 그대로 옮겼으며 상대 링크에만 `../`를 붙였다. `HH시`로 적힌 8건은 분을 지어내지 않고 그대로 시간 열에 두었다. 근거 열은 그 문장을 처음 넣은 README 커밋이다(69건 모두). 2026-09-09 항목만 일주일 뒤 09-16 커밋에 처음 적혔다. 이 파일과 `docs/reference/`에 남은 'README Journal' 언급은 그때의 기록이라 고치지 않는다. `yuan.lock.yaml`의 `meta.journal` pin도 사용 이력이라 둔다. 앞으로의 기록 규칙은 AGENTS.md에 있다.
