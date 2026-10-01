@@ -18,7 +18,9 @@ Yuan의 AGENTS.md가 상위 규약이다.
 - 판단과 이유는 `docs/decisions.md`에 그때그때 적는다. 한 결정에 몇 줄이면 충분하다.
 - 재사용 가치가 보이는 코드나 교훈은 `HARVEST.md`에 즉시 한 줄 적립한다. 나중에 발굴하지 않는다.
 - 실행 기록(plan/cmd/handoff)은 `docs/runs/`에 남긴다.
-- 굵직한 진행·전환은 README 끝 `## Journal`에 날짜 + 한 줄로 남긴다. 세션이 끝나기 전에.
+- 굵직한 진행·전환은 [patch_notes/README.md](patch_notes/README.md) 맨 위 날짜 절에 한 줄로 남긴다. 그 날짜 절이 없으면 만든다. 세션이 끝나기 전에. 커밋마다 쓰지 않는다.
+  - 행은 `| 시간 | 주요 변경사항 | 근거 |`이고 절 안에서도 새 행이 위다. 시간은 HH:MM 또는 `—`, 근거는 `docs/runs/`·PR·커밋 링크 중 있는 것(없으면 `—`).
+  - 이 repo는 공개다. Yuan 언급·미공개 수치·내부 사정(담당 교대, 모델 장애 등)은 패치노트가 아니라 `docs/decisions.md`·`docs/runs/`에 둔다.
 - 템플릿 구조에서 벗어나면 이유를 decisions.md에 한 줄 남긴다.
 
 ## 끝날 때 (Harvest)
@@ -48,7 +50,7 @@ git branch -r --sort=-committerdate | head -10     # PR 없는 작업 브랜치�
 | `phase1_pacbio_hifi/` | PacBio 세션 |
 | `phase2_ont/` | ONT 세션 |
 | `phase3_shortread_wgs/` | 숏리드 세션 |
-| `docs/`, `README.md`, `HARVEST.md`, `AGENTS.md` | **공용** |
+| `docs/`, `patch_notes/`, `README.md`, `HARVEST.md`, `AGENTS.md` | **공용** |
 
 **주인이 아닌 경로를 고쳐야 하면 PR 본문에 그 사실과 이유를 쓴다.** 금지가 아니다 —
 phase1·phase2 스크립트는 일부러 같은 모양이라 한쪽 교훈이 다른 쪽에 바로 적용되는 일이 잦다.
@@ -62,7 +64,7 @@ phase1·phase2 스크립트는 일부러 같은 모양이라 한쪽 교훈이 �
 | `docs/backlog.md` | 현재 담당의 남은 일만. 일이 끝나면 STATUS 해당 행을 갱신하고 상세 근거는 reference에 둔다 |
 | `docs/decisions.md` | **append only.** 남의 항목을 고치지 않는다. 남의 판단을 뒤집을 때는 새 항목에 "정정" 으로 쓴다 |
 | `HARVEST.md` | 표 끝에 행 추가. 남의 행을 고칠 때는 그 사실을 PR 본문에 쓴다 |
-| `README.md ## Journal` | 맨 위에 한 줄 추가만 |
+| `patch_notes/README.md` | 맨 위 날짜 절에 행 추가만 |
 | `phase{1,2}/env.local.sh.example` | 두 phase가 거의 같은 문구를 공유한다. **한쪽만 고치면 갈라진다 — 양쪽을 같이 고친다** |
 | `phase{1,2}/scripts/35_review_qc.py` | 위와 같다 |
 
