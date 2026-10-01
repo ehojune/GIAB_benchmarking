@@ -8,7 +8,7 @@
 
 | 시간 | 주요 변경사항 | 근거 |
 |---|---|---|
-| — | **README 진행 기록을 패치노트로 옮겼습니다.** README 상단 배지에서 엽니다 | — |
+| — | **README 진행 기록을 패치노트로 옮겼습니다.** README 상단 배지에서 엽니다 | [#79](https://github.com/ehojune/GIAB_benchmarking/pull/79) |
 
 ## 2026-09-28
 
